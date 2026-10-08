@@ -1,0 +1,26 @@
+{
+  "mode": "built-in ImageGen",
+  "assets": [
+    {
+      "asset": "remesiana",
+      "prompt": "Detailed Gothic HD2D pixel art exploration map, overhead 3/4 RPG perspective, 8:5 landscape. Remesiana Chelish harbor market. Broad empty walkable paving in central 65 percent, shops and stalls against upper edge, quay along lower edge, small boarding pier at lower right. No characters no words no UI. All buildings, paving, dock and solid terrain on one foreground layer; perimeter beyond quay transparent, no baked water or sky. Warm late afternoon, richly textured square pixel clusters, restrained mature palette. Layout: walkable central plaza x80..560 y140..300 in a normalized 640x400 space, dock extends to x600 y320. Keep walk floor clearly distinguishable, props at perimeter. Transparent background."
+    },
+    {
+      "asset": "tannery",
+      "prompt": "Detailed Gothic HD2D pixel art exploration map, overhead 3/4 RPG perspective, 8:5 landscape. Louslik tannery rural Cheliax: rectangular wooden palisade perimeter, open entrance gate at lower center, four foul lye vats arranged left side, low office building upper right with open doorway facing down, broad clear walkable yard across middle/right. No people animals words UI. Entire solid yard and structures foreground, transparent exterior perimeter, no distant landscape baked in. Normalized640x400: gate320,350; office door488,144; vats left x130..270 y140..250; clear walk corridor x304..560 y160..340. Rich visible square pixels, earthy rust and green, lantern accents, high detail yet navigable."
+    },
+    {
+      "asset": "ash_house",
+      "prompt": "Detailed Gothic HD2D pixel art exploration map, overhead 3/4 RPG cutaway interior, 8:5 landscape. Ash House ground floor, burned rural Chelish manor used as a secret meeting place. Charred timber walls, dusty old floor, paper screens across upper center hiding a back room, modest table with feast at left edge, stairs at right edge, entrance lower center. Broad empty walkable center. No people monsters silhouettes text UI. Entire floor walls furnishings one foreground with real transparent outside perimeter. Normalized640x400: floor48..592 y96..368; screen center320,125; staircase552,192; tableleftx100..190 y180..240; empty centralfloor x240..480 y160..336. Gothic richly detailed square pixel clusters amber lamps deep charcoal."
+    },
+    {
+      "asset": "bathroom",
+      "prompt": "Detailed Gothic HD2D pixel art exploration map, overhead 3/4 RPG cutaway interior, 8:5 landscape. Charred upstairs bathroom of Ash House, ruined Victorian fantasy house. Large old porcelain tub against upper middle wall, scorch marks and scattered war medals beside tub, bare wooden floor, open doorway lower center, deep ominous shadows. No people undead words UI. Foreground floor walls tub rim props, real transparent outside perimeter AND transparent cutout inside tub so separate dark water can show underneath. Normalized640x400 floor64..576 y96..368; bathtub x240..400 y110..190; empty walkablecenter below y208..336. Highly detailed square pixel clusters, dark muted green amber and porcelain white."
+    },
+    {
+      "asset": "longacre-cast",
+      "prompt": "Transparent pixel art character atlas for mature Gothic HD2D fantasy RPG. 3 columns x 2 rows evenly sized isolated cells, no overlap no words no UI, each centered full body front-facing 3/4 view head at top feet bottom. Top left Cimri: young adult human woman resourceful inexperienced emissary, dark auburn tied hair, practical worn brown leather travel clothes, red scarf, short blade sheathed. Top middle tannery owner: weathered middle aged human man work apron gloves holding crossbow down. Top right anonymous delivery farmer with small wooden wheelbarrow. Bottom left medium brown alert dog. Bottom middle krenshar: terrifying feline predator with exposed skull-like facial features, low prowling pose. Bottom right ectoplasmic undead woman: translucent pale teal spectral drowned woman, tattered smoky clothing, distressed rather than monstrous expression. Cohesive highly detailed visible pixel clusters, dark mature palette, generous fully transparent cell margins, identical scale for humans, complete extremities. Appearance interpretations, no named labels."
+    }
+  ],
+  "atlasRevision": "Edit this six-character atlas. Preserve all six characters, same identities, same positions in the 3x2 grid and complete extremities. Remove ALL background including colored halos behind every figure: genuinely transparent alpha between and around them. Convert the artwork to crisp detailed PIXEL ART with clearly visible square pixel clusters and limited color ramps, matching a mature high-detail sprite RPG. Do not use smooth painterly shading. No shadows detached from figures. No text. Keep the top row three humans, lower row dog, krenshar, spectral woman. Preserve spacious margins and original aspect."
+}

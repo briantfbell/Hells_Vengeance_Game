@@ -4,6 +4,10 @@ ctx.imageSmoothingEnabled=false;
 const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jamal:'Jamal',jason:'Jason',draymus:'Draymus',guapo:'El Guapo',barzillai:'Barzillai Thrune',fex:'Archbaron Darellus Fex',viggo:'Viggo',cultist:'Zealot'};
 const STATS={freya:{hp:38,ac:17,atk:6,dmg:[1,10,4]},jamal:{hp:30,ac:16,atk:7,dmg:[1,4,5]},jason:{hp:32,ac:15,atk:4,dmg:[1,8,2]},draymus:{hp:26,ac:13,atk:3,dmg:[1,4,1]},guapo:{hp:34,ac:15,atk:6,dmg:[1,6,3]},viggo:{hp:34,ac:14,atk:5,dmg:[1,8,2]},cultist:{hp:12,ac:12,atk:3,dmg:[1,6,0]}};
 const SPECIAL={freya:{name:'Iaijutsu Strike',uses:1,bonus:2,dmg:[2,10,4]},jamal:{name:'Sneak Attack',uses:2,dmg:[1,4,5]},jason:{name:'Hellfire',uses:2,auto:true,dmg:[2,6,0]},draymus:{name:'Vampiric Touch',uses:3,dmg:[1,6,3],drain:true},guapo:{name:'Throw a Chair',uses:3,auto:true,dmg:[1,8,1]}};
+const INTERACTION_RADIUS=56;
+const WEAPONS={freya:'katana',jamal:'dagger',jason:'mace',draymus:'dagger',guapo:'rapier'};
+const ATTACKS={freya:'slashes with her katana',jamal:'lunges with his dagger',jason:'swings his mace',draymus:'strikes with his dagger',guapo:'thrusts his rapier'};
+const SKILL_TEXT={freya:'draws her katana in an Iaijutsu Strike',jamal:'finds an opening for a Sneak Attack',jason:'calls down Hellfire',draymus:'reaches through the veil with Vampiric Touch',guapo:'hurls a chair across the fight'};
 const DIR={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]},KEY={ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down',ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',Shift:'run'};
 const scenes={
  street:{name:'Kintargo · Night of Ashes',image:'kintargo-map.png',walk:[{x:240,y:8,w:104,h:296},{x:256,y:304,w:88,h:88},{x:16,y:160,w:560,h:48},{x:576,y:176,w:48,h:16},{x:136,y:136,w:104,h:24}],blocks:[],points:[{id:'silver',x:142,y:132,label:'Enter the Silver Star'},{id:'guard',x:472,y:184,label:'Speak to Dottari'},{id:'ship',x:608,y:184,label:'Board The Western Star'}],lights:[[22,30],[140,27],[19,119],[223,20],[163,62],[122,107],[366,67],[399,114],[474,38],[510,36],[573,117],[581,170],[585,231],[365,230],[351,316],[235,279],[40,298],[171,342]]},
@@ -34,20 +38,23 @@ async function rollDice(label,sides,count=1,modifier=0,context=''){
 }
 async function damage(spec,label){return rollDice(label,spec[1],spec[0],spec[2]);}
 function point(id){return scenes[scene].points.find(p=>p.id===id);}
-function actorBlocking(x,y,which=scene){return scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
+function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&window.NextChapter.npcs().some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
 function passable(gx,gy,which=scene){if(gx<0||gy<0||gx>=COLS||gy>=ROWS)return false;const x=gx*T+8,y=gy*T+8,s=scenes[which];return s.walk.some(r=>inside(x,y,r))&&!s.blocks.some(r=>inside(x,y,r))&&!actorBlocking(x,y,which);}
 function findPath(from,to,which=scene){if(!passable(...from,which)||!passable(...to,which))return null;const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
+function partyRoster(){return quest.activeRoster||CORE;}
+function finished(){return !!quest.chapter2Complete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
- units=[lead,...CORE.filter(id=>id!==lead)].map((id,i)=>{const c=trail[Math.min(i*2,trail.length-1)];return {id,x:c[0]*T+8,y:c[1]*T+8,dir,step:null,anim:0};});path=[];keys.clear();
+ units=[lead,...partyRoster().filter(id=>id!==lead)].map((id,i)=>{const c=trail[Math.min(i*2,trail.length-1)];return {id,x:c[0]*T+8,y:c[1]*T+8,dir,step:null,anim:0};});path=[];keys.clear();
 }
 function setScene(next,x,y,dir='up'){$('dice-panel').hidden=true;scene=next;seedParty(x,y,dir);buildFlicker();$('location-name').textContent=scenes[next].name;updateObjective();paintParty();save();}
 function updateObjective(){
+ if(window.NextChapter.objective())return;
  $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'Seven days to Remesiana.':scene==='street'?(quest.burned?'Board The Western Star before dawn.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
  $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The temple burns below. Get the party to the harbor.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
 }
-function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:1,scene,lead,quest,hp,uses,potions,mendUses}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
+function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:1,scene,lead,quest,hp,uses,potions,mendUses,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
 function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
  if(choices)choices.forEach((text,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+text;b.onclick=()=>finishDialog(i);$('choices').append(b);});
@@ -56,6 +63,7 @@ function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-p
 }
 function paintPortrait(name){
  const id=({ 'Freya Kusanagi':'freya','Dottari Guard':'guard','Barkeep':'cultist' })[name]||name,c=$('portrait'),g=c.getContext('2d');let im,f;
+ if(window.NEXT_NPCS?.[id]){im=art.nextNPCs;f=window.NEXT_NPCS[id];}
  if(window.QUESTGIVER_MODELS[id]){im=art[id];f=window.QUESTGIVER_MODELS[id].frames[0];}
  else if(CORE.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
  else if(['viggo','cultist'].includes(id)){im=art.npcs;f=window.CHAPTER_NPCS[id];}
@@ -97,7 +105,7 @@ function reset(resume=false,selected=null){
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=400;ctx.imageSmoothingEnabled=false;
  const saved=resume?readSave():null;quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
- const next=saved?.scene||'street';setScene(next,312,next==='street'?248:next==='tavern'?280:312);canvas.focus();
+ const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();canvas.focus();
  if(!saved||quest.briefed===false)run(deliverOpeningMission);
 }
 $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(CORE.includes(id))reset(false,id);};$('intro-resume').onclick=()=>reset(true);
@@ -113,11 +121,12 @@ async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
  await say(lead,'Understood. The scimitar, the rapier, then the ship.');
  briefingOpen=false;quest.briefed=true;await say('Night of Ashes','Two nights later. Smoke drifts over the rooftops. The Silver Star waits on the north side of the street.');save();}
 function readSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));if(s?.version===1&&scenes[s.scene]&&CORE.includes(s.lead)&&CORE.every(id=>Number.isFinite(s.hp?.[id])))return s;}catch{}return null;}
-function visiblePoints(){return scenes[scene].points.filter(p=>!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
-function nearPoint(){return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<34).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
+function visiblePoints(){if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
+function nearPoint(){if(!units[0])return null;return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
 async function interact(requestedId=null){
- if(introOpen||dialogOpen||taskBusy||battle||units[0]?.step||quest.done)return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<34):nearPoint();if(!p)return;
+ if(introOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;
  run(async()=>{
+  if(await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){setScene('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','The room is empty. Somewhere under the floorboards, chanting rises through the wood.');save();}}
   if(p.id==='outside'){setScene('street',152,152,'down');}
   if(p.id==='upstairs'){setScene('tavern',536,152,'down');}
@@ -155,7 +164,7 @@ function flash(target,value,color='#f0d5a0'){const position=battle?battlePositio
 function hitTarget(attacker,target,value){target.hp=Math.max(0,target.hp-value);attacker.lunge=.22;flash(target,'−'+value);return value;}
 function paintParty(){
  syncBattleView();
- $('party').replaceChildren();units.forEach(u=>{const b=document.createElement('button');b.className='party-card'+(hp[u.id]===0?' down':'')+(battle&&activeUnit()?.id===u.id?' current':'')+(battle?.ally===u.id?' selected':'');b.title=battle?'Select '+NAMES[u.id]+' as healing target':'Speak to '+NAMES[u.id];const c=document.createElement('canvas');c.width=32;c.height=48;drawActor(c.getContext('2d'),{...u,x:16,y:46,dir:'down',step:null},38);const text=document.createElement('span');text.textContent=NAMES[u.id]+' · '+hp[u.id]+'/'+STATS[u.id].hp;const meter=document.createElement('i');meter.style.width=Math.max(0,hp[u.id]/STATS[u.id].hp*100)+'%';b.append(c,text,meter);b.onclick=()=>{if(battle){battle.ally=u.id;paintParty();}else if(!taskBusy&&!quest.done)run(()=>say(u.id,lines[scene]?.[u.id]||'Your call.'));};$('party').append(b);});
+ $('party').replaceChildren();units.forEach(u=>{const b=document.createElement('button');b.className='party-card'+(hp[u.id]===0?' down':'')+(battle&&activeUnit()?.id===u.id?' current':'')+(battle?.ally===u.id?' selected':'');b.title=battle?'Select '+NAMES[u.id]+' as healing target':'Speak to '+NAMES[u.id];const c=document.createElement('canvas');c.width=32;c.height=48;drawActor(c.getContext('2d'),{...u,x:16,y:46,dir:'down',step:null},38);const text=document.createElement('span');text.textContent=NAMES[u.id]+' · '+hp[u.id]+'/'+STATS[u.id].hp;const meter=document.createElement('i');meter.style.width=Math.max(0,hp[u.id]/STATS[u.id].hp*100)+'%';b.append(c,text,meter);b.onclick=()=>{if(battle){battle.ally=u.id;paintParty();}else if(!taskBusy&&!finished())run(()=>say(u.id,lines[scene]?.[u.id]||'Your call.'));};$('party').append(b);});
 }
 function paintBattle(){
  if(!battle)return;while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
@@ -166,7 +175,7 @@ function paintBattle(){
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',({freya:'Iaijutsu',jamal:'Sneak Attack',jason:'Hellfire',draymus:'Vampiric Touch',guapo:'Throw Chair'})[actor.id]+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(actor.id==='jason')commands.splice(2,0,['mend','Mending ('+mendUses+')']);
  if(actor.id==='jamal')commands.splice(2,0,['smoke','Smoke Bomb']);
- commands.forEach(([action,label],i)=>{const b=document.createElement('button');b.textContent=action==='special'?'Skill':action==='potion'?'Potion':action==='smoke'?'Smoke':action==='mend'?'Mend':label;b.dataset.action=action;b.onfocus=b.onpointerenter=()=>{if(battle&&!battle.busy)$('battle-message').textContent=action==='special'?SPECIAL[actor.id].name+' · '+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+' left':label;};b.title=action==='special'?SPECIAL[actor.id].name:action==='mend'?'Infernal Mending':label;b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
+ commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=action==='special'?SPECIAL[actor.id].name+' ['+remaining+'/'+SPECIAL[actor.id].uses+']':action==='potion'?'Healing potion ['+potions+'/2]':action==='mend'?'Infernal Mending ['+mendUses+'/2]':action==='smoke'?'Smoke bomb ['+(quest.smokeUsed?0:1)+'/1]':action==='attack'?'Attack with '+WEAPONS[actor.id]:label;b.textContent=action==='special'?'Skill ['+remaining+'/'+SPECIAL[actor.id].uses+']':action==='potion'?'Potion ['+potions+'/2]':action==='smoke'?'Smoke ['+(quest.smokeUsed?0:1)+'/1]':action==='mend'?'Mend ['+mendUses+'/2]':label;b.dataset.action=action;b.onfocus=b.onpointerenter=()=>{if(battle&&!battle.busy)$('battle-message').textContent=detail;};b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
  paintParty();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
@@ -175,12 +184,12 @@ async function performActionImpl(action){
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
  battle.busy=true;paintBattle();
  if(action==='guard'){actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 this round.');}
- else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');log(NAMES[actor.id]+' heals '+NAMES[id]+' for '+(hp[id]-before)+'.');}
- else if(action==='smoke'){quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds.');}
+ else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
+ else if(action==='smoke'){quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
  else{
   const skill=action==='special'?SPECIAL[actor.id]:null;if(skill)uses[actor.id]++;
   const bonus=STATS[actor.id].atk+(skill?.bonus||0),total=skill?.auto?null:await rollDice(NAMES[actor.id]+' · Attack',20,1,bonus,'AC '+STATS[target.id].ac),roll=total===null?null:total-bonus,hit=skill?.auto||roll===20||roll!==1&&total>=STATS[target.id].ac;
-  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([3,6,0],'Jamal · Sneak attack bonus');hitTarget(actor,target,value);target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' → '+target.name+': '+value+' damage'+(skill?' · '+skill.name:'.'));}else{actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' rolls '+roll+' + '+STATS[actor.id].atk+' and misses '+target.name+'.');}
+  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([3,6,0],'Jamal · Sneak attack bonus');hitTarget(actor,target,value);target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' at '+target.name+': '+value+' damage.'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}else{actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' but misses '+target.name+' ('+roll+' + '+bonus+').'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
  if(!livingEnemy()){battle=null;$('battle').hidden=true;$('character').disabled=false;quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
@@ -196,10 +205,10 @@ async function enemyStrike(enemy,token){const live=units.filter(u=>hp[u.id]>0);i
 async function fail(text){await say('Defeat',text);const c=await say(null,'Return to the last checkpoint?',['Retry encounter.','Restart chapter.']);if(c===0)reset(true);else reset();}
 function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=gy*T+8,dx=tx-u.x,dy=ty-u.y;u.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';u.step={sx:u.x,sy:u.y,tx,ty,p:0};return true;}
 function advance(u,dt,speed){if(!u.step)return false;u.step.p=Math.min(1,u.step.p+dt*speed);u.x=u.step.sx+(u.step.tx-u.step.sx)*u.step.p;u.y=u.step.sy+(u.step.ty-u.step.sy)*u.step.p;u.anim+=dt;if(u.step.p>=1){u.x=u.step.tx;u.y=u.step.ty;u.step=null;return true;}return false;}
-function walkTo(gx,gy){if(!ready||introOpen||dialogOpen||taskBusy||battle||quest.done)return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
+function walkTo(gx,gy){if(!ready||introOpen||dialogOpen||taskBusy||battle||finished())return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
 function update(dt){
  for(const u of units){u.flash=Math.max(0,(u.flash||0)-dt);u.lunge=Math.max(0,(u.lunge||0)-dt);}for(const e of battle?.enemies||[]){e.flash=Math.max(0,(e.flash||0)-dt);e.lunge=Math.max(0,(e.lunge||0)-dt);}
- fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||dialogOpen||taskBusy||battle||quest.done)return;
+ fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||dialogOpen||taskBusy||battle||finished())return;
  const u=units[0],speed=keys.has('run')?8:5;
  if(u.step){if(advance(u,dt,speed)){trail.unshift(cell(u.x,u.y));trail=trail.slice(0,64);}}
  else{const d=['up','down','left','right'].find(d=>keys.has(d));if(d){path=[];const a=cell(u.x,u.y),v=DIR[d];u.dir=d;stepUnit(u,a[0]+v[0],a[1]+v[1]);}else if(path.length){const to=path.shift();stepUnit(u,...to);}}
@@ -214,6 +223,7 @@ function drawActor(g,u,height=55){
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
 function drawNPC(u){
+ if(window.NextChapter.drawNPC(u))return;
  if(u.id==='guard'){const im=art.guard;ctx.drawImage(im,u.x-17,u.y-54,34,56);return;}
  const f=window.CHAPTER_NPCS[u.id],im=art.npcs,scale=55/f.h;ctx.save();if(u.hp!==undefined&&u.hp<=0)ctx.globalAlpha=.25;
  ctx.drawImage(im,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),Math.round(u.y-55),Math.round(f.w*scale),55);ctx.restore();
@@ -227,13 +237,13 @@ function render(t){
  if(scene==='street'&&!reduce.matches){for(let i=0;i<30;i++){const p=(t*.05+i*.177)%1,x=(i*71+t*(2+i%3))%640,y=30+p*90;rect(x,y,2,1,'#b8aa9044');}}
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
  if(path.length){ctx.fillStyle='#d9b86a77';path.forEach(([x,y])=>ctx.fillRect(x*T+7,y*T+7,2,2));}
- const npcs=scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}];
+ const npcs=quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}];
  const drawables=[...units.filter(u=>!battle||hp[u.id]>0),...npcs].sort((a,b)=>a.y-b.y);
  for(const u of drawables){if(CORE.includes(u.id))drawActor(ctx,u);else drawNPC(u);}
- if(!battle&&!quest.done){const target=quest.burned?scene==='street'?point('ship'):point('outside'):scene==='street'?point('silver'):scene==='tavern'?point('stairs'):quest.victory?{x:312,y:120}:point('altar');if(target){const lift=reduce.matches?0:Math.round(Math.sin(t*3)*2);rect(target.x-3,target.y-56+lift,6,1,'#e6c47c');rect(target.x-2,target.y-55+lift,4,2,'#e6c47c');}}
+ if(!battle&&!finished()){const target=quest.chapter2?window.NextChapter.target():quest.done?visiblePoints()[0]:quest.burned?scene==='street'?point('ship'):point('outside'):scene==='street'?point('silver'):scene==='tavern'?point('stairs'):quest.victory?{x:312,y:120}:point('altar');if(target){const lift=reduce.matches?0:Math.round(Math.sin(t*3)*2);rect(target.x-3,target.y-56+lift,6,1,'#e6c47c');rect(target.x-2,target.y-55+lift,4,2,'#e6c47c');}}
  if(quest.burned&&scene==='tavern'){ctx.fillStyle='rgba(80,55,38,.1)';ctx.fillRect(0,0,640,400);if(!reduce.matches)for(let i=0;i<12;i++){const y=350-(t*35+i*47)%320,x=490+Math.sin(i+t)*60;rect(x,y,1,2,'#ffb97377');}}
  for(const f of fx){ctx.save();ctx.globalAlpha=Math.min(1,f.life*2);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;const y=f.y-(.9-f.life)*18;ctx.strokeStyle='#0b1018';ctx.strokeText(f.text,f.x,y);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,y);ctx.restore();}
- $('prompt').hidden=dialogOpen||!!battle||taskBusy||quest.done||!nearPoint();
+ $('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!nearPoint();
 }
 $('close').onclick=()=>finishDialog();$('reset').onclick=()=>reset();$('retry').onclick=()=>reset(true);
 $('paths').onclick=()=>{showPaths=!showPaths;$('paths').textContent=showPaths?'Hide paths':'Show paths';$('paths').setAttribute('aria-pressed',String(showPaths));};
@@ -253,13 +263,13 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('keyup',e=>keys.delete(KEY[e.key]));window.addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{keys.clear();last=0;});
 document.querySelectorAll('[data-dir]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(!dialogOpen&&!battle&&!taskBusy)keys.add(b.dataset.dir);};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>keys.delete(b.dataset.dir));});
-canvas.onpointerdown=e=>{if(!ready||introOpen||dialogOpen||taskBusy||quest.done)return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*canvas.height/r.height;if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<34&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<32)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
+canvas.onpointerdown=e=>{if(!ready||introOpen||dialogOpen||taskBusy||finished())return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*canvas.height/r.height;if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<INTERACTION_RADIUS&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<INTERACTION_RADIUS)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
 function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
 async function load(){
- try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all(ROSTER.map(async id=>sheets[id]=await imageLoad(id+'-sheet.png')));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));ready=true;$('loading').hidden=true;reset(!!readSave());}
+ try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await window.NextChapter.load(imageLoad);await Promise.all(ROSTER.map(async id=>sheets[id]=await imageLoad(id+'-sheet.png')));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));ready=true;$('loading').hidden=true;reset(!!readSave());}
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;
 function loop(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;update(dt);render(now/1000);requestAnimationFrame(loop);}
-window.__chapter={state:()=>({ready,introOpen,briefingOpen,scene,lead,quest:{...quest},hp:{...hp},potions,dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
-load();requestAnimationFrame(loop);
+window.__chapter={state:()=>({ready,introOpen,briefingOpen,scene,lead,quest:{...quest},hp:{...hp},potions,uses:{...uses},mendUses,interaction:nearPoint()?.id,dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
+window.NextChapter.install();load();requestAnimationFrame(loop);

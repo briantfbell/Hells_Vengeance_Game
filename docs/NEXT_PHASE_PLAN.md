@@ -1,3 +1,5 @@
+> Implementation update: the recommended voyage-to-Ash-House continuation is now playable. See [CHAPTER_TWO.md](CHAPTER_TWO.md) for implemented features, adaptation choices, and remaining art/gameplay work. The sermon/decrees sequence remains the next release.
+
 # Next story phase: The Road to Longacre
 
 This is a production plan, not a new playable chapter. Separate confirmed campaign events from suggested gameplay and art interpretation.
