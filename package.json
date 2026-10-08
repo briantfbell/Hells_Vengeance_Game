@@ -1,0 +1,12 @@
+{
+  "name": "hells-vengeance-game",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hells Bubbies playable Night of Ashes chapter",
+  "scripts": {
+    "start": "node server.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

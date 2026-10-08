@@ -1,0 +1,1 @@
+window.CHAPTER_NPCS={"viggo": {"x": 192, "y": 51, "w": 395, "h": 912}, "cultist": {"x": 939, "y": 66, "w": 347, "h": 897}};
