@@ -8,6 +8,10 @@ Download this repository using **Code → Download ZIP**, extract the entire fol
 
 Alternatively, with Node.js 18 or newer installed, run `npm start` in the extracted folder and open http://127.0.0.1:8080. There are no npm dependencies to install. This address is local to whichever computer runs it.
 
+## Starting a new story
+
+A new game opens the character-selection screen. Browse the full party artwork and descriptions, choose one of the five Night of Ashes companions, and receive the mission briefing. Reese and Bruce are shown as provisional later companions. Existing saves resume automatically; use Restart chapter to return to selection, or Continue checkpoint from selection to keep your current progress. Selecting a new character starts a fresh checkpoint.
+
 ## Controls
 
 - WASD or arrows: move. Shift: run. Click the map: walk to a location.
@@ -19,7 +23,8 @@ Alternatively, with Node.js 18 or newer installed, run `npm start` in the extrac
 ## Included
 
 - Five following prologue companions, connected scenes, turn-based combat, signature abilities, healing, bell-rope reinforcements, and checkpoint recovery.
-- Retro boxed command menus and visual D20/D4/D6/D8/D10 rolls.
+- Compact retro command menus and visual D20/D4/D6/D8/D10 rolls. Focus or hover a command to see ability details and remaining uses.
+- Looping harbor ripples, moving water reflections, and dim interior light effects. Reduced-motion settings pause ambient effects.
 - Speaker headshots and title names inside dialogue banners. Portraits reuse close-up crops of existing character artwork.
 - Party Sprite Studio.html: seven-character art gallery. Reese and Bruce are clearly provisional and do not join this prologue.
 - legacy/: preserved original game for reference.
