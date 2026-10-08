@@ -4,7 +4,7 @@ Implemented 2026-10-08.
 
 ## Layout and animation
 
-Combat uses a fixed 640×480 logical surface fitted inside the browser viewport. Party backs occupy the near/left formation; enemy fronts occupy the far/right formation. Five allies and four enemies fit without status badges crossing the command rail. The rail uses 26% of the screen at normal size, with an 82px floor for tiny previews so text remains readable. The previous small-screen menu occupied 52%.
+Exploration, combat, character selection, travel and level-up screens share one fixed 640×400 logical surface (8:5). Mode changes never change the canvas dimensions, frame width or frame position. The shared frame fits within the browser viewport, capped at the existing 1084px exploration width; browser-only title, party, save and touch controls sit below it. Combat hides those controls without moving the screen. Enemy formations adapt to the available battlefield height. Party backs occupy the near/left formation; enemy fronts occupy the far/right formation. Five allies and four enemies fit without status badges crossing the command rail. The rail uses 26% of the screen at normal size, with an 82px floor for tiny previews so text remains readable. The previous small-screen menu occupied 52%.
 
 Command cards fit their content rather than stretching to fill the entire rail. Four commands use two columns; five commands use three. The enemy dropdown replaces the extra target-button row, while Q/E cycling and clicking the battlefield remain available. Dark badges have clipped corners, a muted border, colored HP bars and restrained gold highlights for the active/selected characters.
 
@@ -40,4 +40,4 @@ These faces/modifiers are presentation choices, not recovered historical dice re
 
 ## Validation
 
-Browser checks: 320×240, 640×480 and 800×480 fixed views; every character's command text fits; target selection; badge positions; animation start/end; reduced motion; successful stealth, failed sap/crossbow with RNG forced low; subsequent random combat roll still obeys RNG. Full story/combat walkthroughs and progression/save tests cover the affected branches.
+Browser checks match exploration/combat/return frame dimensions and coordinates at 320×240, 640×400, 800×480 and 1440×1000 browser sizes. Their game frames are respectively 320×200, 640×400, 768×480 and 1084×677.5; all use the same 640×400 logical canvas. Intro profiles and level-up screens are checked for overflow; every character's command text fits; target selection; badge positions; animation start/end; reduced motion; successful stealth, failed sap/crossbow with RNG forced low; subsequent random combat roll still obeys RNG. Full story/combat walkthroughs and progression/save tests cover the affected branches.
