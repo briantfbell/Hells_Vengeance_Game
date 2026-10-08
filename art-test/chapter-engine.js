@@ -160,7 +160,7 @@ function startBattle(count,shaken,config=null){
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
 function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent){const e=document.createElement('div');e.className='combat-entry';e.textContent=text;e.title=text;panel.append(e);}const row=panel.firstElementChild;if(row){const capacity=Math.max(0,Math.floor(panel.clientHeight/row.getBoundingClientRect().height));while(panel.children.length>capacity)panel.lastChild.remove();}}
-function log(text){if(!battle)return;if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,12);battle.current=text;showCombatMessage(text);paintCombatHistory();}
+function log(text){if(!battle)return;$('battle-message').classList.remove('command-preview');if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,12);battle.current=text;showCombatMessage(text);paintCombatHistory();}
 new ResizeObserver(()=>paintCombatHistory()).observe($('combat-log'));
 function activeUnit(){return battle?units[battle.turn]:null;}
 function livingEnemy(){return battle?.enemies.find(e=>e.hp>0);}
@@ -170,6 +170,19 @@ function paintParty(){
  syncBattleView();
  $('party').replaceChildren();units.forEach(u=>{const b=document.createElement('button');b.className='party-card'+(hp[u.id]===0?' down':'')+(battle&&activeUnit()?.id===u.id?' current':'')+(battle?.ally===u.id?' selected':'');b.title=battle?'Select '+NAMES[u.id]+' as healing target':'Speak to '+NAMES[u.id];const c=document.createElement('canvas');c.width=32;c.height=48;drawActor(c.getContext('2d'),{...u,x:16,y:46,dir:'down',step:null},38);const text=document.createElement('span');text.textContent=NAMES[u.id]+' · '+hp[u.id]+'/'+STATS[u.id].hp;const meter=document.createElement('i');meter.style.width=Math.max(0,hp[u.id]/STATS[u.id].hp*100)+'%';b.append(c,text,meter);b.onclick=()=>{if(battle){battle.ally=u.id;paintParty();}else if(!taskBusy&&!finished())run(()=>say(u.id,lines[scene]?.[u.id]||'Your call.'));};$('party').append(b);});
 }
+const signed=n=>(n>=0?'+':'−')+Math.abs(n);
+const rollSummary=spec=>spec[0]+'D'+spec[1]+(spec[2]?' '+signed(spec[2]):'');
+function commandSummary(action,id){
+ const stat=STATS[id],skill=SPECIAL[id],hit='D20 '+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),remaining=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
+ if(action==='attack'){const move={freya:'Katana slash',jamal:'Dagger lunge',jason:'Mace swing',draymus:'Dagger strike',guapo:'Rapier thrust'}[id];return 'Attack | '+move+' · Hit '+hit+' vs AC · Damage '+rollSummary(stat.dmg)+'.';}
+ if(action==='special'){let effect='Damage '+rollSummary(skill.dmg);if(id==='jamal')effect+='; +3D6 if target already hit this round';if(skill.drain)effect+='; heal self by damage dealt';return 'Skill | '+skill.name+' ['+remaining+'/'+skill.uses+'] · '+(skill.auto?'Automatic hit':'Hit '+hit+' vs AC')+' · '+effect+'.';}
+ if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+stat.ac+' → '+(stat.ac+4)+' until the next round. Uses this turn.';
+ if(action==='potion')return 'Potion | '+NAMES[id]+' heals '+ally+' · Restore 2D4 +2 HP (up to max) · ['+potions+'/2].';
+ if(action==='mend')return 'Mend | Infernal Mending · Jason heals '+ally+' for 2D8 +3 HP (up to max) · ['+mendUses+'/2].';
+ if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
+}
+function previewCommand(action,id){if(!battle||battle.busy||activeUnit()?.id!==id)return;$('battle-message').classList.add('command-preview');showCombatMessage(commandSummary(action,id));}
+function clearCommandPreview(){if(!battle||battle.busy)return;$('battle-message').classList.remove('command-preview');showCombatMessage(battle.current||'Choose a command.');}
 function paintBattle(){
  if(!battle)return;while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
  if(battle.turn>=units.length){return;}
@@ -179,14 +192,14 @@ function paintBattle(){
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',({freya:'Iaijutsu',jamal:'Sneak Attack',jason:'Hellfire',draymus:'Vampiric Touch',guapo:'Throw Chair'})[actor.id]+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(actor.id==='jason')commands.splice(2,0,['mend','Mending ('+mendUses+')']);
  if(actor.id==='jamal')commands.splice(2,0,['smoke','Smoke Bomb']);
- commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=action==='special'?SPECIAL[actor.id].name+' ['+remaining+'/'+SPECIAL[actor.id].uses+']':action==='potion'?'Healing potion ['+potions+'/2]':action==='mend'?'Infernal Mending ['+mendUses+'/2]':action==='smoke'?'Smoke bomb ['+(quest.smokeUsed?0:1)+'/1]':action==='attack'?'Attack with '+WEAPONS[actor.id]:label;b.textContent=action==='special'?'Skill ['+remaining+'/'+SPECIAL[actor.id].uses+']':action==='potion'?'Potion ['+potions+'/2]':action==='smoke'?'Smoke ['+(quest.smokeUsed?0:1)+'/1]':action==='mend'?'Mend ['+mendUses+'/2]':label;b.dataset.action=action;b.onfocus=b.onpointerenter=()=>{if(battle&&!battle.busy)showCombatMessage(detail);};b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
+ commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=commandSummary(action,actor.id);b.textContent=action==='special'?'Skill ['+remaining+'/'+SPECIAL[actor.id].uses+']':action==='potion'?'Potion ['+potions+'/2]':action==='smoke'?'Smoke ['+(quest.smokeUsed?0:1)+'/1]':action==='mend'?'Mend ['+mendUses+'/2]':label;b.dataset.action=action;b.onfocus=b.onpointerenter=()=>previewCommand(action,actor.id);b.onblur=b.onpointerleave=clearCommandPreview;b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
  paintParty();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
 async function performActionImpl(action){
  if(!battle||battle.busy||dialogOpen||taskBusy)return;const token=epoch,actor=activeUnit();if(!actor)return;const target=battle.enemies[battle.target]?.hp>0?battle.enemies[battle.target]:livingEnemy();if(!target)return;
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
- battle.busy=true;paintBattle();
+ battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
  if(action==='guard'){actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 this round.');}
  else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
  else if(action==='smoke'){quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
