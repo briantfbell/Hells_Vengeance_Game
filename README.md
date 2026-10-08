@@ -46,3 +46,7 @@ The web build is the current playable prototype. Final handheld packaging, compl
 ## Validation
 
 The source prototype passed a complete chapter walkthrough, checkpoint reload, reinforcement and defeat branches, healing/smoke/enemy turns, visual dice checks, and mobile width checks. The repository build is checked separately for offline startup and bundled asset completeness.
+
+## Next chapter and map layers
+
+See docs/NEXT_PHASE_PLAN.md for the source-grounded voyage/Longacre production plan and Corrine timing. Open **Map Layer Studio.html** (or `/maps` on the local server) to inspect the transparent Western Star foreground over independent animated water. The voyage is an art prototype, not yet part of the playable story. New maps follow docs/MAP_LAYER_SPEC.md; existing opaque maps use the shared renderer while awaiting later asset upgrades.
