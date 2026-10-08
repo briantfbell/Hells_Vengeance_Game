@@ -133,32 +133,16 @@ function renderAction(){const a=battle?.animation;if(!a)return;const p=reduce.ma
  ctx.restore();
 }
 function drawCombatIdle(g,u,v,t){const m=window.COMBAT_IDLES?.[u.id],im=m&&art[m.src];if(!m||!im)return false;const phase=reduce.matches||hp[u.id]===0||u.hp===0?0:m.cycle[Math.floor((t+(CORE.indexOf(u.id)+1)*.17)/.52)%4],f=m.frames[phase],scale=v.height/m.maxHeight;g.save();g.imageSmoothingEnabled=false;const pose=actionPose(u);g.translate(v.x+pose.dx,v.y+pose.dy-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));g.rotate(pose.tilt);if(hp[u.id]===0||u.hp===0)g.globalAlpha=.25;g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();return true;}
-const combatPlates=new Map();
-function combatPlate(kind){
- if(combatPlates.has(kind))return combatPlates.get(kind);
- const c=document.createElement('canvas');c.width=640;c.height=288;const g=c.getContext('2d'),jail=kind==='deputies';
- g.fillStyle=jail?'#151d26':'#211923';g.fillRect(0,0,640,288);
- // Distant masonry, shadowed arches and a separate perspective floor.
- g.fillStyle=jail?'#222b31':'#33282c';g.fillRect(0,40,640,115);
- for(let row=0;row<7;row++)for(let col=-1;col<17;col++){const x=col*42+(row%2)*21,y=40+row*17;g.strokeStyle=row%2?'#394047':'#2d343b';g.strokeRect(x,y,41,16);}
- for(const x of [72,290,508]){g.fillStyle='#0e131b';g.beginPath();g.arc(x+30,83,30,Math.PI,0);g.lineTo(x+60,150);g.lineTo(x,150);g.fill();g.strokeStyle='#574e43';g.lineWidth=3;g.stroke();if(jail){g.strokeStyle='#35404a';g.lineWidth=2;for(let i=1;i<6;i++){g.beginPath();g.moveTo(x+i*10,74);g.lineTo(x+i*10,150);g.stroke();}}}
- g.fillStyle=jail?'#30343a':'#3b3032';g.fillRect(0,155,640,133);
- g.strokeStyle=jail?'#424548':'#51413d';g.lineWidth=1;for(let y=162;y<288;y+=Math.round((y-135)/3)){g.beginPath();g.moveTo(0,y);g.lineTo(640,y);g.stroke();}for(let x=-600;x<1300;x+=105){g.beginPath();g.moveTo(320+(x-320)*.28,155);g.lineTo(x,288);g.stroke();}
- // Quiet pixel texture instead of an exploration map squeezed into the arena.
- for(let i=0;i<260;i++){g.fillStyle=i%3?'#b2a1810c':'#080c1233';g.fillRect((i*79+17)%640,156+(i*31)%132,2+i%5,1);}
- combatPlates.set(kind,c);return c;
-}
 function drawCombatBackdrop(t){
- ctx.drawImage(combatPlate(battle.kind),0,0);
- for(const [i,x] of [188,440].entries()){const phase=reduce.matches?0:Math.floor(t*5+i*2)%3,glow=reduce.matches?.13:.13+Math.sin(t*2+i)*.025;
- ctx.save();const light=ctx.createRadialGradient(x,91,0,x,91,65);light.addColorStop(0,'rgba(230,146,71,'+glow+')');light.addColorStop(1,'rgba(230,146,71,0)');ctx.fillStyle=light;ctx.fillRect(x-65,26,130,130);ctx.restore();
- rect(x-3,93,6,18,'#352820');rect(x-3,83-phase,6,11+phase,'#b35c3c');rect(x-1,85-phase,3,7+phase,'#e5ae68');
- }
- if(!reduce.matches){ctx.fillStyle='#c88c5550';for(let i=0;i<5;i++){const y=148-((t*5+i*23)%100);ctx.fillRect(185+i*64+Math.floor(Math.sin(t+i)*3),y,1,2);}}
+ rect(0,0,640,288,'#14151f');
+ // A quiet combat void: translucent drifting bands, no scenery or floor grid.
+ ctx.save();ctx.fillStyle='#706078';ctx.globalAlpha=.045;
+ for(let i=0;i<4;i++){const shift=reduce.matches?0:Math.sin(t*.18+i*1.7)*18;ctx.beginPath();ctx.ellipse(105+i*155+shift,78+i%2*102,165,30+i*6,-.16,0,Math.PI*2);ctx.fill();}
+ ctx.globalAlpha=.11;ctx.fillStyle='#bba783';for(let i=0;i<13;i++){const drift=reduce.matches?0:t*2;const x=(i*97+33)%640,y=(i*43+drift)%288;ctx.fillRect(x,y,1,i%4===0?2:1);}ctx.restore();
 }
 function renderBattle(t){
  const field=battlefieldHeight();drawCombatBackdrop(t);
- const platform=(x,y,rx,ry)=>{ctx.fillStyle='#a9a18544';ctx.beginPath();ctx.ellipse(x,y,rx,ry,-.08,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#dccb8b66';ctx.stroke();};platform(485,185,140,70);platform(210,field-52,210,24);
+ const platform=(x,y,rx,ry)=>{ctx.fillStyle='#a9a18512';ctx.beginPath();ctx.ellipse(x,y,rx,ry,-.08,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#dccb8b25';ctx.stroke();};platform(485,185,140,70);platform(210,field-52,210,24);
  for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,88,enemy.name,enemy.hp,enemy.max,battle.enemies[battle.target]===enemy,true);}
 
  const ordered=units.map(u=>({u,v:battlePosition(u)})).sort((a,b)=>a.v.y-b.v.y);
@@ -276,23 +260,56 @@ function commandSummary(action,id){
 function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return ({freya:'Katana slash',jamal:'Dagger lunge',jason:'Mace swing',draymus:'Dagger strike',guapo:'Rapier thrust'})[id]+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return skill.name+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+stat.ac+' → '+(stat.ac+4)+'\nThis round';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
 function previewCommand(action,id){if(!battle||battle.busy||activeUnit()?.id!==id)return;$('battle-message').classList.add('command-preview');showCombatMessage(commandSummary(action,id));}
 function clearCommandPreview(){if(!battle||battle.busy)return;$('battle-message').classList.remove('command-preview');showCombatMessage(battle.current||'Choose a command.');}
+function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
+function paintCombatSelection(){
+ if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
+ if(c?.mode==='enemy'||c?.mode==='ally'){
+  $('battle-title').textContent=(c.mode==='enemy'?'Choose enemy':'Choose ally')+' · E: confirm · B: back';
+  const name=c.mode==='enemy'?battle.enemies[battle.target]?.name:NAMES[battle.ally];showCombatMessage(commandSummary(c.action,activeUnit().id)+' Target: '+name+'.');canvas.focus({preventScroll:true});
+ }
+}
+function beginCombatChoice(action){
+ if(!battle||battle.busy)return;const c=battle.control;
+ if(['guard','smoke'].includes(action)){performAction(action);return;}
+ c.action=action;c.mode=['potion','mend'].includes(action)?'ally':'enemy';paintCombatSelection();
+}
+function handleCombatKey(e){
+ const key=e.key.toLowerCase(),direction=KEY[e.key],confirm=['enter','e',' '].includes(key),cancel=['escape','b'].includes(key);
+ if(!direction&&!confirm&&!cancel&&!['q','h'].includes(key)&&! /^[1-9]$/.test(key))return false;
+ e.preventDefault();keys.clear();if(battle.busy||taskBusy||e.repeat&&confirm)return true;
+ const c=battle.control,buttons=combatButtons();
+ if(cancel){c.mode='commands';c.action=null;paintBattle();combatButtons()[c.index]?.focus({preventScroll:true});return true;}
+ if(c.mode!=='commands'){
+  if(direction){const delta=['left','up'].includes(direction)?-1:1;if(c.mode==='enemy'){const alive=battle.enemies.map((enemy,i)=>enemy.hp>0?i:-1).filter(i=>i>=0);battle.target=alive[(alive.indexOf(battle.target)+delta+alive.length)%alive.length];}else{const ids=units.map(u=>u.id);battle.ally=ids[(ids.indexOf(battle.ally)+delta+ids.length)%ids.length];}paintBattle();}
+  else if(confirm)performAction(c.action);return true;
+ }
+ if(direction){
+  const cols=$('actions').classList.contains('has-aux')?3:2,rows=Math.ceil(buttons.length/cols),start=c.index;
+  let row=Math.floor(start/cols),col=start%cols;
+  for(let i=0;i<buttons.length+cols;i++){if(direction==='left')col=(col-1+cols)%cols;else if(direction==='right')col=(col+1)%cols;else row=(row+(direction==='up'?-1:1)+rows)%rows;const index=row*cols+col;if(buttons[index]&&!buttons[index].disabled){c.index=index;break;}}
+  buttons[c.index]?.focus({preventScroll:true});paintCombatSelection();
+ }else if(confirm){const button=buttons[c.index];if(button&&!button.disabled)beginCombatChoice(button.dataset.action);}
+ else if(/^[1-9]$/.test(key)){const button=buttons[Number(key)-1];if(button&&!button.disabled){c.index=Number(key)-1;beginCombatChoice(button.dataset.action);}}
+ else if(key==='h')$('heal-target').click();else if(key==='q'){const alive=battle.enemies.map((enemy,i)=>enemy.hp>0?i:-1).filter(i=>i>=0);battle.target=alive[(alive.indexOf(battle.target)-1+alive.length)%alive.length];paintBattle();}
+ return true;
+}
 function paintBattle(){
  if(!battle)return;while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
  if(battle.turn>=units.length){return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
- const actor=activeUnit();$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id];$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
+ const actor=activeUnit();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',SPECIAL[actor.id].name+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(actor.id==='jason')commands.splice(2,0,['mend','Mending ('+mendUses+')']);
  if(actor.id==='jamal')commands.splice(2,0,['smoke','Smoke Bomb']);
  $('actions').classList.toggle('has-aux',commands.length>4);
- commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE'})[action];subtitle.textContent=commandCardSummary(action,actor.id);b.append(title,subtitle);b.dataset.action=action;b.onfocus=b.onpointerenter=()=>previewCommand(action,actor.id);b.onblur=b.onpointerleave=clearCommandPreview;b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
- paintParty();
+ commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE'})[action];subtitle.textContent=commandCardSummary(action,actor.id);b.append(title,subtitle);b.dataset.action=action;b.onfocus=()=>{if(battle.control.mode==='commands'){battle.control.index=i;paintCombatSelection();previewCommand(action,actor.id);}};b.onpointerenter=()=>{if(battle.control.mode==='commands')previewCommand(action,actor.id);};b.onblur=b.onpointerleave=clearCommandPreview;b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
+ paintParty();const buttons=combatButtons();if(buttons[battle.control.index]?.disabled)battle.control.index=Math.max(0,buttons.findIndex(b=>!b.disabled));paintCombatSelection();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
 async function performActionImpl(action){
  if(!battle||battle.busy||dialogOpen||taskBusy)return;const token=epoch,actor=activeUnit();if(!actor)return;const target=battle.enemies[battle.target]?.hp>0?battle.enemies[battle.target]:livingEnemy();if(!target)return;
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
- battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
+ battle.control.mode='commands';battle.control.action=null;battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
  if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 this round.');}
  else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action);hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
  else if(action==='smoke'){await animateAction(actor,target,'smoke');quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
@@ -369,8 +386,8 @@ document.addEventListener('keydown',e=>{if($('save-import-dialog').open)return;
  if(levelOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('level-continue').click();else if(e.key==='Tab')$('level-continue').focus();return;}
  if(journeyOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('journey-continue').click();else if(e.key==='Tab')$('journey-continue').focus();return;}
  if(introOpen){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();introIndex=(introIndex+(['ArrowLeft','ArrowUp'].includes(e.key)?-1:1)+ROSTER.length)%ROSTER.length;paintIntro();}else if(e.key==='Enter'&&e.target.id!=='intro-resume'){e.preventDefault();$('intro-start').click();}return;}
+ if(battle&&!dialogOpen&&!['INPUT','TEXTAREA'].includes(e.target.tagName)&&handleCombatKey(e))return;
  if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
- if(battle&&!battle.busy&&!dialogOpen&&['q','e','h'].includes(e.key.toLowerCase())){e.preventDefault();if(e.key.toLowerCase()==='h')$('heal-target').click();else{const living=battle.enemies.map((a,i)=>a.hp>0?i:-1).filter(i=>i>=0),at=living.indexOf(battle.target);battle.target=living[(at+(e.key.toLowerCase()==='q'?-1:1)+living.length)%living.length];paintBattle();}return;}
  const menu=dialogOpen&&$('choices').children.length?$('choices'):battle&&!battle.busy?$('actions'):null;
  if(menu&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const buttons=Array.from(menu.querySelectorAll('button')).filter(b=>!b.disabled),index=buttons.indexOf(document.activeElement),delta={ArrowUp:-2,ArrowDown:2,ArrowLeft:-1,ArrowRight:1}[e.key];buttons[index<0?0:(index+delta+buttons.length*2)%buttons.length]?.focus();return;}
  if(dialogOpen){if(['Escape','Enter',' '].includes(e.key)&&!$('close').hidden){e.preventDefault();finishDialog();}if(/^[1-9]$/.test(e.key)){const b=$('choices').children[Number(e.key)-1];if(b){e.preventDefault();b.click();}}if(e.key==='Tab'){e.preventDefault();const focusable=Array.from($('dialog').querySelectorAll('button')).filter(b=>!b.hidden);const index=focusable.indexOf(document.activeElement),next=(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length;focusable[next]?.focus();}return;}
