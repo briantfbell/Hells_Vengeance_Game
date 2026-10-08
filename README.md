@@ -13,13 +13,14 @@ Alternatively, with Node.js 18 or newer installed, run `npm start` in the extrac
 - WASD or arrows: move. Shift: run. Click the map: walk to a location.
 - E: interact. Click a nearby object to interact with that exact object.
 - Dialogue: click a choice, or use its number shortcut. Enter continues ordinary dialogue.
-- Combat: choose an enemy, then a command. Arrow keys select commands; Enter activates a focused button. Party cards select healing targets.
+- Combat fills one 4:3 screen with all five companions in the foreground and enemies opposite them. Choose an enemy, then a command. Arrow keys select commands; Enter activates a focused button. Click a companion in the battle scene to select a healing target, or use the Heal button/H. Q/E cycle enemy targets.
 - Touch controls appear below the game.
 
 ## Included
 
 - Five following prologue companions, connected scenes, turn-based combat, signature abilities, healing, bell-rope reinforcements, and checkpoint recovery.
 - Retro boxed command menus and visual D20/D4/D6/D8/D10 rolls.
+- Speaker headshots and title names inside dialogue banners. Portraits reuse close-up crops of existing character artwork.
 - Party Sprite Studio.html: seven-character art gallery. Reese and Bruce are clearly provisional and do not join this prologue.
 - legacy/: preserved original game for reference.
 - docs/: artwork provenance and implementation notes. The raw campaign archive is not included.
@@ -34,7 +35,7 @@ This is a static website: index.html and art-test/ can be served by a static web
 
 ## Handheld direction
 
-The web build is the current playable prototype. Final handheld packaging, complete controller support, a screen-fitting UI, transferable saves, and cartridge-style removable storage remain future work. This is not a Game Boy ROM.
+The web build is the current playable prototype. Final handheld packaging, complete controller support, further screen/readability refinement, transferable saves, and cartridge-style removable storage remain future work. This is not a Game Boy ROM.
 
 ## Validation
 
