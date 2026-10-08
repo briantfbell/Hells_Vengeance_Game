@@ -10,7 +10,7 @@ Alternatively, with Node.js 18 or newer installed, run `npm start` in the extrac
 
 ## Starting a new story
 
-A new game opens the character-selection screen. Browse the full party artwork and descriptions, choose one of the five Night of Ashes companions, and receive the mission briefing. Reese and Bruce are shown as provisional later companions. Existing saves resume automatically; use Restart chapter to return to selection, or Continue checkpoint from selection to keep your current progress. Selecting a new character starts a fresh checkpoint.
+A new game opens the character-selection screen. Browse the full party artwork and descriptions, choose one of the five Night of Ashes companions, and receive the mission directly from Barzillai Thrune in a staged dialogue scene. Reese and Bruce are shown as provisional later companions. Existing saves resume automatically; use Restart chapter to return to selection, or Continue checkpoint from selection to keep your current progress. Selecting a new character starts a fresh checkpoint.
 
 ## Controls
 
@@ -24,7 +24,8 @@ A new game opens the character-selection screen. Browse the full party artwork a
 
 - Five following prologue companions, connected scenes, turn-based combat, signature abilities, healing, bell-rope reinforcements, and checkpoint recovery.
 - Compact retro command menus and visual D20/D4/D6/D8/D10 rolls. Focus or hover a command to see ability details and remaining uses.
-- Looping harbor ripples, moving water reflections, and dim interior light effects. Reduced-motion settings pause ambient effects.
+- Dim interior light effects. Harbor ripple animation has been removed. Reduced-motion settings pause ambient effects.
+- Reusable Barzillai Thrune and Archbaron Darellus Fex character models, with three facings and automatic dialogue portraits. See docs/QUESTGIVERS.md.
 - Speaker headshots and title names inside dialogue banners. Portraits reuse close-up crops of existing character artwork.
 - Party Sprite Studio.html: seven-character art gallery. Reese and Bruce are clearly provisional and do not join this prologue.
 - legacy/: preserved original game for reference.

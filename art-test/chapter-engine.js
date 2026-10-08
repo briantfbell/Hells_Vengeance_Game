@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d'),T=16,COLS=40,ROWS=25;
 ctx.imageSmoothingEnabled=false;
-const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jamal:'Jamal',jason:'Jason',draymus:'Draymus',guapo:'El Guapo',viggo:'Viggo',cultist:'Zealot'};
+const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jamal:'Jamal',jason:'Jason',draymus:'Draymus',guapo:'El Guapo',barzillai:'Barzillai Thrune',fex:'Archbaron Darellus Fex',viggo:'Viggo',cultist:'Zealot'};
 const STATS={freya:{hp:38,ac:17,atk:6,dmg:[1,10,4]},jamal:{hp:30,ac:16,atk:7,dmg:[1,4,5]},jason:{hp:32,ac:15,atk:4,dmg:[1,8,2]},draymus:{hp:26,ac:13,atk:3,dmg:[1,4,1]},guapo:{hp:34,ac:15,atk:6,dmg:[1,6,3]},viggo:{hp:34,ac:14,atk:5,dmg:[1,8,2]},cultist:{hp:12,ac:12,atk:3,dmg:[1,6,0]}};
 const SPECIAL={freya:{name:'Iaijutsu Strike',uses:1,bonus:2,dmg:[2,10,4]},jamal:{name:'Sneak Attack',uses:2,dmg:[1,4,5]},jason:{name:'Hellfire',uses:2,auto:true,dmg:[2,6,0]},draymus:{name:'Vampiric Touch',uses:3,dmg:[1,6,3],drain:true},guapo:{name:'Throw a Chair',uses:3,auto:true,dmg:[1,8,1]}};
 const DIR={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]},KEY={ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down',ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',Shift:'run'};
@@ -12,7 +12,7 @@ const scenes={
 };
 const lines={street:{freya:'Quiet. In and out. Barzillai does not forgive noise.',jamal:'Nice night for it. Door is up there. Try not to kick it in.',jason:'The flames are a blessing. Asmodeus favors the thorough.',draymus:'So many bodies in a fire. Nobody will notice one more going missing.',guapo:'If we die tonight, I want it on record that I was not paid.'},tavern:{freya:'Search the room. Quickly.',jamal:'Trapdoor. Has to be. Check the corners.',jason:'Can you smell the incense? It is under us.',draymus:'The floor creaks differently over there.',guapo:'I will guard the door. From the inside. Near the drinks.'}};
 const SAVE='hells-bubbies-night-of-ashes-v1',keys=new Set(),art={},sheets={},CANCEL=Symbol('cancel');
-let introOpen=false,introIndex=0,waterBase=null,waterMask=null,waterSurface=null;
+let introOpen=false,introIndex=0,briefingOpen=false;
 let ready=false,scene='street',lead='freya',units=[],trail=[],path=[],epoch=0,dialogResolve=null,dialogOpen=false,taskBusy=false,battle=null,last=0,showPaths=false,fx=[],flicker=[],lastPartyPaint=-1,quest={},hp={},uses={},potions=2,mendUses=2;
 const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h);},cell=(x,y)=>[Math.floor(x/T),Math.floor(y/T)],inside=(x,y,r)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;
 const delay=ms=>new Promise(r=>setTimeout(r,ms)),dice=n=>1+Math.floor(Math.random()*n);
@@ -56,7 +56,8 @@ function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-p
 }
 function paintPortrait(name){
  const id=({ 'Freya Kusanagi':'freya','Dottari Guard':'guard','Barkeep':'cultist' })[name]||name,c=$('portrait'),g=c.getContext('2d');let im,f;
- if(CORE.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
+ if(window.QUESTGIVER_MODELS[id]){im=art[id];f=window.QUESTGIVER_MODELS[id].frames[0];}
+ else if(CORE.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
  else if(['viggo','cultist'].includes(id)){im=art.npcs;f=window.CHAPTER_NPCS[id];}
  else if(id==='guard'){im=art.guard;f={x:0,y:0,w:im.width,h:im.height};}
  c.hidden=!im;$('dialog').classList.toggle('has-portrait',!!im);if(!im)return;
@@ -91,15 +92,26 @@ function drawIntroArt(c,id){const g=c.getContext('2d'),f=window.PARTY_FRAMES[id]
 function paintIntro(){const id=ROSTER[introIndex],bio=BIOS[id];drawIntroArt($('intro-art'),id);$('intro-name').textContent=bio.name;$('intro-role').textContent=bio.role;$('intro-bio').textContent=bio.bio;$('intro-ability').textContent=bio.ability;$('intro-start').disabled=!CORE.includes(id);$('intro-start').textContent=CORE.includes(id)?'Play as '+NAMES[id]:'Joins in a later chapter';Array.from($('intro-roster').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(i===introIndex)));}
 function showIntro(){introOpen=true;document.body.classList.add('is-intro');canvas.height=480;ctx.imageSmoothingEnabled=false;$('intro').hidden=false;$('intro-resume').hidden=!readSave();$('intro-roster').replaceChildren();ROSTER.forEach((id,i)=>{const b=document.createElement('button'),c=document.createElement('canvas'),name=document.createElement('span');c.width=110;c.height=130;drawIntroArt(c,id);name.textContent=NAMES[id]||BIOS[id].name;b.append(c,name);b.setAttribute('aria-label',BIOS[id].name+(CORE.includes(id)?'':', joins later'));if(!CORE.includes(id)){const tag=document.createElement('small');tag.textContent='Later';b.append(tag);}b.onclick=()=>{introIndex=i;paintIntro();};$('intro-roster').append(b);});introIndex=Math.max(0,ROSTER.indexOf(lead));paintIntro();$('intro-start').focus();}
 function reset(resume=false,selected=null){
- epoch++;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
+ epoch++;briefingOpen=false;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
  if(!resume&&!selected){showIntro();return;}
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=400;ctx.imageSmoothingEnabled=false;
- const saved=resume?readSave():null;quest=saved?.quest||{ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
+ const saved=resume?readSave():null;quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
  const next=saved?.scene||'street';setScene(next,312,next==='street'?248:next==='tavern'?280:312);canvas.focus();
- if(!saved)run(async()=>{await say('Night of Ashes','Kintargo burns. Barzillai Thrune has sent your party to silence a rebel priest beneath the Silver Star.');await say(lead,'Viggo’s scimitar is the proof. Take it, plant the rapier in its place, and burn the temple to conceal the trail.');await say('The mission','Leave no unfinished business. Reach The Western Star before dawn. The ship will carry you to Remesiana, then onward to Longacre.');save();});
+ if(!saved||quest.briefed===false)run(deliverOpeningMission);
 }
 $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(CORE.includes(id))reset(false,id);};$('intro-resume').onclick=()=>reset(true);
+function drawQuestgiver(id,x,y,height=150,dir='front'){const model=window.QUESTGIVER_MODELS[id],f=model.frames[dir==='back'?2:dir==='right'||dir==='left'?1:0],scale=height/f.h;ctx.save();ctx.translate(x,y);if(dir==='left')ctx.scale(-1,1);ctx.drawImage(art[id],f.x,f.y,f.w,f.h,-f.w*scale/2,-height,f.w*scale,height);ctx.restore();}
+function renderBriefing(t){ctx.drawImage(art.tavern,0,0,640,400);ctx.fillStyle='#0a111bcc';ctx.fillRect(0,0,640,400);ctx.textAlign='center';ctx.font='bold 14px monospace';ctx.fillStyle='#d9ba79';ctx.fillText('KINTARGO · A PRIVATE AUDIENCE',320,35);drawActor(ctx,{id:lead,x:174,y:255,dir:'right',step:null},153);drawQuestgiver('barzillai',456,255,170,'left');$('prompt').hidden=true;}
+async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
+ await say('barzillai','Kintargo is restless. Rebels nest in this city like rats in a granary.');
+ await say('barzillai',lead==='freya'?'Kusanagi. You are assigned to me. Quietly. Your team as well.':NAMES[lead]+'. Kusanagi answers to me now, quietly. That means your whole team does.');
+ await say('barzillai','Beneath a tavern called the Silver Star, dissidents keep a hidden temple. Its priest is a man named Viggo.');
+ await say('barzillai','In two nights this city will burn a little. In the confusion, go beneath the Silver Star. End the temple. End Viggo.');
+ await say('barzillai','Take his scimitar. Leave this rapier in its place. Let Kintargo blame a swordsman who was never there.');
+ await say('barzillai','Then be aboard The Western Star before dawn. You were never in this city.');
+ await say(lead,'Understood. The scimitar, the rapier, then the ship.');
+ briefingOpen=false;quest.briefed=true;await say('Night of Ashes','Two nights later. Smoke drifts over the rooftops. The Silver Star waits on the north side of the street.');save();}
 function readSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));if(s?.version===1&&scenes[s.scene]&&CORE.includes(s.lead)&&CORE.every(id=>Number.isFinite(s.hp?.[id])))return s;}catch{}return null;}
 function visiblePoints(){return scenes[scene].points.filter(p=>!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
 function nearPoint(){return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<34).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
@@ -209,11 +221,8 @@ function drawNPC(u){
 }
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 function buildFlicker(){if(!art[scene])return;const a=document.createElement('canvas');a.width=640;a.height=400;const g=a.getContext('2d',{willReadFrequently:true});g.imageSmoothingEnabled=false;g.drawImage(art[scene],0,0,640,400);let pixels;try{pixels=g.getImageData(0,0,640,400).data;}catch{}flicker=scenes[scene].lights.map(([x,y],index)=>{const mask=document.createElement('canvas');mask.width=33;mask.height=49;const mg=mask.getContext('2d'),d=mg.createImageData(33,49);for(let yy=0;yy<49;yy++)for(let xx=0;xx<33;xx++){const wx=x-16+xx,wy=y-24+yy,dist=((xx-16)/16)**2+((yy-24)/24)**2,i=(wy*640+wx)*4;if(dist>=1||wx<0||wy<0||wx>=640||wy>=400)continue;const r=pixels?pixels[i]:200,green=pixels?pixels[i+1]:130,b=pixels?pixels[i+2]:65;if(r>125&&green>65&&r>green*1.12&&green>b*1.2)d.data[(yy*33+xx)*4+3]=Math.round(255*Math.min(1,(r-110)/120)*(pixels?Math.sqrt(1-dist):(1-dist)**2*.55));}mg.putImageData(d,0,0);return {mask,x:x-16,y:y-24,index};});}
-function waterOutline(g){g.beginPath();g.moveTo(640,224);for(const [x,y] of [[625,224],[625,246],[596,255],[596,284],[568,294],[568,316],[541,325],[541,349],[510,363],[510,388],[484,400],[640,400]])g.lineTo(x,y);g.closePath();}
-function buildWater(){waterBase=document.createElement('canvas');waterBase.width=640;waterBase.height=400;waterBase.getContext('2d').drawImage(art.street,0,0,640,400);waterMask=document.createElement('canvas');waterMask.width=640;waterMask.height=400;const g=waterMask.getContext('2d');waterOutline(g);g.fillStyle='white';g.fill();g.clearRect(608,310,32,90);try{const source=waterBase.getContext('2d').getImageData(0,0,640,400).data,mask=g.getImageData(0,0,640,400);for(let i=0;i<source.length;i+=4){if(!(source[i+2]>source[i]+12&&source[i+2]>source[i+1]+4&&source[i+2]>45))mask.data[i+3]=0;}g.putImageData(mask,0,0);}catch{}waterSurface=document.createElement('canvas');waterSurface.width=640;waterSurface.height=400;}
-function drawWater(t){if(reduce.matches||!waterSurface)return;const g=waterSurface.getContext('2d');g.clearRect(0,0,640,400);g.imageSmoothingEnabled=false;const phase=Math.floor(t*12)/12;for(let y=224;y<400;y+=3){const shift=Math.round(Math.sin(y*.12+phase*1.4)*2);g.drawImage(waterBase,470,y,170,3,470+shift,y,170,3);}for(let i=0;i<65;i++){const x=487+(i*37)%150,y=242+(i*29)%156,drift=Math.round(Math.sin(phase*1.2+i)*3);g.fillStyle='rgba(129,176,207,'+(.1+.08*Math.sin(phase*1.7+i))+')';g.fillRect(x+drift,y,3+i%7,1);}g.globalCompositeOperation='destination-in';g.drawImage(waterMask,0,0);g.globalCompositeOperation='source-over';ctx.drawImage(waterSurface,0,0);}
 function render(t){
- rect(0,0,640,canvas.height,'#0b1018');if(!ready||introOpen)return;if(battle){renderBattle(t);return;}ctx.drawImage(art[scene],0,0,640,400);if(scene==='street')drawWater(t);
+ rect(0,0,640,canvas.height,'#0b1018');if(!ready||introOpen)return;if(briefingOpen){renderBriefing(t);return;}if(battle){renderBattle(t);return;}ctx.drawImage(art[scene],0,0,640,400);
  if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}
  if(scene==='street'&&!reduce.matches){for(let i=0;i<30;i++){const p=(t*.05+i*.177)%1,x=(i*71+t*(2+i%3))%640,y=30+p*90;rect(x,y,2,1,'#b8aa9044');}}
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
@@ -247,10 +256,10 @@ document.querySelectorAll('[data-dir]').forEach(b=>{b.onpointerdown=e=>{e.preven
 canvas.onpointerdown=e=>{if(!ready||introOpen||dialogOpen||taskBusy||quest.done)return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*canvas.height/r.height;if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<34&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<32)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
 function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
 async function load(){
- try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all(ROSTER.map(async id=>sheets[id]=await imageLoad(id+'-sheet.png')));ready=true;buildWater();$('loading').hidden=true;reset(!!readSave());}
+ try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all(ROSTER.map(async id=>sheets[id]=await imageLoad(id+'-sheet.png')));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));ready=true;$('loading').hidden=true;reset(!!readSave());}
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;
 function loop(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;update(dt);render(now/1000);requestAnimationFrame(loop);}
-window.__chapter={state:()=>({ready,introOpen,scene,lead,quest:{...quest},hp:{...hp},potions,dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
+window.__chapter={state:()=>({ready,introOpen,briefingOpen,scene,lead,quest:{...quest},hp:{...hp},potions,dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
 load();requestAnimationFrame(loop);
