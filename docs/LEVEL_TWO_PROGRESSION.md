@@ -4,12 +4,12 @@ Implemented 2026-10-08. The **timing** of the level-2 milestone is supported by 
 
 | Character | Max HP | Attack modifier | Existing skill uses |
 |---|---|---|---|
-| Freya | 38 → 44 | +6 → +7 | Iaijutsu Strike 1 → 2 |
+| Freya | 38 → 44 | +6 → +7 | Challenge 1 → 2 |
 | J'Mal | 30 → 35 | +7 → +8 | Sneak Attack 2 → 3 |
-| Jason | 32 → 37 | +4 → +5 | Hellfire 2 → 3 |
-| Draymus | 26 → 30 | +3 → +4 | Vampiric Touch 3 → 4 |
+| Jason | 32 → 37 | +4 → +5 | Burning Hands 2 → 3 |
+| Draymus | 26 → 30 | +3 → +4 | Chill Touch 3 → 4 |
 
-The rest restores these four companions' HP and skill charges, plus Jason's shared mending charges. Potions are not replenished. Damage dice, AC and weapons stay at their existing opening-game values. El Guapo is away and remains level 1; this does not establish his canonical advancement elsewhere.
+The rest restores these four companions' HP and skill charges, plus Jason's shared mending charges. Potions are not replenished. AC and weapons retain their opening-game values. The later attack audit replaces unsupported skills, uses +1D6 for early sneak attack, and scales Burning Hands and Challenge damage with level; see FIXED_SCREEN_COMBAT_AND_ACCURACY.md. El Guapo is away and remains level 1; this does not establish his canonical advancement elsewhere.
 
 The improvements screen appears before the next-morning travel card, lists the four individual changes, and waits for Continue. Enter, Space or E also continues. Party cards show individual levels.
 

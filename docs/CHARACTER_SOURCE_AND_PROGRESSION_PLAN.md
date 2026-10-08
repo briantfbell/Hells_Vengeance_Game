@@ -29,3 +29,7 @@ Use images/references.csv to map original actor img and prototypeToken.texture.s
 - Later sourced beats: J'Mal's Red Mantis instruction and blades; Freya's cave-giant belt runes; J'Mal's June 1, 2025 item pickup. Do not infer learning dates from spell preparation or first use.
 
 After the roster and progression pass, build Bolgart/Riley, the church events and Red Mantis training using the Foundry encounters/maps and blog outcomes. Read the full related records before implementing each beat.
+
+## Full-archive actor matches found in the combat audit
+
+Field Marshal Freya Kusanagi (Actor.KOt611BvSrOhib3t) and El Guapo (Actor.L5DcsTIk8mrd7gm6) are saved elsewhere in the archive, outside the five PC-folder records. Their later sheets supply Challenge and Panache references. See FIXED_SCREEN_COMBAT_AND_ACCURACY.md for corrections and the remaining early-loadout gaps.
