@@ -87,3 +87,7 @@ Use one 640×400 exploration coordinate space and 16-pixel navigation cells. Hig
 Local supplied references: reference/03_villains_and_npcs.md (Corrine, Fex, later NPCs); reference/01_master_timeline.md (GM entries); raw_posts/P049.txt (Remesiana, Cimri, tannery, Ash House); P048.txt (sermon and decrees); P046.txt (Fex audience, reveal and following town encounters); P034/P022/P015 (Corrine's later role).
 
 Date conflict: the image/blog timeline uses Arodus/August-like dates while GM entries place the prologue and Longacre sequence in Neth/November 4716. Preserve event order and use the GM timeline for displayed dates pending a dedicated reconciliation. Do not silently merge dates or promise a precise bath/tannery date that is not supplied. Proposed chapter boundaries, optional conversations and map grouping are adaptation choices, not recorded events.
+
+## Production update — 7 October 2026
+
+Portable export/import and previous-checkpoint recovery are implemented. Chapter Three is playable through the sermon, decrees, deputy ambush, and Fex oath. Nine layered environments and eighteen reusable character/forms now cover this arc and the next several arcs; later gameplay remains to author. See LONGACRE_PRODUCTION.md and SAVE_PORTABILITY.md. Corrine remains on hold.

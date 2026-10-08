@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains the playable **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains three playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -33,7 +33,7 @@ A new game opens the character-selection screen. Browse the full party artwork a
 
 ## Saves
 
-Checkpoints use browser localStorage. They remain on that browser and computer and do not sync through GitHub. File and HTTP versions can have different saves. Restart chapter replaces the current checkpoint. Save export/import is a future portability task.
+Checkpoints use browser localStorage. They remain on that browser and computer and do not sync through GitHub. File and HTTP versions can have different saves. Restart chapter replaces the current checkpoint. Use **Export save** to download your checkpoint, and **Import save** on another device’s start screen or game toolbar. Preview before replacing; Restore previous save recovers the checkpoint replaced by an import. See docs/SAVE_PORTABILITY.md.
 
 ## Hosting and privacy
 
@@ -41,7 +41,7 @@ This is a static website: index.html and art-test/ can be served by a static web
 
 ## Handheld direction
 
-The web build is the current playable prototype. Final handheld packaging, complete controller support, further screen/readability refinement, transferable saves, and cartridge-style removable storage remain future work. This is not a Game Boy ROM.
+The web build is the current playable prototype. Final handheld packaging, complete controller support, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
 
 ## Validation
 
@@ -52,3 +52,7 @@ The source prototype passed a complete chapter walkthrough, checkpoint reload, r
 ## Next chapter and map layers
 
 See docs/NEXT_PHASE_PLAN.md for the source-grounded voyage/Longacre production plan and Corrine timing. Open **Map Layer Studio.html** (or `/maps` on the local server) to inspect the transparent Western Star foreground over independent animated water. Chapter Two is now playable: continue at the Western Star after the prologue, sail to Remesiana, meet Cimri, complete the tannery job, and rescue Jamal at Ash House. El Guapo leaves at Remesiana; a Guapo player chooses a temporary viewpoint companion. The chapter ends with the sermon briefing. New maps follow docs/MAP_LAYER_SPEC.md; existing opaque maps use the shared renderer while awaiting later asset upgrades.
+
+## Chapter Three and future art
+
+Continue from the Ash House briefing into the sermon, four decrees, deputy ambush, and Fex audience. All seven party walking cycles now include opposite-foot poses. Open **Longacre Art Studio.html** (`/art`) for nine layered environments and eighteen NPC models/forms covering several upcoming story arcs. Later arcs have art prepared; their gameplay is still to build. See docs/LONGACRE_PRODUCTION.md. Portable saves, all three chapter walkthroughs, the future art gallery, offline startup, and a 320px layout were checked in the browser.

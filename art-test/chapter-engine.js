@@ -38,11 +38,11 @@ async function rollDice(label,sides,count=1,modifier=0,context=''){
 }
 async function damage(spec,label){return rollDice(label,spec[1],spec[0],spec[2]);}
 function point(id){return scenes[scene].points.find(p=>p.id===id);}
-function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&window.NextChapter.npcs().some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
+function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&(quest.chapter3?window.NextArc.npcs():window.NextChapter.npcs()).some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
 function passable(gx,gy,which=scene){if(gx<0||gy<0||gx>=COLS||gy>=ROWS)return false;const x=gx*T+8,y=gy*T+8,s=scenes[which];return s.walk.some(r=>inside(x,y,r))&&!s.blocks.some(r=>inside(x,y,r))&&!actorBlocking(x,y,which);}
 function findPath(from,to,which=scene){if(!passable(...from,which)||!passable(...to,which))return null;const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
 function partyRoster(){return quest.activeRoster||CORE;}
-function finished(){return !!quest.chapter2Complete;}
+function finished(){return !!quest.chapter3Complete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -50,7 +50,7 @@ function seedParty(x,y,dir='up'){
 }
 function setScene(next,x,y,dir='up'){$('dice-panel').hidden=true;scene=next;seedParty(x,y,dir);buildFlicker();$('location-name').textContent=scenes[next].name;updateObjective();paintParty();save();}
 function updateObjective(){
- if(window.NextChapter.objective())return;
+ if(window.NextArc.objective()||window.NextChapter.objective())return;
  $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'Seven days to Remesiana.':scene==='street'?(quest.burned?'Board The Western Star before dawn.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
  $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The temple burns below. Get the party to the harbor.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
 }
@@ -63,6 +63,7 @@ function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-p
 }
 function paintPortrait(name){
  const id=({ 'Freya Kusanagi':'freya','Dottari Guard':'guard','Barkeep':'cultist' })[name]||name,c=$('portrait'),g=c.getContext('2d');let im,f;
+ if(window.FUTURE_NPCS?.[id]){const m=window.FUTURE_NPCS[id];im=art[m.source];f=m.frame;}
  if(window.NEXT_NPCS?.[id]){im=art.nextNPCs;f=window.NEXT_NPCS[id];}
  if(window.QUESTGIVER_MODELS[id]){im=art[id];f=window.QUESTGIVER_MODELS[id].frames[0];}
  else if(CORE.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
@@ -76,9 +77,9 @@ function paintPortrait(name){
 function syncBattleView(){const on=!!battle;document.body.classList.toggle('is-combat',on);if(canvas.height!==(on?480:400)){canvas.height=on?480:400;ctx.imageSmoothingEnabled=false;}}
 function battlePosition(actor){const partyIndex=units.indexOf(actor);if(partyIndex>=0){const places=[[72,246],[181,225],[290,244],[399,230],[508,244]];return {x:places[partyIndex][0],y:places[partyIndex][1],height:activeUnit()===actor?104:82};}const i=battle?.enemies.indexOf(actor)??0,places=[[346,108],[441,144],[522,110],[588,157]];return {x:places[Math.max(0,i)][0],y:places[Math.max(0,i)][1],height:actor.id==='viggo'?79:65};}
 function renderBattle(t){
- window.SceneLayers.draw(ctx,window.MAP_LAYERS.temple,art.temple,t,{height:336,reduced:reduce.matches});ctx.fillStyle='#131a2755';ctx.fillRect(0,0,640,336);if(!reduce.matches){ctx.save();ctx.scale(1,.84);for(const l of flicker){ctx.globalAlpha=.1+.04*Math.sin(t*1.7+l.index*2.4);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();}
+ window.SceneLayers.draw(ctx,window.MAP_LAYERS[battle.kind==='deputies'?'longacre_jail':'temple'],art[battle.kind==='deputies'?'longacre_jail':'temple'],t,{height:336,reduced:reduce.matches});ctx.fillStyle='#131a2755';ctx.fillRect(0,0,640,336);if(!reduce.matches){ctx.save();ctx.scale(1,.84);for(const l of flicker){ctx.globalAlpha=.1+.04*Math.sin(t*1.7+l.index*2.4);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();}
  const platform=(x,y,rx,ry)=>{ctx.fillStyle='#a9a18544';ctx.beginPath();ctx.ellipse(x,y,rx,ry,-.08,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#dccb8b66';ctx.stroke();};platform(470,145,148,35);platform(288,242,282,46);
- for(const enemy of battle.enemies){const v=battlePosition(enemy),f=window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;ctx.drawImage(art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0){const selected=battle.enemies[battle.target]===enemy;rect(v.x-29,v.y-v.height-22,58,18,selected?'#e7d49c':'#e5dfc7');ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillStyle='#222a30';ctx.fillText(enemy.name,v.x,v.y-v.height-10);rect(v.x-27,v.y-v.height-7,54,3,'#39404b');rect(v.x-27,v.y-v.height-7,54*enemy.hp/enemy.max,3,'#9a523f');}}
+ for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0){const selected=battle.enemies[battle.target]===enemy;rect(v.x-29,v.y-v.height-22,58,18,selected?'#e7d49c':'#e5dfc7');ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillStyle='#222a30';ctx.fillText(enemy.name,v.x,v.y-v.height-10);rect(v.x-27,v.y-v.height-7,54,3,'#39404b');rect(v.x-27,v.y-v.height-7,54*enemy.hp/enemy.max,3,'#9a523f');}}
  const ordered=units.map(u=>({u,v:battlePosition(u)})).sort((a,b)=>a.v.y-b.v.y);
  for(const {u,v} of ordered){if(activeUnit()===u){ctx.strokeStyle='#e4c379';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(v.x,v.y+2,31,7,0,0,Math.PI*2);ctx.stroke();}drawActor(ctx,{...u,x:v.x,y:v.y,dir:'up',step:null},v.height);rect(v.x-44,v.y+8,88,30,battle.ally===u.id?'#f1e4b7':'#e3ddc7');ctx.textAlign='center';ctx.font='bold 11px monospace';ctx.fillStyle='#222a30';ctx.fillText(NAMES[u.id],v.x,v.y+20);ctx.font='10px monospace';ctx.fillText(hp[u.id]+'/'+STATS[u.id].hp,v.x,v.y+31);rect(v.x-41,v.y+35,82,3,'#39404b');rect(v.x-41,v.y+35,82*hp[u.id]/STATS[u.id].hp,3,'#7b925b');}
  for(const f of fx){ctx.font='bold 15px monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#111';ctx.fillStyle=f.color;ctx.strokeText(f.text,f.x,f.y-(.9-f.life)*15);ctx.fillText(f.text,f.x,f.y-(.9-f.life)*15);}
@@ -120,13 +121,13 @@ async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
  await say('barzillai','Then be aboard The Western Star before dawn. You were never in this city.');
  await say(lead,'Understood. The scimitar, the rapier, then the ship.');
  briefingOpen=false;quest.briefed=true;await say('Night of Ashes','Two nights later. Smoke drifts over the rooftops. The Silver Star waits on the north side of the street.');save();}
-function readSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));if(s?.version===1&&scenes[s.scene]&&CORE.includes(s.lead)&&CORE.every(id=>Number.isFinite(s.hp?.[id])))return s;}catch{}return null;}
-function visiblePoints(){if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
+function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
+function visiblePoints(){if(quest.chapter2Complete&&!quest.chapter3)return [{id:'chapterThree',x:328,y:160,label:'Continue to Chapter Three'}];if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>(p.id!=='longacreRoad'||quest.chapter3)&&!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
 function nearPoint(){if(!units[0])return null;return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
 async function interact(requestedId=null){
  if(introOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;
  run(async()=>{
-  if(await window.NextChapter.interact(p.id))return;
+  if(await window.NextArc.interact(p.id)||await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){setScene('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','The room is empty. Somewhere under the floorboards, chanting rises through the wood.');save();}}
   if(p.id==='outside'){setScene('street',152,152,'down');}
   if(p.id==='upstairs'){setScene('tavern',536,152,'down');}
@@ -151,11 +152,11 @@ async function encounter(){
  await say(null,count===1?'A single zealot steps from behind a pillar. The others never heard the bell.':count===2?'Two zealots step from behind the pillars.':'Three zealots come down the stairs behind you. The bell did its work.');
  startBattle(count,shaken);if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
-function startBattle(count,shaken){
+function startBattle(count,shaken,config=null){
  const places=[[312,280],[264,296],[360,296],[280,328],[344,328]];
  units.forEach((u,i)=>{u.x=places[i][0];u.y=places[i][1];u.dir='up';u.step=null;u.guard=false;});path=[];
- const enemies=[{id:'viggo',name:'Viggo',x:312,y:136,hp:34,max:34,shaken:shaken?2:0},...Array.from({length:count},(_,i)=>({id:'cultist',name:'Zealot '+(i+1),x:[248,392,552][i],y:[152,152,280][i],hp:12,max:12}))];
- battle={round:1,turn:0,target:0,ally:lead,enemies,busy:false,smoke:0};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();log('Choose a target. Five companions, one mission.');paintBattle();updateObjective();
+ const enemies=config?.enemies||[{id:'viggo',name:'Viggo',x:312,y:136,hp:34,max:34,shaken:shaken?2:0},...Array.from({length:count},(_,i)=>({id:'cultist',name:'Zealot '+(i+1),x:[248,392,552][i],y:[152,152,280][i],hp:12,max:12}))];
+ battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:lead,enemies,busy:false,smoke:0};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();log('Choose a target. Five companions, one mission.');paintBattle();updateObjective();
 }
 function log(text){$('battle-message').textContent=text;const e=document.createElement('div');e.textContent=text;$('combat-log').prepend(e);while($('combat-log').children.length>6)$('combat-log').lastChild.remove();}
 function activeUnit(){return battle?units[battle.turn]:null;}
@@ -192,10 +193,10 @@ async function performActionImpl(action){
   if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([3,6,0],'Jamal · Sneak attack bonus');hitTarget(actor,target,value);target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' at '+target.name+': '+value+' damage.'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}else{actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' but misses '+target.name+' ('+roll+' + '+bonus+').'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
- if(!livingEnemy()){battle=null;$('battle').hidden=true;$('character').disabled=false;quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
+ if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
  battle.turn++;
  while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
- if(battle.turn>=units.length){log('The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(CORE.every(id=>hp[id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail('The hidden temple keeps your names. Try the encounter again.'));return;}}
+ if(battle.turn>=units.length){log(battle.kind==='deputies'?'The former deputies strike back.':'The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
  units.forEach(u=>u.guard=false);battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));
  }
  battle.busy=false;paintBattle();
@@ -206,7 +207,7 @@ async function fail(text){await say('Defeat',text);const c=await say(null,'Retur
 function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=gy*T+8,dx=tx-u.x,dy=ty-u.y;u.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';u.step={sx:u.x,sy:u.y,tx,ty,p:0};return true;}
 function advance(u,dt,speed){if(!u.step)return false;u.step.p=Math.min(1,u.step.p+dt*speed);u.x=u.step.sx+(u.step.tx-u.step.sx)*u.step.p;u.y=u.step.sy+(u.step.ty-u.step.sy)*u.step.p;u.anim+=dt;if(u.step.p>=1){u.x=u.step.tx;u.y=u.step.ty;u.step=null;return true;}return false;}
 function walkTo(gx,gy){if(!ready||introOpen||dialogOpen||taskBusy||battle||finished())return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
-function update(dt){
+function update(dt){if($('save-import-dialog').open)return;
  for(const u of units){u.flash=Math.max(0,(u.flash||0)-dt);u.lunge=Math.max(0,(u.lunge||0)-dt);}for(const e of battle?.enemies||[]){e.flash=Math.max(0,(e.flash||0)-dt);e.lunge=Math.max(0,(e.lunge||0)-dt);}
  fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||dialogOpen||taskBusy||battle||finished())return;
  const u=units[0],speed=keys.has('run')?8:5;
@@ -217,12 +218,13 @@ function update(dt){
 }
 function drawActor(g,u,height=55){
  g.imageSmoothingEnabled=false;
- const meta=window.PARTY_FRAMES[u.id],im=sheets[u.id];if(!im)return;
- const row=u.dir==='up'?2:u.dir==='down'?0:1,col=u.step?[1,0,2,0][Math.floor(u.anim*10)%4]:0,f=meta.frames[row*3+col],scale=height/meta.maxHeight;
+ const meta=window.PARTY_FRAMES[u.id];let im=sheets[u.id];if(!im)return;
+ const row=u.dir==='up'?2:u.dir==='down'?0:1,col=u.step?meta.walkCycle[Math.floor(u.anim*10)%4]:0,f=col===3?meta.oppositeStep.frames[row]:meta.frames[row*3+col],scale=height/(f.scaleBasis||meta.maxHeight);if(col===3)im=sheets[u.id+'-opposite'];
  const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);if(hp[u.id]===0)g.globalAlpha=.38;
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
 function drawNPC(u){
+ if(window.NextArc.drawNPC(u))return;
  if(window.NextChapter.drawNPC(u))return;
  if(u.id==='guard'){const im=art.guard;ctx.drawImage(im,u.x-17,u.y-54,34,56);return;}
  const f=window.CHAPTER_NPCS[u.id],im=art.npcs,scale=55/f.h;ctx.save();if(u.hp!==undefined&&u.hp<=0)ctx.globalAlpha=.25;
@@ -237,10 +239,10 @@ function render(t){
  if(scene==='street'&&!reduce.matches){for(let i=0;i<30;i++){const p=(t*.05+i*.177)%1,x=(i*71+t*(2+i%3))%640,y=30+p*90;rect(x,y,2,1,'#b8aa9044');}}
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
  if(path.length){ctx.fillStyle='#d9b86a77';path.forEach(([x,y])=>ctx.fillRect(x*T+7,y*T+7,2,2));}
- const npcs=quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}];
+ const npcs=quest.chapter3?window.NextArc.npcs():quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}];
  const drawables=[...units.filter(u=>!battle||hp[u.id]>0),...npcs].sort((a,b)=>a.y-b.y);
  for(const u of drawables){if(CORE.includes(u.id))drawActor(ctx,u);else drawNPC(u);}
- if(!battle&&!finished()){const target=quest.chapter2?window.NextChapter.target():quest.done?visiblePoints()[0]:quest.burned?scene==='street'?point('ship'):point('outside'):scene==='street'?point('silver'):scene==='tavern'?point('stairs'):quest.victory?{x:312,y:120}:point('altar');if(target){const lift=reduce.matches?0:Math.round(Math.sin(t*3)*2);rect(target.x-3,target.y-56+lift,6,1,'#e6c47c');rect(target.x-2,target.y-55+lift,4,2,'#e6c47c');}}
+ if(!battle&&!finished()){const target=quest.chapter2Complete&&!quest.chapter3?visiblePoints()[0]:quest.chapter3?window.NextArc.target():quest.chapter2?window.NextChapter.target():quest.done?visiblePoints()[0]:quest.burned?scene==='street'?point('ship'):point('outside'):scene==='street'?point('silver'):scene==='tavern'?point('stairs'):quest.victory?{x:312,y:120}:point('altar');if(target){const lift=reduce.matches?0:Math.round(Math.sin(t*3)*2);rect(target.x-3,target.y-56+lift,6,1,'#e6c47c');rect(target.x-2,target.y-55+lift,4,2,'#e6c47c');}}
  if(quest.burned&&scene==='tavern'){ctx.fillStyle='rgba(80,55,38,.1)';ctx.fillRect(0,0,640,400);if(!reduce.matches)for(let i=0;i<12;i++){const y=350-(t*35+i*47)%320,x=490+Math.sin(i+t)*60;rect(x,y,1,2,'#ffb97377');}}
  for(const f of fx){ctx.save();ctx.globalAlpha=Math.min(1,f.life*2);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;const y=f.y-(.9-f.life)*18;ctx.strokeStyle='#0b1018';ctx.strokeText(f.text,f.x,y);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,y);ctx.restore();}
  $('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!nearPoint();
@@ -250,7 +252,7 @@ $('paths').onclick=()=>{showPaths=!showPaths;$('paths').textContent=showPaths?'H
 $('interact').onclick=interact;
 $('heal-target').onclick=()=>{if(!battle||battle.busy)return;const i=units.findIndex(u=>u.id===battle.ally);battle.ally=units[(i+1)%units.length].id;paintBattle();};
 $('character').onchange=e=>{if(battle||taskBusy||dialogOpen){e.target.value=lead;return;}const old=lead;if(units[0].step){units[0].x=units[0].step.sx;units[0].y=units[0].step.sy;}lead=e.target.value;const displaced=units.find(u=>u.id===lead);if(displaced)displaced.id=old;units[0].id=lead;units[0].step=null;path=[];keys.clear();paintParty();save();canvas.focus();};
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',e=>{if($('save-import-dialog').open)return;
  if(introOpen){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();introIndex=(introIndex+(['ArrowLeft','ArrowUp'].includes(e.key)?-1:1)+ROSTER.length)%ROSTER.length;paintIntro();}else if(e.key==='Enter'&&e.target.id!=='intro-resume'){e.preventDefault();$('intro-start').click();}return;}
  if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
  if(battle&&!battle.busy&&!dialogOpen&&['q','e','h'].includes(e.key.toLowerCase())){e.preventDefault();if(e.key.toLowerCase()==='h')$('heal-target').click();else{const living=battle.enemies.map((a,i)=>a.hp>0?i:-1).filter(i=>i>=0),at=living.indexOf(battle.target);battle.target=living[(at+(e.key.toLowerCase()==='q'?-1:1)+living.length)%living.length];paintBattle();}return;}
@@ -266,10 +268,10 @@ document.querySelectorAll('[data-dir]').forEach(b=>{b.onpointerdown=e=>{e.preven
 canvas.onpointerdown=e=>{if(!ready||introOpen||dialogOpen||taskBusy||finished())return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*canvas.height/r.height;if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<INTERACTION_RADIUS&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<INTERACTION_RADIUS)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
 function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
 async function load(){
- try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await window.NextChapter.load(imageLoad);await Promise.all(ROSTER.map(async id=>sheets[id]=await imageLoad(id+'-sheet.png')));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));ready=true;$('loading').hidden=true;reset(!!readSave());}
+ try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));ready=true;$('loading').hidden=true;reset(!!readSave());}
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;
 function loop(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;update(dt);render(now/1000);requestAnimationFrame(loop);}
 window.__chapter={state:()=>({ready,introOpen,briefingOpen,scene,lead,quest:{...quest},hp:{...hp},potions,uses:{...uses},mendUses,interaction:nearPoint()?.id,dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
-window.NextChapter.install();load();requestAnimationFrame(loop);
+window.NextChapter.install();window.NextArc.install();window.SaveFiles.install({scenes,core:CORE,stats:STATS,special:SPECIAL,names:NAMES,key:SAVE,read:readSave,capture:save,safeToCapture:()=>ready&&!introOpen&&!battle&&!dialogOpen&&!taskBusy,canImport:()=>ready&&!battle&&!dialogOpen&&!taskBusy,resume:()=>reset(true)});load();requestAnimationFrame(loop);

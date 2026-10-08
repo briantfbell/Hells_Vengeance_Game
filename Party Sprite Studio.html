@@ -18,22 +18,22 @@ for(const p of party){
  const note=document.createElement('span');note.className='badge';note.textContent=p.note;card.append(note);
  const visual=document.createElement('div');visual.className='visual';const big=document.createElement('canvas');big.width=144;big.height=240;big.setAttribute('aria-label',p.name+' enlarged sprite');visual.append(big);
  const smallBox=document.createElement('div');smallBox.className='actual';const small=document.createElement('canvas');small.width=64;small.height=80;smallBox.append(small,document.createElement('br'),document.createTextNode('IN-GAME SCALE'));visual.append(smallBox);card.append(visual);
- const links=document.createElement('div');links.className='links';const src='art-test/'+p.id+'-sheet.png';const view=document.createElement('a');view.href=src;view.target='_blank';view.textContent='View full sheet ↗';const download=document.createElement('a');download.href=src;download.download=p.id+'-sheet.png';download.textContent='Save PNG';links.append(view,download);card.append(links);
+ const links=document.createElement('div');links.className='links';const src='art-test/'+p.id+'-sheet.png';const view=document.createElement('a');view.href=src;view.target='_blank';view.textContent='View full sheet ↗';const download=document.createElement('a');download.href=src;download.download=p.id+'-sheet.png';download.textContent='Save PNG';const extra=document.createElement('a');extra.href='art-test/'+window.PARTY_FRAMES[p.id].oppositeStep.src;extra.target='_blank';extra.textContent='Opposite-foot poses ↗';links.append(view,download,extra);card.append(links);
  const error=document.createElement('p');error.className='error';error.hidden=true;card.append(error);
  document.getElementById('grid').append(card);
- const image=new Image();const item={...p,image,big,small,ready:false};sprites.push(item);
- image.onload=()=>{item.ready=true;loaded++;document.getElementById('status').textContent=loaded+' / 7 sprite sheets loaded';};
+ const image=new Image(),opposite=new Image();const item={...p,image,opposite,big,small,ready:false};sprites.push(item);
+ const markReady=()=>{if(!item.ready&&image.complete&&image.naturalWidth&&opposite.complete&&opposite.naturalWidth){item.ready=true;loaded++;document.getElementById('status').textContent=loaded+' / 7 sprite sheets loaded';}};image.onload=markReady;opposite.onload=markReady;opposite.onerror=()=>{error.hidden=false;error.textContent='Opposite step strip unavailable.';};opposite.src='art-test/'+window.PARTY_FRAMES[p.id].oppositeStep.src;
  image.onerror=()=>{error.hidden=false;error.textContent='Sheet unavailable. Keep the studio beside the art-test folder.';};
  image.src=src;
 }
 document.getElementById('direction').onchange=e=>facing=e.target.value;
 document.getElementById('motion').onclick=e=>{walking=!walking;e.target.textContent=walking?'Pause walk cycle':'Play walk cycle';e.target.setAttribute('aria-pressed',String(walking));};
-function draw(canvas,im,row,col,w,h,id){
+function draw(canvas,im,row,col,w,h,id,opposite){
  const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;
- const meta=window.PARTY_FRAMES[id],frame=meta.frames[row*3+col],scale=h*.92/meta.maxHeight;
+ const meta=window.PARTY_FRAMES[id],frame=col===3?meta.oppositeStep.frames[row]:meta.frames[row*3+col],scale=h*.92/(frame.scaleBasis||meta.maxHeight);if(col===3)im=opposite;
  c.save();c.translate(canvas.width/2,canvas.height-4);if(facing==='left')c.scale(-1,1);
  c.drawImage(im,frame.x,frame.y,frame.w,frame.h,Math.round((frame.x-frame.anchorX)*scale),-Math.round(frame.h*scale),Math.round(frame.w*scale),Math.round(frame.h*scale));c.restore();
 }
-function loop(t){const row=facing==='up'?2:facing==='down'?0:1,col=walking?[0,1,0,2][Math.floor(t/180)%4]:0;for(const s of sprites)if(s.ready){draw(s.big,s.image,row,col,144,240,s.id);draw(s.small,s.image,row,col,36,60,s.id);}requestAnimationFrame(loop);}requestAnimationFrame(loop);
+function loop(t){const row=facing==='up'?2:facing==='down'?0:1,col=walking?[1,0,3,0][Math.floor(t/180)%4]:0;for(const s of sprites)if(s.ready){draw(s.big,s.image,row,col,144,240,s.id,s.opposite);draw(s.small,s.image,row,col,36,60,s.id,s.opposite);}requestAnimationFrame(loop);}requestAnimationFrame(loop);
 window.__spriteStudio={state:()=>({loaded,facing,walking,characters:sprites.filter(s=>s.ready).map(s=>({id:s.id,width:s.image.width,height:s.image.height,note:s.note}))})};
 </script></body></html>

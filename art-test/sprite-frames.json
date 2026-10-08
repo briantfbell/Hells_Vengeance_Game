@@ -80,7 +80,44 @@
         "anchorX": 808.5
       }
     ],
-    "provisional": false
+    "provisional": false,
+    "oppositeStep": {
+      "src": "freya-opposite-step-v2.png",
+      "frames": [
+        {
+          "x": 127,
+          "y": 27,
+          "w": 413,
+          "h": 773,
+          "anchorX": 329.9278455284553,
+          "scaleBasis": 804.4227642276422
+        },
+        {
+          "x": 722,
+          "y": 31,
+          "w": 475,
+          "h": 744,
+          "anchorX": 990.51244813278,
+          "scaleBasis": 790.3070539419087
+        },
+        {
+          "x": 1350,
+          "y": 27,
+          "w": 429,
+          "h": 773,
+          "anchorX": 1580.2353515625,
+          "scaleBasis": 773.0
+        }
+      ],
+      "width": 1882,
+      "height": 836
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "jamal": {
     "width": 997,
@@ -163,7 +200,44 @@
         "anchorX": 831.0
       }
     ],
-    "provisional": false
+    "provisional": false,
+    "oppositeStep": {
+      "src": "jamal-opposite-step.png",
+      "frames": [
+        {
+          "x": 122,
+          "y": 29,
+          "w": 446,
+          "h": 770,
+          "anchorX": 351.7835820895522,
+          "scaleBasis": 779.8507462686567
+        },
+        {
+          "x": 688,
+          "y": 29,
+          "w": 516,
+          "h": 770,
+          "anchorX": 948.945295404814,
+          "scaleBasis": 800.3282275711159
+        },
+        {
+          "x": 1328,
+          "y": 29,
+          "w": 414,
+          "h": 770,
+          "anchorX": 1530.276595744681,
+          "scaleBasis": 778.1914893617021
+        }
+      ],
+      "width": 1881,
+      "height": 836
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "jason": {
     "width": 997,
@@ -246,7 +320,44 @@
         "anchorX": 831.0
       }
     ],
-    "provisional": false
+    "provisional": false,
+    "oppositeStep": {
+      "src": "jason-opposite-step-v3.png",
+      "frames": [
+        {
+          "x": 111,
+          "y": 9,
+          "w": 412,
+          "h": 781,
+          "anchorX": 305.35714285714283,
+          "scaleBasis": 795.1428571428571
+        },
+        {
+          "x": 690,
+          "y": 9,
+          "w": 547,
+          "h": 768,
+          "anchorX": 966.448,
+          "scaleBasis": 777.216
+        },
+        {
+          "x": 1346,
+          "y": 4,
+          "w": 439,
+          "h": 787,
+          "anchorX": 1587.4544554455445,
+          "scaleBasis": 788.5584158415842
+        }
+      ],
+      "width": 1882,
+      "height": 836
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "draymus": {
     "width": 972,
@@ -329,7 +440,44 @@
         "anchorX": 810.0
       }
     ],
-    "provisional": false
+    "provisional": false,
+    "oppositeStep": {
+      "src": "draymus-opposite-step-v3.png",
+      "frames": [
+        {
+          "x": 141,
+          "y": 57,
+          "w": 439,
+          "h": 784,
+          "anchorX": 357.2536231884058,
+          "scaleBasis": 839.1884057971015
+        },
+        {
+          "x": 696,
+          "y": 67,
+          "w": 480,
+          "h": 764,
+          "anchorX": 950.9710743801653,
+          "scaleBasis": 816.0909090909091
+        },
+        {
+          "x": 1242,
+          "y": 60,
+          "w": 427,
+          "h": 776,
+          "anchorX": 1452.0,
+          "scaleBasis": 776.0
+        }
+      ],
+      "width": 1774,
+      "height": 887
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "guapo": {
     "width": 997,
@@ -412,7 +560,44 @@
         "anchorX": 831.0
       }
     ],
-    "provisional": false
+    "provisional": false,
+    "oppositeStep": {
+      "src": "guapo-opposite-step-v2.png",
+      "frames": [
+        {
+          "x": 85,
+          "y": 53,
+          "w": 403,
+          "h": 773,
+          "anchorX": 295.1588594704684,
+          "scaleBasis": 773.0
+        },
+        {
+          "x": 689,
+          "y": 57,
+          "w": 513,
+          "h": 768,
+          "anchorX": 918.640127388535,
+          "scaleBasis": 800.6114649681529
+        },
+        {
+          "x": 1339,
+          "y": 60,
+          "w": 402,
+          "h": 767,
+          "anchorX": 1534.238775510204,
+          "scaleBasis": 768.565306122449
+        }
+      ],
+      "width": 1821,
+      "height": 864
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "reese": {
     "width": 971,
@@ -495,7 +680,44 @@
         "anchorX": 809.0
       }
     ],
-    "provisional": true
+    "provisional": true,
+    "oppositeStep": {
+      "src": "reese-opposite-step.png",
+      "frames": [
+        {
+          "x": 175,
+          "y": 17,
+          "w": 402,
+          "h": 791,
+          "anchorX": 388.3102766798419,
+          "scaleBasis": 822.2648221343874
+        },
+        {
+          "x": 722,
+          "y": 17,
+          "w": 509,
+          "h": 778,
+          "anchorX": 1000.6235059760957,
+          "scaleBasis": 815.1952191235059
+        },
+        {
+          "x": 1344,
+          "y": 17,
+          "w": 381,
+          "h": 784,
+          "anchorX": 1536.7523900573615,
+          "scaleBasis": 788.4971319311663
+        }
+      ],
+      "width": 1881,
+      "height": 836
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   },
   "bruce": {
     "width": 971,
@@ -578,6 +800,43 @@
         "anchorX": 809.0
       }
     ],
-    "provisional": true
+    "provisional": true,
+    "oppositeStep": {
+      "src": "bruce-opposite-step-v3.png",
+      "frames": [
+        {
+          "x": 208,
+          "y": 26,
+          "w": 396,
+          "h": 795,
+          "anchorX": 408.79819277108436,
+          "scaleBasis": 825.3313253012049
+        },
+        {
+          "x": 701,
+          "y": 31,
+          "w": 506,
+          "h": 772,
+          "anchorX": 956.797520661157,
+          "scaleBasis": 824.6363636363636
+        },
+        {
+          "x": 1272,
+          "y": 27,
+          "w": 376,
+          "h": 789,
+          "anchorX": 1449.21083172147,
+          "scaleBasis": 789.0
+        }
+      ],
+      "width": 1860,
+      "height": 846
+    },
+    "walkCycle": [
+      1,
+      0,
+      3,
+      0
+    ]
   }
 }
