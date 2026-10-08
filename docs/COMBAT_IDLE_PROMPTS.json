@@ -1,0 +1,119 @@
+{
+  "mode": "built-in ImageGen",
+  "jobs": [
+    {
+      "id": "idle-freya",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\freya-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show her drawn katana held in both hands clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. freya."
+    },
+    {
+      "id": "idle-jamal",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\jamal-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show his paired drawn daggers clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. jamal."
+    },
+    {
+      "id": "idle-jason",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\jason-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show his heavy mace in one hand clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. jason."
+    },
+    {
+      "id": "idle-draymus",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\draymus-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show his drawn dagger, the other hand poised for necromancy clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. draymus."
+    },
+    {
+      "id": "idle-guapo",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\guapo-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show his drawn rapier clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. guapo."
+    },
+    {
+      "id": "idle-reese",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\reese-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show a longbow held ready (provisional design) clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. reese."
+    },
+    {
+      "id": "idle-bruce",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\bruce-sheet.png"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Use ONLY a rear three-quarter view toward the upper-right in ALL three cells, the back facing the player. Show a drawn longsword (provisional design) clearly unsheathed in every pose. The reference is a walking sheet; replace the walking with a grounded combat stance. bruce."
+    },
+    {
+      "id": "idle-temple",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\chapter-npcs.png"
+      ],
+      "rows": [
+        "viggo",
+        "cultist"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Instead use TWO ROWS, THREE COLUMNS, six sprites total. Row1: Viggo, reference left gold-brown hooded priest, scimitar drawn; Row2: the navy-hooded zealot on the reference right, curved sword drawn. All sprites face the viewer in three-quarter combat stance. Each row shows the SAME character shifting center/left/right."
+    },
+    {
+      "id": "idle-deputies-a",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-authority-cast.png"
+      ],
+      "rows": [
+        "deputy1",
+        "deputy2"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Instead TWO ROWS by THREE COLUMNS. Row1 SAME bearded brown-haired male deputy (reference top center) in all3cells. Row2 SAME dark curly-haired female deputy (reference top right) all3cells. Brown leather, navy scarves, white sleeves, no badges or vests, each holds a sap/club, viewer-facing battle-ready stance."
+    },
+    {
+      "id": "idle-deputies-b",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-authority-cast.png"
+      ],
+      "rows": [
+        "deputy3",
+        "deputy4"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Instead TWO ROWS by THREE COLUMNS. Row1 SAME slim blond male deputy (reference middle left) all3cells. Row2 SAME gray-haired bearded male deputy (reference middle center) all3cells. Brown leather, navy scarves, white sleeves, no badges or vests, each holds a sap/club, viewer-facing battle-ready stance."
+    },
+    {
+      "id": "idle-later",
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-later-cast.png",
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-revelations.png",
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-authority-cast.png"
+      ],
+      "rows": [
+        "bolgart_wereboar",
+        "riley_ghast",
+        "lencia",
+        "rhona",
+        "sleipnir"
+      ],
+      "prompt": "Create a NEW transparent PNG pixel-art combat idle strip, exactly THREE evenly spaced equal-size horizontal cells, one full-body character per cell, no labels, no ground shadows, no background. Preserve the reference character identity, outfit, palette, silhouette, and crisp detailed pixel art. These are three STILL BATTLE READY weight-shift poses: center balanced, slight left-weight bent knee, slight right-weight bent knee. Feet planted in the same place, no walking or lunging, subtle shoulder and weapon position differences, consistent height, baseline and torso centers. Entire figure and weapon comfortably inside each cell. Instead EXACTLY FIVE ROWS by THREE COLUMNS (15 full characters), transparent atlas. One SAME character per row, three weight-shift idle poses: Row1 Bolgart wereboar, pig head hairy hulking body apron fryingpan+spoon, reference1 top middle. Row2 Riley ghast, reference1 bottom left, undead ragged bard holding lute with claws exposed. Row3 Lencia armored female knight, reference2 left, silver angelic armor sword+shield drawn. Row4 Rhona sheriff reference3 top left, gray-haired woman navy/brown leather with ready crossbow. Row5 Sleipnir dark horse reference2 right, FOUR LEGS, crimson/gold tack, shifts weight, NOT walking. All face toward viewer in three-quarter view, scale each row height equally. No additional characters."
+    },
+    {
+      "id": "idle-allies-rivals",
+      "rows": [
+        "fex",
+        "cimri",
+        "allamar",
+        "twin1",
+        "twin2"
+      ],
+      "refs": [
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\fex-model.png",
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-cast.png",
+        "C:\\Users\\Brian\\Desktop\\Files\\Claude\\Toby_PF_Game\\github-game\\art-test\\longacre-authority-cast.png"
+      ],
+      "prompt": "Create a transparent high-detail crisp pixel-art combat idle atlas EXACTLY FIVE ROWS x THREE COLUMNS, 15 complete figures. Each ROW is the SAME reference character, THREE planted-feet combat ready weight shift poses: balanced, weight slightly left, weight slightly right. Consistent baseline/scale/torso center across columns, plenty of transparent gutters and exterior padding, no labels/background/halos. All figures face toward viewer in three-quarter view. Row1 Fex from reference1, silver hair dark purple noble coat black feather collar, holding his cane in one hand and preparing subtle dark magic in other; do not invent new sword. Row2 Cimri from reference2 top-left, red-haired woman red scarf brown leathers holding dagger drawn. Row3 Allamar from reference3 middle-right, female priestess silver armor blue-white tabard holding sword ready. Row4 reference3 bottom-left young brown-haired twin son in blue-white tabard, holding simple drawn sword (interpreted equipment). Row5 matching twin brother reference3 bottom-center also with simple drawn sword. Real subtly different knees and shoulders; NOT walking, no attacks. Copy identities and palette faithfully."
+    }
+  ]
+}
