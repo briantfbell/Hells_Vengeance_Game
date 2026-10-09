@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains five playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains six playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -80,3 +80,11 @@ The game now uses one 640×480 (4:3) surface across exploration, combat, charact
 Three-phase weapon/casting sprites accompany eight-frame Burning Hands, healing and Chill Touch effects. Freya displays her equipped katana or recovered scimitar. Reduced motion uses brief static effects. Pause → Audio cycles music/effect volumes and mute; preferences stay in this browser. Original temporary instrumental cues include three combat variations, ready to be replaced by campaign tracks.
 
 Chapter Five, Debts and Rumors, visits Gerya’s hospice and the church in an explicitly labeled earlier-day sequence, then returns to the present for Ingoe’s ten-gold weekly agreement. Completed Chapter Four saves can continue directly; the section replay menu also offers Chapter Five. No additional advancement is inferred. See docs/COMBAT_AUDIO_AND_DEBTS.md.
+
+## Chapter Six: Political Movement
+
+Continue from a completed Chapter Five checkpoint, or use section replay 18. Investigate the gate’s Ovinnik, back away from the church standoff, keep watch with J’Mal, inspect the jailbreak and vanishing trail, release Bolgart, then follow the recorded dusk confrontation and Riley reveal. Sections 19–21 offer additional replay starts. There is no inferred new level-up.
+
+Combat targets have amber attack brackets and green healing brackets. Choose a command, choose a target with directions, then confirm; B returns to commands. With a mouse, click a command then its target, or click the command again to confirm the current target. Completed actions stay in the left-hand log.
+
+Open Political Movement Art Studio.html to inspect the new characters, mounted Freya and layered execution-square map. See docs/POLITICAL_MOVEMENT.md for source facts, adaptation decisions and art provenance.
