@@ -84,8 +84,8 @@ $('journey-continue').onclick=()=>{if(!journeyOpen||$('journey-continue').disabl
 async function travel(next,x,y,dir='up'){
  let summary=JOURNEYS[next];
  if(next==='church_watch'&&quest.watchStarted)summary='After resting at Ash House, J’Mal watches the church alone into the evening. Meet any movement with care.';
- if(next==='street'&&quest.burned)summary='The temple burns below. Get through the streets and board The Western Star before dawn.';
- if(next==='tavern'&&quest.burned)summary='Smoke rises from the cellar. Cross the instrument shop and reach the rendezvous.';
+ if(next==='street'&&quest.burned)summary='The Silver Star burns. Slip away under Freya’s cover.';
+ if(next==='tavern'&&quest.burned)summary='Smoke rises from the cellar. The party carries J’Mal out under cover of the fire.';
  if(next==='ash_house'&&quest.payroll&&!quest.reward)summary='At the river, Jamal washes the tannery off. Cimri leads the party to Ash House. Deliver the payroll to the employer behind the screens.';
  else if(next==='ash_house'&&quest.chapter3)summary=quest.sermonDispersed?'Return to Razelago and report the party’s work in Longacre.':'Meet Razelago before heading to the sermon.';
  else if(next==='ash_house'&&quest.spiritCalmed)summary='Return downstairs. Jamal is safe and the spirit is quiet. Report to Razelago in the morning.';
@@ -95,8 +95,8 @@ async function travel(next,x,y,dir='up'){
 }
 function updateObjective(){
  const sixth=PoliticalMovement.goal();if(sixth){$('objective').textContent=sixth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}const fifth=DebtsRumors.goal();if(fifth){$('objective').textContent=fifth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}const fourth=LastStand.goal();if(fourth){$('objective').textContent=fourth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}if(window.NextArc.objective()||window.NextChapter.objective())return;
- $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'A voyage south, then Longacre.':scene==='street'?(quest.burned?'Reach the rendezvous with Nox.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
- $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The temple burns below. Reach Nox and the Dottari outside.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
+ $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'A voyage south, then Longacre.':scene==='street'?(quest.burned?'Leave Kintargo under cover.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
+ $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The Silver Star burns. Slip away under Freya’s cover.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
 }
 function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:2,scene,lead,quest,hp,uses,potions,mendUses,progression,inventory,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
@@ -190,7 +190,7 @@ function reset(resume=false,selected=null){
  progression=saved?.progression||Progression.fresh();inventory=saved?.inventory||Inventory.fresh();applyProgression();
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
  const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();canvas.focus();
- if(!saved||quest.briefed===false)run(deliverOpeningMission);
+ if(!saved||quest.briefed===false)run(deliverOpeningMission);else if(quest.burned&&!quest.done)run(finishTempleEscape);
 }
 $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(CORE.includes(id))reset(false,id);};$('intro-resume').onclick=()=>reset(true);
 function drawQuestgiver(id,x,y,height=150,dir='front'){const model=window.QUESTGIVER_MODELS[id],f=model.frames[dir==='back'?2:dir==='right'||dir==='left'?1:0],scale=height/f.h;ctx.save();ctx.translate(x,y);if(dir==='left')ctx.scale(-1,1);ctx.drawImage(art[id],f.x,f.y,f.w,f.h,-f.w*scale/2,-height,f.w*scale,height);ctx.restore();}
@@ -226,18 +226,31 @@ async function interact(requestedId=null){
   if(p.id==='outside'){await travel('street',152,152,'down');}
   if(p.id==='upstairs'){await travel('tavern',536,152,'down');}
   if(p.id==='guard'){await say('Dottari Guard',quest.burned?'The Western Star sails on the tide. Nobody is checking papers tonight.':'Fires on the north bank. Every Dottari in the city is up there. Keep off the streets.');if(!quest.burned)await say('Dottari Guard','...Unless you are who I think you are. Then I saw nothing.');}
-  if(p.id==='ship'){if(!quest.burned){await say('Chronicle','The temple is unfinished business. Complete the operation beneath the Silver Star first.');return;}
- await say('Chronicle','The temple’s sacred protections are dismantled. J’Mal is carried out on a stretcher as the burning shop collapses part of the tunnels below.');
- await say('Chronicle','Freya returns with Dottari guards, makes a show of trying to fight the fire, and declares it an unfortunate accident.');
- await say('Chronicle','Her contractor, known only as Nox, appears human: a woman carrying a fine glaive, with an unsettling power about her. She pays each member one hundred gold pieces and sends them to a safehouse.');
- await journeyCard('Kintargo · The safehouse','From a lavish safehouse balcony, the team watches three fires burn across the city. They lie low for nearly twenty-four hours. A covered wagon then takes them to the docks.');
- await say('guapo','A pleasure cruiser? Now that is a proper escape.');quest.done=true;save();updateObjective();await say('Chapter complete','The Western Star carries the team away from Kintargo. Pezzack, Corentyn, and finally Remesiana lie ahead.');}
+  if(p.id==='ship'){if(!quest.burned){await say('Chronicle','The temple is unfinished business. Complete the operation beneath the Silver Star first.');return;}if(!quest.done)await finishTempleEscape();}
   if(p.id==='barkeep'){await say('Shopkeeper','We are closed. The fires. Go home.');const choice=await say(null,'The shopkeeper waits.',['[Leave the shopkeeper alone]','[Ask about the cellar]','[Threaten the shopkeeper] Tell me, or burn with it.']);if(choice===0){await say('Shopkeeper','...Please.');}if(choice===1){await say(lead,{freya:'Tell me what is beneath this shop.',jamal:'So, what are you keeping in the cellar?',jason:'What lies beneath this establishment?',draymus:'What exactly is down in your cellar?',guapo:'What have you got down in the cellar?'}[lead]);await say('Shopkeeper','There is no cellar.');await say(null,'His eyes go to the far corner of the room.');quest.stairsKnown=true;}if(choice===2){if(quest.ropeCut||quest.bell){await say('Shopkeeper','I already told you everything.');return;}const mod={freya:4,jamal:1,jason:3,draymus:2,guapo:3}[lead],total=await rollDice('Intimidation',20,1,mod,'DC 10');await say('Intimidation',total>=10?'Success. The shopkeeper gives way.':'Failed. The shopkeeper reaches for the alarm.');if(total>=10){quest.ropeCut=true;await say('Shopkeeper','The bell rope. By the stairs in the corner. Cut it or they will hear you coming.');await say(null,'You cut the rope. Whatever is below will not be warned.');}else{quest.bell=true;await say(null,'He screams. Somewhere beneath the floor, a bell answers.');}}save();}
   if(p.id==='rope'){if(quest.ropeCut){await say(null,'The severed bell rope hangs loose. Below, the chanting continues.');}else if(quest.bell){await say(null,'The bell has already sounded. Whoever is below knows you are coming.');}else{await say(null,'A bell rope, by the cellar stairs.');const c=await say(null,'Cut the rope before descending?',['[Cut the bell rope]','[Leave the rope intact]']);if(c===0){quest.ropeCut=true;await say(null,'You cut the rope. Whatever is below will not be warned.');save();}}}
   if(p.id==='stairs'){await say('jason','The incense leads here. This is the entrance.');await say(null,'Jason finds the concealed way beneath the shop. Chanting rises from the hidden temple of Sarenrae.');await travel('temple',312,312);if(!quest.victory)await say(null,'A hidden temple. Candles, an altar, and a man in robes'+(quest.ropeCut?' still absorbed in prayer.':' who has heard you coming.'));}
   if(p.id==='altar')await encounter();
-  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Whoever finds this room will look for a swordsman who was never here.');}else{const c=await say(null,'Nothing about tonight is undecided.',['[Burn it.]','[Burn it anyways.]']);quest.burned=true;await say('Chronicle','On the way out, the party takes musical instruments from the shop above. They will fence the stolen goods far from Kintargo.');await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await travel('tavern',312,280,'down');}save();}
+  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Whoever finds this room will look for a swordsman who was never here.');}else{await say(null,'Nothing about tonight is undecided.',['[Burn it.]','[Burn it anyways.]']);quest.burned=true;await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await finishTempleEscape();}save();}
  });
+}
+async function finishTempleEscape(){
+ await journeyCard('The Silver Star · Fire and false evidence','The temple’s sacred protections are dismantled. J’Mal is carried out on a stretcher as the burning shop collapses part of the tunnels below.\n\nOn the way out, the party takes musical instruments from the shop above. They will fence the stolen goods far from Kintargo.');
+ await journeyCard('Kintargo · Nox’s payment','Freya returns with Dottari guards, makes a show of trying to fight the fire, and declares it an unfortunate accident.\n\nHer contractor, known only as Nox, appears human: a woman carrying a fine glaive, with an unsettling power about her. She pays each member one hundred gold pieces and sends them to a safehouse.');
+ await journeyCard('Kintargo · The safehouse','From a lavish safehouse balcony, the team watches three fires burn across the city. They lie low for nearly twenty-four hours.\n\nAfter resting, a covered wagon takes them to the docks, where The Western Star awaits.',()=>{for(const id of CORE)hp[id]=STATS[id].hp;setScene('street',600,184,'left');});
+ await say('guapo','A pleasure cruiser? Now that is a proper escape.');quest.done=true;save();updateObjective();
+}
+async function templeStoryStrike(){
+ if(!battle||battle.kind!=='temple')return;
+ const token=epoch,enemy=battle.enemies.find(e=>e.id==='viggo')||livingEnemy(),target=units.find(u=>u.id==='jamal');if(!enemy||!target)return;
+ battle.busy=true;paintBattle();
+ await storyRoll(enemy.name+' → J’Mal',20,STATS[enemy.id].atk,'Critical blow · J’Mal is knocked out of the fight');
+ if(token!==epoch||!battle)return;
+ await animateAction(enemy,target,'attack',true);if(token!==epoch||!battle)return;
+ const lost=hp.jamal;hp.jamal=0;quest.templeWound=true;flash(target,'−'+lost,'#ee9a88');
+ log(enemy.name+' catches J’Mal with a devastating strike. He collapses; the others must finish the fight.');paintParty();await delay(reduce.matches?120:650);
+ while(battle&&battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
+ if(battle){battle.busy=false;paintBattle();}
 }
 async function encounter(){
  await say('viggo','You walk into a holy place with drawn steel. Then you are what the fires are for.');
@@ -249,7 +262,7 @@ async function encounter(){
  else await say(lead,'It will.');
  const count=quest.ropeCut?1:quest.bell?3:2;
  await say(null,count===1?'A single zealot steps from behind a pillar. The others never heard the bell.':count===2?'Two zealots step from behind the pillars.':'Three zealots come down the stairs behind you. The bell did its work.');
- startBattle(count,shaken);if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
+ startBattle(count,shaken);await templeStoryStrike();if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
 function startBattle(count,shaken,config=null){
  const places=[[312,280],[264,296],[360,296],[280,328],[344,328]];

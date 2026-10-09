@@ -1,0 +1,11 @@
+# Temple escape and J’Mal sprite revision
+
+Brian requested this adaptation on October 9, 2026. The blog explicitly says the hobgoblin is carried out on a stretcher, but gives neither the responsible attacker nor a verified injury roll. Viggo’s guaranteed critical hit and the resulting incapacitation are a user-authorized story adaptation, not an extracted Pathfinder combat record. The visible D20 is marked Story roll; the scripted blow sets J’Mal to zero HP and skips his turn if selected as leader. Ordinary healing still works; the injury event does not repeat during that encounter. templeWound is a validated persistent boolean. Other encounters retain normal rolls.
+
+After either original cheeky burn choice, J’Mal gives his fire remark. Three black-screen journey cards cover dismantling the temple, carrying him out, stolen musical instruments, Freya’s Dottari cover, Nox’s 100 gp per-person payment, nearly 24 hours at the safehouse and the covered wagon to the docks. The safehouse rest restores HP as a game recovery mechanic. The scene then opens at the docks for El Guapo’s pleasure-cruiser remark. No exploration through the burning shop or streets is required. Older burned-but-unfinished checkpoints resume this sequence automatically.
+
+J’Mal v3 preserves his established appearance while reducing head size and lengthening adult proportions. Fifteen poses include nine exploration frames, three combat idles and three attacks. The original generated PNG is copied unchanged. Frame metadata is measured from occupied pixels inside separately identified row bounds; it does not divide the atlas into blindly equal rows. This prevents neighboring row fragments from leaking into walking frames. Metadata is shared by the game and both sprite galleries.
+
+Asset: art-test/jamal-lore-v3.png. Metadata: art-test/jamal-frames-v3.js and docs/JAMAL_V3_FRAMES.json. Generation used built-in image_gen; exact final prompt is in docs/JAMAL_V3_PROMPT.txt.
+
+Validation: actual temple fight with J’Mal selected, fixed critical and incapacitation, skipped turn, normal fight completion, burn choices, fire dialogue, three transition cards, arrival at docks, recovered HP, save validation/reload, legacy unfinished escape resume, 15 frame boundaries, offline startup and existing progression checks.

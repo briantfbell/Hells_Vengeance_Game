@@ -17,7 +17,7 @@ window.QuestGuide={current(){
  if(quest.chapter2Complete)return result('Continue to the Longacre sermon.','chapterThree');
  if(quest.chapter2){if(scene==='bathroom')return result(quest.spiritCalmed?'Return downstairs.':!quest.bathStarted?'Investigate the tub with J’Mal.':'Rescue Jamal and calm the spirit.',quest.spiritCalmed?'bathExit':'bath');return {text:$('objective').textContent,target:NextChapter.target()};}
  if(quest.done)return result('Continue aboard The Western Star.','nextChapter');
- if(quest.burned)return result('Reach the rendezvous with Nox.',scene==='street'?'ship':scene==='tavern'?'outside':'upstairs');
+ if(quest.burned)return result('Leave Kintargo under cover.');
  if(scene==='street')return result('Find the Silver Star.','silver');
  if(scene==='tavern')return result(quest.ropeCut||quest.bell?'Descend into the hidden temple.':'Silence the bell, then find the cellar.',quest.ropeCut||quest.bell?'stairs':'rope');
  if(quest.victory)return result(!quest.scimitar?'Take Viggo’s scimitar.':!quest.planted?'Plant the false evidence.':'Burn the temple.','aftermath');
