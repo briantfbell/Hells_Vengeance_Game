@@ -15,7 +15,7 @@ window.QuestGuide={current(){
   return result('Meet Archbaron Fex.',scene==='scarlet_manor'?'fexAudience':scene==='longacre_square'?'manorRoad':scene==='ash_house'?'longacreRoad':'jailReport');
  }
  if(quest.chapter2Complete)return result('Continue to the Longacre sermon.','chapterThree');
- if(quest.chapter2){if(scene==='bathroom')return result(quest.spiritCalmed?'Return downstairs.':'Rescue Jamal and calm the spirit.',quest.spiritCalmed?'bathExit':'bath');return {text:$('objective').textContent,target:NextChapter.target()};}
+ if(quest.chapter2){if(scene==='bathroom')return result(quest.spiritCalmed?'Return downstairs.':!quest.bathStarted?'Investigate the tub with J’Mal.':'Rescue Jamal and calm the spirit.',quest.spiritCalmed?'bathExit':'bath');return {text:$('objective').textContent,target:NextChapter.target()};}
  if(quest.done)return result('Continue aboard The Western Star.','nextChapter');
  if(quest.burned)return result('Board The Western Star before dawn.',scene==='street'?'ship':scene==='tavern'?'outside':'upstairs');
  if(scene==='street')return result('Find the Silver Star.','silver');
