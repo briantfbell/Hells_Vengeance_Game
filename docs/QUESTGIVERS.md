@@ -1,3 +1,5 @@
+> Lore reconciliation update: see [LORE_ACCURACY_AUDIT.md](LORE_ACCURACY_AUDIT.md). Its source facts and chronological route supersede conflicting prototype descriptions below.
+
 # Reusable questgiver models
 
 Created with the built-in ImageGen tool, matching the approved Freya pixel-art sheet. Full prompts: questgiver-art-prompts.json.

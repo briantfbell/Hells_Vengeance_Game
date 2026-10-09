@@ -1,3 +1,5 @@
+> Lore reconciliation update: see [LORE_ACCURACY_AUDIT.md](LORE_ACCURACY_AUDIT.md). Its source facts and chronological route supersede conflicting prototype descriptions below.
+
 # Night of Ashes playable chapter
 
 Open `../Night of Ashes.html`, or visit the local preview at http://127.0.0.1:52039/chapter while serve.cjs is running.

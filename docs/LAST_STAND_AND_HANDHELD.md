@@ -1,3 +1,5 @@
+> Lore reconciliation update: see [LORE_ACCURACY_AUDIT.md](LORE_ACCURACY_AUDIT.md). Its source facts and chronological route supersede conflicting prototype descriptions below.
+
 # Last Stand and handheld menus
 
 ## Playable scope
