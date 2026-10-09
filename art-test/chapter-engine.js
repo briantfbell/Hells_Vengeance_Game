@@ -5,6 +5,7 @@ const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jama
 const STATS={freya:{hp:38,ac:17,atk:6,dmg:[1,10,4]},jamal:{hp:30,ac:16,atk:7,dmg:[1,4,5]},jason:{hp:32,ac:15,atk:4,dmg:[1,8,2]},draymus:{hp:26,ac:13,atk:3,dmg:[1,4,1]},guapo:{hp:34,ac:15,atk:6,dmg:[1,6,3]},viggo:{hp:34,ac:14,atk:5,dmg:[1,8,2]},cultist:{hp:12,ac:12,atk:3,dmg:[1,6,0]}};
 const SPECIAL={freya:{name:'Challenge',uses:1,bonus:0,dmg:[1,10,5]},jamal:{name:'Sneak Attack',uses:2,dmg:[1,4,5]},jason:{name:'Burning Hands',uses:2,auto:true,dmg:[1,4,0]},draymus:{name:'Chill Touch',uses:3,dmg:[1,6,0]},guapo:{name:'Panache Thrust',uses:3,bonus:2,dmg:[1,6,5]}};
 const BASE_STATS=structuredClone(STATS),BASE_SPECIAL=structuredClone(SPECIAL);
+let inventory=Inventory.fresh();
 let progression=Progression.fresh(),levelOpen=false,levelResolve=null;
 const INTERACTION_RADIUS=56;
 const WEAPONS={freya:'katana',jamal:'dagger',jason:'mace',draymus:'dagger',guapo:'rapier'};
@@ -93,7 +94,7 @@ function updateObjective(){
  $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'Seven days to Remesiana.':scene==='street'?(quest.burned?'Board The Western Star before dawn.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
  $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The temple burns below. Get the party to the harbor.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
 }
-function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:2,scene,lead,quest,hp,uses,potions,mendUses,progression,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
+function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:2,scene,lead,quest,hp,uses,potions,mendUses,progression,inventory,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
 function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
  if(choices)choices.forEach((text,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+text;b.onclick=()=>finishDialog(i);$('choices').append(b);});
@@ -174,7 +175,7 @@ function reset(resume=false,selected=null){
  if(!resume&&!selected){showIntro();return;}
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=400;ctx.imageSmoothingEnabled=false;
  const saved=resume?readSave():null;quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
- progression=saved?.progression||Progression.fresh();applyProgression();
+ progression=saved?.progression||Progression.fresh();inventory=saved?.inventory||Inventory.fresh();applyProgression();
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
  const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();canvas.focus();
  if(!saved||quest.briefed===false)run(deliverOpeningMission);
@@ -191,7 +192,7 @@ async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
  await say('barzillai','Then be aboard The Western Star before dawn. You were never in this city.');
  await say(lead,'Understood. The scimitar, the rapier, then the ship.');
  briefingOpen=false;quest.briefed=true;await journeyCard('Kintargo · Night of Ashes','Two nights later, smoke drifts over the rooftops. Find the Silver Star, descend to Viggo’s temple, and carry out Barzillai’s orders before boarding The Western Star.',save);save();}
-function applyProgression(){for(const id of CORE){STATS[id]=Progression.stats(BASE_STATS[id],id,progression.levels[id]);SPECIAL[id]=Progression.skill(BASE_SPECIAL[id],progression.levels[id],id);}}
+function applyProgression(){for(const id of CORE){STATS[id]=Inventory.stats(Progression.stats(BASE_STATS[id],id,progression.levels[id]),inventory,id);SPECIAL[id]=Progression.skill(BASE_SPECIAL[id],progression.levels[id],id);if(id==='freya')SPECIAL[id].dmg[1]=STATS[id].dmg[1];WEAPONS[id]=Inventory.weapon(inventory,id).name;ATTACKS[id]=Inventory.weapon(inventory,id).verb;}}
 function cancelLevel(){const resolve=levelResolve;levelResolve=null;levelOpen=false;document.body.classList.remove('is-level');$('level-up').hidden=true;if(resolve)resolve();}
 $('level-continue').onclick=()=>{const resolve=levelResolve;levelResolve=null;if(resolve)resolve();};
 async function awardSermonMilestone(){
@@ -254,14 +255,14 @@ const signed=n=>(n>=0?'+':'−')+Math.abs(n);
 const rollSummary=spec=>spec[0]+'D'+spec[1]+(spec[2]?' '+signed(spec[2]):'');
 function commandSummary(action,id){
  const stat=STATS[id],skill=SPECIAL[id],hit='D20 '+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),remaining=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
- if(action==='attack'){const move={freya:'Katana slash',jamal:'Dagger lunge',jason:'Mace swing',draymus:'Dagger strike',guapo:'Rapier thrust'}[id];return 'Attack | '+move+' · Hit '+hit+' vs AC · Damage '+rollSummary(stat.dmg)+'.';}
+ if(action==='attack'){const move=Inventory.weapon(inventory,id).move;return 'Attack | '+move+' · Hit '+hit+' vs AC · Damage '+rollSummary(stat.dmg)+'.';}
  if(action==='special'){let effect='Damage '+rollSummary(skill.dmg);if(id==='jamal')effect+='; +1D6 if target already hit this round';if(skill.drain)effect+='; heal self by damage dealt';return 'Skill | '+skill.name+' ['+remaining+'/'+skill.uses+'] · '+(skill.auto?'Automatic hit':'Hit '+hit+' vs AC')+' · '+effect+'.';}
  if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+stat.ac+' → '+(stat.ac+4)+' until the next round. Uses this turn.';
  if(action==='potion')return 'Potion | '+NAMES[id]+' heals '+ally+' · Restore 2D4 +2 HP (up to max) · ['+potions+'/2].';
  if(action==='mend')return 'Mend | Infernal Mending · Jason heals '+ally+' for 2D8 +3 HP (up to max) · ['+mendUses+'/2].';
  if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
 }
-function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return ({freya:'Katana slash',jamal:'Dagger lunge',jason:'Mace swing',draymus:'Dagger strike',guapo:'Rapier thrust'})[id]+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return skill.name+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+stat.ac+' → '+(stat.ac+4)+'\nThis round';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
+function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return Inventory.weapon(inventory,id).move+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return skill.name+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+stat.ac+' → '+(stat.ac+4)+'\nThis round';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
 function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
@@ -318,7 +319,7 @@ async function performActionImpl(action){
  else{
   const skill=action==='special'?SPECIAL[actor.id]:null;if(skill)uses[actor.id]++;
   const bonus=STATS[actor.id].atk+(skill?.bonus||0),total=skill?.auto?null:await rollDice(NAMES[actor.id]+' · Attack',20,1,bonus,'AC '+STATS[target.id].ac),roll=total===null?null:total-bonus,hit=skill?.auto||roll===20||roll!==1&&total>=STATS[target.id].ac;
-  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true);hitTarget(actor,target,value);target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' at '+target.name+': '+value+' damage.'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' '+(skill?SKILL_TEXT[actor.id]:ATTACKS[actor.id])+' but misses '+target.name+' ('+roll+' + '+bonus+').'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}
+  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true);hitTarget(actor,target,value);target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' '+(skill?(actor.id==='freya'?'challenges the foe and cuts with her '+WEAPONS.freya:SKILL_TEXT[actor.id]):ATTACKS[actor.id])+' at '+target.name+': '+value+' damage.'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' '+(skill?(actor.id==='freya'?'challenges the foe and cuts with her '+WEAPONS.freya:SKILL_TEXT[actor.id]):ATTACKS[actor.id])+' but misses '+target.name+' ('+roll+' + '+bonus+').'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
  if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}

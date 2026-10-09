@@ -17,7 +17,7 @@ A new game opens the character-selection screen. Browse the full party artwork a
 - Arrows / WASD: move or select. Enter / E / Space: confirm. B / Escape: back or pause. P also opens pause. Shift runs during exploration.
 - Dialogue choices and character selection use the same direction and confirm controls.
 - Combat: select a command, confirm, select its enemy or healing target, then confirm. B cancels targeting. The current action and last two completed actions remain visible.
-- Pause: resume, party/equipment, four save slots, load, export/import, controls, or title screen. Saves and file transfers are unavailable during combat.
+- Pause: resume, party/equipment, inventory, four save slots, load, export/import, controls, or title screen. Saves and file transfers are unavailable during combat.
 - Exploration and combat share a fixed 640×400 logical screen (8:5), scaled uniformly to the available display. Mouse and touch remain supported.
 
 ## Included
@@ -66,3 +66,7 @@ Exploration now has a visible task overlay and context-correct quest markers; pu
 Continue from Fex’s audience into the Last Stand confrontation, Riley’s capture/interrogation, the empty hill investigation, and Bolgart’s wereboar transformation at the jail. Existing tavern, hill and NPC artwork is reused. Read docs/LAST_STAND_AND_HANDHELD.md for evidence, adaptation choices and controls. The party screen shows current weapons, combat numbers, health, remaining skills/potions and earned upgrades.
 
 A complete keyboard-only browser playthrough covered the opening mission through Chapter Four, including every battle and the four-decree counter. Save/load slots and party browsing were checked at 320×200; exploration/combat frame bounds were checked across four viewports. Portable progression saves and seven validation tests pass. Native hardware/gamepad and filesystem adapters still need a later packaging pass.
+
+## Inventory and equipment
+
+Press B/P → Inventory to inspect personal weapons, recovered gear, shared potions and mission items. Equip Viggo’s scimitar on Freya after the altar pickup, or switch back to her katana. Damage rolls and combat text follow the selected blade. Use healing potions on injured companions outside combat; the supply is shared with combat and saved immediately. Equipment changes are locked during fights. Existing saves migrate automatically. See docs/INVENTORY_AND_EQUIPMENT.md for rules, source limits and validation.

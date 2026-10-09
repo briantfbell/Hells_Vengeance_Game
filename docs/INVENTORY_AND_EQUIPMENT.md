@@ -1,0 +1,15 @@
+# Inventory and equipment
+
+Open Pause with B/P, choose Inventory, and use the direction buttons plus E/Enter to inspect items. Four items appear per page, with Previous/Next and Back. Weapon details show the compatible character, hit roll, prospective damage and current weapon. Equip saves immediately. Personal weapons stay in the bag when replaced; inspect Freya’s katana to switch back.
+
+Viggo’s scimitar appears only after the existing altar pickup. Freya can equip it: a 1D6 blade plus her existing +4 damage modifier, with her existing hit bonus. Challenge also uses the equipped weapon’s die while retaining its level damage bonus and resource limit. Equipment is locked during combat and for absent companions. Attack card names, summaries, damage dice, party details and completed-action text follow the selected weapon. The existing sword sprite/animation is reused; distinct scimitar artwork is a later combat-animation task.
+
+The scimitar’s recovery is established by the opening campaign adaptation. Its damage and Freya-only compatibility are prototype equipment rules, not recovered item enchantments or an exhaustive Pathfinder proficiency system. No magic bonus or historical equip decision is asserted. Existing personal gear remains as documented in FIXED_SCREEN_COMBAT_AND_ACCURACY.md. The mace and Draymus’s starting dagger remain provisional.
+
+Healing potions show their shared remaining stock. Choose a present injured companion to roll 2D4+2 and restore HP up to their maximum. Full-health or absent companions cannot consume a potion. A busy lock prevents double presses from spending another dose. Potion use saves health and stock immediately. Combat draws from the same potions variable; supply/rest events retain the existing two-potion refill behavior. The game’s existing healing-from-zero behavior is retained.
+
+The false-trail rapier is inspect-only until planted. The payroll box is inspect-only until delivered to Razelago, then disappears. These items follow existing story flags and cannot be sold, equipped or consumed. There is no shop/currency or speculative loot added in this pass.
+
+Equipment is saved in checkpoint.inventory (version 1, equipped map) alongside existing version-2 checkpoints. Old checkpoints without this field migrate to the original personal weapons; a prior scimitar pickup makes it available without automatically equipping it. Save validation rejects unowned or incompatible weapons, extra inventory fields and malformed data. Four slots and JSON export/import preserve equipped gear; use the updated build on the receiving device.
+
+Validation: ten Node tests pass, including old-save migration, portable equipment round trips, ownership/proficiency rejection and mission-item delivery rules. Browser checks covered the real Viggo encounter and altar pickup, keyboard pagination/equip, injury healing/full-health no-spend, double-confirm prevention, reload/export serialization, combat equipment lock and an actual 1D6+4 scimitar attack. The menu was inspected at 320×200. Existing progression/portable-save, offline startup and four fixed-screen viewport checks pass.
