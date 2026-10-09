@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains four playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains five playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -17,7 +17,7 @@ A new game opens the character-selection screen. Browse the full party artwork a
 - Arrows / WASD: move or select. Enter / E / Space: confirm. B / Escape: back or pause. P also opens pause. Shift runs during exploration.
 - Dialogue choices and character selection use the same direction and confirm controls.
 - Combat: select a command, confirm, select its enemy or healing target, then confirm. B cancels targeting. The current action and last two completed actions remain visible.
-- Pause: resume, party/equipment, inventory, four save slots, load, export/import, controls, or title screen. Saves and file transfers are unavailable during combat.
+- Pause: resume, party/equipment, inventory, four save slots, load, export/import, audio, controls, or title screen. Saves and file transfers are unavailable during combat.
 - Exploration and combat share a fixed 640×480 logical screen (4:3), scaled uniformly to the available display. Mouse and touch remain supported.
 
 ## Included
@@ -74,3 +74,9 @@ Press B/P → Inventory to inspect personal weapons, recovered gear, shared poti
 ## 640×480 game window
 
 The game now uses one 640×480 (4:3) surface across exploration, combat, character selection, dialogue, travel, progression and pause/inventory menus. Browser admin controls remain below the game. Current map artwork and walk coordinates stay at their original proportions with a 40-pixel vertical offset; independent backgrounds fill the additional space. Combat uses a 368-pixel battlefield and the same compact 112-pixel command dock. See docs/SCREEN_LAYOUT_640480.md.
+
+## Combat art, audio and Chapter Five
+
+Three-phase weapon/casting sprites accompany eight-frame Burning Hands, healing and Chill Touch effects. Freya displays her equipped katana or recovered scimitar. Reduced motion uses brief static effects. Pause → Audio cycles music/effect volumes and mute; preferences stay in this browser. Original temporary instrumental cues include three combat variations, ready to be replaced by campaign tracks.
+
+Chapter Five, Debts and Rumors, visits Gerya’s hospice and the church in an explicitly labeled earlier-day sequence, then returns to the present for Ingoe’s ten-gold weekly agreement. Completed Chapter Four saves can continue directly; the section replay menu also offers Chapter Five. No additional advancement is inferred. See docs/COMBAT_AUDIO_AND_DEBTS.md.

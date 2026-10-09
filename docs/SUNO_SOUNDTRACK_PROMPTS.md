@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Suno soundtrack prompt book
 
-Copy one complete prompt below into Suno for each cue. Use the available instrumental setting as well as the wording; leave lyrics empty. This is a production prompt list, not generated audio or an installed music system.
+Copy one complete prompt below into Suno for each cue. Use the available instrumental setting as well as the wording; leave lyrics empty. This is a production prompt list; its Suno tracks have not been generated or installed. The game now has an audio system with temporary original cues, volume controls, and file hooks. See COMBAT_AUDIO_AND_DEBTS.md.
 
 The sound is dark chamber/orchestral fantasy with a restrained retro accent: roughly 90% acoustic/orchestral character and 10% chiptune color as an artistic target. No vocals, choir, humming, narration or spoken samples. Avoid modern EDM drops, overpowering sub-bass, long intros and incessant maximum-volume percussion. The player party serves an infernal regime; victory should sound proud, threatening or complicated rather than automatically righteous.
 

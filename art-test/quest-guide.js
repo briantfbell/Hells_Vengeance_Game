@@ -1,4 +1,5 @@
 window.QuestGuide={current(){
+ if(DebtsRumors.goal())return {text:DebtsRumors.goal(),target:DebtsRumors.target()};
  if(LastStand.goal())return {text:LastStand.goal(),target:LastStand.target()};
  const result=(text,id)=>({text,target:id?(visiblePoints().find(p=>p.id===id)||point(id)):null});
  if(quest.chapter3){
