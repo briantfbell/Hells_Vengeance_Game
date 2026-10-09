@@ -44,14 +44,15 @@ function point(id){return scenes[scene].points.find(p=>p.id===id);}
 function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&(quest.chapter3?window.NextArc.npcs():window.NextChapter.npcs()).some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
 function passable(gx,gy,which=scene){if(gx<0||gy<0||gx>=COLS||gy>=ROWS)return false;const x=gx*T+8,y=gy*T+8,s=scenes[which];return s.walk.some(r=>inside(x,y,r))&&!s.blocks.some(r=>inside(x,y,r))&&!actorBlocking(x,y,which);}
 function findPath(from,to,which=scene){if(!passable(...from,which)||!passable(...to,which))return null;const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
-function partyRoster(){return quest.activeRoster||CORE;}
+function soloScout(){return scene==='tannery'&&!quest.scouted;}
+function partyRoster(){return soloScout()?['jamal']:(quest.activeRoster||CORE);}
 function finished(){return !!quest.chapter3Complete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
- units=[lead,...partyRoster().filter(id=>id!==lead)].map((id,i)=>{const c=trail[Math.min(i*2,trail.length-1)];return {id,x:c[0]*T+8,y:c[1]*T+8,dir,step:null,anim:0};});path=[];keys.clear();
+ const front=soloScout()?'jamal':lead;units=[front,...partyRoster().filter(id=>id!==front)].map((id,i)=>{const c=trail[Math.min(i*2,trail.length-1)];return {id,x:c[0]*T+8,y:c[1]*T+8,dir,step:null,anim:0};});path=[];keys.clear();
 }
-function setScene(next,x,y,dir='up'){$('dice-panel').hidden=true;scene=next;seedParty(x,y,dir);buildFlicker();$('location-name').textContent=scenes[next].name;updateObjective();paintParty();save();}
+function setScene(next,x,y,dir='up'){$('dice-panel').hidden=true;scene=next;if(soloScout()){x=136;y=280;dir='right';}seedParty(x,y,dir);buildFlicker();$('location-name').textContent=scenes[next].name;updateObjective();paintParty();$('character').disabled=soloScout();save();}
 const JOURNEYS={
  street:'Return to Kintargo’s streets. Keep the operation quiet and follow the route to the next objective.',
  tavern:'Inside the Silver Star, the party follows the trail of the hidden temple. Keep the alarm silent.',
@@ -68,7 +69,7 @@ const JOURNEYS={
 function cancelJourney(){const resolve=journeyResolve;journeyResolve=null;journeyOpen=false;$('journey').hidden=true;$('journey').classList.remove('visible');$('journey-continue').disabled=true;if(resolve)resolve();}
 async function journeyCard(title,summary,commit=()=>{}){
  const token=epoch,panel=$('journey'),button=$('journey-continue');journeyOpen=true;keys.clear();path=[];$('prompt').hidden=true;$('dice-panel').hidden=true;
- $('journey-title').textContent=title;$('journey-summary').textContent=summary;button.disabled=true;panel.hidden=false;panel.classList.remove('visible');panel.getBoundingClientRect();panel.classList.add('visible');
+ $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/([.!?])\s+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.remove('visible');panel.getBoundingClientRect();panel.classList.add('visible');
  await delay(reduce.matches?0:280);if(token!==epoch)throw CANCEL;
  commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
  button.disabled=true;panel.classList.remove('visible');await delay(reduce.matches?0:280);if(token!==epoch)throw CANCEL;
@@ -112,7 +113,7 @@ function paintPortrait(name){
 }
 function syncBattleView(){const on=!!battle;document.body.classList.toggle('is-combat',on);}
 function battlefieldHeight(){return 288;}
-function battlePosition(actor){const i=units.indexOf(actor);if(i>=0){const floor=battlefieldHeight()-46,places=[[60,floor-1],[140,floor-14],[220,floor],[300,floor-15],[380,floor-2]];return {x:places[i][0],y:places[i][1],height:activeUnit()===actor?90:80};}const iEnemy=battle?.enemies.indexOf(actor)??0,places=battle.enemies.length===4?[[395,133],[515,129],[455,219],[575,208]]:[[385,145],[480,158],[575,142]];const p=places[Math.max(0,iEnemy)]||places[0];const height=actor.id==='viggo'?76:63;return {x:p[0],y:Math.max(height+39,Math.round(p[1]*battlefieldHeight()/355)),height};}
+function battlePosition(actor){const i=units.indexOf(actor);if(i>=0){const floor=battlefieldHeight()-46,places=[[60,floor-1],[140,floor-14],[220,floor],[300,floor-15],[380,floor-2]];return {x:places[i][0],y:places[i][1],height:activeUnit()===actor?90:80};}const iEnemy=battle?.enemies.indexOf(actor)??0,places=battle.enemies.length===4?[[347,133],[499,129],[423,219],[575,208]]:[[353,145],[464,158],[575,142]];const p=places[Math.max(0,iEnemy)]||places[0];const height=actor.id==='viggo'?76:63;return {x:p[0],y:Math.max(height+39,Math.round(p[1]*battlefieldHeight()/355)),height};}
 function healthBadge(x,y,w,name,value,max,selected=false,enemy=false){
  ctx.save();ctx.fillStyle='#131922ed';ctx.strokeStyle=selected?'#e4c581':'#766343';ctx.lineWidth=selected?2:1;ctx.beginPath();ctx.moveTo(x-w/2+5,y);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w/2,y+27);ctx.lineTo(x-w/2,y+27);ctx.lineTo(x-w/2,y+5);ctx.closePath();ctx.fill();ctx.stroke();
  ctx.textAlign='left';ctx.font='bold 11px Georgia';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';ctx.fillText(name,x-w/2+6,y+10,w-12);
@@ -142,11 +143,10 @@ function drawCombatBackdrop(t){
 }
 function renderBattle(t){
  const field=battlefieldHeight();drawCombatBackdrop(t);
- const platform=(x,y,rx,ry)=>{ctx.fillStyle='#a9a18512';ctx.beginPath();ctx.ellipse(x,y,rx,ry,-.08,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#dccb8b25';ctx.stroke();};platform(485,185,140,70);platform(210,field-52,210,24);
  for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,88,enemy.name,enemy.hp,enemy.max,battle.enemies[battle.target]===enemy,true);}
 
  const ordered=units.map(u=>({u,v:battlePosition(u)})).sort((a,b)=>a.v.y-b.v.y);
- for(const {u,v} of ordered){if(activeUnit()===u){ctx.strokeStyle='#e4c379';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(v.x,v.y+2,31,7,0,0,Math.PI*2);ctx.stroke();}if(!drawCombatIdle(ctx,u,v,t))drawActor(ctx,{...u,x:v.x,y:v.y,dir:'up',step:null},v.height);healthBadge(v.x,v.y+7,76,NAMES[u.id],hp[u.id],STATS[u.id].hp,activeUnit()===u||battle.ally===u.id);}
+ for(const {u,v} of ordered){if(!drawCombatIdle(ctx,u,v,t))drawActor(ctx,{...u,x:v.x,y:v.y,dir:'up',step:null},v.height);healthBadge(v.x,v.y+7,76,NAMES[u.id],hp[u.id],STATS[u.id].hp,activeUnit()===u||battle.ally===u.id);}
  renderAction();
  for(const f of fx){ctx.font='bold 15px monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#111';ctx.fillStyle=f.color;ctx.strokeText(f.text,f.x,f.y-(.9-f.life)*15);ctx.fillText(f.text,f.x,f.y-(.9-f.life)*15);}
  $('prompt').hidden=true;
@@ -199,28 +199,29 @@ async function awardSermonMilestone(){
  $('level-up').hidden=false;$('level-continue').focus();await new Promise(resolve=>levelResolve=resolve);if(token!==epoch)throw CANCEL;$('level-up').hidden=true;levelOpen=false;document.body.classList.remove('is-level');canvas.height=400;ctx.imageSmoothingEnabled=false;keys.clear();canvas.focus();save();return true;
 }
 function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
-function visiblePoints(){if(quest.chapter2Complete&&!quest.chapter3)return [{id:'chapterThree',x:328,y:160,label:'Continue to Chapter Three'}];if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>(p.id!=='longacreRoad'||quest.chapter3)&&!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]);}
+function visiblePoints(){if(soloScout())return [point('scout')];if(quest.chapter2Complete&&!quest.chapter3)return [{id:'chapterThree',x:328,y:160,label:'Continue to Chapter Three'}];if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>(p.id!=='longacreRoad'||quest.chapter3)&&!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]).concat(townsfolk().map(u=>({id:u.id,x:u.x,y:u.y,label:'Speak to a townsfolk'})));}
 function nearPoint(){if(!units[0])return null;return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
 async function interact(requestedId=null){
  if(introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;
  run(async()=>{
+  if(p.id.startsWith('citizen-')){await say('Townsfolk',citizenLine(p.id));return;}
   if(await window.NextArc.interact(p.id)||await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){await travel('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','The room is empty. Somewhere under the floorboards, chanting rises through the wood.');save();}}
   if(p.id==='outside'){await travel('street',152,152,'down');}
   if(p.id==='upstairs'){await travel('tavern',536,152,'down');}
   if(p.id==='guard'){await say('Dottari Guard',quest.burned?'The Western Star sails on the tide. Nobody is checking papers tonight.':'Fires on the north bank. Every Dottari in the city is up there. Keep off the streets.');if(!quest.burned)await say('Dottari Guard','...Unless you are who I think you are. Then I saw nothing.');}
   if(p.id==='ship'){if(!quest.burned){await say('The Western Star','The temple is unfinished business. Barzillai expects a false trail before you leave Kintargo.');return;}await say('The Western Star','The Western Star clears the harbor. Kintargo glows orange on the horizon, then fades.');await say('guapo','So. The Night of Ashes. I have been in worse nights, but never in one somebody else paid for.');quest.done=true;save();updateObjective();await say('Chapter complete','Seven days to Remesiana. From there, the road to Longacre, and a man named Archbaron Fex.');}
-  if(p.id==='barkeep'){await say('Barkeep','We are closed. The fires. Go home.');const choice=await say(null,'The barkeep waits.',['Leave him.','The cellar?','[Intimidation] Tell me, or burn with it.']);if(choice===0){await say('Barkeep','...Please.');}if(choice===1){await say('Barkeep','There is no cellar.');await say(null,'His eyes go to the far corner of the room.');quest.stairsKnown=true;}if(choice===2){if(quest.ropeCut||quest.bell){await say('Barkeep','I already told you everything.');return;}const mod={freya:4,jamal:1,jason:3,draymus:2,guapo:3}[lead],total=await rollDice('Intimidation',20,1,mod,'DC 10');await say('Intimidation',total>=10?'Success. The barkeep gives way.':'Failed. The barkeep reaches for the alarm.');if(total>=10){quest.ropeCut=true;await say('Barkeep','The bell rope. By the stairs in the corner. Cut it or they will hear you coming.');await say(null,'You cut the rope. Whatever is below will not be warned.');}else{quest.bell=true;await say(null,'He screams. Somewhere beneath the floor, a bell answers.');}}save();}
-  if(p.id==='rope'){if(quest.ropeCut){await say(null,'The severed bell rope hangs loose. Below, the chanting continues.');}else if(quest.bell){await say(null,'The bell has already sounded. Whoever is below knows you are coming.');}else{await say(null,'A bell rope, by the cellar stairs.');const c=await say(null,'Cut the rope before descending?',['Cut it.','Leave it.']);if(c===0){quest.ropeCut=true;await say(null,'You cut the rope. Whatever is below will not be warned.');save();}}}
+  if(p.id==='barkeep'){await say('Barkeep','We are closed. The fires. Go home.');const choice=await say(null,'The barkeep waits.',['[Leave the barkeep alone]','[Ask about the cellar]','[Threaten the barkeep] Tell me, or burn with it.']);if(choice===0){await say('Barkeep','...Please.');}if(choice===1){await say('Barkeep','There is no cellar.');await say(null,'His eyes go to the far corner of the room.');quest.stairsKnown=true;}if(choice===2){if(quest.ropeCut||quest.bell){await say('Barkeep','I already told you everything.');return;}const mod={freya:4,jamal:1,jason:3,draymus:2,guapo:3}[lead],total=await rollDice('Intimidation',20,1,mod,'DC 10');await say('Intimidation',total>=10?'Success. The barkeep gives way.':'Failed. The barkeep reaches for the alarm.');if(total>=10){quest.ropeCut=true;await say('Barkeep','The bell rope. By the stairs in the corner. Cut it or they will hear you coming.');await say(null,'You cut the rope. Whatever is below will not be warned.');}else{quest.bell=true;await say(null,'He screams. Somewhere beneath the floor, a bell answers.');}}save();}
+  if(p.id==='rope'){if(quest.ropeCut){await say(null,'The severed bell rope hangs loose. Below, the chanting continues.');}else if(quest.bell){await say(null,'The bell has already sounded. Whoever is below knows you are coming.');}else{await say(null,'A bell rope, by the cellar stairs.');const c=await say(null,'Cut the rope before descending?',['[Cut the bell rope]','[Leave the rope intact]']);if(c===0){quest.ropeCut=true;await say(null,'You cut the rope. Whatever is below will not be warned.');save();}}}
   if(p.id==='stairs'){await say(null,'A trapdoor, and stairs. Chanting rises from below.');await travel('temple',312,312);if(!quest.victory)await say(null,'A hidden temple. Candles, an altar, and a man in robes'+(quest.ropeCut?' still absorbed in prayer.':' who has heard you coming.'));}
   if(p.id==='altar')await encounter();
-  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Whoever finds this room will look for a swordsman who was never here.');}else{const c=await say(null,'Nothing about tonight is undecided.',['Burn it.','Burn it anyway.']);quest.burned=true;await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await travel('tavern',312,280,'down');}save();}
+  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Whoever finds this room will look for a swordsman who was never here.');}else{const c=await say(null,'Nothing about tonight is undecided.',['[Set the temple ablaze]','[Carry out the order to burn the temple]']);quest.burned=true;await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await travel('tavern',312,280,'down');}save();}
  });
 }
 async function encounter(){
  await say('viggo','You walk into a holy place with drawn steel. Then you are what the fires are for.');
  await say('viggo','The Silver Star will not kneel to Thrune.');
- const c=await say(null,'Your answer?',['It will.','[Intimidation] Everything kneels, eventually.','Kneel.']);
+ const c=await say(null,'Your answer?',['“It will.”','[Intimidate Viggo] Everything kneels, eventually.','[Kneel before Viggo]']);
  if(c===2){await say(null,'You kneel. Viggo smiles, and the knife is already in his hand.');await fail('You knelt to the Silver Star. The crown does not record failures.');return;}
  let shaken=false,surprise=false;
  if(c===1){const mod={freya:4,jamal:1,jason:3,draymus:2,guapo:3}[lead],total=await rollDice('Intimidation',20,1,mod,'DC 12');await say('Intimidation',total>=12?'Success. Viggo’s resolve falters.':'Failed. Viggo stands firm.');shaken=total>=12;surprise=!shaken;await say(shaken?null:'viggo',shaken?'Viggo flinches. His hands are shaking. He will fight worse for it.':'Then kneel to this.');}
@@ -258,14 +259,12 @@ function commandSummary(action,id){
  if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
 }
 function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return ({freya:'Katana slash',jamal:'Dagger lunge',jason:'Mace swing',draymus:'Dagger strike',guapo:'Rapier thrust'})[id]+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return skill.name+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+stat.ac+' → '+(stat.ac+4)+'\nThis round';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
-function previewCommand(action,id){if(!battle||battle.busy||activeUnit()?.id!==id)return;$('battle-message').classList.add('command-preview');showCombatMessage(commandSummary(action,id));}
-function clearCommandPreview(){if(!battle||battle.busy)return;$('battle-message').classList.remove('command-preview');showCombatMessage(battle.current||'Choose a command.');}
 function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
  if(c?.mode==='enemy'||c?.mode==='ally'){
   $('battle-title').textContent=(c.mode==='enemy'?'Choose enemy':'Choose ally')+' · E: confirm · B: back';
-  const name=c.mode==='enemy'?battle.enemies[battle.target]?.name:NAMES[battle.ally];showCombatMessage(commandSummary(c.action,activeUnit().id)+' Target: '+name+'.');canvas.focus({preventScroll:true});
+  canvas.focus({preventScroll:true});
  }
 }
 function beginCombatChoice(action){
@@ -302,7 +301,7 @@ function paintBattle(){
  if(actor.id==='jason')commands.splice(2,0,['mend','Mending ('+mendUses+')']);
  if(actor.id==='jamal')commands.splice(2,0,['smoke','Smoke Bomb']);
  $('actions').classList.toggle('has-aux',commands.length>4);
- commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE'})[action];subtitle.textContent=commandCardSummary(action,actor.id);b.append(title,subtitle);b.dataset.action=action;b.onfocus=()=>{if(battle.control.mode==='commands'){battle.control.index=i;paintCombatSelection();previewCommand(action,actor.id);}};b.onpointerenter=()=>{if(battle.control.mode==='commands')previewCommand(action,actor.id);};b.onblur=b.onpointerleave=clearCommandPreview;b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
+ commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE'})[action];subtitle.textContent=commandCardSummary(action,actor.id);b.append(title,subtitle);b.dataset.action=action;b.onfocus=()=>{if(battle.control.mode==='commands'){battle.control.index=i;paintCombatSelection();}};b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed);b.onclick=()=>performAction(action);$('actions').append(b);});
  paintParty();const buttons=combatButtons();if(buttons[battle.control.index]?.disabled)battle.control.index=Math.max(0,buttons.findIndex(b=>!b.disabled));paintCombatSelection();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
@@ -329,11 +328,11 @@ async function performActionImpl(action){
 }
 async function enemyStrike(enemy,token){const live=units.filter(u=>hp[u.id]>0);if(!live.length)return;const target=live[Math.floor(Math.random()*live.length)],penalty=(battle.smoke?4:0)+(enemy.shaken?2:0),bonus=STATS[enemy.id].atk-penalty,total=await rollDice(enemy.name+' → '+NAMES[target.id],20,1,bonus,'AC '+(STATS[target.id].ac+(target.guard?4:0))),roll=total-bonus;
  if(roll===20||roll!==1&&roll+STATS[enemy.id].atk-penalty>=STATS[target.id].ac+(target.guard?4:0)){const value=await damage(STATS[enemy.id].dmg,enemy.name+' · Damage');await animateAction(enemy,target,'attack',true);hp[target.id]=Math.max(0,hp[target.id]-value);enemy.lunge=.22;flash(target,'−'+value,'#ee9a88');log(enemy.name+' hits '+NAMES[target.id]+' for '+value+'.');}else{await animateAction(enemy,target,'attack',false);flash(target,'MISS','#bfc1d1');log(enemy.name+' misses '+NAMES[target.id]+'.');}paintParty();await delay(220);if(token!==epoch)return;}
-async function fail(text){await say('Defeat',text);const c=await say(null,'Return to the last checkpoint?',['Retry encounter.','Restart chapter.']);if(c===0)reset(true);else reset();}
+async function fail(text){await say('Defeat',text);const c=await say(null,'Return to the last checkpoint?',['[Retry the encounter]','[Restart the chapter]']);if(c===0)reset(true);else reset();}
 function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=gy*T+8,dx=tx-u.x,dy=ty-u.y;u.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';u.step={sx:u.x,sy:u.y,tx,ty,p:0};return true;}
 function advance(u,dt,speed){if(!u.step)return false;u.step.p=Math.min(1,u.step.p+dt*speed);u.x=u.step.sx+(u.step.tx-u.step.sx)*u.step.p;u.y=u.step.sy+(u.step.ty-u.step.sy)*u.step.p;u.anim+=dt;if(u.step.p>=1){u.x=u.step.tx;u.y=u.step.ty;u.step=null;return true;}return false;}
 function walkTo(gx,gy){if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
-function update(dt){if($('save-import-dialog').open)return;
+function update(dt){if($('save-import-dialog').open)return;if(ready&&!introOpen&&!journeyOpen&&!levelOpen&&!briefingOpen&&!dialogOpen&&!taskBusy&&!battle)updateCitizens(dt);
  for(const u of units){u.flash=Math.max(0,(u.flash||0)-dt);u.lunge=Math.max(0,(u.lunge||0)-dt);}for(const e of battle?.enemies||[]){e.flash=Math.max(0,(e.flash||0)-dt);e.lunge=Math.max(0,(e.lunge||0)-dt);}
  fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;
  const u=units[0],speed=keys.has('run')?8:5;
@@ -350,6 +349,7 @@ function drawActor(g,u,height=55){
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
 function drawNPC(u){
+ if(u.id.startsWith('citizen-')){drawCitizen(u);return;}
  if(window.NextArc.drawNPC(u))return;
  if(window.NextChapter.drawNPC(u))return;
  if(u.id==='guard'){const im=art.guard;ctx.drawImage(im,u.x-17,u.y-54,34,56);return;}
@@ -367,7 +367,7 @@ function render(t){
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
  if(path.length){ctx.fillStyle='#d9b86a77';path.forEach(([x,y])=>ctx.fillRect(x*T+7,y*T+7,2,2));}
  const npcs=quest.chapter3?window.NextArc.npcs():quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}];
- const drawables=[...units.filter(u=>!battle||hp[u.id]>0),...npcs].sort((a,b)=>a.y-b.y);
+ const drawables=[...units.filter(u=>!battle||hp[u.id]>0),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
  for(const u of drawables){if(CORE.includes(u.id))drawActor(ctx,u);else drawNPC(u);}
  const guide=QuestGuide.current();if($('quest-task-text').textContent!==guide.text)$('quest-task-text').textContent=guide.text;
  if(!finished()&&guide.target){const rawTarget=guide.target,speaker=({sermon:'allamar',razelago:'razelago',fexAudience:'fex',jailDecree:'rhona',owner:'owner',cimri:'cimri',guard:'guard',barkeep:'cultist',altar:'viggo'})[rawTarget.id],actor=npcs.find(n=>n.id===speaker),target=actor?{x:actor.x,y:actor.y-(speaker==='fex'?62:55)+41}:rawTarget,lift=reduce.matches?0:Math.round(Math.sin(t*2.5)*2),y=target.y-53+lift;ctx.save();ctx.globalAlpha=.8;ctx.fillStyle='#f2cf7e';ctx.strokeStyle='#31202a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(target.x,y-9);ctx.lineTo(target.x+9,y);ctx.lineTo(target.x,y+10);ctx.lineTo(target.x-9,y);ctx.closePath();ctx.fill();ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle='#492a2a';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.beginPath();ctx.moveTo(target.x,y-5);ctx.lineTo(target.x+4,y);ctx.lineTo(target.x,y+5);ctx.lineTo(target.x-4,y);ctx.closePath();ctx.fill();ctx.restore();}
@@ -398,12 +398,60 @@ document.addEventListener('keydown',e=>{if($('save-import-dialog').open)return;
 document.addEventListener('keyup',e=>keys.delete(KEY[e.key]));window.addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{keys.clear();last=0;});
 document.querySelectorAll('[data-dir]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(!dialogOpen&&!battle&&!taskBusy)keys.add(b.dataset.dir);};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>keys.delete(b.dataset.dir));});
 canvas.onpointerdown=e=>{if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||finished())return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*canvas.height/r.height;if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<INTERACTION_RADIUS&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<INTERACTION_RADIUS)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
+const citizenCache=new Map(),CITIZEN_FRAMES=[{"frames":[{"x":96,"y":27,"w":137,"h":256},{"x":96,"y":307,"w":136,"h":260},{"x":96,"y":582,"w":137,"h":255},{"x":95,"y":852,"w":141,"h":247},{"x":120,"y":1113,"w":89,"h":259}],"maxHeight":260},{"frames":[{"x":365,"y":30,"w":117,"h":254},{"x":370,"y":306,"w":116,"h":261},{"x":367,"y":580,"w":118,"h":259},{"x":369,"y":854,"w":114,"h":247},{"x":370,"y":1118,"w":102,"h":254}],"maxHeight":261},{"frames":[{"x":623,"y":23,"w":129,"h":261},{"x":620,"y":300,"w":131,"h":270},{"x":624,"y":578,"w":133,"h":261},{"x":625,"y":851,"w":130,"h":257},{"x":644,"y":1113,"w":82,"h":263}],"maxHeight":270},{"frames":[{"x":896,"y":32,"w":118,"h":251},{"x":897,"y":310,"w":118,"h":259},{"x":899,"y":584,"w":124,"h":255},{"x":902,"y":854,"w":114,"h":247},{"x":903,"y":1119,"w":99,"h":253}],"maxHeight":259}];
+function townsfolk(){
+ const plans={street:[[384,184],[424,184]],remesiana:[[280,184],[328,216],[168,232]],longacre_jail:[[232,280],[440,296]],longacre_square:quest.sermonDispersed?[[200,280],[472,312],[376,296]]:[[192,224],[240,232],[288,248],[344,248],[392,232],[448,224],[208,280],[424,288]]};
+ if(!plans[scene])return [];const key=scene+':'+(scene==='longacre_square'&&!quest.sermonDispersed?'crowd':'quiet');
+ if(!citizenCache.has(key))citizenCache.set(key,plans[scene].map(([x,y],i)=>({id:'citizen-'+scene+'-'+i,x,y,homeX:x,homeY:y,dir:key.endsWith('crowd')?'up':'down',variant:i%4,crowd:key.endsWith('crowd'),wait:6+i*2,step:null,anim:0})));
+ return citizenCache.get(key);
+}
+function citizenLine(id){
+ const i=Number(id.split('-').at(-1))||0;
+ const lines=scene==='street'?['Keep your head down. The guards have enough trouble tonight.','I saw smoke across the river. I’m going home.']:scene==='remesiana'?['Ships bring news from everywhere. Most of it is bad.','Mind your purse in the market.','The tide will turn before evening.']:scene==='longacre_square'&&!quest.sermonDispersed?['Quiet, please. Allamar is speaking.','I came to hear what she has to say.','That helm has everyone talking.']:['I have work to finish. I don’t want trouble.','Things were quieter before all these orders.','Best keep moving.'];
+ return lines[i%lines.length];
+}
+function updateCitizens(dt){for(const u of townsfolk()){
+ if(u.crowd||reduce.matches)continue;
+ if(u.step){u.anim+=dt;const st=u.step;st.progress=Math.min(1,st.progress+dt/3);u.x=st.sx+(st.tx-st.sx)*st.progress;u.y=st.sy+(st.ty-st.sy)*st.progress;if(st.progress===1){u.step=null;u.wait=9+u.variant*3;}continue;}
+ u.wait-=dt;if(u.wait>0)continue;u.wait=8;
+ const options=u.x!==u.homeX||u.y!==u.homeY?[[u.homeX,u.homeY]]:[[u.x+16,u.y],[u.x-16,u.y],[u.x,u.y+16],[u.x,u.y-16]];
+ const dest=options.find(([x,y])=>passable(...cell(x,y))&&visiblePoints().filter(p=>!p.id.startsWith('citizen-')).every(p=>Math.hypot(x-p.x,y-p.y)>36)&&units.every(p=>Math.hypot(x-p.x,y-p.y)>24));
+ if(dest){u.dir=dest[0]>u.x?'right':dest[0]<u.x?'left':dest[1]<u.y?'up':'down';u.step={sx:u.x,sy:u.y,tx:dest[0],ty:dest[1],progress:0};}
+}}
+function drawCitizen(u){
+ if(!art.citizens)return;const meta=CITIZEN_FRAMES[u.variant],row=u.dir==='up'?3:['left','right'].includes(u.dir)?4:u.step?1+Math.floor(u.anim*2)%2:0,f=meta.frames[row],scale=43/meta.maxHeight;
+ ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(u.x),Math.round(u.y));if(u.dir==='left')ctx.scale(-1,1);ctx.drawImage(art.citizens,f.x,f.y,f.w,f.h,Math.round(-f.w*scale/2),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));ctx.restore();
+}
+const REPLAY_BACKUP=SAVE+'-before-section-replay';
+function replaySections(){
+ const q={briefed:false},list=[];
+ const add=(id,name,map,position,flags='')=>{for(const k of flags.split(' ').filter(Boolean))q[k]=true;list.push({id,name,scene:map,position,quest:structuredClone(q)});};
+ add('mission','01 · Barzillai’s mission','street',[312,248]);q.briefed=true;
+ add('streets','02 · Kintargo streets','street',[312,248]);add('tavern','03 · The Silver Star','tavern',[312,280],'entered');add('temple','04 · Viggo’s temple','temple',[312,312],'ropeCut');
+ add('ship','05 · The Western Star','western_star',[360,248],'victory scimitar planted burned done chapter2');add('market','06 · Remesiana harbor','remesiana',[520,280]);
+ add('tannery','07 · J’Mal scouts the tannery','tannery',[136,280],'supplied metCimri guapoAway');q.activeRoster=CORE.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
+ add('employer','08 · Ash House employer','ash_house',[328,328],'scouted ownerDeal payroll');q.goldReward=100;add('rest','09 · Rest at Ash House','ash_house',[328,296],'reward');add('bath','10 · The upstairs bath','bathroom',[328,328],'rested');
+ add('sermon','11 · Allamar’s sermon','longacre_square',[328,296],'bathStarted jamalRescued spiritCalmed chapter2Complete chapter3');
+ add('decrees','12 · Posting the decrees','ash_house',[328,296],'sermonDispersed decreesIssued');add('dismissal','13 · Rhona’s dismissal','longacre_jail',[328,312],'noticePosted tavernPosted gatePosted');add('ambush','14 · Former deputies’ ambush','longacre_jail',[328,312],'jailPosted rhonaDismissed');
+ add('compact','15 · The Hellfire Compact','scarlet_manor',[328,312],'deputiesDefeated deputiesReported');return list;
+}
+function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
+function installSectionReplay(){
+ for(const section of replaySections()){const o=document.createElement('option');o.value=section.id;o.textContent=section.name;$('section-replay').append(o);}
+ $('section-restore').hidden=!localStorage.getItem(REPLAY_BACKUP);
+ $('section-go').onclick=()=>{if(!replayAllowed()){$('save-file-status').textContent='Finish the conversation, journey or fight before replaying a section.';return;}
+ const section=replaySections().find(x=>x.id===$('section-replay').value),q=section.quest,p=Progression.migrate(q),chosen=q.guapoAway&&lead==='guapo'?'freya':lead;
+ const checkpoint=SaveFiles.validate({version:2,scene:section.scene,position:{x:section.position[0],y:section.position[1]},lead:chosen,quest:q,progression:p,hp:Object.fromEntries(CORE.map(id=>[id,Progression.stats(BASE_STATS[id],id,p.levels[id]).hp])),uses:Object.fromEntries(CORE.map(id=>[id,0])),potions:2,mendUses:2});
+ save();if(!localStorage.getItem(REPLAY_BACKUP))localStorage.setItem(REPLAY_BACKUP,localStorage.getItem(SAVE));localStorage.setItem(SAVE,JSON.stringify(checkpoint));reset(true);$('section-restore').hidden=false;$('save-file-status').textContent='Replaying '+section.name+'. Your previous progress is preserved.';
+ };
+ $('section-restore').onclick=()=>{if(!replayAllowed()){$('save-file-status').textContent='Finish the current conversation or fight first.';return;}const raw=localStorage.getItem(REPLAY_BACKUP);if(!raw)return;SaveFiles.decode(raw);localStorage.setItem(SAVE,raw);localStorage.removeItem(REPLAY_BACKUP);reset(true);$('section-restore').hidden=true;$('save-file-status').textContent='Your previous progress is restored.';};
+}
 function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
 async function load(){
- try{const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all([...new Set(Object.values(window.COMBAT_IDLES).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));await Promise.all(['reese','bruce'].map(async id=>art[id+'-portrait']=await imageLoad(id+'-foundry-portrait.webp')));ready=true;$('loading').hidden=true;reset(!!readSave());}
+ try{art.citizens=await imageLoad('townsfolk-sheet-v1.png');const values=await Promise.all(['kintargo-map.png','chapter-tavern.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all([...new Set(Object.values(window.COMBAT_IDLES).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));await Promise.all(['reese','bruce'].map(async id=>art[id+'-portrait']=await imageLoad(id+'-foundry-portrait.webp')));ready=true;$('loading').hidden=true;reset(!!readSave());}
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;
 function loop(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;update(dt);render(now/1000);requestAnimationFrame(loop);}
 window.__chapter={state:()=>({ready,introOpen,briefingOpen,journeyOpen,levelOpen,progression:structuredClone(progression),scene,lead,quest:{...quest},hp:{...hp},potions,uses:{...uses},mendUses,interaction:nearPoint()?.id,guide:window.QuestGuide.current(),dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
-window.NextChapter.install();window.NextArc.install();window.SaveFiles.install({scenes,core:CORE,stats:BASE_STATS,special:BASE_SPECIAL,names:NAMES,key:SAVE,read:readSave,capture:save,safeToCapture:()=>ready&&!introOpen&&!battle&&!dialogOpen&&!taskBusy,canImport:()=>ready&&!battle&&!dialogOpen&&!taskBusy,resume:()=>reset(true)});load();requestAnimationFrame(loop);
+window.NextChapter.install();window.NextArc.install();window.SaveFiles.install({scenes,core:CORE,stats:BASE_STATS,special:BASE_SPECIAL,names:NAMES,key:SAVE,read:readSave,capture:save,safeToCapture:()=>ready&&!introOpen&&!battle&&!dialogOpen&&!taskBusy,canImport:()=>ready&&!battle&&!dialogOpen&&!taskBusy,resume:()=>reset(true)});installSectionReplay();load();requestAnimationFrame(loop);
