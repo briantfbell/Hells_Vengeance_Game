@@ -9,3 +9,27 @@ Current world artwork, walk geometry, path cells, lights and saved positions sti
 Intro, dialogue, journey, level-up and pause/inventory overlays use the full stage. No mode changes the canvas height to 400. Sprite gallery/map studio canvases are separate tools and retain their asset-preview dimensions.
 
 Validation: stage/canvas bounds and all combat command cards checked at 320×240, 640×480, 800×480 and 1440×1000 host viewports. Intro, briefing, dialogue, travel, pause, inventory and real level-up retain identical stage bounds. Exploration clicks target the shifted map correctly. Existing saves decode without coordinate migration. Inventory equipment/potion tests, actual combat damage, Last Stand story tests and the ten save/progression tests pass. Ship, intro and combat screenshots were visually inspected; background and sprite proportions are preserved. This is browser preparation for the Miyoo display, not a completed native device port.
+
+## Planned Miyoo controls — saved for later
+
+Brian accepted this control plan on October 9, 2026. This is a future mapping; no input behavior is changed by this note. Retain WASD/arrows and Enter/E during development.
+
+| Button | Exploration | Combat / menus |
+| --- | --- | --- |
+| D-pad | Move | Navigate commands, choices and targets |
+| A | Interact / advance dialogue | Confirm command, then confirm target |
+| B | Tap while stationary: pause; hold while moving: run | Cancel targeting / return to previous menu |
+| X | Inventory shortcut | Inspect inventory; equipment and potion use remain locked during combat |
+| Y | Party details shortcut | View equipment, stats and remaining abilities |
+| Start | Pause | Pause |
+| Select | Current quest details | Combat help |
+
+B advances ordinary dialogue but never automatically chooses a dialogue action. All essential gameplay remains reachable using D-pad + A/B; X/Y are shortcuts. The run/pause distinction needs physical-device testing. Native button mapping, shortcuts, quest details and combat-help screens are still future implementation.
+
+## Remaining agenda
+
+1. Combat feedback and weapon-specific animations: readable hit/miss reactions, damage/healing numbers, distinct melee/spell effects, and art that follows equipped weapons (including Freya’s recovered scimitar).
+2. Audio system: exploration/combat tracks, ambient and interface/action sounds, music/effects volume settings; integrate supplied Suno tracks.
+3. Source-grounded next story chapter: reconcile the doctor, church and Ingoe events, then work toward Riley’s later escape and consequences without inventing advancement dates.
+
+Inventory/equipment and the 640×480 game window are complete. Physical controls and native Miyoo packaging remain later work.
