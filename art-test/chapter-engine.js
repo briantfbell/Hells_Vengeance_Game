@@ -74,11 +74,10 @@ const JOURNEYS={
 function cancelJourney(){const resolve=journeyResolve;journeyResolve=null;journeyOpen=false;$('journey').hidden=true;$('journey').classList.remove('visible');$('journey-continue').disabled=true;if(resolve)resolve();}
 async function journeyCard(title,summary,commit=()=>{}){
  const token=epoch,panel=$('journey'),button=$('journey-continue');journeyOpen=true;keys.clear();path=[];$('prompt').hidden=true;$('dice-panel').hidden=true;
- $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/([.!?])\s+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.remove('visible');panel.getBoundingClientRect();panel.classList.add('visible');
- await delay(reduce.matches?0:280);if(token!==epoch)throw CANCEL;
+ $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
  commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
- button.disabled=true;panel.classList.remove('visible');await delay(reduce.matches?0:280);if(token!==epoch)throw CANCEL;
- panel.hidden=true;journeyOpen=false;keys.clear();canvas.focus();save();
+ button.disabled=true;journeyOpen=false;keys.clear();canvas.focus();save();
+ // Keep the black card covering the map until the next card, dialogue or end of the scene.
 }
 $('journey-continue').onclick=()=>{if(!journeyOpen||$('journey-continue').disabled||!journeyResolve)return;const resolve=journeyResolve;journeyResolve=null;$('journey-continue').disabled=true;resolve();};
 async function travel(next,x,y,dir='up'){
@@ -100,13 +99,13 @@ function updateObjective(){
 }
 function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:2,scene,lead,quest,hp,uses,potions,mendUses,progression,inventory,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
-function say(name,text,choices=null){if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
+function say(name,text,choices=null){if(!journeyOpen)$('journey').hidden=true;if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
  if(choices)choices.forEach((text,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+text;b.onclick=()=>finishDialog(i);$('choices').append(b);});
  (choices?$('choices').firstChild:$('close')).focus();
  return new Promise(r=>dialogResolve=r).then(v=>{if(token!==epoch)throw CANCEL;return v;});
 }
 function paintPortrait(name){
- const id=({ 'Freya Kusanagi':'freya','Dottari Guard':'guard','Shopkeeper':'cultist' })[name]||name,c=$('portrait'),g=c.getContext('2d');let im,f;
+ let id=({ 'Freya Kusanagi':'freya','Dottari Guard':'guard','Shopkeeper':'cultist','Outfitter':'farmer','The Woman in the Bath':'spirit' })[name]||name;if(id==='razelago'&&quest.compactSworn)id='razelago_revealed';const c=$('portrait'),g=c.getContext('2d');let im,f;
  if(window.FUTURE_NPCS?.[id]){const m=window.FUTURE_NPCS[id];im=art[m.source];f=m.frame;}
  if(window.NEXT_NPCS?.[id]){im=art.nextNPCs;f=window.NEXT_NPCS[id];}
  if(window.QUESTGIVER_MODELS[id]){im=art[id];f=window.QUESTGIVER_MODELS[id].frames[0];}
@@ -114,9 +113,10 @@ function paintPortrait(name){
  else if(['viggo','cultist'].includes(id)){im=art.npcs;f=window.CHAPTER_NPCS[id];}
  else if(id==='guard'){im=art.guard;f={x:0,y:0,w:im.width,h:im.height};}
  if(window.LORE_CAST?.[id]){const m=LORE_CAST[id];im=art[m.source]||art[id];f=m.frame;}
+ if(['Townsfolk','Tavern patron'].includes(name)){im=art.citizens;f=CITIZEN_FRAMES[0].frames[0];}
  c.hidden=!im;$('dialog').classList.toggle('has-portrait',!!im);if(!im)return;
  g.clearRect(0,0,96,96);g.imageSmoothingEnabled=false;g.fillStyle='#252c35';g.fillRect(0,0,96,96);
- if(id==='razelago_revealed'&&!window.LORE_CAST?.[id]){g.drawImage(im,1130,42,220,220,3,3,90,90);return;}const side=Math.min(f.w,f.h*.32),cx=f.anchorX||f.x+f.w/2;
+ if(id==='razelago_revealed'&&!window.LORE_CAST?.[id]){g.drawImage(im,1130,42,220,220,3,3,90,90);return;}const crop=window.DIALOGUE_FACE_CROPS?.[id];if(crop){g.drawImage(im,crop.x,crop.y,crop.w,crop.h,3,3,90,90);return;}const side=Math.min(f.w,f.h*.32),cx=f.x+f.w/2;
  g.drawImage(im,Math.max(f.x,Math.min(cx-side/2,f.x+f.w-side)),f.y,side,side,3,3,90,90);
 }
 function syncBattleView(){const on=!!battle;document.body.classList.toggle('is-combat',on);}
@@ -167,7 +167,7 @@ function renderBattle(t){
  $('prompt').hidden=true;
 }
 function finishDialog(value=0){GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus();if(resolve)resolve(value);}
-function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;updateObjective();}});}
+function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;if(!journeyOpen)$('journey').hidden=true;updateObjective();}});}
 const ROSTER=[...CORE,'reese','bruce'];
 const BIOS={
  freya:{name:'Freya Kusanagi',role:'Half-elf · Samurai',bio:'Composed and deliberate. Freya leads with steel, discipline, and a devastating first strike.',ability:'Challenge · Focused samurai strike against one foe.'},
@@ -383,7 +383,7 @@ function drawActor(g,u,height=55){
  const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);if(hp[u.id]===0)g.globalAlpha=.38;
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
-function drawNPC(u){
+function drawNPC(u){if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
  if(u.id.startsWith('citizen-')||u.id.startsWith('execution-citizen-')){drawCitizen(u);return;}
  if(PoliticalMovement.drawNPC(u))return;
  if(window.NextArc.drawNPC(u))return;
@@ -395,7 +395,7 @@ function drawNPC(u){
 }
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 function buildFlicker(){if(!art[scene])return;const a=document.createElement('canvas');a.width=640;a.height=400;const g=a.getContext('2d',{willReadFrequently:true});g.imageSmoothingEnabled=false;g.drawImage(art[scene],0,0,640,400);let pixels;try{pixels=g.getImageData(0,0,640,400).data;}catch{}flicker=scenes[scene].lights.map(([x,y],index)=>{const mask=document.createElement('canvas');mask.width=33;mask.height=49;const mg=mask.getContext('2d'),d=mg.createImageData(33,49);for(let yy=0;yy<49;yy++)for(let xx=0;xx<33;xx++){const wx=x-16+xx,wy=y-24+yy,dist=((xx-16)/16)**2+((yy-24)/24)**2,i=(wy*640+wx)*4;if(dist>=1||wx<0||wy<0||wx>=640||wy>=400)continue;const r=pixels?pixels[i]:200,green=pixels?pixels[i+1]:130,b=pixels?pixels[i+2]:65;if(r>125&&green>65&&r>green*1.12&&green>b*1.2)d.data[(yy*33+xx)*4+3]=Math.round(255*Math.min(1,(r-110)/120)*(pixels?Math.sqrt(1-dist):(1-dist)**2*.55));}mg.putImageData(d,0,0);return {mask,x:x-16,y:y-24,index};});}
-function render(t){GameAudio.tick();t=Handheld.time(t);$('pause-toggle').hidden=!ready||introOpen||dialogOpen||journeyOpen||levelOpen||briefingOpen||taskBusy;
+function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio.tick();t=Handheld.time(t);$('pause-toggle').hidden=!ready||introOpen||dialogOpen||journeyOpen||levelOpen||briefingOpen||taskBusy;
  $('quest-task').hidden=!ready||introOpen||briefingOpen||journeyOpen||levelOpen||!!battle;
  rect(0,0,640,canvas.height,'#0b1018');if(ready&&TitleScreen.draw(ctx,t))return;if(!ready||introOpen)return;if(battle){renderBattle(t);return;}ctx.save();ctx.translate(0,SCREEN.mapTop);try{if(briefingOpen){renderBriefing(t);return;}window.SceneLayers.draw(ctx,window.MAP_LAYERS[scene],art[scene],t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});
  if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}

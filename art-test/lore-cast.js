@@ -7,3 +7,9 @@ Object.assign(LORE_CAST,{"krenshar":{"src":"lore-creatures-v2.png","source":"lor
 window.LORE_CREATURE_IDLES={"krenshar":{"src":"lore-creatures-v2.png","frames":[{"x":32,"y":82,"w":472,"h":430,"anchorX":256.0},{"x":546,"y":80,"w":469,"h":432,"anchorX":768.0},{"x":1058,"y":79,"w":461,"h":433,"anchorX":1280.0}],"maxHeight":433,"cycle":[0,1,0,2]},"false_knight":{"src":"lore-creatures-v2.png","frames":[{"x":54,"y":512,"w":403,"h":453,"anchorX":256.0},{"x":558,"y":512,"w":394,"h":454,"anchorX":768.0},{"x":1060,"y":512,"w":423,"h":455,"anchorX":1280.0}],"maxHeight":455,"cycle":[0,1,0,2]}};
 Object.assign(COMBAT_IDLES,LORE_CREATURE_IDLES);
 Object.assign(FUTURE_NPCS,{"krenshar":{"src":"lore-creatures-v2.png","source":"lore-creatures-v2.png","frame":{"x":32,"y":82,"w":472,"h":430,"anchorX":256.0}},"false_knight":{"src":"lore-creatures-v2.png","source":"lore-creatures-v2.png","frame":{"x":54,"y":512,"w":403,"h":453,"anchorX":256.0}}});
+
+/* Face crops are independent from full-body placement anchors. */
+window.DIALOGUE_FACE_CROPS={owner:{x:688,y:0,w:160,h:160},farmer:{x:1144,y:0,w:150,h:150},spirit:{x:1175,y:531,w:170,h:170},dog:{x:176,y:564,w:170,h:170},guard:{x:378,y:220,w:230,h:230},krenshar:{x:24,y:170,w:165,h:165},false_knight:{x:182,y:477,w:145,h:145},
+ fex:{x:152,y:0,w:76,h:76},cimri:{x:150,y:258,w:78,h:78},rhona:{x:152,y:510,w:76,h:76},allamar:{x:151,y:766,w:76,h:76},twin1:{x:151,y:1021,w:78,h:78},twin2:{x:151,y:1276,w:78,h:78},
+ bolgart:{x:188,y:0,w:78,h:78},bolgart_wereboar:{x:182,y:260,w:94,h:94},riley:{x:180,y:508,w:90,h:90},gerya:{x:183,y:766,w:78,h:78},ingoe:{x:177,y:1030,w:86,h:86},razelago_revealed:{x:153,y:1310,w:105,h:105}
+};

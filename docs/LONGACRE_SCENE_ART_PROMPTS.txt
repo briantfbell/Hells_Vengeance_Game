@@ -1,0 +1,13 @@
+Tool: built-in image_gen. Both assets requested with transparent_background=true.
+
+Output: art-test/longacre-jail-open-v1.png
+Reference/edit target: art-test/longacre-jail.png
+Prompt:
+Precise localized edit of supplied pixel-art map. Keep the entire western gate and jail artwork EXACTLY THE SAME: same canvas dimensions/aspect ratio, composition, isometric angle, floor paths, stone buildings, jail roof cutaway, barred windows, braziers, banners, pillory at lower left, courtyard, bottom stairs, objects, shadows and fully transparent exterior. Change ONLY the large wooden double gate in the upper-left stone arch from CLOSED to OPEN. Swing its two wooden leaves inward against either side of the passage, preserving their wood and iron straps, so a dark open stone passage is visible through the same arch. Do not move or resize the arch. No people, no sprites, no text, no new floor obstacles. Match existing high-detail gothic pixel-art exactly. All content outside the two wooden doors and interior of that arch is invariant.
+
+The runtime uses only the doorway region from this generated variant, over the unchanged original map.
+
+Output: art-test/bolgart-stocks-v1.png
+References: art-test/lore-longacre-v2.png, art-test/longacre-jail.png
+Prompt:
+Produce ONE isolated high-detail pixel-art game sprite on true transparent background. Reference1 first row character is human Bolgart Caggan: stocky adult human tavern cook, short reddish-brown hair, green short-sleeve shirt, stained cream apron, brown trousers boots, same face and outfit. Reference2 wooden pillory in lower-left is location/style reference. Show Bolgart restrained in wooden pillory stocks, bent forward with head through center hole and both wrists through side holes, visible face facing camera slightly right, visibly HUMAN not wereboar, annoyed stubborn expression. Full body behind the pillory with legs and boots planted. Pillory dark heavy wooden crossbar and two uprights, small foot platform, gothic pixel clusters consistent with map. No frying pan or spoon, hands empty and restrained. Orthographic three-quarter game camera compatible with map, front face easily readable. Compact isolated character-plus-pillory assembly, generous completely transparent margin, no ground scene, no extra objects, no particles, no shadows outside assembly, no text, no borders. One sprite only.
