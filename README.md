@@ -18,7 +18,7 @@ A new game opens the character-selection screen. Browse the full party artwork a
 - Dialogue choices and character selection use the same direction and confirm controls.
 - Combat: select a command, confirm, select its enemy or healing target, then confirm. B cancels targeting. The current action and last two completed actions remain visible.
 - Pause: resume, party/equipment, inventory, four save slots, load, export/import, controls, or title screen. Saves and file transfers are unavailable during combat.
-- Exploration and combat share a fixed 640×400 logical screen (8:5), scaled uniformly to the available display. Mouse and touch remain supported.
+- Exploration and combat share a fixed 640×480 logical screen (4:3), scaled uniformly to the available display. Mouse and touch remain supported.
 
 ## Included
 
@@ -70,3 +70,7 @@ A complete keyboard-only browser playthrough covered the opening mission through
 ## Inventory and equipment
 
 Press B/P → Inventory to inspect personal weapons, recovered gear, shared potions and mission items. Equip Viggo’s scimitar on Freya after the altar pickup, or switch back to her katana. Damage rolls and combat text follow the selected blade. Use healing potions on injured companions outside combat; the supply is shared with combat and saved immediately. Equipment changes are locked during fights. Existing saves migrate automatically. See docs/INVENTORY_AND_EQUIPMENT.md for rules, source limits and validation.
+
+## 640×480 game window
+
+The game now uses one 640×480 (4:3) surface across exploration, combat, character selection, dialogue, travel, progression and pause/inventory menus. Browser admin controls remain below the game. Current map artwork and walk coordinates stay at their original proportions with a 40-pixel vertical offset; independent backgrounds fill the additional space. Combat uses a 368-pixel battlefield and the same compact 112-pixel command dock. See docs/SCREEN_LAYOUT_640480.md.
