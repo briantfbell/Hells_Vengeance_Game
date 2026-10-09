@@ -1,0 +1,38 @@
+/* Charcoal iron, blood-red panels and gold from the supplied title artwork. */
+#title-screen{position:absolute;inset:0;z-index:24;color:#ffe6a4;pointer-events:none}
+#title-screen[hidden],#title-menu[hidden],#title-push[hidden]{display:none}
+#title-push{position:absolute;bottom:4%;left:50%;transform:translateX(-50%);pointer-events:auto;width:max-content;padding:1.1cqw 3cqw;color:#ffe4a0;background:#160c12de;border:2px solid #a17b42;border-radius:0;font:bold 2.8cqw/1.3 Consolas,monospace;letter-spacing:.04em;box-shadow:0 0 0 2px #151318,0 3px 0 #000a;text-shadow:2px 2px #000;animation:title-prompt 2.8s steps(3,end) infinite}
+#title-push:focus-visible{outline:1px solid #ffe2a5;outline-offset:3px}
+.booting #title-push{animation:title-arrive 1.6s ease-out both,title-prompt 2.8s 1.6s steps(3,end) infinite}
+#title-menu{pointer-events:auto;position:absolute;left:25%;right:25%;top:43%;bottom:5%;padding:2cqw 2.5cqw;display:flex;flex-direction:column;background:linear-gradient(135deg,#201b21f7,#140e14f7);border:3px solid #62595a;outline:1px solid #151115;box-shadow:inset 0 0 0 1px #b7975e,inset 0 0 0 4px #100d11,0 5px 0 #050406aa,0 10px 25px #0009}
+#title-menu:before,#title-menu:after{content:'◆';position:absolute;color:#e63327;font-size:3cqw;text-shadow:1px 1px #000,-1px -1px #f5b168;top:-1.9cqw;left:calc(50% - 1.5cqw)}
+#title-menu:after{top:auto;bottom:-1.9cqw}
+#title-menu-heading{font:bold 2.8cqw/1.2 Georgia,serif;text-align:center;color:#efcd86;margin:0 0 1.4cqw;text-shadow:2px 2px #000}
+#title-options{display:flex;flex-direction:column;gap:.8cqw;min-height:0;flex:1;justify-content:center}
+#title-options button{position:relative;flex:1;max-height:6.5cqw;min-height:0;padding:.7cqw 1.8cqw;background:linear-gradient(#672020,#3c131b);border:1px solid #957046;border-radius:0;color:#f7db9c;font:bold 2.15cqw/1.2 Georgia,serif;text-shadow:1px 1px #000;box-shadow:inset 0 1px #bc6d4138;text-align:center}
+#title-options button:focus-visible,#title-options button:hover{outline:1px solid #ffdc8e;outline-offset:-3px;background:linear-gradient(#922a24,#4b1420)}
+#title-options button:focus-visible:before{content:'◆';position:absolute;left:.7cqw;color:#ffb660;font-size:1.4cqw;top:50%;transform:translateY(-50%)}
+#title-options button:disabled{opacity:.4}
+#title-menu:has(#title-detail:not([hidden])){left:20%;right:20%}
+#title-detail{white-space:pre-line;font:1.95cqw/1.5 Consolas,monospace;margin:0 0 1cqw;color:#e6d5b9}
+#title-screen.menu-open{background:#09060a35}
+#pause-panel,#intro,#level-up{background:linear-gradient(135deg,#231b22fa,#100d13fa);color:#f0dab0}
+#pause-title,.intro-heading h2,#level-title{color:#f2cf89;text-shadow:2px 2px #080509;border-color:#975a3e}
+#pause-options button,#intro-start,#intro-resume,#intro-import,#level-continue,.journey-card button{background:linear-gradient(#622029,#35121d);border-color:#aa8050;color:#f7deaa;box-shadow:inset 0 1px #c27b4933}
+#pause-options button:focus-visible,#intro button:focus-visible{background:#782b2f;outline-color:#ffd28a}
+.journey-card{background:linear-gradient(#261b23,#140f18);border-color:#aa8050;color:#eddbb8;box-shadow:inset 0 0 0 2px #100d12,0 6px 24px #0008}
+#dialog{background:linear-gradient(120deg,#261c24f7,#150f17f7);border-color:#635859;color:#f0dfc1;box-shadow:inset 0 0 0 1px #b18a53,inset 0 0 0 3px #110d13,0 6px 24px #0008}
+#speaker{color:#f4ce85;text-shadow:1px 1px #000}
+#choices button,#close{background:linear-gradient(#5a202a,#31131e);color:#f0d5a4;border-color:#9c7548;box-shadow:1px 2px #09060d}
+#choices button:hover,#choices button:focus-visible,#close:hover,#close:focus-visible{background:#78303a;outline-color:#e6bf80}
+#battle,#dice-panel{background:linear-gradient(120deg,#241a24f5,#130e19f5);border-color:#a77c4b}
+#actions button{background:linear-gradient(#56212b,#28141f);border-color:#9c7548}
+@keyframes title-arrive{0%,40%{opacity:0}100%{opacity:1}}
+@keyframes title-prompt{0%,100%{opacity:1}50%{opacity:.68}}
+@media(prefers-reduced-motion:reduce){#title-push,.booting #title-push{animation:none}}
+
+#title-screen[data-view=load] #title-options button{font-size:1.9cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.battle-dispatch{background:linear-gradient(110deg,#261c27,#17111c);color:#ead6b0;border-color:#9c7548}
+#combat-log{color:#baa98e;border-color:#9c754888}
+#save-import-dialog{background:linear-gradient(#261b23,#140f18);color:#eddbb8;border-color:#aa8050}
+#save-import-dialog button{background:#5a202a;color:#f0d5a4;border-color:#9c7548}

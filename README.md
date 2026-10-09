@@ -10,7 +10,9 @@ Alternatively, with Node.js 18 or newer installed, run `npm start` in the extrac
 
 ## Starting a new story
 
-A new game opens the character-selection screen. Browse the full party artwork and descriptions, choose one of the five Night of Ashes companions, and receive the mission directly from Barzillai Thrune in a staged dialogue scene. Reese and Bruce are shown as provisional later companions. Existing saves resume automatically; use Restart chapter to return to selection, or Continue checkpoint from selection to keep your current progress. Selecting a new character starts a fresh checkpoint.
+Every launch opens the animated **Hell’s Rebels — a Hell’s Vengeance story** title screen, using Brian’s supplied Folken Games artwork. The screen flickers on and **Push A to Start** fades in. Press Enter/E/Space (or A at the title prompt) to open the main menu. Continue resumes the latest checkpoint; New game opens character selection; Load game offers four manual slots and portable save import; Settings contains audio and controls. Browsing or backing out of character selection preserves the existing checkpoint.
+
+Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese and Bruce join later. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
 
 ## Controls
 
