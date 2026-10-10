@@ -126,7 +126,14 @@ function paintPortrait(name){
 }
 function syncBattleView(){const on=!!battle;document.body.classList.toggle('is-combat',on);}
 function battlefieldHeight(){return SCREEN.height-SCREEN.combatDock;}
-function battlePosition(actor){const i=units.indexOf(actor);if(i>=0){const floor=battlefieldHeight()-46,places=units.length>5?[[48,floor-1],[120,floor-14],[192,floor],[264,floor-15],[336,floor-2],[408,floor-15]]:[[60,floor-1],[140,floor-14],[220,floor],[300,floor-15],[380,floor-2]];return {x:places[i][0],y:places[i][1],height:activeUnit()===actor?90:80};}const iEnemy=battle?.enemies.indexOf(actor)??0,places=battle.enemies.length===1?[[495,158]]:battle.enemies.length===4?[[347,133],[499,129],[423,219],[575,208]]:[[353,145],[464,158],[575,142]];const p=places[Math.max(0,iEnemy)]||places[0];const height=['viggo','bolgart_wereboar'].includes(actor.id)?76:63;return {x:p[0],y:Math.max(height+39,Math.round(p[1]*battlefieldHeight()/355)),height};}
+function battlePosition(actor){
+ const i=units.indexOf(actor),floor=battlefieldHeight()-46;
+ if(i>=0){const spacing=units.length>1?540/(units.length-1):0;return {x:units.length>1?50+i*spacing:320,y:floor,height:activeUnit()===actor?116:108};}
+ const index=Math.max(0,battle?.enemies.indexOf(actor)??0),count=battle?.enemies.length||1;
+ const x=count===1?480:count===2?380+index*170:count===3?300+index*140:275+index*105;
+ const height=['viggo','bolgart_wereboar'].includes(actor.id)?116:count>=4?96:104;
+ return {x,y:180,height};
+}
 function healthBadge(x,y,w,name,value,max,selected=false,enemy=false){
  ctx.save();ctx.fillStyle='#131922ed';ctx.strokeStyle=selected?'#e4c581':'#766343';ctx.lineWidth=selected?2:1;ctx.beginPath();ctx.moveTo(x-w/2+5,y);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w/2,y+27);ctx.lineTo(x-w/2,y+27);ctx.lineTo(x-w/2,y+5);ctx.closePath();ctx.fill();ctx.stroke();
  ctx.textAlign='left';ctx.font='bold 11px Georgia';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';ctx.fillText(name,x-w/2+6,y+10,w-12);
@@ -383,9 +390,11 @@ function paintBattle(){
  paintParty();const buttons=combatButtons();if(buttons[battle.control.index]?.disabled)battle.control.index=Math.max(0,buttons.findIndex(b=>!b.disabled));paintCombatSelection();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
+function potionRefusal(id){return battle?.kind==='temple'&&quest.templeWound&&id==='jamal'?'J’Mal is too badly injured to swallow a potion. He cannot consume it.':'';}
 async function performActionImpl(action){
  if(Handheld.isOpen()||!battle||battle.busy||dialogOpen||taskBusy)return;const token=epoch,actor=activeUnit();if(!actor)return;const target=battle.enemies[battle.target]?.hp>0?battle.enemies[battle.target]:livingEnemy();if(!target)return;
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
+ const refusal=action==='potion'?potionRefusal(battle.ally||actor.id):'';if(refusal){battle.control.mode='commands';battle.control.action=null;log(refusal);paintBattle();return;}
  battle.control.mode='commands';battle.control.action=null;battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
  if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 this round.');}
  else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action);hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}

@@ -58,3 +58,7 @@ The first Bolgart encounter has Freya, Jason, Draymus, and Reese; J’Mal guards
 Before the disguise is revealed, the rider’s public label is Angel Knight. Draymus’s Cause Fear sequence shows the defender’s D20 saving throw of 1, explicitly labeled failed save / frightened. A defender’s 20 would reverse the intended outcome; this is not Draymus’s attack roll.
 
 Older five-character saves migrate after the compact by adding Reese with fresh resources, leaving existing injuries, inventory, and progression intact. Opening saves continue to exclude him. The Remesiana outfitter uses the same skinny, hat-wearing model as the existing dialogue portrait.
+
+## Temple injury and combat presentation
+
+During the Silver Star temple fight, the scripted severe injury prevents J’Mal from swallowing a healing potion. An attempted potion explains the refusal and spends neither stock nor a turn. This restriction applies to that temple injury, not later encounters. Combat keeps the fixed 640×480 window, enlarges party sprites to 108px (116px active), and distributes the current combatants evenly across the bottom. Enlarged enemies and their labels occupy the upper right, beyond the dice overlay.
