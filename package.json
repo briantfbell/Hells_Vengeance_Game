@@ -5,7 +5,7 @@
   "description": "Hells Bubbies playable Night of Ashes chapter",
   "scripts": {
     "start": "node server.cjs",
-    "test": "node --test tests/progression.test.cjs"
+    "test": "node --test tests/*.test.cjs"
   },
   "engines": {
     "node": ">=18"

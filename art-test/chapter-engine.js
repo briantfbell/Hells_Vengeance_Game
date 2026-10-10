@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d'),T=16,COLS=40,ROWS=25;
 const SCREEN={width:640,height:480,worldHeight:400,mapTop:40,combatDock:112};
 ctx.imageSmoothingEnabled=false;
-const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jamal:"J’Mal",jason:'Jason',draymus:'Draymus',guapo:'El Guapo',barzillai:'Barzillai Thrune',fex:'Archbaron Darellus Fex',viggo:'Viggo · Dawnflower Swordmaster',nox:'Nox',cultist:'Zealot'};
+const CORE=['freya','jamal','jason','draymus','guapo'],NAMES={freya:'Freya',jamal:"J’Mal",jason:'Jason',draymus:'Draymus',guapo:'El Guapo',reese:'Reese',corrine:'Corrine · Asmodean Clergy',barzillai:'Barzillai Thrune',fex:'Archbaron Darellus Fex',viggo:'Viggo · Dawnflower Swordmaster',nox:'Nox',cultist:'Zealot'};
 const STATS={freya:{hp:38,ac:17,atk:6,dmg:[1,10,4]},jamal:{hp:30,ac:16,atk:7,dmg:[1,4,5]},jason:{hp:32,ac:15,atk:4,dmg:[1,8,2]},draymus:{hp:26,ac:13,atk:3,dmg:[1,4,1]},guapo:{hp:34,ac:15,atk:6,dmg:[1,6,3]},viggo:{hp:34,ac:14,atk:5,dmg:[1,8,2]},cultist:{hp:12,ac:12,atk:3,dmg:[1,6,0]}};
 const SPECIAL={freya:{name:'Challenge',uses:1,bonus:0,dmg:[1,10,5]},jamal:{name:'Sneak Attack',uses:2,dmg:[1,4,5]},jason:{name:'Burning Hands',uses:2,auto:true,dmg:[1,4,0]},draymus:{name:'Chill Touch',uses:3,dmg:[1,6,0]},guapo:{name:'Panache Thrust',uses:3,bonus:2,dmg:[1,6,5]}};
 const BASE_STATS=structuredClone(STATS),BASE_SPECIAL=structuredClone(SPECIAL);
@@ -20,6 +20,7 @@ const scenes={
 };
 const lines={street:{freya:'Quiet. In and out. Barzillai does not forgive noise.',jamal:'Nice night for it. Door is up there. Try not to kick it in.',jason:'The flames are a blessing. Asmodeus favors the thorough.',draymus:'So many bodies in a fire. Nobody will notice one more going missing.',guapo:'If we die tonight, I want it on record that I was not paid.'},tavern:{freya:'Search the room. Quickly.',jamal:'Trapdoor. Has to be. Check the corners.',jason:'Can you smell the incense? It is under us.',draymus:'The floor creaks differently over there.',guapo:'I will guard the door. From the inside. Near the instruments.'}};
 const SAVE='hells-bubbies-night-of-ashes-v1',keys=new Set(),art={},sheets={},CANCEL=Symbol('cancel');
+let dialogOpenedAt=0;
 let introOpen=false,introIndex=0,briefingOpen=false,journeyOpen=false,journeyResolve=null;
 let ready=false,scene='street',lead='freya',units=[],trail=[],path=[],epoch=0,dialogResolve=null,dialogOpen=false,taskBusy=false,battle=null,last=0,showPaths=false,fx=[],flicker=[],lastPartyPaint=-1,quest={},hp={},uses={},potions=2,mendUses=2;
 const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h);},cell=(x,y)=>[Math.floor(x/T),Math.floor(y/T)],inside=(x,y,r)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;
@@ -45,7 +46,8 @@ async function damage(spec,label){return rollDice(label,spec[1],spec[0],spec[2])
 function point(id){return scenes[scene].points.find(p=>p.id===id);}
 function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&(PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():window.NextChapter.npcs())).some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
 function passable(gx,gy,which=scene){if(gx<0||gy<0||gx>=COLS||gy>=ROWS)return false;const x=gx*T+8,y=gy*T+8,s=scenes[which];return s.walk.some(r=>inside(x,y,r))&&!s.blocks.some(r=>inside(x,y,r))&&!actorBlocking(x,y,which);}
-function findPath(from,to,which=scene){if(!passable(...from,which)||!passable(...to,which))return null;const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
+function findPath(from,to,which=scene){if(!passable(...to,which))return null; // Allow walking out of a cell occupied by a newly revealed NPC.
+const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return soloParty()?['jamal']:(quest.activeRoster||CORE);}
@@ -58,13 +60,13 @@ function seedParty(x,y,dir='up'){
 function setScene(next,x,y,dir='up'){$('dice-panel').hidden=true;scene=next;if(soloScout()){x=136;y=280;dir='right';}seedParty(x,y,dir);buildFlicker();$('location-name').textContent=scenes[next].name;updateObjective();paintParty();$('character').value=soloParty()?'jamal':lead;$('character').disabled=soloParty();save();}
 const JOURNEYS={
  street:'Return to Kintargo’s streets. Keep the operation quiet and follow the route to the next objective.',
- tavern:'Shensen is absent from her musical instrument shop, the Silver Star. Jason searches for the entrance to the hidden temple of Sarenrae.',
+ tavern:'Shensen, the famous actress, is absent from her musical instrument shop, the Silver Star. Jason searches for the entrance to the hidden temple of Sarenrae.',
  temple:'Descend beneath the Silver Star. Find Viggo, end the temple, and leave the false evidence.',
- western_star:'Kintargo falls behind the party. Seven days of food, rest, and sea air carry them toward Remesiana.',
- remesiana:'The Western Star makes port after a week at sea. Resupply, meet Cimri Staelish, and arrange the road to Longacre.',
+ western_star:'Kintargo falls behind the party. Their route runs through Pezzack, a pirate encounter, and Corentyn before Remesiana.',
+ remesiana:'10 Neth, 4716. The Western Star reaches Remesiana. Meet Cimri and arrange the road to Freya’s next assignment in Longacre.',
  last_stand:'The posted decree has been torn down. Repost it while J’Mal watches the back door. Subdue resistance and take the prisoners to jail.',
  angel_hill:'Riley describes a meeting two miles outside Longacre. Keep him under guard and inspect the hill before returning to the jail.',
- tannery:'Cimri leads the riders northwest. Freya rides Sleipnir; the rental horses are returned in Longacre. The first job is to collect the payroll at Louslik Tannery.',
+ tannery:'Cimri leads the party northwest to Longacre, where the rental horses are returned. Razelago’s first test is a robbery: take the payroll from Louslik Tannery. J’Mal approaches the palisade alone.',
  ash_house:'Cimri guides the party to the ruined Ash House. Razelago waits behind the screens.',
  bathroom:'J’Mal investigates the splashing alone. His companions wait on the landing.',
  longacre_square:'Enter Longacre’s church square and carry out Razelago’s instructions.',
@@ -89,17 +91,18 @@ async function travel(next,x,y,dir='up'){
  else if(next==='ash_house'&&quest.chapter3)summary=quest.sermonDispersed?'Return to Razelago and report the party’s work in Longacre.':'Meet Razelago before heading to the sermon.';
  else if(next==='ash_house'&&quest.spiritCalmed)summary='Return downstairs. Jamal is safe and the spirit is quiet. Report to Razelago in the morning.';
  if(next==='ash_house'&&quest.chapter6)summary=!quest.ovinnikReported?'Bring the still-living gate guardian to Razelago. Learn what attacked the party.':'The party withdraws from the church standoff. Rest at Ash House before J’Mal’s evening watch.';
+ if(next==='longacre_jail')summary=quest.chapter4?(quest.hillSearched?'Return with Riley after the unsuccessful hill search. Check on Bolgart in custody.':'Escort and question the prisoners at the jail.'):quest.rhonaDismissed?'Return to the jail, now staffed by retained deputies and replacement guards.':quest.decreesIssued?'Post the jail’s copy of the notices and deliver the party’s separate dismissal of Rhona.':'Visit the western gate and jail.';
  if(next==='longacre_square')summary=!quest.sermonDispersed?'The church square is gathering for Allamar’s sermon. Listen to her claims and counter the talk of rebellion.':quest.deputiesReported?'Cross Longacre on the way to the audience at Scarlet Manor.':'Return to the square. '+QuestGuide.current().text;
  await journeyCard(scenes[next].name,summary,()=>setScene(next,x,y,dir));
 }
 function updateObjective(){
  const sixth=PoliticalMovement.goal();if(sixth){$('objective').textContent=sixth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}const fifth=DebtsRumors.goal();if(fifth){$('objective').textContent=fifth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}const fourth=LastStand.goal();if(fourth){$('objective').textContent=fourth;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}if(window.NextArc.objective()||window.NextChapter.objective())return;
- $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'A voyage south, then Longacre.':scene==='street'?(quest.burned?'Leave Kintargo under cover.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Burn the false trail.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
+ $('objective').textContent=battle?'Defeat Viggo and the zealots.':quest.done?'A voyage south, then Longacre.':scene==='street'?(quest.burned?'Leave Kintargo under cover.':'Find the Silver Star.'):scene==='tavern'?(quest.burned?'Return to the street.':quest.ropeCut?'The bell is silent. Find the stairs.':'Find the way down.'):quest.victory?(quest.planted?'Destroy the temple.':'Take the scimitar. Plant the rapier.'):'Approach the altar.';
  $('status').textContent=quest.done?'Chapter complete. Remesiana, then the road to Longacre.':battle?'Choose an enemy, then attack or use an ability. Select a companion to receive healing.':quest.burned?'The Silver Star burns. Slip away under Freya’s cover.':'WASD / arrows to walk · Shift to run · E to interact · Click to move';
 }
 function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAVE,JSON.stringify({version:2,scene,lead,quest,hp,uses,potions,mendUses,progression,inventory,position:units[0]?{x:units[0].step?.sx||units[0].x,y:units[0].step?.sy||units[0].y}:null}));$('save-status').textContent='Checkpoint saved';}catch{$('save-status').textContent='Checkpoint unavailable';}}
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
-function say(name,text,choices=null){if(!journeyOpen)$('journey').hidden=true;if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
+function say(name,text,choices=null){if(!journeyOpen)$('journey').hidden=true;if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;dialogOpenedAt=performance.now();keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);$('line').textContent=text;$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
  if(choices)choices.forEach((text,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+text;b.onclick=()=>finishDialog(i);$('choices').append(b);});
  (choices?$('choices').firstChild:$('close')).focus();
  return new Promise(r=>dialogResolve=r).then(v=>{if(token!==epoch)throw CANCEL;return v;});
@@ -109,7 +112,7 @@ function paintPortrait(name){
  if(window.FUTURE_NPCS?.[id]){const m=window.FUTURE_NPCS[id];im=art[m.source];f=m.frame;}
  if(window.NEXT_NPCS?.[id]){im=art.nextNPCs;f=window.NEXT_NPCS[id];}
  if(window.QUESTGIVER_MODELS[id]){im=art[id];f=window.QUESTGIVER_MODELS[id].frames[0];}
- else if(CORE.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
+ else if(ROSTER.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
  else if(['viggo','cultist'].includes(id)){im=art.npcs;f=window.CHAPTER_NPCS[id];}
  else if(id==='guard'){im=art.guard;f={x:0,y:0,w:im.width,h:im.height};}
  if(window.LORE_CAST?.[id]){const m=LORE_CAST[id];im=art[m.source]||art[id];f=m.frame;}
@@ -166,16 +169,16 @@ function renderBattle(t){
  for(const f of fx){ctx.font='bold 18px monospace';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#111';ctx.fillStyle=f.color;ctx.strokeText(f.text,f.x,f.y-(.9-f.life)*15);ctx.fillText(f.text,f.x,f.y-(.9-f.life)*15);}
  $('prompt').hidden=true;
 }
-function finishDialog(value=0){GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus();if(resolve)resolve(value);}
+function finishDialog(value=0){if(!dialogOpen||performance.now()-dialogOpenedAt<180)return;GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus();if(resolve)resolve(value);}
 function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;if(!journeyOpen)$('journey').hidden=true;updateObjective();}});}
 const ROSTER=[...CORE,'reese','bruce'];
 const BIOS={
- freya:{name:'Freya Kusanagi',role:'Half-elf · Samurai',bio:'Composed and deliberate. Freya leads with steel, discipline, and a devastating first strike.',ability:'Challenge · Focused samurai strike against one foe.'},
- jamal:{name:'J’Mal',role:'Hobgoblin · Rogue',bio:'A sharp grin and sharper blades. Jamal exploits openings while smoke keeps the enemy guessing.',ability:'Sneak Attack · Extra damage against a wounded target.'},
+ freya:{name:'Freya Kusanagi',role:'Half-elf · Samurai',bio:'An army captain raised by an officer father. Trained in swordsmanship, horsemanship, and tactics, Freya wants to earn a reputation beyond her family name. Her Hellknight induction lies ahead.',ability:'Challenge · Focused samurai strike against one foe.'},
+ jamal:{name:'J’Mal',role:'Hobgoblin · Rogue',bio:'A sharp grin and sharper blades. J’Mal exploits openings while smoke keeps the enemy guessing.',ability:'Sneak Attack · Extra damage against a wounded target.'},
  jason:{name:'Jason',role:'Oni-spawn tiefling · Cleric of Asmodeus',bio:'An imposing servant of the Prince of Darkness. Jason brings divine authority and fire magic to the party.',ability:'Burning Hands · Fire spell. Mending · Restore an ally.'},
  draymus:{name:'Draymus Keshaal Mortiarum',role:'Dhampir · Necromancer',bio:'Pale, patient, and fascinated by what death leaves behind. Draymus wields cold necromantic touch magic.',ability:'Chill Touch · A close-range necromantic strike.'},
  guapo:{name:'El Guapo',role:'Sailor · Swashbuckler',bio:'A seasoned blade with a dry sense of humor. El Guapo fights dirty and keeps one eye on the nearest exit.',ability:'Panache Thrust · A daring attack with his rapier.'},
- reese:{name:'Reese',role:'Strix · Ranger / Arcane Archer',bio:'Raised near Devil’s Perch and trained in archery. Reese later combines ranger training with wizardry and the path of an arcane archer.',ability:'Joins later in the campaign; not present on the Night of Ashes.'},
+ reese:{name:'Reese',role:'Strix · Ranger / Arcane Archer',bio:'Raised near Devil’s Perch and trained in archery. Reese later combines ranger training with wizardry and the path of an arcane archer.',ability:'Joins during the Longacre operations; absent from the Kintargo mission.'},
  bruce:{name:'Bruce',role:'Aasimar · Monk / Dragon Disciple',bio:'Bruce’s later build combines unchained monk training, sorcery, and the Dragon Disciple path. His portrait shows his later campaign appearance.',ability:'Joins later in the campaign; not present on the Night of Ashes.'}
 };
 function drawIntroArt(c,id){const g=c.getContext('2d'),f=window.PARTY_FRAMES[id].frames[0];if(art[id+'-portrait']){const im=art[id+'-portrait'];g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=true;const scale=Math.min(c.width/im.width,c.height/im.height);g.drawImage(im,(c.width-im.width*scale)/2,(c.height-im.height*scale)/2,im.width*scale,im.height*scale);return;}g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=false;const scale=Math.min(c.width*.85/f.w,c.height*.94/f.h),w=f.w*scale,h=f.h*scale;g.drawImage(sheets[id],f.x,f.y,f.w,f.h,(c.width-w)/2,c.height-h,w,h);}
@@ -186,9 +189,11 @@ function reset(resume=false,selected=null){
  epoch++;cancelJourney();cancelLevel();briefingOpen=false;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;$('combat-log').replaceChildren();showCombatMessage('');taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
  if(!resume&&!selected){showIntro();return;}
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;
+ if(!resume&&selected){try{const previous=localStorage.getItem(SAVE);if(previous){localStorage.setItem(SAVE+'-before-import',previous);$('save-restore').hidden=false;}}catch{}}
  const saved=resume?readSave():null;quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
  progression=saved?.progression||Progression.fresh();inventory=saved?.inventory||Inventory.fresh();applyProgression();
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
+ $('save-file-status').textContent='';
  const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();canvas.focus();
  if(!saved||quest.briefed===false)run(deliverOpeningMission);else if(quest.burned&&!quest.done)run(finishTempleEscape);
 }
@@ -196,13 +201,17 @@ $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(CORE.includes(id))r
 function drawQuestgiver(id,x,y,height=150,dir='front'){const model=window.QUESTGIVER_MODELS[id],f=model.frames[dir==='back'?2:dir==='right'||dir==='left'?1:0],scale=height/f.h;ctx.save();ctx.translate(x,y);if(dir==='left')ctx.scale(-1,1);ctx.drawImage(art[id],f.x,f.y,f.w,f.h,-f.w*scale/2,-height,f.w*scale,height);ctx.restore();}
 function renderBriefing(t){window.SceneLayers.draw(ctx,window.MAP_LAYERS.tavern,art.tavern,t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});ctx.fillStyle='#0a111bcc';ctx.fillRect(0,-SCREEN.mapTop,SCREEN.width,SCREEN.height);ctx.textAlign='center';ctx.font='bold 14px monospace';ctx.fillStyle='#d9ba79';ctx.fillText('KINTARGO · THE MISSION ORDERS',320,35);drawActor(ctx,{id:lead,x:174,y:255,dir:'right',step:null},153);drawActor(ctx,{id:lead==='jason'?'freya':'jason',x:456,y:255,dir:'left',step:null},153);$('prompt').hidden=true;}
 async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
- await say('Chronicle','Martial law grips Kintargo. Its lord-mayor has disappeared, and Barzillai Thrune has taken command. Three days after his arrival, Freya receives orders for a covert operation.');
- await say('freya','We are to confirm a report of a forbidden temple beneath the Silver Star. Jason and I lead this operation together.');
- await say('jason','The Silver Star is Shensen’s musical instrument shop. She is not expected to be home. The shrine below serves Sarenrae.');
- await say('Chronicle','Their strike will coincide with other operations across Kintargo on what becomes known as the Night of Ashes. Viggo, the Dawnflower Swordmaster, stands among the temple’s defenders.');
- await say('freya','End the temple and leave a false trail. Take Viggo’s scimitar and put a rapier in its place.');
- await say('jason','Then we dismantle its sacred protections. Nothing below the shop is to remain.');
- briefingOpen=false;quest.briefed=true;await journeyCard('Kintargo · Night of Ashes','The coordinated operation begins. Enter Shensen’s musical instrument shop, find the hidden temple of Sarenrae, and carry out the mission.');save();}
+ await say('Chronicle','Martial law grips Kintargo. Its lord-mayor has disappeared, and Barzillai Thrune has taken command. Three days after his arrival, a covert operation is assigned to Captain Freya Kusanagi.');
+ await say('Chronicle','Raised among soldiers by her officer father, Freya learned riding, swordsmanship, tactics, and leadership long before officer school. Family connections brought her the Kintargo and Longacre assignments. Success must be her own.');
+ await say('corrine','There is a secret temple to Sarenrae beneath Shensen’s Silver Star music shop. The Asmodean clergy requires it dismantled. Carry out the operation quietly.');
+ await say('freya','Understood. Jason and I will lead the operation together. We confirm the temple, remove its defenders, and dismantle its protections.');
+ await say('jason','Shensen is the famous actress who owns the shop. She is not expected to be home. Beneath it, Viggo, the Dawnflower Swordmaster, guards the shrine.');
+ await say('Chronicle','Freya, Jason, J’Mal, Draymus, and El Guapo form the company for this operation under the Asmodean banner. Jason serves Asmodeus as a cleric; the others bring steel, stealth, necromancy, and a sailor’s experience.');
+ await say('freya','We leave misleading evidence behind. Take Viggo’s scimitar and put a rapier in its place.');
+ await say('jason','Then we dismantle the sacred protections. Nothing below the shop is to remain.');
+ await say('Chronicle','Their strike coincides with other operations across Kintargo on what becomes known as the Night of Ashes. Beyond Kintargo, Freya’s next assignment is to work against the rebellion in Longacre, under Archbaron Darellus Fex.');
+ briefingOpen=false;quest.briefed=true;await journeyCard('Kintargo · Night of Ashes','Corrine’s mission: dismantle the hidden temple of Sarenrae beneath the Silver Star. Enter the shop, find the cellar, and carry out the covert operation.');save();}
+
 function applyProgression(){for(const id of CORE){STATS[id]=Inventory.stats(Progression.stats(BASE_STATS[id],id,progression.levels[id]),inventory,id);SPECIAL[id]=Progression.skill(BASE_SPECIAL[id],progression.levels[id],id);if(id==='freya')SPECIAL[id].dmg[1]=STATS[id].dmg[1];WEAPONS[id]=Inventory.weapon(inventory,id).name;ATTACKS[id]=Inventory.weapon(inventory,id).verb;}}
 function cancelLevel(){const resolve=levelResolve;levelResolve=null;levelOpen=false;document.body.classList.remove('is-level');$('level-up').hidden=true;if(resolve)resolve();}
 $('level-continue').onclick=()=>{const resolve=levelResolve;levelResolve=null;if(resolve)resolve();};
@@ -215,7 +224,16 @@ async function awardSermonMilestone(){
 }
 function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
 // Later Ash House interactions are exposed only by their chapter’s gated points() handler.
-function visiblePoints(){const sixth=PoliticalMovement.points();if(sixth)return sixth;const fifth=DebtsRumors.points();if(fifth)return fifth;if(quest.chapter3Complete&&!quest.chapter4)return [point('lastStandRoad')].filter(Boolean);const fourth=LastStand.points();if(fourth)return fourth.concat(townsfolk().map(u=>({id:u.id,x:u.x,y:u.y,label:'Speak to townsfolk'})));if(soloScout())return [point('scout')];if(quest.chapter2Complete&&!quest.chapter3)return [{id:'chapterThree',x:328,y:160,label:'Continue to Chapter Three'}];if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>!['debtsRoad','movementRoad','feyReport','churchStandRoad','watchRoad'].includes(p.id)&&(p.id!=='longacreRoad'||quest.chapter3)&&!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]).concat(townsfolk().map(u=>({id:u.id,x:u.x,y:u.y,label:'Speak to a townsfolk'})));}
+function storyPointAvailable(p){
+ const completed={supplies:'supplied',cimri:'metCimri',guapoDeparture:'guapoAway',scout:'scouted',owner:'ownerDeal',payroll:'payroll',rest:'rested',bathStairs:'spiritCalmed',sermon:'sermonDispersed',noticeDecree:'noticePosted',tavernDecree:'tavernPosted',gateDecree:'gatePosted',jailDecree:'rhonaDismissed'};
+ if(completed[p.id]&&quest[completed[p.id]])return false;
+ if(['noticeDecree','tavernDecree','gateDecree','jailDecree'].includes(p.id)&&!quest.decreesIssued)return false;
+ if(p.id==='manorRoad')return !!quest.deputiesReported;
+ if(['rileyQuestion','hospiceRoad','hillRoad','bolgartStocks','lastReport'].includes(p.id))return !!quest.chapter4;
+ if(p.id==='lastStandRoad')return !!quest.chapter3Complete;
+ return true;
+}
+function visiblePoints(){const sixth=PoliticalMovement.points();if(sixth)return sixth;const fifth=DebtsRumors.points();if(fifth)return fifth;if(quest.chapter3Complete&&!quest.chapter4)return [point('lastStandRoad')].filter(Boolean);const fourth=LastStand.points();if(fourth)return fourth.concat(townsfolk().map(u=>({id:u.id,x:u.x,y:u.y,label:'Speak to townsfolk'})));if(soloScout())return [point('scout')];if(quest.chapter2Complete&&!quest.chapter3)return [{id:'chapterThree',x:328,y:160,label:'Continue to Chapter Three'}];if(quest.done&&!quest.chapter2)return [{id:'nextChapter',x:608,y:184,label:'Continue to Chapter Two'}];return scenes[scene].points.filter(p=>storyPointAvailable(p)&&!['debtsRoad','movementRoad','feyReport','churchStandRoad','watchRoad'].includes(p.id)&&(p.id!=='longacreRoad'||quest.chapter3)&&!(quest.burned&&scene==='tavern'&&p.id==='stairs')&&!(quest.victory&&scene==='temple'&&p.id==='altar')) .concat(scene==='temple'&&quest.victory?[{id:'aftermath',x:312,y:120,label:!quest.scimitar?'Take Viggo’s scimitar':!quest.planted?'Plant the rapier':'Burn the temple'}]:[]).concat(townsfolk().map(u=>({id:u.id,x:u.x,y:u.y,label:'Speak to a townsfolk'})));}
 function nearPoint(){if(!units[0])return null;return visiblePoints().filter(p=>Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS).sort((a,b)=>Math.hypot(units[0].x-a.x,units[0].y-a.y)-Math.hypot(units[0].x-b.x,units[0].y-b.y))[0];}
 async function interact(requestedId=null){
  if(Handheld.isOpen()||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;
@@ -231,12 +249,12 @@ async function interact(requestedId=null){
   if(p.id==='rope'){if(quest.ropeCut){await say(null,'The severed bell rope hangs loose. Below, the chanting continues.');}else if(quest.bell){await say(null,'The bell has already sounded. Whoever is below knows you are coming.');}else{await say(null,'A bell rope, by the cellar stairs.');const c=await say(null,'Cut the rope before descending?',['[Cut the bell rope]','[Leave the rope intact]']);if(c===0){quest.ropeCut=true;await say(null,'You cut the rope. Whatever is below will not be warned.');save();}}}
   if(p.id==='stairs'){await say('jason','The incense leads here. This is the entrance.');await say(null,'Jason finds the concealed way beneath the shop. Chanting rises from the hidden temple of Sarenrae.');await travel('temple',312,312);if(!quest.victory)await say(null,'A hidden temple. Candles, an altar, and a man in robes'+(quest.ropeCut?' still absorbed in prayer.':' who has heard you coming.'));}
   if(p.id==='altar')await encounter();
-  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Whoever finds this room will look for a swordsman who was never here.');}else{await say(null,'Nothing about tonight is undecided.',['[Burn it.]','[Burn it anyways.]']);quest.burned=true;await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await finishTempleEscape();}save();}
+  if(p.id==='aftermath'){if(!quest.scimitar){quest.scimitar=true;await say(null,'Obtained: Viggo’s scimitar.');}else if(!quest.planted){quest.planted=true;await say(null,'You lay the rapier in its place. Viggo’s scimitar is gone; a rapier takes its place. The substitution leaves misleading evidence behind.');}else{await say(null,'Nothing about tonight is undecided.',['[Burn it.]','[Burn it anyways.]']);quest.burned=true;await say(null,'Braziers tip. Old wood catches fast. Nobody will pray here again.');await say('jamal','We should not be standing in a fire. Just saying.');await finishTempleEscape();}save();}
  });
 }
 async function finishTempleEscape(){
- await journeyCard('The Silver Star · Fire and false evidence','The temple’s sacred protections are dismantled. J’Mal is carried out on a stretcher as the burning shop collapses part of the tunnels below.\n\nOn the way out, the party takes musical instruments from the shop above. They will fence the stolen goods far from Kintargo.');
- await journeyCard('Kintargo · Nox’s payment','Freya returns with Dottari guards, makes a show of trying to fight the fire, and declares it an unfortunate accident.\n\nHer contractor, known only as Nox, appears human: a woman carrying a fine glaive, with an unsettling power about her. She pays each member one hundred gold pieces and sends them to a safehouse.');
+ await journeyCard('The Silver Star · Fire and false evidence','The temple’s sacred protections are dismantled. After his warning about the fire, J’Mal is stabilized. His wounds are still too severe to walk; the party carries him out on a stretcher as the burning shop collapses part of the tunnels below.\n\nOn the way out, the party takes musical instruments from the shop above. They will fence the stolen goods far from Kintargo.');
+ await journeyCard('Kintargo · Nox’s payment','Captain Freya returns with Dottari guards. Her military standing and family connections lend weight to her words. She makes a show of trying to fight the fire, and declares it an unfortunate accident.\n\nThe contractor, known to the party only as Nox, appears human: a woman carrying a fine glaive, with an unsettling power about her. She pays each member one hundred gold pieces and sends them to a safehouse.');
  await journeyCard('Kintargo · The safehouse','From a lavish safehouse balcony, the team watches three fires burn across the city. They lie low for nearly twenty-four hours.\n\nAfter resting, a covered wagon takes them to the docks, where The Western Star awaits.',()=>{for(const id of CORE)hp[id]=STATS[id].hp;setScene('street',600,184,'left');});
  await say('guapo','A pleasure cruiser? Now that is a proper escape.');quest.done=true;save();updateObjective();
 }
@@ -275,7 +293,7 @@ function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');pane
 function log(text){if(!battle)return;$('battle-message').classList.remove('command-preview');if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,2);battle.current=text;showCombatMessage(text);paintCombatHistory();}
 function activeUnit(){return battle?units[battle.turn]:null;}
 function livingEnemy(){return battle?.enemies.find(e=>e.hp>0);}
-function flash(target,value,color='#f0d5a0'){const position=battle?battlePosition(target):{x:target.x,y:target.y,height:55};fx.push({x:position.x,y:position.y-position.height,text:String(value),color,life:.9});target.flash=.18;}
+function flash(target,value,color='#f0d5a0'){const position=battle?battlePosition(target):{x:target.x,y:target.y,height:55};fx.push({x:position.x,y:position.y-position.height+(battle?.enemies.includes(target)?24:0),text:String(value),color,life:.9});target.flash=.18;}
 function hitTarget(attacker,target,value){GameAudio.effect('hit');target.hp=Math.max(0,target.hp-value);attacker.lunge=.22;flash(target,'−'+value);return value;}
 function paintParty(){
  syncBattleView();
@@ -356,7 +374,7 @@ async function performActionImpl(action){
  if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
  battle.turn++;
  while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
- if(battle.turn>=units.length){log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':'The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
+ if(battle.turn>=units.length){log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':battle.kind==='wereboar'?'Bolgart charges with tusks and brute force.':battle.kind==='bolgart'?'Bolgart fights back.':'The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
  units.forEach(u=>u.guard=false);battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));
  }
  battle.busy=false;paintBattle();
@@ -383,18 +401,21 @@ function drawActor(g,u,height=55){
  const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);if(hp[u.id]===0)g.globalAlpha=.38;
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
-function drawNPC(u){if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
+function drawNPC(u){if(u.hp!==undefined&&u.hp<=0){ctx.save();ctx.globalAlpha=.65;ctx.translate(u.x,u.y);ctx.rotate(-Math.PI/2);drawNPC({...u,x:0,y:0,hp:undefined});ctx.restore();return;}if(u.id==='reese'){drawActor(ctx,{...u,dir:'up',step:null,anim:0},55);return;}if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
  if(u.id.startsWith('citizen-')||u.id.startsWith('execution-citizen-')){drawCitizen(u);return;}
  if(PoliticalMovement.drawNPC(u))return;
  if(window.NextArc.drawNPC(u))return;
  if(window.NextChapter.drawNPC(u))return;
  if(u.id==='guard'){const im=art.guard;ctx.drawImage(im,u.x-17,u.y-54,34,56);return;}
- const f=window.CHAPTER_NPCS[u.id],im=art.npcs,scale=55/f.h;ctx.save();if(u.hp!==undefined&&u.hp<=0)ctx.globalAlpha=.25;
+ const f=window.CHAPTER_NPCS[u.id],im=art.npcs,scale=55/f.h;ctx.save();
  ctx.drawImage(im,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),Math.round(u.y-55),Math.round(f.w*scale),55);ctx.restore();
  if(battle&&u.hp>0){rect(u.x-16,u.y-64,32,3,'#151522');rect(u.x-16,u.y-64,Math.max(0,32*u.hp/u.max),3,'#c46652');}
 }
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 function buildFlicker(){if(!art[scene])return;const a=document.createElement('canvas');a.width=640;a.height=400;const g=a.getContext('2d',{willReadFrequently:true});g.imageSmoothingEnabled=false;g.drawImage(art[scene],0,0,640,400);let pixels;try{pixels=g.getImageData(0,0,640,400).data;}catch{}flicker=scenes[scene].lights.map(([x,y],index)=>{const mask=document.createElement('canvas');mask.width=33;mask.height=49;const mg=mask.getContext('2d'),d=mg.createImageData(33,49);for(let yy=0;yy<49;yy++)for(let xx=0;xx<33;xx++){const wx=x-16+xx,wy=y-24+yy,dist=((xx-16)/16)**2+((yy-24)/24)**2,i=(wy*640+wx)*4;if(dist>=1||wx<0||wy<0||wx>=640||wy>=400)continue;const r=pixels?pixels[i]:200,green=pixels?pixels[i+1]:130,b=pixels?pixels[i+2]:65;if(r>125&&green>65&&r>green*1.12&&green>b*1.2)d.data[(yy*33+xx)*4+3]=Math.round(255*Math.min(1,(r-110)/120)*(pixels?Math.sqrt(1-dist):(1-dist)**2*.55));}mg.putImageData(d,0,0);return {mask,x:x-16,y:y-24,index};});}
+// Reese's recruitment date is unknown. Present him during the established Longacre service period,
+// without assigning an invented early weapon or combat sheet.
+function reeseCompanion(){const tail=units.at(-1);if(!tail)return null;for(const [dx,dy]of [[24,0],[-24,0],[0,24],[0,-24]]){const x=tail.x+dx,y=tail.y+dy;if(passable(...cell(x,y))&&units.every(u=>Math.hypot(u.x-x,u.y-y)>15))return {id:'reese',x,y};}return null;}
 function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio.tick();t=Handheld.time(t);$('pause-toggle').hidden=!ready||introOpen||dialogOpen||journeyOpen||levelOpen||briefingOpen||taskBusy;
  $('quest-task').hidden=!ready||introOpen||briefingOpen||journeyOpen||levelOpen||!!battle;
  rect(0,0,640,canvas.height,'#0b1018');if(ready&&TitleScreen.draw(ctx,t))return;if(!ready||introOpen)return;if(battle){renderBattle(t);return;}ctx.save();ctx.translate(0,SCREEN.mapTop);try{if(briefingOpen){renderBriefing(t);return;}window.SceneLayers.draw(ctx,window.MAP_LAYERS[scene],art[scene],t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});
@@ -403,14 +424,16 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
  if(path.length){ctx.fillStyle='#d9b86a77';path.forEach(([x,y])=>ctx.fillRect(x*T+7,y*T+7,2,2));}
  const npcs=PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}]);
- const drawables=[...units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya')),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
+ const companion=quest.chapter3Complete&&!soloParty()&&!['temple','tavern','street','western_star','remesiana','bathroom'].includes(scene)?reeseCompanion():null;
+ const drawables=[...(companion?[companion]:[]),...units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya')),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
  for(const u of drawables){if(CORE.includes(u.id))drawActor(ctx,u);else drawNPC(u);}
  const guide=QuestGuide.current();if($('quest-task-text').textContent!==guide.text)$('quest-task-text').textContent=guide.text;
- if(!finished()&&guide.target){const rawTarget=guide.target,speaker=({gateDisturbance:'ovinnik',churchConfront:'allamar',cimriAccount:'cimri',executionOrders:'fex',arrestBo:'bo_gramel',doctorTalk:'gerya',ingoeTalk:'ingoe',sermon:'allamar',razelago:'razelago',fexAudience:'fex',jailDecree:'rhona',owner:'owner',cimri:'cimri',guard:'guard',barkeep:'cultist',altar:'viggo'})[rawTarget.id],actor=npcs.find(n=>n.id===speaker),target=actor?{x:actor.x,y:actor.y-(speaker==='fex'?62:55)+41}:rawTarget,lift=reduce.matches?0:Math.round(Math.sin(t*2.5)*2),y=target.y-53+lift;ctx.save();ctx.globalAlpha=.8;ctx.fillStyle='#f2cf7e';ctx.strokeStyle='#31202a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(target.x,y-9);ctx.lineTo(target.x+9,y);ctx.lineTo(target.x,y+10);ctx.lineTo(target.x-9,y);ctx.closePath();ctx.fill();ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle='#492a2a';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.beginPath();ctx.moveTo(target.x,y-5);ctx.lineTo(target.x+4,y);ctx.lineTo(target.x,y+5);ctx.lineTo(target.x-4,y);ctx.closePath();ctx.fill();ctx.restore();}
+ if(scene==='church_watch'&&quest.watchStarted||scene==='execution_square'){ctx.fillStyle='#121a3c55';ctx.fillRect(0,0,640,400);}
+ if(!finished()&&guide.target){const rawTarget=guide.target,speaker=({churchConfront:'allamar',cimriAccount:'cimri',executionOrders:'fex',arrestBo:'bo_gramel',doctorTalk:'gerya',ingoeTalk:'ingoe',sermon:'allamar',razelago:'razelago',fexAudience:'fex',jailDecree:'rhona',owner:'owner',cimri:'cimri',guard:'guard',barkeep:'cultist',altar:'viggo'})[rawTarget.id],actor=npcs.find(n=>n.id===speaker),target=actor?{x:actor.x,y:actor.y-(speaker==='fex'?62:55)+41}:rawTarget,lift=reduce.matches?0:Math.round(Math.sin(t*2.5)*2),y=target.y-53+lift;ctx.save();ctx.globalAlpha=.8;ctx.fillStyle='#f2cf7e';ctx.strokeStyle='#31202a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(target.x,y-9);ctx.lineTo(target.x+9,y);ctx.lineTo(target.x,y+10);ctx.lineTo(target.x-9,y);ctx.closePath();ctx.fill();ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle='#492a2a';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.beginPath();ctx.moveTo(target.x,y-5);ctx.lineTo(target.x+4,y);ctx.lineTo(target.x,y+5);ctx.lineTo(target.x-4,y);ctx.closePath();ctx.fill();ctx.restore();}
 
  if(quest.burned&&scene==='tavern'){ctx.fillStyle='rgba(80,55,38,.1)';ctx.fillRect(0,0,640,400);if(!reduce.matches)for(let i=0;i<12;i++){const y=350-(t*35+i*47)%320,x=490+Math.sin(i+t)*60;rect(x,y,1,2,'#ffb97377');}}
  for(const f of fx){ctx.save();ctx.globalAlpha=Math.min(1,f.life*2);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;const y=f.y-(.9-f.life)*18;ctx.strokeStyle='#0b1018';ctx.strokeText(f.text,f.x,y);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,y);ctx.restore();}
- $('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!nearPoint();
+ const currentPrompt=nearPoint();$('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!currentPrompt;if(currentPrompt)$('prompt').textContent='E · '+currentPrompt.label;
 }finally{ctx.restore();}
 }
 $('combat-target').onchange=e=>{if(battle&&!battle.busy){battle.target=Number(e.target.value);paintBattle();}};
@@ -419,7 +442,7 @@ $('paths').onclick=()=>{showPaths=!showPaths;$('paths').textContent=showPaths?'H
 $('interact').onclick=interact;
 $('heal-target').onclick=()=>{if(!battle||battle.busy)return;const i=units.findIndex(u=>u.id===battle.ally);battle.ally=units[(i+1)%units.length].id;paintBattle();};
 $('character').onchange=e=>{if(battle||taskBusy||dialogOpen){e.target.value=lead;return;}const old=lead;if(units[0].step){units[0].x=units[0].step.sx;units[0].y=units[0].step.sy;}lead=e.target.value;const displaced=units.find(u=>u.id===lead);if(displaced)displaced.id=old;units[0].id=lead;units[0].step=null;path=[];keys.clear();paintParty();save();canvas.focus();};
-document.addEventListener('keydown',e=>{if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
+document.addEventListener('keydown',e=>{if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&(e.key.toLowerCase()==='p'||['Escape','b','B'].includes(e.key)&&(!battle||battle.control?.mode==='commands'))){e.preventDefault();if(!e.repeat)Handheld.show();return;}
  if(levelOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('level-continue').click();else if(e.key==='Tab')$('level-continue').focus();return;}
  if(journeyOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('journey-continue').click();else if(e.key==='Tab')$('journey-continue').focus();return;}
@@ -471,7 +494,7 @@ function replaySections(){
  add('employer','08 · Ash House employer','ash_house',[328,328],'scouted ownerDeal payroll');q.goldReward=100;add('rest','09 · Rest at Ash House','ash_house',[328,296],'reward');add('bath','10 · The upstairs bath','bathroom',[328,328],'rested');
  add('sermon','11 · Allamar’s sermon','longacre_square',[328,296],'bathStarted jamalRescued spiritCalmed chapter2Complete chapter3');
  add('decrees','12 · Posting the decrees','ash_house',[328,296],'sermonDispersed decreesIssued');add('dismissal','13 · Rhona’s dismissal','longacre_jail',[328,312],'noticePosted tavernPosted gatePosted');add('ambush','14 · Former deputies’ ambush','longacre_jail',[328,312],'jailPosted rhonaDismissed');
- add('compact','15 · The Hellfire Compact','scarlet_manor',[328,312],'deputiesDefeated deputiesReported');add('last-stand','16 · The Last Stand','scarlet_manor',[328,312],'compactSworn chapter3Complete');add('hospice','17 · Gerya’s intercepted letter','rohalendi_hospice',[328,344],'chapter4 bolgartSubdued rileyCaptured prisonersJailed rileyQuestioned');add('hill','18 · The predawn hill search','angel_hill',[328,344],'doctorAlliance churchEntered churchDoorsRepaired');add('debts','19 · Ingoe’s dockside rumors','ash_house',[328,296],'hillSearched bolgartSecured chapter4Complete');add('movement','20 · Political Movement','ash_house',[328,296],'chapter5 doctorAlliance churchEntered churchDoorsRepaired ingoeAgreement chapter5Complete');add('church-watch','21 · Church standoff and watch','ash_house',[328,296],'chapter6 gateOpened ovinnikSubdued ovinnikReported');add('jailbreak','22 · Jailbreak investigation','escape_jail',[328,312],'churchStandoff watchStarted jailbreakHeard');add('execution','23 · Dusk execution','execution_square',[328,296],'jailbreakInspected escapeTrailLost bolgartReleased executionOrdered boCaptured');return list;
+ add('compact','15 · The Hellfire Compact','scarlet_manor',[328,312],'deputiesDefeated deputiesReported');add('last-stand','16 · The Last Stand','scarlet_manor',[328,312],'compactSworn chapter3Complete');add('hospice','17 · Gerya’s intercepted letter','rohalendi_hospice',[328,344],'chapter4 bolgartSubdued rileyCaptured prisonersJailed rileyQuestioned');add('hill','18 · The predawn hill search','angel_hill',[328,344],'doctorAlliance churchEntered churchDoorsRepaired');add('debts','19 · Ingoe’s dockside rumors','ash_house',[328,296],'hillSearched bolgartSecured chapter4Complete');add('movement','20 · Political Movement','ash_house',[328,296],'chapter5 doctorAlliance churchEntered churchDoorsRepaired ingoeAgreement chapter5Complete');q.guapoReturned=true;q.guapoAway=false;q.activeRoster=[...CORE];add('church-watch','21 · Church standoff and watch','ash_house',[328,296],'chapter6 gateOpened ovinnikSubdued ovinnikReported');add('jailbreak','22 · Jailbreak investigation','escape_jail',[328,312],'churchStandoff watchStarted jailbreakHeard');add('execution','23 · Dusk execution','execution_square',[328,296],'jailbreakInspected escapeTrailLost bolgartReleased executionOrdered boCaptured');return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
 function installSectionReplay(){
