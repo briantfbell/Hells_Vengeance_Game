@@ -165,36 +165,39 @@
     ]
   },
   "reese": {
-    "src": "idle-reese.png",
+    "src": "reese-early-sheet-v1.png",
     "frames": [
       {
-        "x": 170,
-        "y": 20,
-        "w": 419,
-        "h": 768,
-        "anchorX": 313.5
+        "x": 161,
+        "y": 812,
+        "w": 182,
+        "h": 268,
+        "anchorX": 255,
+        "anchorY": 1080
       },
       {
-        "x": 766,
-        "y": 18,
-        "w": 394,
-        "h": 770,
-        "anchorX": 940.5
+        "x": 475,
+        "y": 814,
+        "w": 173,
+        "h": 267,
+        "anchorX": 555,
+        "anchorY": 1088
       },
       {
-        "x": 1375,
-        "y": 36,
-        "w": 403,
-        "h": 752,
-        "anchorX": 1567.5
+        "x": 791,
+        "y": 814,
+        "w": 177,
+        "h": 267,
+        "anchorX": 867,
+        "anchorY": 1081
       }
     ],
-    "maxHeight": 770,
+    "maxHeight": 268,
     "cycle": [
       0,
       1,
-      0,
-      2
+      2,
+      1
     ]
   },
   "bruce": {

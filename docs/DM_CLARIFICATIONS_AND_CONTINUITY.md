@@ -26,7 +26,7 @@ Gate marker points to its actual investigation trigger. Evening watch and dusk s
 
 ## Remaining boundaries
 
-Reese is acknowledged between the compact and Last Stand and appears as a visual companion during established Longacre service. This does not establish his exact recruitment date. His early weapons/skills remain unconfirmed, so he is not assigned invented combat statistics or controls in this revision.
+Reese is introduced between the compact and Last Stand, then joins the playable exploration and combat roster. This placement does not establish an exact historical recruitment date. His early loadout is a bow, armor, and basic equipment, per Brian’s direct DM clarification.
 
 Sleipnir is introduced by name when Freya prepares her recorded mounted charge. No acquisition/reunion event is invented. Exact command credentials, substituted-weapon motives, Bolgart's release motive, and any revised gathering decree remain unknown.
 
@@ -46,3 +46,15 @@ Brian’s latest direct clarification supersedes the earlier supplied exile acco
 Corrine now has front/profile/back sprite views and a centered face crop. Her human-looking appearance and black/crimson/gold robes are interpretation rather than established lore. She faces Freya and Jason standing side by side, regardless of the chosen protagonist. The illustrated clergy chamber is also an interpreted backdrop, not a named canonical building. It replaces the misleading use of the target music shop as the briefing room. The fixed screen and dialogue panel remain intact.
 
 The replacement Silver Star art omitted the visible bell rope while retaining the trigger. A canvas-drawn brass bell and braided rope now mark that trigger, including a shortened, frayed rope after cutting. Existing alarm choices and encounter consequences are preserved.
+
+## Early Reese art and combat integration (10 October 2026)
+
+Brian supplied the early Reese portrait and requested his participation in the Bolgart, gate guardian, and Angel Knight fights. The image is the visual reference for blue-gray skin, white hair, long ears, black wings, leather clothing, a plain bow, and clawed feet. Directional movement has idle, left-step and right-step frames, mirrored profile for left facing. Combat uses three ready poses and nock/draw/release poses. This replaces the old stationary companion rendering; Reese can be selected as leader after recruitment, but cannot start the Kintargo prologue.
+
+Reese’s HP 30, AC 15, attack +6, bow damage 1D8+2, and limited-use Aimed Shot (+2 accuracy, three uses per rest) are **MVP balance values**, not a reconstructed historical Pathfinder sheet or confirmed feat. His displayed game level 1 is likewise an adaptation value, not his historical joining level. No later magical bow, enchanted armor, wizard spell, or Arcane Archer ability is backdated. Exact early mechanics still need DM confirmation.
+
+The first Bolgart encounter has Freya, Jason, Draymus, and Reese; J’Mal guards the rear exit and captures Riley. El Guapo remains away until his established return. J’Mal rejoins for the wereboar fight. Bolgart returns to human sprite form after defeat. All six companions take part in the gate guardian encounter; Freya holds for the scripted mounted charge at the execution while the other five, including Reese, fight the Angel Knight and rioters.
+
+Before the disguise is revealed, the rider’s public label is Angel Knight. Draymus’s Cause Fear sequence shows the defender’s D20 saving throw of 1, explicitly labeled failed save / frightened. A defender’s 20 would reverse the intended outcome; this is not Draymus’s attack roll.
+
+Older five-character saves migrate after the compact by adding Reese with fresh resources, leaving existing injuries, inventory, and progression intact. Opening saves continue to exclude him. The Remesiana outfitter uses the same skinny, hat-wearing model as the existing dialogue portrait.
