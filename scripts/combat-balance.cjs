@@ -1,0 +1,36 @@
+// Runs the game's actual action/turn functions with seeded dice and instant animation.
+// No browser saves or campaign files are changed.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.join(__dirname,'..'),read=n=>fs.readFileSync(path.join(root,'art-test',n),'utf8'),source=read('chapter-engine.js');
+const head=source.slice(source.indexOf('const OPENING_ROSTER='),source.indexOf('const DIR='));
+const cases=[
+ {name:'Temple · silent bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist'],down:'jamal'},
+ {name:'Temple · sounded bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist','cultist','cultist'],down:'jamal'},
+ {name:'Former deputies',kind:'deputies',roster:['freya','jamal','jason','draymus'],enemies:['deputy1','deputy2','deputy3','deputy4'],level2:true},
+ {name:'Bolgart · human',kind:'bolgart',roster:['freya','jason','draymus','reese'],enemies:['bolgart'],level2:true},
+ {name:'Bolgart · wereboar',kind:'wereboar',roster:['freya','jamal','jason','draymus','reese'],enemies:['bolgart_wereboar'],level2:true},
+ {name:'Gate guardian',kind:'ovinnik',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['ovinnik'],level2:true,down:'jamal'},
+ {name:'Angel Knight and rioters',kind:'execution',roster:['jamal','jason','draymus','guapo','reese'],enemies:['false_knight','rioter1','rioter2'],level2:true}
+];
+function create(c,seed,carry){
+ const w={window:null,structuredClone,console,epoch:1,dialogOpen:false,taskBusy:false,Handheld:{isOpen:()=>false},GameAudio:{effect:()=>{}},CANCEL:Symbol('cancel'),scene:'temple',lead:c.roster[0],ready:true};w.window=w;vm.createContext(w);
+ for(const name of ['inventory.js','progression.js'])vm.runInContext(read(name),w);
+ const data=vm.runInContext('(()=>{'+head+'return {CORE,NAMES,STATS,SPECIAL,BASE_STATS,BASE_SPECIAL,WEAPONS,ATTACKS,SKILL_TEXT,inventory,progression};})()',w);Object.assign(w,data);
+ for(const file of ['last-stand-chapter.js','political-movement.js'])for(const match of read(file).matchAll(/STATS\.\w+=\{[^}]+\}/g))vm.runInContext(match[0],w);
+ for(let i=1;i<=4;i++)w.STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])w.STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
+ w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',chapter6:['ovinnik','execution'].includes(c.kind)};w.progression=w.Progression.migrate(w.quest);
+ vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();
+ w.hp=Object.fromEntries(w.CORE.map(id=>[id,w.STATS[id].hp]));w.uses=Object.fromEntries(w.CORE.map(id=>[id,0]));w.potions=w.mendUses=2;if(carry){Object.assign(w.hp,carry.hp);Object.assign(w.uses,carry.uses);w.potions=carry.potions;w.mendUses=carry.mendUses;}if(c.down)w.hp[c.down]=0;
+ w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.lastRound=1;
+ const nodes={};w.$=id=>nodes[id]??={hidden:false,disabled:false,classList:{remove:()=>{}},textContent:''};w.keys={clear:()=>{}};w.delay=async()=>{};w.animateAction=async(_a,_t,_type,_hit,impact)=>impact?.();w.flash=()=>{};w.log=()=>{};w.paintParty=w.updateObjective=w.save=()=>{};w.run=()=>{};
+ w.paintBattle=()=>{if(!w.battle)return;w.lastRound=w.battle.round;while(w.battle.turn<w.units.length&&w.hp[w.units[w.battle.turn].id]<=0)w.battle.turn++;};
+ w.activeUnit=()=>w.battle?w.units[w.battle.turn]:null;w.livingEnemy=()=>w.battle?.enemies.find(e=>e.hp>0);w.combatAC=id=>w.STATS[id].ac+(c.kind==='execution'&&id==='jason'?2:0);
+ w.dice=n=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return 1+Math.floor(seed/4294967296*n);};w.Math=Object.create(Math);w.Math.random=()=>w.dice(1000000)/1000001;
+ w.rollDice=async(_label,sides,count=1,modifier=0)=>Array.from({length:count},()=>w.dice(sides)).reduce((a,b)=>a+b,modifier);w.damage=async(spec,label)=>w.rollDice(label,spec[1],spec[0],spec[2]);
+ w.hitTarget=(_actor,target,value)=>{target.hp=Math.max(0,target.hp-value);return value;};
+ vm.runInContext(source.slice(source.indexOf('function potionRefusal('),source.indexOf('async function fail(')),w);w.paintBattle();return w;
+}
+async function play(c,seed,carry){const w=create(c,seed,carry);let actions=0;while(w.battle&&actions++<250){const u=w.activeUnit();if(!u)throw Error('No active unit in '+c.name);const injured=w.units.filter(v=>w.hp[v.id]>0&&w.hp[v.id]<w.STATS[v.id].hp*.45).sort((a,b)=>w.hp[a.id]/w.STATS[a.id].hp-w.hp[b.id]/w.STATS[b.id].hp);let action='attack';if(injured.length&&(w.potions>0||u.id==='jason'&&w.mendUses>0)){w.battle.ally=injured[0].id;action=u.id==='jason'&&w.mendUses>0?'mend':'potion';}else if(w.uses[u.id]<w.SPECIAL[u.id].uses)action='special';w.battle.target=w.enemies.findIndex(e=>e.hp>0);await w.performActionImpl(action);}if(w.battle)throw Error('Fight did not resolve: '+c.name);return {won:w.enemies.every(e=>e.hp===0),rounds:w.lastRound,potions:w.potions,mendUses:w.mendUses,hp:{...w.hp},uses:{...w.uses},down:w.units.filter(u=>w.hp[u.id]===0&&u.id!==c.down).length};}
+async function audit(trials=200){const rows=[];for(const c of cases){const results=[];for(let i=0;i<trials;i++)results.push(await play(c,1001+i));const avg=k=>+(results.reduce((sum,r)=>sum+r[k],0)/trials).toFixed(2);rows.push({encounter:c.name,trials,winPercent:avg('won')*100,meanRounds:avg('rounds'),meanPotionsRemaining:avg('potions'),meanMendingRemaining:avg('mendUses'),meanAdditionalDowned:avg('down')});}const chain=[];for(let i=0;i<trials;i++){const first=await play(cases[3],5001+i);if(first.won)chain.push(await play(cases[4],8001+i,first));}rows.push({encounter:'Human → wereboar, no rest between',trials:chain.length,winPercent:+(100*chain.filter(r=>r.won).length/chain.length).toFixed(1),meanPotionsRemaining:+(chain.reduce((sum,r)=>sum+r.potions,0)/chain.length).toFixed(2)});return rows;}
+if(require.main===module)audit().then(rows=>{const out=path.join(root,'docs','combat-balance-results.json');fs.writeFileSync(out,JSON.stringify({method:'Actual game action and enemy-turn code; 200 seeded runs each; skills first, heal living allies below 45%; fixed story injuries; instant animation; no browser saves touched.',rows},null,2)+'\n');console.table(rows);}).catch(e=>{console.error(e);process.exitCode=1;});
+module.exports={audit,play,cases};
