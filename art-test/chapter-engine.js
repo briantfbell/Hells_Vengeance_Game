@@ -115,11 +115,12 @@ function paintPortrait(name){
  else if(ROSTER.includes(id)){im=sheets[id];f=window.PARTY_FRAMES[id].frames[0];}
  else if(['viggo','cultist'].includes(id)){im=art.npcs;f=window.CHAPTER_NPCS[id];}
  else if(id==='guard'){im=art.guard;f={x:0,y:0,w:im.width,h:im.height};}
+ if(id==='corrine'){f={x:211,y:45,w:132,h:132};}
  if(window.LORE_CAST?.[id]){const m=LORE_CAST[id];im=art[m.source]||art[id];f=m.frame;}
  if(['Townsfolk','Tavern patron'].includes(name)){im=art.citizens;f=CITIZEN_FRAMES[0].frames[0];}
  c.hidden=!im;$('dialog').classList.toggle('has-portrait',!!im);if(!im)return;
  g.clearRect(0,0,96,96);g.imageSmoothingEnabled=false;g.fillStyle='#252c35';g.fillRect(0,0,96,96);
- if(id==='razelago_revealed'&&!window.LORE_CAST?.[id]){g.drawImage(im,1130,42,220,220,3,3,90,90);return;}const crop=window.DIALOGUE_FACE_CROPS?.[id];if(crop){g.drawImage(im,crop.x,crop.y,crop.w,crop.h,3,3,90,90);return;}const side=Math.min(f.w,f.h*.32),cx=f.x+f.w/2;
+ if(id==='razelago_revealed'&&!window.LORE_CAST?.[id]){g.drawImage(im,1130,42,220,220,3,3,90,90);return;}const crop=window.DIALOGUE_FACE_CROPS?.[id];if(crop){g.drawImage(im,crop.x,crop.y,crop.w,crop.h,3,3,90,90);return;}if(id==='corrine'){g.drawImage(im,f.x,f.y,f.w,f.h,3,3,90,90);return;}const side=Math.min(f.w,f.h*.32),cx=f.x+f.w/2;
  g.drawImage(im,Math.max(f.x,Math.min(cx-side/2,f.x+f.w-side)),f.y,side,side,3,3,90,90);
 }
 function syncBattleView(){const on=!!battle;document.body.classList.toggle('is-combat',on);}
@@ -178,7 +179,7 @@ const BIOS={
  jason:{name:'Jason',role:'Oni-spawn tiefling · Cleric of Asmodeus',bio:'An imposing servant of the Prince of Darkness. Jason brings divine authority and fire magic to the party.',ability:'Burning Hands · Fire spell. Mending · Restore an ally.'},
  draymus:{name:'Draymus Keshaal Mortiarum',role:'Dhampir · Necromancer',bio:'Pale, patient, and fascinated by what death leaves behind. Draymus wields cold necromantic touch magic.',ability:'Chill Touch · A close-range necromantic strike.'},
  guapo:{name:'El Guapo',role:'Sailor · Swashbuckler',bio:'A seasoned blade with a dry sense of humor. El Guapo fights dirty and keeps one eye on the nearest exit.',ability:'Panache Thrust · A daring attack with his rapier.'},
- reese:{name:'Reese',role:'Strix · Ranger / Arcane Archer',bio:'Raised near Devil’s Perch and trained in archery. Reese later combines ranger training with wizardry and the path of an arcane archer.',ability:'Joins during the Longacre operations; absent from the Kintargo mission.'},
+ reese:{name:'Reese',role:'Strix · Ranger / Archer',bio:'A strix archer exiled from his people for excessive violence while serving in their defense force. He comes down from the mountains with armor, a bow, and basic equipment; his magical arsenal comes later.',ability:'Joins during the Longacre operations; absent from the Kintargo mission.'},
  bruce:{name:'Bruce',role:'Aasimar · Monk / Dragon Disciple',bio:'Bruce’s later build combines unchained monk training, sorcery, and the Dragon Disciple path. His portrait shows his later campaign appearance.',ability:'Joins later in the campaign; not present on the Night of Ashes.'}
 };
 function drawIntroArt(c,id){const g=c.getContext('2d'),f=window.PARTY_FRAMES[id].frames[0];if(art[id+'-portrait']){const im=art[id+'-portrait'];g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=true;const scale=Math.min(c.width/im.width,c.height/im.height);g.drawImage(im,(c.width-im.width*scale)/2,(c.height-im.height*scale)/2,im.width*scale,im.height*scale);return;}g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=false;const scale=Math.min(c.width*.85/f.w,c.height*.94/f.h),w=f.w*scale,h=f.h*scale;g.drawImage(sheets[id],f.x,f.y,f.w,f.h,(c.width-w)/2,c.height-h,w,h);}
@@ -199,7 +200,28 @@ function reset(resume=false,selected=null){
 }
 $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(CORE.includes(id))reset(false,id);};$('intro-resume').onclick=()=>reset(true);
 function drawQuestgiver(id,x,y,height=150,dir='front'){const model=window.QUESTGIVER_MODELS[id],f=model.frames[dir==='back'?2:dir==='right'||dir==='left'?1:0],scale=height/f.h;ctx.save();ctx.translate(x,y);if(dir==='left')ctx.scale(-1,1);ctx.drawImage(art[id],f.x,f.y,f.w,f.h,-f.w*scale/2,-height,f.w*scale,height);ctx.restore();}
-function renderBriefing(t){window.SceneLayers.draw(ctx,window.MAP_LAYERS.tavern,art.tavern,t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});ctx.fillStyle='#0a111bcc';ctx.fillRect(0,-SCREEN.mapTop,SCREEN.width,SCREEN.height);ctx.textAlign='center';ctx.font='bold 14px monospace';ctx.fillStyle='#d9ba79';ctx.fillText('KINTARGO · THE MISSION ORDERS',320,35);drawActor(ctx,{id:lead,x:174,y:255,dir:'right',step:null},153);drawActor(ctx,{id:lead==='jason'?'freya':'jason',x:456,y:255,dir:'left',step:null},153);$('prompt').hidden=true;}
+function renderBriefing(t){
+ // An interpreted clergy chamber; the exact briefing room is not recorded.
+ ctx.drawImage(art.briefingRoom,0,-SCREEN.mapTop,SCREEN.width,SCREEN.height);
+ rect(0,-SCREEN.mapTop,640,112,'#0b0c1699');
+ if(!reduce.matches){ctx.save();ctx.globalAlpha=.02+.012*Math.sin(t*2.3);ctx.fillStyle='#db9c58';ctx.fillRect(0,80,640,220);ctx.restore();}
+ ctx.textAlign='center';ctx.font='bold 14px monospace';ctx.fillStyle='#d9ba79';ctx.fillText('KINTARGO · THE MISSION ORDERS',320,35);
+ ctx.font='11px monospace';ctx.fillStyle='#aaa08e';ctx.fillText('ASMODEAN CLERGY · CAPTAIN FREYA’S COMPANY',320,58);
+ drawQuestgiver('corrine',174,260,155,'right');
+ drawActor(ctx,{id:'freya',x:382,y:260,dir:'left',step:null},150);
+ drawActor(ctx,{id:'jason',x:478,y:260,dir:'left',step:null},150);
+ ctx.font='bold 11px monospace';ctx.fillStyle='#d9ba79';ctx.fillText('CORRINE',174,278);ctx.fillText('FREYA',382,278);ctx.fillText('JASON',478,278);$('prompt').hidden=true;
+}
+function drawBellRope(){
+ if(scene!=='tavern')return;
+ const x=point('rope').x;
+ // Canvas-native overlay stays aligned to the existing interaction on the replacement map.
+ rect(x-6,44,12,3,'#2c1d16');rect(x-4,47,8,8,'#b68a43');rect(x-7,55,14,3,'#dfb66b');rect(x-1,58,2,3,'#e3c38a');
+ const end=quest.ropeCut?77:112;
+ for(let y=61;y<end;y++){rect(x-1,y,2,1,y%4<2?'#e4c89b':'#9e7850');if(y%4===0)rect(x+1,y,1,2,'#563b27');}
+ if(quest.ropeCut){rect(x-3,77,1,3,'#e4c89b');rect(x+2,76,1,4,'#ae8655');}
+ else{rect(x-3,111,6,2,'#e4c89b');rect(x-4,113,2,5,'#c29d66');rect(x+2,113,2,5,'#c29d66');rect(x-2,117,4,2,'#e4c89b');}
+}
 async function deliverOpeningMission(){briefingOpen=true;keys.clear();path=[];
  await say('Chronicle','Martial law grips Kintargo. Its lord-mayor has disappeared, and Barzillai Thrune has taken command. Three days after his arrival, a covert operation is assigned to Captain Freya Kusanagi.');
  await say('Chronicle','Raised among soldiers by her officer father, Freya learned riding, swordsmanship, tactics, and leadership long before officer school. Family connections brought her the Kintargo and Longacre assignments. Success must be her own.');
@@ -419,6 +441,7 @@ function reeseCompanion(){const tail=units.at(-1);if(!tail)return null;for(const
 function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio.tick();t=Handheld.time(t);$('pause-toggle').hidden=!ready||introOpen||dialogOpen||journeyOpen||levelOpen||briefingOpen||taskBusy;
  $('quest-task').hidden=!ready||introOpen||briefingOpen||journeyOpen||levelOpen||!!battle;
  rect(0,0,640,canvas.height,'#0b1018');if(ready&&TitleScreen.draw(ctx,t))return;if(!ready||introOpen)return;if(battle){renderBattle(t);return;}ctx.save();ctx.translate(0,SCREEN.mapTop);try{if(briefingOpen){renderBriefing(t);return;}window.SceneLayers.draw(ctx,window.MAP_LAYERS[scene],art[scene],t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});
+ drawBellRope();
  if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}
  if(scene==='street'&&!reduce.matches){for(let i=0;i<30;i++){const p=(t*.05+i*.177)%1,x=(i*71+t*(2+i%3))%640,y=30+p*90;rect(x,y,2,1,'#b8aa9044');}}
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
@@ -509,7 +532,7 @@ function installSectionReplay(){
 }
 function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
 async function load(){
- try{art.citizens=await imageLoad('townsfolk-sheet-v1.png');const values=await Promise.all(['kintargo-map.png','silver-star-music-shop-v2.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await CombatArt.load(imageLoad);await LastStand.load(imageLoad);await DebtsRumors.load(imageLoad);await PoliticalMovement.load(imageLoad);await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all([...new Set(Object.values(window.COMBAT_IDLES).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(PARTY_FRAMES[id].src||id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));await Promise.all(['reese','bruce'].map(async id=>art[id+'-portrait']=await imageLoad(id+'-foundry-portrait.webp')));await TitleScreen.load(imageLoad);ready=true;$('loading').hidden=true;TitleScreen.show();}
+ try{art.briefingRoom=await imageLoad('kintargo-briefing-v1.png');art.citizens=await imageLoad('townsfolk-sheet-v1.png');const values=await Promise.all(['kintargo-map.png','silver-star-music-shop-v2.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await CombatArt.load(imageLoad);await LastStand.load(imageLoad);await DebtsRumors.load(imageLoad);await PoliticalMovement.load(imageLoad);await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all([...new Set(Object.values(window.COMBAT_IDLES).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(PARTY_FRAMES[id].src||id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));await Promise.all(['reese','bruce'].map(async id=>art[id+'-portrait']=await imageLoad(id+'-foundry-portrait.webp')));await TitleScreen.load(imageLoad);ready=true;$('loading').hidden=true;TitleScreen.show();}
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;

@@ -25,3 +25,8 @@ Model PNG alpha is retained. Bounds are detected without altering raster artwork
 ## Validation
 
 All six model frames have nonempty alpha bounds. Each starting character receives the eight-part opening sequence, then becomes the exploration leader. Checkpoint reload preserves the choice. Full chapter walkthrough and offline/HTTP asset startup checks pass. Water distortion and moving wave highlights have been removed; other light/ambient effects remain.
+
+
+## Corrine — 10 October 2026
+
+`corrine-model-v1.png` supplies three views, with frame bounds in questgiver-models.json/js and an explicit centered face crop in the dialogue renderer. This is an interpreted clergy design, not canonical appearance evidence. `kintargo-briefing-v1.png` is the interpreted room backdrop. The opening always stages Corrine opposite Freya and Jason side by side, even if another protagonist is selected. The prior shop backdrop is no longer used for the briefing.

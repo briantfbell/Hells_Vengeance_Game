@@ -4,7 +4,7 @@ This document supersedes conflicting story assumptions in earlier production not
 
 ## Confirmed facts used
 
-- Corrine issues the covert Silver Star temple mission for the Asmodean clergy. Her precise military command relationship is unresolved. Her appearance remains deferred; the briefing uses a named speaker without invented portrait art.
+- Corrine issues the covert Silver Star temple mission for the Asmodean clergy. Her precise military command relationship is unresolved. Her sprite is an interpreted design requested on 10 October; it is not a confirmed canonical portrait.
 - Freya is an army captain during Kintargo and Longacre, trained by her officer father. Family connections secure the assignments; she wants to distinguish herself. Hellknight induction comes after Kantaria, through Zara Orcelani. None of the early party are assumed to have been recruited as Hellknights.
 - The early company is Freya, Jason, J’Mal, Draymus, and El Guapo. Reese joins in Longacre, not Kintargo.
 - Nox is known initially only as a contractor. Bodyguard status and devilbound nature are later information, not opening knowledge.
@@ -35,3 +35,14 @@ Hell's Rebels branding and all approved party art remain unchanged. Existing fix
 ## Verification
 
 22 automated checks cover saves, progression, four notice postings, payroll idempotence, scouting travel sequence, voyage order, return roster, future/completed interactions, and dialogue confirmation protection. All game JavaScript files pass syntax checks. Browser checks confirm keyboard advancement through the rebuilt briefing, text fit, the [3/4] jail checkpoint, and the dated return card with El Guapo restored to the party. This is focused regression coverage, not another complete 23-section playthrough.
+
+
+## Subsequent DM correction: Reese
+
+Brian’s latest direct clarification supersedes the earlier supplied exile account: Reese was exiled for excessive violence while serving in his people's defense force. He came down from the mountains with armor, a bow, and basic equipment. His current Foundry magical inventory and level-14 multiclass build are later data, not his Longacre starting loadout. The character-selection biography is corrected; no specific early armor type, bow enhancement, or magic ability is inferred.
+
+## Corrine briefing and visible bell rope
+
+Corrine now has front/profile/back sprite views and a centered face crop. Her human-looking appearance and black/crimson/gold robes are interpretation rather than established lore. She faces Freya and Jason standing side by side, regardless of the chosen protagonist. The illustrated clergy chamber is also an interpreted backdrop, not a named canonical building. It replaces the misleading use of the target music shop as the briefing room. The fixed screen and dialogue panel remain intact.
+
+The replacement Silver Star art omitted the visible bell rope while retaining the trigger. A canvas-drawn brass bell and braided rope now mark that trigger, including a shortened, frayed rope after cutting. Existing alarm choices and encounter consequences are preserved.

@@ -58,5 +58,35 @@
       }
     ],
     "appearance": "interpreted; campaign appearance unspecified"
+  },
+  "corrine": {
+    "name": "Corrine",
+    "src": "corrine-model-v1.png",
+    "facings": [
+      "front",
+      "right",
+      "back"
+    ],
+    "frames": [
+      {
+        "x": 94,
+        "y": 17,
+        "w": 374,
+        "h": 986
+      },
+      {
+        "x": 605,
+        "y": 17,
+        "w": 343,
+        "h": 986
+      },
+      {
+        "x": 1083,
+        "y": 17,
+        "w": 365,
+        "h": 984
+      }
+    ],
+    "appearance": "interpreted Asmodean clergy design; canonical appearance unconfirmed"
   }
 }
