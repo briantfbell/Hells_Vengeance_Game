@@ -1,0 +1,3477 @@
+{
+  "idles": {
+    "freya": {
+      "src": "idle-freya.png",
+      "frames": [
+        {
+          "x": 101,
+          "y": 41,
+          "w": 549,
+          "h": 744,
+          "anchorX": 325
+        },
+        {
+          "x": 730,
+          "y": 56,
+          "w": 511,
+          "h": 733,
+          "anchorX": 952
+        },
+        {
+          "x": 1335,
+          "y": 42,
+          "w": 511,
+          "h": 745,
+          "anchorX": 1567.5
+        }
+      ],
+      "maxHeight": 745,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "jamal": {
+      "src": "jamal-lore-v3.png",
+      "frames": [
+        {
+          "x": 58,
+          "y": 985,
+          "w": 237,
+          "h": 298,
+          "anchorX": 162,
+          "anchorY": 1283
+        },
+        {
+          "x": 374,
+          "y": 988,
+          "w": 249,
+          "h": 296,
+          "anchorX": 485.5,
+          "anchorY": 1284
+        },
+        {
+          "x": 678,
+          "y": 987,
+          "w": 243,
+          "h": 295,
+          "anchorX": 809,
+          "anchorY": 1282
+        }
+      ],
+      "maxHeight": 298,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "jason": {
+      "src": "idle-jason.png",
+      "frames": [
+        {
+          "x": 94,
+          "y": 53,
+          "w": 495,
+          "h": 745,
+          "anchorX": 295.5
+        },
+        {
+          "x": 692,
+          "y": 54,
+          "w": 453,
+          "h": 746,
+          "anchorX": 887
+        },
+        {
+          "x": 1254,
+          "y": 65,
+          "w": 504,
+          "h": 733,
+          "anchorX": 1478.5
+        }
+      ],
+      "maxHeight": 746,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "draymus": {
+      "src": "idle-draymus.png",
+      "frames": [
+        {
+          "x": 54,
+          "y": 57,
+          "w": 534,
+          "h": 765,
+          "anchorX": 294
+        },
+        {
+          "x": 631,
+          "y": 57,
+          "w": 498,
+          "h": 766,
+          "anchorX": 866.5
+        },
+        {
+          "x": 1181,
+          "y": 57,
+          "w": 496,
+          "h": 765,
+          "anchorX": 1431
+        }
+      ],
+      "maxHeight": 766,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "guapo": {
+      "src": "idle-guapo.png",
+      "frames": [
+        {
+          "x": 71,
+          "y": 118,
+          "w": 598,
+          "h": 640,
+          "anchorX": 334.5
+        },
+        {
+          "x": 718,
+          "y": 121,
+          "w": 553,
+          "h": 639,
+          "anchorX": 970
+        },
+        {
+          "x": 1334,
+          "y": 132,
+          "w": 521,
+          "h": 628,
+          "anchorX": 1576
+        }
+      ],
+      "maxHeight": 640,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "reese": {
+      "src": "reese-early-sheet-v1.png",
+      "frames": [
+        {
+          "x": 161,
+          "y": 812,
+          "w": 182,
+          "h": 268,
+          "anchorX": 255,
+          "anchorY": 1080
+        },
+        {
+          "x": 475,
+          "y": 814,
+          "w": 173,
+          "h": 267,
+          "anchorX": 555,
+          "anchorY": 1088
+        },
+        {
+          "x": 791,
+          "y": 814,
+          "w": 177,
+          "h": 267,
+          "anchorX": 867,
+          "anchorY": 1081
+        }
+      ],
+      "maxHeight": 268,
+      "cycle": [
+        0,
+        1,
+        2,
+        1
+      ]
+    },
+    "bruce": {
+      "src": "bruce-portrait-packed-v1.png",
+      "frames": [
+        {
+          "x": 37,
+          "y": 1011,
+          "w": 212,
+          "h": 452,
+          "anchorX": 143.5,
+          "anchorY": 1463
+        },
+        {
+          "x": 325,
+          "y": 1002,
+          "w": 210,
+          "h": 461,
+          "anchorX": 430.5,
+          "anchorY": 1463
+        },
+        {
+          "x": 609,
+          "y": 1002,
+          "w": 216,
+          "h": 461,
+          "anchorX": 717.5,
+          "anchorY": 1463
+        }
+      ],
+      "maxHeight": 461,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "viggo": {
+      "src": "idle-temple.png",
+      "frames": [
+        {
+          "x": 36,
+          "y": 21,
+          "w": 446,
+          "h": 466,
+          "anchorX": 256
+        },
+        {
+          "x": 533,
+          "y": 20,
+          "w": 404,
+          "h": 467,
+          "anchorX": 768
+        },
+        {
+          "x": 1055,
+          "y": 22,
+          "w": 379,
+          "h": 465,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 467,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "cultist": {
+      "src": "idle-temple.png",
+      "frames": [
+        {
+          "x": 34,
+          "y": 529,
+          "w": 454,
+          "h": 467,
+          "anchorX": 256
+        },
+        {
+          "x": 531,
+          "y": 528,
+          "w": 408,
+          "h": 468,
+          "anchorX": 768
+        },
+        {
+          "x": 1048,
+          "y": 530,
+          "w": 392,
+          "h": 466,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 468,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "deputy1": {
+      "src": "idle-deputies-a.png",
+      "frames": [
+        {
+          "x": 134,
+          "y": 16,
+          "w": 317,
+          "h": 505,
+          "anchorX": 256
+        },
+        {
+          "x": 617,
+          "y": 17,
+          "w": 322,
+          "h": 504,
+          "anchorX": 768
+        },
+        {
+          "x": 1096,
+          "y": 35,
+          "w": 311,
+          "h": 486,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 505,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "deputy2": {
+      "src": "idle-deputies-a.png",
+      "frames": [
+        {
+          "x": 138,
+          "y": 537,
+          "w": 293,
+          "h": 467,
+          "anchorX": 256
+        },
+        {
+          "x": 635,
+          "y": 537,
+          "w": 277,
+          "h": 467,
+          "anchorX": 768
+        },
+        {
+          "x": 1125,
+          "y": 537,
+          "w": 282,
+          "h": 467,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 467,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "deputy3": {
+      "src": "idle-deputies-b.png",
+      "frames": [
+        {
+          "x": 144,
+          "y": 22,
+          "w": 288,
+          "h": 479,
+          "anchorX": 256
+        },
+        {
+          "x": 634,
+          "y": 22,
+          "w": 270,
+          "h": 479,
+          "anchorX": 768
+        },
+        {
+          "x": 1128,
+          "y": 32,
+          "w": 272,
+          "h": 469,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 479,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "deputy4": {
+      "src": "idle-deputies-b.png",
+      "frames": [
+        {
+          "x": 144,
+          "y": 525,
+          "w": 298,
+          "h": 472,
+          "anchorX": 256
+        },
+        {
+          "x": 624,
+          "y": 526,
+          "w": 293,
+          "h": 471,
+          "anchorX": 768
+        },
+        {
+          "x": 1126,
+          "y": 536,
+          "w": 282,
+          "h": 462,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 472,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "bolgart_wereboar": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 129,
+          "y": 256,
+          "w": 186,
+          "h": 256,
+          "anchorX": 170.5
+        },
+        {
+          "x": 422,
+          "y": 256,
+          "w": 183,
+          "h": 256,
+          "anchorX": 512
+        },
+        {
+          "x": 724,
+          "y": 256,
+          "w": 186,
+          "h": 256,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 256,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "riley_ghast": {
+      "src": "idle-later.png",
+      "frames": [
+        {
+          "x": 77,
+          "y": 300,
+          "w": 200,
+          "h": 303,
+          "anchorX": 170.5
+        },
+        {
+          "x": 428,
+          "y": 301,
+          "w": 198,
+          "h": 302,
+          "anchorX": 512
+        },
+        {
+          "x": 768,
+          "y": 300,
+          "w": 197,
+          "h": 303,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 303,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "lencia": {
+      "src": "idle-later.png",
+      "frames": [
+        {
+          "x": 3,
+          "y": 603,
+          "w": 308,
+          "h": 317,
+          "anchorX": 170.5
+        },
+        {
+          "x": 373,
+          "y": 603,
+          "w": 258,
+          "h": 317,
+          "anchorX": 512
+        },
+        {
+          "x": 719,
+          "y": 603,
+          "w": 301,
+          "h": 316,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 317,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "rhona": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 135,
+          "y": 513,
+          "w": 128,
+          "h": 255,
+          "anchorX": 170.5
+        },
+        {
+          "x": 453,
+          "y": 513,
+          "w": 119,
+          "h": 248,
+          "anchorX": 512
+        },
+        {
+          "x": 782,
+          "y": 512,
+          "w": 138,
+          "h": 249,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 255,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "sleipnir": {
+      "src": "idle-later.png",
+      "frames": [
+        {
+          "x": 31,
+          "y": 1226,
+          "w": 288,
+          "h": 306,
+          "anchorX": 170.5
+        },
+        {
+          "x": 384,
+          "y": 1226,
+          "w": 267,
+          "h": 305,
+          "anchorX": 512
+        },
+        {
+          "x": 703,
+          "y": 1226,
+          "w": 297,
+          "h": 308,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 308,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "fex": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 126,
+          "y": 4,
+          "w": 129,
+          "h": 251,
+          "anchorX": 170.5
+        },
+        {
+          "x": 448,
+          "y": 4,
+          "w": 134,
+          "h": 250,
+          "anchorX": 512
+        },
+        {
+          "x": 774,
+          "y": 5,
+          "w": 124,
+          "h": 250,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 251,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "cimri": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 110,
+          "y": 262,
+          "w": 155,
+          "h": 244,
+          "anchorX": 170.5
+        },
+        {
+          "x": 427,
+          "y": 263,
+          "w": 150,
+          "h": 243,
+          "anchorX": 512
+        },
+        {
+          "x": 777,
+          "y": 262,
+          "w": 148,
+          "h": 244,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 244,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "allamar": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 101,
+          "y": 768,
+          "w": 169,
+          "h": 256,
+          "anchorX": 170.5
+        },
+        {
+          "x": 432,
+          "y": 769,
+          "w": 152,
+          "h": 255,
+          "anchorX": 512
+        },
+        {
+          "x": 766,
+          "y": 769,
+          "w": 153,
+          "h": 250,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 256,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "twin1": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 106,
+          "y": 1024,
+          "w": 167,
+          "h": 256,
+          "anchorX": 170.5
+        },
+        {
+          "x": 431,
+          "y": 1024,
+          "w": 165,
+          "h": 256,
+          "anchorX": 512
+        },
+        {
+          "x": 758,
+          "y": 1026,
+          "w": 165,
+          "h": 254,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 256,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "twin2": {
+      "src": "lore-authority-v2.png",
+      "frames": [
+        {
+          "x": 106,
+          "y": 1280,
+          "w": 166,
+          "h": 246,
+          "anchorX": 170.5
+        },
+        {
+          "x": 431,
+          "y": 1280,
+          "w": 166,
+          "h": 246,
+          "anchorX": 512
+        },
+        {
+          "x": 755,
+          "y": 1280,
+          "w": 170,
+          "h": 246,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 246,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "bolgart": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 130,
+          "y": 5,
+          "w": 183,
+          "h": 251,
+          "anchorX": 170.5
+        },
+        {
+          "x": 433,
+          "y": 3,
+          "w": 173,
+          "h": 253,
+          "anchorX": 512
+        },
+        {
+          "x": 740,
+          "y": 7,
+          "w": 159,
+          "h": 249,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 253,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "riley": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 143,
+          "y": 512,
+          "w": 151,
+          "h": 244,
+          "anchorX": 170.5
+        },
+        {
+          "x": 446,
+          "y": 512,
+          "w": 141,
+          "h": 245,
+          "anchorX": 512
+        },
+        {
+          "x": 753,
+          "y": 512,
+          "w": 150,
+          "h": 245,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 245,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "gerya": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 159,
+          "y": 768,
+          "w": 123,
+          "h": 256,
+          "anchorX": 170.5
+        },
+        {
+          "x": 450,
+          "y": 770,
+          "w": 126,
+          "h": 254,
+          "anchorX": 512
+        },
+        {
+          "x": 745,
+          "y": 773,
+          "w": 124,
+          "h": 251,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 256,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "ingoe": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 162,
+          "y": 1034,
+          "w": 124,
+          "h": 246,
+          "anchorX": 170.5
+        },
+        {
+          "x": 456,
+          "y": 1033,
+          "w": 123,
+          "h": 247,
+          "anchorX": 512
+        },
+        {
+          "x": 752,
+          "y": 1034,
+          "w": 122,
+          "h": 246,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 247,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "razelago_revealed": {
+      "src": "lore-longacre-v2.png",
+      "frames": [
+        {
+          "x": 113,
+          "y": 1280,
+          "w": 203,
+          "h": 244,
+          "anchorX": 170.5
+        },
+        {
+          "x": 426,
+          "y": 1280,
+          "w": 176,
+          "h": 245,
+          "anchorX": 512
+        },
+        {
+          "x": 726,
+          "y": 1280,
+          "w": 198,
+          "h": 241,
+          "anchorX": 853.5
+        }
+      ],
+      "maxHeight": 245,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "krenshar": {
+      "src": "lore-creatures-v2.png",
+      "frames": [
+        {
+          "x": 32,
+          "y": 82,
+          "w": 472,
+          "h": 430,
+          "anchorX": 256
+        },
+        {
+          "x": 546,
+          "y": 80,
+          "w": 469,
+          "h": 432,
+          "anchorX": 768
+        },
+        {
+          "x": 1058,
+          "y": 79,
+          "w": 461,
+          "h": 433,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 433,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "false_knight": {
+      "src": "lore-creatures-v2.png",
+      "frames": [
+        {
+          "x": 54,
+          "y": 512,
+          "w": 403,
+          "h": 453,
+          "anchorX": 256
+        },
+        {
+          "x": 558,
+          "y": 512,
+          "w": 394,
+          "h": 454,
+          "anchorX": 768
+        },
+        {
+          "x": 1060,
+          "y": 512,
+          "w": 423,
+          "h": 455,
+          "anchorX": 1280
+        }
+      ],
+      "maxHeight": 455,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "church_acolyte": {
+      "src": "church-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 45,
+          "y": 106,
+          "w": 293,
+          "h": 334,
+          "anchorX": 192,
+          "anchorY": 440
+        },
+        {
+          "x": 477,
+          "y": 94,
+          "w": 198,
+          "h": 346,
+          "anchorX": 576,
+          "anchorY": 440
+        },
+        {
+          "x": 808,
+          "y": 123,
+          "w": 304,
+          "h": 317,
+          "anchorX": 960,
+          "anchorY": 440
+        }
+      ],
+      "maxHeight": 346,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "kuribu": {
+      "src": "church-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 65,
+          "y": 574,
+          "w": 253,
+          "h": 314,
+          "anchorX": 192,
+          "anchorY": 888
+        },
+        {
+          "x": 394,
+          "y": 542,
+          "w": 363,
+          "h": 346,
+          "anchorX": 576,
+          "anchorY": 888
+        },
+        {
+          "x": 821,
+          "y": 568,
+          "w": 277,
+          "h": 320,
+          "anchorX": 960,
+          "anchorY": 888
+        }
+      ],
+      "maxHeight": 346,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "ghast_riley": {
+      "src": "church-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 45,
+          "y": 1026,
+          "w": 293,
+          "h": 310,
+          "anchorX": 192,
+          "anchorY": 1336
+        },
+        {
+          "x": 454,
+          "y": 1018,
+          "w": 244,
+          "h": 318,
+          "anchorX": 576,
+          "anchorY": 1336
+        },
+        {
+          "x": 815,
+          "y": 1028,
+          "w": 289,
+          "h": 308,
+          "anchorX": 960,
+          "anchorY": 1336
+        }
+      ],
+      "maxHeight": 318,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "mantis_master": {
+      "src": "church-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 17,
+          "y": 1368,
+          "w": 349,
+          "h": 416,
+          "anchorX": 192,
+          "anchorY": 1784
+        },
+        {
+          "x": 434,
+          "y": 1374,
+          "w": 283,
+          "h": 410,
+          "anchorX": 576,
+          "anchorY": 1784
+        },
+        {
+          "x": 789,
+          "y": 1382,
+          "w": 342,
+          "h": 402,
+          "anchorX": 960,
+          "anchorY": 1784
+        }
+      ],
+      "maxHeight": 416,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "celestial_wolf": {
+      "src": "celestial-wolf-packed-v1.png",
+      "frames": [
+        {
+          "x": 16,
+          "y": 95,
+          "w": 684,
+          "h": 588,
+          "anchorX": 358,
+          "anchorY": 683
+        },
+        {
+          "x": 767,
+          "y": 16,
+          "w": 613,
+          "h": 667,
+          "anchorX": 1074,
+          "anchorY": 683
+        },
+        {
+          "x": 1485,
+          "y": 16,
+          "w": 610,
+          "h": 667,
+          "anchorX": 1790,
+          "anchorY": 683
+        }
+      ],
+      "maxHeight": 667,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "armory_bo": {
+      "src": "armory-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 41,
+          "y": 17,
+          "w": 212,
+          "h": 355,
+          "anchorX": 147,
+          "anchorY": 372
+        },
+        {
+          "x": 330,
+          "y": 24,
+          "w": 221,
+          "h": 348,
+          "anchorX": 441,
+          "anchorY": 372
+        },
+        {
+          "x": 619,
+          "y": 23,
+          "w": 231,
+          "h": 349,
+          "anchorX": 735,
+          "anchorY": 372
+        }
+      ],
+      "maxHeight": 355,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "armory_dent": {
+      "src": "armory-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 30,
+          "y": 407,
+          "w": 234,
+          "h": 353,
+          "anchorX": 147,
+          "anchorY": 760
+        },
+        {
+          "x": 324,
+          "y": 408,
+          "w": 233,
+          "h": 352,
+          "anchorX": 441,
+          "anchorY": 760
+        },
+        {
+          "x": 622,
+          "y": 407,
+          "w": 226,
+          "h": 353,
+          "anchorX": 735,
+          "anchorY": 760
+        }
+      ],
+      "maxHeight": 353,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "heist_ranger": {
+      "src": "armory-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 18,
+          "y": 805,
+          "w": 257,
+          "h": 343,
+          "anchorX": 147,
+          "anchorY": 1148
+        },
+        {
+          "x": 310,
+          "y": 808,
+          "w": 262,
+          "h": 340,
+          "anchorX": 441,
+          "anchorY": 1148
+        },
+        {
+          "x": 617,
+          "y": 810,
+          "w": 236,
+          "h": 338,
+          "anchorX": 735,
+          "anchorY": 1148
+        }
+      ],
+      "maxHeight": 343,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "accuser": {
+      "src": "armory-cast-packed-v1.png",
+      "frames": [
+        {
+          "x": 64,
+          "y": 1181,
+          "w": 165,
+          "h": 355,
+          "anchorX": 147,
+          "anchorY": 1536
+        },
+        {
+          "x": 350,
+          "y": 1180,
+          "w": 182,
+          "h": 356,
+          "anchorX": 441,
+          "anchorY": 1536
+        },
+        {
+          "x": 654,
+          "y": 1185,
+          "w": 161,
+          "h": 351,
+          "anchorX": 735,
+          "anchorY": 1536
+        }
+      ],
+      "maxHeight": 356,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    }
+  },
+  "churchWeapons": {
+    "freya": {
+      "src": "church-weapons-packed-v1.png",
+      "frames": [
+        {
+          "x": 87,
+          "y": 16,
+          "w": 339,
+          "h": 403,
+          "anchorX": 256.5,
+          "anchorY": 419
+        },
+        {
+          "x": 530,
+          "y": 16,
+          "w": 479,
+          "h": 403,
+          "anchorX": 769.5,
+          "anchorY": 419
+        },
+        {
+          "x": 1108,
+          "y": 70,
+          "w": 348,
+          "h": 349,
+          "anchorX": 1282.5,
+          "anchorY": 419
+        }
+      ],
+      "maxHeight": 403,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "jason": {
+      "src": "church-weapons-packed-v1.png",
+      "frames": [
+        {
+          "x": 111,
+          "y": 453,
+          "w": 290,
+          "h": 401,
+          "anchorX": 256.5,
+          "anchorY": 854
+        },
+        {
+          "x": 529,
+          "y": 521,
+          "w": 481,
+          "h": 333,
+          "anchorX": 769.5,
+          "anchorY": 854
+        },
+        {
+          "x": 1111,
+          "y": 540,
+          "w": 343,
+          "h": 314,
+          "anchorX": 1282.5,
+          "anchorY": 854
+        }
+      ],
+      "maxHeight": 401,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    },
+    "jamal": {
+      "src": "church-weapons-packed-v1.png",
+      "frames": [
+        {
+          "x": 115,
+          "y": 902,
+          "w": 282,
+          "h": 387,
+          "anchorX": 256.5,
+          "anchorY": 1289
+        },
+        {
+          "x": 558,
+          "y": 945,
+          "w": 423,
+          "h": 344,
+          "anchorX": 769.5,
+          "anchorY": 1289
+        },
+        {
+          "x": 1141,
+          "y": 945,
+          "w": 283,
+          "h": 344,
+          "anchorX": 1282.5,
+          "anchorY": 1289
+        }
+      ],
+      "maxHeight": 387,
+      "cycle": [
+        0,
+        1,
+        0,
+        2
+      ]
+    }
+  },
+  "attacks": {
+    "spell-effects-v1.png": [
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 128,
+            "anchorY": 216,
+            "bodyHeight": 71
+          },
+          {
+            "x": 256,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 384,
+            "anchorY": 224,
+            "bodyHeight": 143
+          },
+          {
+            "x": 512,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 640,
+            "anchorY": 232,
+            "bodyHeight": 207
+          },
+          {
+            "x": 768,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 896,
+            "anchorY": 238,
+            "bodyHeight": 236
+          },
+          {
+            "x": 1024,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1152,
+            "anchorY": 232,
+            "bodyHeight": 184
+          },
+          {
+            "x": 1280,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1408,
+            "anchorY": 231,
+            "bodyHeight": 156
+          },
+          {
+            "x": 1536,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1664,
+            "anchorY": 225,
+            "bodyHeight": 119
+          },
+          {
+            "x": 1792,
+            "y": 0,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1920,
+            "anchorY": 220,
+            "bodyHeight": 95
+          }
+        ],
+        "maxHeight": 236
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 128,
+            "anchorY": 475,
+            "bodyHeight": 122
+          },
+          {
+            "x": 256,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 384,
+            "anchorY": 478,
+            "bodyHeight": 154
+          },
+          {
+            "x": 512,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 640,
+            "anchorY": 480,
+            "bodyHeight": 169
+          },
+          {
+            "x": 768,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 896,
+            "anchorY": 487,
+            "bodyHeight": 204
+          },
+          {
+            "x": 1024,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1152,
+            "anchorY": 482,
+            "bodyHeight": 166
+          },
+          {
+            "x": 1280,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1408,
+            "anchorY": 478,
+            "bodyHeight": 155
+          },
+          {
+            "x": 1536,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1664,
+            "anchorY": 477,
+            "bodyHeight": 130
+          },
+          {
+            "x": 1792,
+            "y": 256,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1920,
+            "anchorY": 475,
+            "bodyHeight": 130
+          }
+        ],
+        "maxHeight": 204
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 128,
+            "anchorY": 721,
+            "bodyHeight": 116
+          },
+          {
+            "x": 256,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 384,
+            "anchorY": 722,
+            "bodyHeight": 147
+          },
+          {
+            "x": 512,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 640,
+            "anchorY": 739,
+            "bodyHeight": 209
+          },
+          {
+            "x": 768,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 896,
+            "anchorY": 757,
+            "bodyHeight": 241
+          },
+          {
+            "x": 1024,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1152,
+            "anchorY": 750,
+            "bodyHeight": 208
+          },
+          {
+            "x": 1280,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1408,
+            "anchorY": 732,
+            "bodyHeight": 170
+          },
+          {
+            "x": 1536,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1664,
+            "anchorY": 735,
+            "bodyHeight": 160
+          },
+          {
+            "x": 1792,
+            "y": 512,
+            "w": 256,
+            "h": 256,
+            "anchorX": 1920,
+            "anchorY": 716,
+            "bodyHeight": 133
+          }
+        ],
+        "maxHeight": 241
+      }
+    ],
+    "attack-freya-v1.png": [
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 256,
+            "anchorY": 508,
+            "bodyHeight": 494
+          },
+          {
+            "x": 512,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 768,
+            "anchorY": 508,
+            "bodyHeight": 454
+          },
+          {
+            "x": 1024,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 1280,
+            "anchorY": 508,
+            "bodyHeight": 488
+          }
+        ],
+        "maxHeight": 494
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 256,
+            "anchorY": 1007,
+            "bodyHeight": 487
+          },
+          {
+            "x": 512,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 768,
+            "anchorY": 1007,
+            "bodyHeight": 420
+          },
+          {
+            "x": 1024,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 1280,
+            "anchorY": 1007,
+            "bodyHeight": 473
+          }
+        ],
+        "maxHeight": 487
+      }
+    ],
+    "cast-party-v1.png": [
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 256,
+            "anchorY": 509,
+            "bodyHeight": 469
+          },
+          {
+            "x": 512,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 768,
+            "anchorY": 509,
+            "bodyHeight": 470
+          },
+          {
+            "x": 1024,
+            "y": 0,
+            "w": 512,
+            "h": 512,
+            "anchorX": 1280,
+            "anchorY": 511,
+            "bodyHeight": 464
+          }
+        ],
+        "maxHeight": 470
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 256,
+            "anchorY": 1001,
+            "bodyHeight": 472
+          },
+          {
+            "x": 512,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 768,
+            "anchorY": 1001,
+            "bodyHeight": 469
+          },
+          {
+            "x": 1024,
+            "y": 512,
+            "w": 512,
+            "h": 512,
+            "anchorX": 1280,
+            "anchorY": 1000,
+            "bodyHeight": 470
+          }
+        ],
+        "maxHeight": 472
+      }
+    ],
+    "attack-party-v1.png": [
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 0,
+            "w": 362,
+            "h": 362,
+            "anchorX": 181,
+            "anchorY": 357,
+            "bodyHeight": 338
+          },
+          {
+            "x": 362,
+            "y": 0,
+            "w": 362,
+            "h": 362,
+            "anchorX": 543,
+            "anchorY": 358,
+            "bodyHeight": 300
+          },
+          {
+            "x": 724,
+            "y": 0,
+            "w": 362,
+            "h": 362,
+            "anchorX": 905,
+            "anchorY": 356,
+            "bodyHeight": 281
+          }
+        ],
+        "maxHeight": 338
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 362,
+            "w": 362,
+            "h": 362,
+            "anchorX": 181,
+            "anchorY": 709,
+            "bodyHeight": 330
+          },
+          {
+            "x": 362,
+            "y": 362,
+            "w": 362,
+            "h": 362,
+            "anchorX": 543,
+            "anchorY": 709,
+            "bodyHeight": 264
+          },
+          {
+            "x": 724,
+            "y": 362,
+            "w": 362,
+            "h": 362,
+            "anchorX": 905,
+            "anchorY": 709,
+            "bodyHeight": 314
+          }
+        ],
+        "maxHeight": 330
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 724,
+            "w": 362,
+            "h": 362,
+            "anchorX": 181,
+            "anchorY": 1086,
+            "bodyHeight": 359
+          },
+          {
+            "x": 362,
+            "y": 724,
+            "w": 362,
+            "h": 362,
+            "anchorX": 543,
+            "anchorY": 1066,
+            "bodyHeight": 286
+          },
+          {
+            "x": 724,
+            "y": 724,
+            "w": 362,
+            "h": 362,
+            "anchorX": 905,
+            "anchorY": 1065,
+            "bodyHeight": 289
+          }
+        ],
+        "maxHeight": 359
+      },
+      {
+        "frames": [
+          {
+            "x": 0,
+            "y": 1086,
+            "w": 362,
+            "h": 362,
+            "anchorX": 181,
+            "anchorY": 1393,
+            "bodyHeight": 307
+          },
+          {
+            "x": 362,
+            "y": 1086,
+            "w": 362,
+            "h": 362,
+            "anchorX": 543,
+            "anchorY": 1400,
+            "bodyHeight": 288
+          },
+          {
+            "x": 724,
+            "y": 1086,
+            "w": 362,
+            "h": 362,
+            "anchorX": 905,
+            "anchorY": 1396,
+            "bodyHeight": 287
+          }
+        ],
+        "maxHeight": 307
+      }
+    ],
+    "reese-early-sheet-v1.png": [
+      {
+        "frames": [
+          {
+            "x": 172,
+            "y": 1099,
+            "w": 186,
+            "h": 276,
+            "anchorX": 255,
+            "anchorY": 1375
+          },
+          {
+            "x": 470,
+            "y": 1088,
+            "w": 207,
+            "h": 287,
+            "anchorX": 555,
+            "anchorY": 1375
+          },
+          {
+            "x": 759,
+            "y": 1088,
+            "w": 326,
+            "h": 286,
+            "anchorX": 867,
+            "anchorY": 1374
+          }
+        ],
+        "maxHeight": 287
+      }
+    ],
+    "jamal-lore-v3.png": [
+      {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 103,
+            "y": 13,
+            "w": 158,
+            "h": 309,
+            "anchorX": 162,
+            "anchorY": 322
+          },
+          {
+            "x": 412,
+            "y": 16,
+            "w": 148,
+            "h": 313,
+            "anchorX": 485.5,
+            "anchorY": 329
+          },
+          {
+            "x": 719,
+            "y": 17,
+            "w": 157,
+            "h": 312,
+            "anchorX": 809,
+            "anchorY": 329
+          }
+        ],
+        "maxHeight": 313,
+        "cycle": [
+          0,
+          1,
+          0,
+          2
+        ]
+      },
+      {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 126,
+            "y": 338,
+            "w": 130,
+            "h": 310,
+            "anchorX": 162,
+            "anchorY": 648
+          },
+          {
+            "x": 417,
+            "y": 339,
+            "w": 172,
+            "h": 306,
+            "anchorX": 485.5,
+            "anchorY": 645
+          },
+          {
+            "x": 734,
+            "y": 339,
+            "w": 174,
+            "h": 306,
+            "anchorX": 809,
+            "anchorY": 645
+          }
+        ],
+        "maxHeight": 310,
+        "cycle": [
+          0,
+          1,
+          0,
+          2
+        ]
+      },
+      {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 99,
+            "y": 655,
+            "w": 169,
+            "h": 318,
+            "anchorX": 162,
+            "anchorY": 973
+          },
+          {
+            "x": 412,
+            "y": 651,
+            "w": 163,
+            "h": 327,
+            "anchorX": 485.5,
+            "anchorY": 978
+          },
+          {
+            "x": 715,
+            "y": 654,
+            "w": 171,
+            "h": 327,
+            "anchorX": 809,
+            "anchorY": 981
+          }
+        ],
+        "maxHeight": 327,
+        "cycle": [
+          0,
+          1,
+          0,
+          2
+        ]
+      },
+      {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 58,
+            "y": 985,
+            "w": 237,
+            "h": 298,
+            "anchorX": 162,
+            "anchorY": 1283
+          },
+          {
+            "x": 374,
+            "y": 988,
+            "w": 249,
+            "h": 296,
+            "anchorX": 485.5,
+            "anchorY": 1284
+          },
+          {
+            "x": 678,
+            "y": 987,
+            "w": 243,
+            "h": 295,
+            "anchorX": 809,
+            "anchorY": 1282
+          }
+        ],
+        "maxHeight": 298,
+        "cycle": [
+          0,
+          1,
+          0,
+          2
+        ]
+      },
+      {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 76,
+            "y": 1288,
+            "w": 218,
+            "h": 306,
+            "anchorX": 162,
+            "anchorY": 1594
+          },
+          {
+            "x": 348,
+            "y": 1308,
+            "w": 299,
+            "h": 287,
+            "anchorX": 485.5,
+            "anchorY": 1595
+          },
+          {
+            "x": 647,
+            "y": 1300,
+            "w": 257,
+            "h": 300,
+            "anchorX": 809,
+            "anchorY": 1600
+          }
+        ],
+        "maxHeight": 306,
+        "cycle": [
+          0,
+          1,
+          0,
+          2
+        ]
+      }
+    ]
+  },
+  "party": {
+    "freya": {
+      "width": 971,
+      "height": 1619,
+      "rows": [
+        0,
+        540,
+        1053,
+        1619
+      ],
+      "columns": [
+        0,
+        324,
+        646,
+        971
+      ],
+      "maxHeight": 512,
+      "frames": [
+        {
+          "x": 71,
+          "y": 17,
+          "w": 241,
+          "h": 493,
+          "anchorX": 162
+        },
+        {
+          "x": 379,
+          "y": 18,
+          "w": 247,
+          "h": 492,
+          "anchorX": 485
+        },
+        {
+          "x": 688,
+          "y": 18,
+          "w": 239,
+          "h": 492,
+          "anchorX": 808.5
+        },
+        {
+          "x": 48,
+          "y": 544,
+          "w": 220,
+          "h": 483,
+          "anchorX": 162
+        },
+        {
+          "x": 333,
+          "y": 544,
+          "w": 276,
+          "h": 482,
+          "anchorX": 485
+        },
+        {
+          "x": 649,
+          "y": 544,
+          "w": 270,
+          "h": 482,
+          "anchorX": 808.5
+        },
+        {
+          "x": 44,
+          "y": 1056,
+          "w": 241,
+          "h": 512,
+          "anchorX": 162
+        },
+        {
+          "x": 347,
+          "y": 1056,
+          "w": 247,
+          "h": 512,
+          "anchorX": 485
+        },
+        {
+          "x": 659,
+          "y": 1056,
+          "w": 251,
+          "h": 512,
+          "anchorX": 808.5
+        }
+      ],
+      "provisional": false,
+      "oppositeStep": {
+        "src": "freya-opposite-step-v2.png",
+        "frames": [
+          {
+            "x": 127,
+            "y": 27,
+            "w": 413,
+            "h": 773,
+            "anchorX": 329.9278455284553,
+            "scaleBasis": 804.4227642276422
+          },
+          {
+            "x": 722,
+            "y": 31,
+            "w": 475,
+            "h": 744,
+            "anchorX": 990.51244813278,
+            "scaleBasis": 790.3070539419087
+          },
+          {
+            "x": 1350,
+            "y": 27,
+            "w": 429,
+            "h": 773,
+            "anchorX": 1580.2353515625,
+            "scaleBasis": 773
+          }
+        ],
+        "width": 1882,
+        "height": 836
+      },
+      "walkCycle": [
+        1,
+        0,
+        3,
+        0
+      ]
+    },
+    "jamal": {
+      "width": 971,
+      "height": 1620,
+      "rows": [
+        0,
+        334,
+        650,
+        984
+      ],
+      "columns": [
+        0,
+        324,
+        647,
+        971
+      ],
+      "frames": [
+        {
+          "x": 103,
+          "y": 13,
+          "w": 158,
+          "h": 309,
+          "anchorX": 162,
+          "anchorY": 322
+        },
+        {
+          "x": 412,
+          "y": 16,
+          "w": 148,
+          "h": 313,
+          "anchorX": 485.5,
+          "anchorY": 329
+        },
+        {
+          "x": 719,
+          "y": 17,
+          "w": 157,
+          "h": 312,
+          "anchorX": 809,
+          "anchorY": 329
+        },
+        {
+          "x": 126,
+          "y": 338,
+          "w": 130,
+          "h": 310,
+          "anchorX": 162,
+          "anchorY": 648
+        },
+        {
+          "x": 417,
+          "y": 339,
+          "w": 172,
+          "h": 306,
+          "anchorX": 485.5,
+          "anchorY": 645
+        },
+        {
+          "x": 734,
+          "y": 339,
+          "w": 174,
+          "h": 306,
+          "anchorX": 809,
+          "anchorY": 645
+        },
+        {
+          "x": 99,
+          "y": 655,
+          "w": 169,
+          "h": 318,
+          "anchorX": 162,
+          "anchorY": 973
+        },
+        {
+          "x": 412,
+          "y": 651,
+          "w": 163,
+          "h": 327,
+          "anchorX": 485.5,
+          "anchorY": 978
+        },
+        {
+          "x": 715,
+          "y": 654,
+          "w": 171,
+          "h": 327,
+          "anchorX": 809,
+          "anchorY": 981
+        }
+      ],
+      "maxHeight": 327,
+      "walkCycle": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "oppositeStep": {
+        "src": "jamal-lore-v3.png",
+        "frames": [
+          {
+            "x": 719,
+            "y": 17,
+            "w": 157,
+            "h": 312,
+            "anchorX": 809,
+            "anchorY": 329
+          },
+          {
+            "x": 734,
+            "y": 339,
+            "w": 174,
+            "h": 306,
+            "anchorX": 809,
+            "anchorY": 645
+          },
+          {
+            "x": 715,
+            "y": 654,
+            "w": 171,
+            "h": 327,
+            "anchorX": 809,
+            "anchorY": 981
+          }
+        ]
+      },
+      "provisional": false,
+      "src": "jamal-lore-v3.png"
+    },
+    "jason": {
+      "width": 997,
+      "height": 1577,
+      "rows": [
+        0,
+        507,
+        1010,
+        1577
+      ],
+      "columns": [
+        0,
+        332,
+        665,
+        997
+      ],
+      "maxHeight": 506,
+      "frames": [
+        {
+          "x": 65,
+          "y": 5,
+          "w": 244,
+          "h": 496,
+          "anchorX": 166
+        },
+        {
+          "x": 385,
+          "y": 4,
+          "w": 236,
+          "h": 497,
+          "anchorX": 498.5
+        },
+        {
+          "x": 700,
+          "y": 5,
+          "w": 240,
+          "h": 496,
+          "anchorX": 831
+        },
+        {
+          "x": 56,
+          "y": 510,
+          "w": 220,
+          "h": 500,
+          "anchorX": 166
+        },
+        {
+          "x": 376,
+          "y": 510,
+          "w": 261,
+          "h": 500,
+          "anchorX": 498.5
+        },
+        {
+          "x": 698,
+          "y": 510,
+          "w": 279,
+          "h": 500,
+          "anchorX": 831
+        },
+        {
+          "x": 45,
+          "y": 1010,
+          "w": 245,
+          "h": 497,
+          "anchorX": 166
+        },
+        {
+          "x": 369,
+          "y": 1010,
+          "w": 245,
+          "h": 505,
+          "anchorX": 498.5
+        },
+        {
+          "x": 692,
+          "y": 1010,
+          "w": 249,
+          "h": 506,
+          "anchorX": 831
+        }
+      ],
+      "provisional": false,
+      "oppositeStep": {
+        "src": "jason-opposite-step-v3.png",
+        "frames": [
+          {
+            "x": 111,
+            "y": 9,
+            "w": 412,
+            "h": 781,
+            "anchorX": 305.35714285714283,
+            "scaleBasis": 795.1428571428571
+          },
+          {
+            "x": 690,
+            "y": 9,
+            "w": 547,
+            "h": 768,
+            "anchorX": 966.448,
+            "scaleBasis": 777.216
+          },
+          {
+            "x": 1346,
+            "y": 4,
+            "w": 439,
+            "h": 787,
+            "anchorX": 1587.4544554455445,
+            "scaleBasis": 788.5584158415842
+          }
+        ],
+        "width": 1882,
+        "height": 836
+      },
+      "walkCycle": [
+        1,
+        0,
+        3,
+        0
+      ]
+    },
+    "draymus": {
+      "width": 972,
+      "height": 1619,
+      "rows": [
+        0,
+        540,
+        1052,
+        1619
+      ],
+      "columns": [
+        0,
+        324,
+        648,
+        972
+      ],
+      "maxHeight": 517,
+      "frames": [
+        {
+          "x": 63,
+          "y": 25,
+          "w": 237,
+          "h": 482,
+          "anchorX": 162
+        },
+        {
+          "x": 374,
+          "y": 26,
+          "w": 229,
+          "h": 483,
+          "anchorX": 486
+        },
+        {
+          "x": 671,
+          "y": 26,
+          "w": 237,
+          "h": 484,
+          "anchorX": 810
+        },
+        {
+          "x": 65,
+          "y": 544,
+          "w": 213,
+          "h": 484,
+          "anchorX": 162
+        },
+        {
+          "x": 367,
+          "y": 544,
+          "w": 247,
+          "h": 484,
+          "anchorX": 486
+        },
+        {
+          "x": 687,
+          "y": 545,
+          "w": 244,
+          "h": 483,
+          "anchorX": 810
+        },
+        {
+          "x": 54,
+          "y": 1055,
+          "w": 246,
+          "h": 517,
+          "anchorX": 162
+        },
+        {
+          "x": 364,
+          "y": 1055,
+          "w": 245,
+          "h": 517,
+          "anchorX": 486
+        },
+        {
+          "x": 671,
+          "y": 1055,
+          "w": 249,
+          "h": 517,
+          "anchorX": 810
+        }
+      ],
+      "provisional": false,
+      "oppositeStep": {
+        "src": "draymus-opposite-step-v3.png",
+        "frames": [
+          {
+            "x": 141,
+            "y": 57,
+            "w": 439,
+            "h": 784,
+            "anchorX": 357.2536231884058,
+            "scaleBasis": 839.1884057971015
+          },
+          {
+            "x": 696,
+            "y": 67,
+            "w": 480,
+            "h": 764,
+            "anchorX": 950.9710743801653,
+            "scaleBasis": 816.0909090909091
+          },
+          {
+            "x": 1242,
+            "y": 60,
+            "w": 427,
+            "h": 776,
+            "anchorX": 1452,
+            "scaleBasis": 776
+          }
+        ],
+        "width": 1774,
+        "height": 887
+      },
+      "walkCycle": [
+        1,
+        0,
+        3,
+        0
+      ]
+    },
+    "guapo": {
+      "width": 997,
+      "height": 1577,
+      "rows": [
+        0,
+        526,
+        1022,
+        1577
+      ],
+      "columns": [
+        0,
+        332,
+        665,
+        997
+      ],
+      "maxHeight": 491,
+      "frames": [
+        {
+          "x": 59,
+          "y": 24,
+          "w": 232,
+          "h": 488,
+          "anchorX": 166
+        },
+        {
+          "x": 377,
+          "y": 24,
+          "w": 233,
+          "h": 491,
+          "anchorX": 498.5
+        },
+        {
+          "x": 702,
+          "y": 24,
+          "w": 232,
+          "h": 491,
+          "anchorX": 831
+        },
+        {
+          "x": 44,
+          "y": 539,
+          "w": 222,
+          "h": 472,
+          "anchorX": 166
+        },
+        {
+          "x": 364,
+          "y": 539,
+          "w": 271,
+          "h": 471,
+          "anchorX": 498.5
+        },
+        {
+          "x": 689,
+          "y": 541,
+          "w": 265,
+          "h": 469,
+          "anchorX": 831
+        },
+        {
+          "x": 60,
+          "y": 1025,
+          "w": 233,
+          "h": 490,
+          "anchorX": 166
+        },
+        {
+          "x": 384,
+          "y": 1025,
+          "w": 231,
+          "h": 490,
+          "anchorX": 498.5
+        },
+        {
+          "x": 710,
+          "y": 1025,
+          "w": 232,
+          "h": 490,
+          "anchorX": 831
+        }
+      ],
+      "provisional": false,
+      "oppositeStep": {
+        "src": "guapo-opposite-step-v2.png",
+        "frames": [
+          {
+            "x": 85,
+            "y": 53,
+            "w": 403,
+            "h": 773,
+            "anchorX": 295.1588594704684,
+            "scaleBasis": 773
+          },
+          {
+            "x": 689,
+            "y": 57,
+            "w": 513,
+            "h": 768,
+            "anchorX": 918.640127388535,
+            "scaleBasis": 800.6114649681529
+          },
+          {
+            "x": 1339,
+            "y": 60,
+            "w": 402,
+            "h": 767,
+            "anchorX": 1534.238775510204,
+            "scaleBasis": 768.565306122449
+          }
+        ],
+        "width": 1821,
+        "height": 864
+      },
+      "walkCycle": [
+        1,
+        0,
+        3,
+        0
+      ]
+    },
+    "reese": {
+      "src": "reese-early-sheet-v1.png",
+      "width": 1122,
+      "height": 1402,
+      "rows": [
+        0,
+        274,
+        540,
+        811
+      ],
+      "columns": [
+        0,
+        400,
+        730,
+        1122
+      ],
+      "maxHeight": 267,
+      "frames": [
+        {
+          "x": 156,
+          "y": 6,
+          "w": 197,
+          "h": 265,
+          "anchorX": 255,
+          "anchorY": 271
+        },
+        {
+          "x": 446,
+          "y": 6,
+          "w": 201,
+          "h": 267,
+          "anchorX": 555,
+          "anchorY": 273
+        },
+        {
+          "x": 761,
+          "y": 6,
+          "w": 203,
+          "h": 266,
+          "anchorX": 867,
+          "anchorY": 272
+        },
+        {
+          "x": 160,
+          "y": 282,
+          "w": 172,
+          "h": 253,
+          "anchorX": 255,
+          "anchorY": 535
+        },
+        {
+          "x": 469,
+          "y": 281,
+          "w": 173,
+          "h": 253,
+          "anchorX": 555,
+          "anchorY": 534
+        },
+        {
+          "x": 782,
+          "y": 282,
+          "w": 176,
+          "h": 253,
+          "anchorX": 867,
+          "anchorY": 535
+        },
+        {
+          "x": 174,
+          "y": 542,
+          "w": 189,
+          "h": 265,
+          "anchorX": 255,
+          "anchorY": 807
+        },
+        {
+          "x": 475,
+          "y": 542,
+          "w": 178,
+          "h": 264,
+          "anchorX": 555,
+          "anchorY": 806
+        },
+        {
+          "x": 784,
+          "y": 543,
+          "w": 172,
+          "h": 264,
+          "anchorX": 867,
+          "anchorY": 807
+        }
+      ],
+      "provisional": false,
+      "walkCycle": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "oppositeStep": {
+        "src": "reese-early-sheet-v1.png",
+        "frames": [
+          {
+            "x": 761,
+            "y": 6,
+            "w": 203,
+            "h": 266,
+            "anchorX": 867,
+            "anchorY": 272
+          },
+          {
+            "x": 782,
+            "y": 282,
+            "w": 176,
+            "h": 253,
+            "anchorX": 867,
+            "anchorY": 535
+          },
+          {
+            "x": 784,
+            "y": 543,
+            "w": 172,
+            "h": 264,
+            "anchorX": 867,
+            "anchorY": 807
+          }
+        ]
+      }
+    },
+    "bruce": {
+      "src": "bruce-portrait-packed-v1.png",
+      "width": 861,
+      "height": 1479,
+      "maxHeight": 461,
+      "frames": [
+        {
+          "x": 39,
+          "y": 28,
+          "w": 208,
+          "h": 449,
+          "anchorX": 143.5,
+          "anchorY": 477
+        },
+        {
+          "x": 327,
+          "y": 22,
+          "w": 207,
+          "h": 455,
+          "anchorX": 430.5,
+          "anchorY": 477
+        },
+        {
+          "x": 611,
+          "y": 26,
+          "w": 213,
+          "h": 451,
+          "anchorX": 717.5,
+          "anchorY": 477
+        },
+        {
+          "x": 55,
+          "y": 541,
+          "w": 176,
+          "h": 429,
+          "anchorX": 143.5,
+          "anchorY": 970
+        },
+        {
+          "x": 309,
+          "y": 542,
+          "w": 243,
+          "h": 428,
+          "anchorX": 430.5,
+          "anchorY": 970
+        },
+        {
+          "x": 590,
+          "y": 547,
+          "w": 255,
+          "h": 423,
+          "anchorX": 717.5,
+          "anchorY": 970
+        },
+        {
+          "x": 37,
+          "y": 1011,
+          "w": 212,
+          "h": 452,
+          "anchorX": 143.5,
+          "anchorY": 1463
+        },
+        {
+          "x": 325,
+          "y": 1002,
+          "w": 210,
+          "h": 461,
+          "anchorX": 430.5,
+          "anchorY": 1463
+        },
+        {
+          "x": 609,
+          "y": 1002,
+          "w": 216,
+          "h": 461,
+          "anchorX": 717.5,
+          "anchorY": 1463
+        }
+      ],
+      "provisional": false,
+      "walkCycle": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "oppositeStep": {
+        "src": "bruce-portrait-packed-v1.png",
+        "frames": [
+          {
+            "x": 611,
+            "y": 26,
+            "w": 213,
+            "h": 451,
+            "anchorX": 717.5,
+            "anchorY": 477
+          },
+          {
+            "x": 590,
+            "y": 547,
+            "w": 255,
+            "h": 423,
+            "anchorX": 717.5,
+            "anchorY": 970
+          },
+          {
+            "x": 609,
+            "y": 1002,
+            "w": 216,
+            "h": 461,
+            "anchorX": 717.5,
+            "anchorY": 1463
+          }
+        ]
+      }
+    }
+  },
+  "movement": {
+    "ovinnik-idle-v1.png": [
+      {
+        "src": "ovinnik-idle-v1.png",
+        "frames": [
+          {
+            "x": 115,
+            "y": 31,
+            "w": 583,
+            "h": 650,
+            "anchorX": 406.5,
+            "anchorY": 681
+          },
+          {
+            "x": 873,
+            "y": 19,
+            "w": 545,
+            "h": 663,
+            "anchorX": 1145.5,
+            "anchorY": 682
+          },
+          {
+            "x": 1616,
+            "y": 32,
+            "w": 517,
+            "h": 652,
+            "anchorX": 1874.5,
+            "anchorY": 684
+          }
+        ],
+        "maxHeight": 663,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      }
+    ],
+    "political-cast-v1.png": [
+      {
+        "src": "political-cast-v1.png",
+        "frames": [
+          {
+            "x": 115,
+            "y": 6,
+            "w": 177,
+            "h": 344,
+            "anchorX": 203.5,
+            "anchorY": 350
+          },
+          {
+            "x": 460,
+            "y": 11,
+            "w": 166,
+            "h": 339,
+            "anchorX": 543,
+            "anchorY": 350
+          },
+          {
+            "x": 809,
+            "y": 9,
+            "w": 206,
+            "h": 341,
+            "anchorX": 912,
+            "anchorY": 350
+          }
+        ],
+        "maxHeight": 344,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "src": "political-cast-v1.png",
+        "frames": [
+          {
+            "x": 103,
+            "y": 367,
+            "w": 189,
+            "h": 357,
+            "anchorX": 197.5,
+            "anchorY": 724
+          },
+          {
+            "x": 446,
+            "y": 370,
+            "w": 185,
+            "h": 354,
+            "anchorX": 538.5,
+            "anchorY": 724
+          },
+          {
+            "x": 801,
+            "y": 369,
+            "w": 168,
+            "h": 355,
+            "anchorX": 885,
+            "anchorY": 724
+          }
+        ],
+        "maxHeight": 357,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "src": "political-cast-v1.png",
+        "frames": [
+          {
+            "x": 28,
+            "y": 724,
+            "w": 334,
+            "h": 362,
+            "anchorX": 195,
+            "anchorY": 1086
+          },
+          {
+            "x": 362,
+            "y": 724,
+            "w": 327,
+            "h": 362,
+            "anchorX": 525.5,
+            "anchorY": 1086
+          },
+          {
+            "x": 798,
+            "y": 724,
+            "w": 270,
+            "h": 350,
+            "anchorX": 933,
+            "anchorY": 1074
+          }
+        ],
+        "maxHeight": 362,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "src": "political-cast-v1.png",
+        "frames": [
+          {
+            "x": 100,
+            "y": 1086,
+            "w": 205,
+            "h": 342,
+            "anchorX": 202.5,
+            "anchorY": 1428
+          },
+          {
+            "x": 459,
+            "y": 1086,
+            "w": 180,
+            "h": 342,
+            "anchorX": 549,
+            "anchorY": 1428
+          },
+          {
+            "x": 819,
+            "y": 1161,
+            "w": 148,
+            "h": 267,
+            "anchorX": 893,
+            "anchorY": 1428
+          }
+        ],
+        "maxHeight": 342,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      }
+    ],
+    "mounted-freya-v1.png": [
+      {
+        "src": "mounted-freya-v1.png",
+        "frames": [
+          {
+            "x": 34,
+            "y": 26,
+            "w": 690,
+            "h": 655,
+            "anchorX": 379,
+            "anchorY": 681
+          },
+          {
+            "x": 724,
+            "y": 143,
+            "w": 724,
+            "h": 533,
+            "anchorX": 1086,
+            "anchorY": 676
+          },
+          {
+            "x": 1448,
+            "y": 76,
+            "w": 694,
+            "h": 605,
+            "anchorX": 1795,
+            "anchorY": 681
+          }
+        ],
+        "maxHeight": 655,
+        "cycle": [
+          0,
+          1,
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  "lore": {
+    "fex": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 126,
+        "y": 4,
+        "w": 129,
+        "h": 251,
+        "anchorX": 170.5
+      }
+    },
+    "cimri": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 110,
+        "y": 262,
+        "w": 155,
+        "h": 244,
+        "anchorX": 170.5
+      }
+    },
+    "rhona": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 135,
+        "y": 513,
+        "w": 128,
+        "h": 255,
+        "anchorX": 170.5
+      }
+    },
+    "allamar": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 101,
+        "y": 768,
+        "w": 169,
+        "h": 256,
+        "anchorX": 170.5
+      }
+    },
+    "twin1": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 106,
+        "y": 1024,
+        "w": 167,
+        "h": 256,
+        "anchorX": 170.5
+      }
+    },
+    "twin2": {
+      "src": "lore-authority-v2.png",
+      "source": "lore-authority-v2.png",
+      "frame": {
+        "x": 106,
+        "y": 1280,
+        "w": 166,
+        "h": 246,
+        "anchorX": 170.5
+      }
+    },
+    "bolgart": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 130,
+        "y": 5,
+        "w": 183,
+        "h": 251,
+        "anchorX": 170.5
+      }
+    },
+    "bolgart_wereboar": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 129,
+        "y": 256,
+        "w": 186,
+        "h": 256,
+        "anchorX": 170.5
+      }
+    },
+    "riley": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 143,
+        "y": 512,
+        "w": 151,
+        "h": 244,
+        "anchorX": 170.5
+      }
+    },
+    "gerya": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 159,
+        "y": 768,
+        "w": 123,
+        "h": 256,
+        "anchorX": 170.5
+      }
+    },
+    "ingoe": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 162,
+        "y": 1034,
+        "w": 124,
+        "h": 246,
+        "anchorX": 170.5
+      }
+    },
+    "razelago_revealed": {
+      "src": "lore-longacre-v2.png",
+      "source": "lore-longacre-v2.png",
+      "frame": {
+        "x": 113,
+        "y": 1280,
+        "w": 203,
+        "h": 244,
+        "anchorX": 170.5
+      }
+    },
+    "krenshar": {
+      "src": "lore-creatures-v2.png",
+      "source": "lore-creatures-v2.png",
+      "frame": {
+        "x": 32,
+        "y": 82,
+        "w": 472,
+        "h": 430,
+        "anchorX": 256
+      }
+    },
+    "false_knight": {
+      "src": "lore-creatures-v2.png",
+      "source": "lore-creatures-v2.png",
+      "frame": {
+        "x": 54,
+        "y": 512,
+        "w": 403,
+        "h": 453,
+        "anchorX": 256
+      }
+    },
+    "church_acolyte": {
+      "src": "church-cast-packed-v1.png",
+      "source": "church-cast-packed-v1.png",
+      "frame": {
+        "x": 45,
+        "y": 106,
+        "w": 293,
+        "h": 334,
+        "anchorX": 192,
+        "anchorY": 440
+      }
+    },
+    "kuribu": {
+      "src": "church-cast-packed-v1.png",
+      "source": "church-cast-packed-v1.png",
+      "frame": {
+        "x": 65,
+        "y": 574,
+        "w": 253,
+        "h": 314,
+        "anchorX": 192,
+        "anchorY": 888
+      }
+    },
+    "ghast_riley": {
+      "src": "church-cast-packed-v1.png",
+      "source": "church-cast-packed-v1.png",
+      "frame": {
+        "x": 45,
+        "y": 1026,
+        "w": 293,
+        "h": 310,
+        "anchorX": 192,
+        "anchorY": 1336
+      }
+    },
+    "mantis_master": {
+      "src": "church-cast-packed-v1.png",
+      "source": "church-cast-packed-v1.png",
+      "frame": {
+        "x": 17,
+        "y": 1368,
+        "w": 349,
+        "h": 416,
+        "anchorX": 192,
+        "anchorY": 1784
+      }
+    },
+    "armory_bo": {
+      "src": "armory-cast-packed-v1.png",
+      "source": "armory-cast-packed-v1.png",
+      "frame": {
+        "x": 41,
+        "y": 17,
+        "w": 212,
+        "h": 355,
+        "anchorX": 147,
+        "anchorY": 372
+      }
+    },
+    "armory_dent": {
+      "src": "armory-cast-packed-v1.png",
+      "source": "armory-cast-packed-v1.png",
+      "frame": {
+        "x": 30,
+        "y": 407,
+        "w": 234,
+        "h": 353,
+        "anchorX": 147,
+        "anchorY": 760
+      }
+    },
+    "heist_ranger": {
+      "src": "armory-cast-packed-v1.png",
+      "source": "armory-cast-packed-v1.png",
+      "frame": {
+        "x": 18,
+        "y": 805,
+        "w": 257,
+        "h": 343,
+        "anchorX": 147,
+        "anchorY": 1148
+      }
+    },
+    "accuser": {
+      "src": "armory-cast-packed-v1.png",
+      "source": "armory-cast-packed-v1.png",
+      "frame": {
+        "x": 64,
+        "y": 1181,
+        "w": 165,
+        "h": 355,
+        "anchorX": 147,
+        "anchorY": 1536
+      }
+    }
+  }
+}

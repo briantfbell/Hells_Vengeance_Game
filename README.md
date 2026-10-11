@@ -120,3 +120,9 @@ Continue from the completed dock/tower operation, or replay section 86. Stir the
 Four new transparent map foregrounds and two anonymous civilian models match the existing style. All views retain the 640×480 logical frame. The prison aftermath remains unresolved, and this chapter grants no inferred level-ups or unidentified magic items. See [chapter notes](docs/chapter-thirteen.md).
 
 Validation: 83 automated tests pass, including portable-save round trips for every replay checkpoint and objective reachability on the new maps. The combat harness covers 200 seeded runs per encounter and chapter chains; results describe its skill-first/healing strategy, not every possible player choice.
+
+## Presentation polish and Photoshop frames
+
+The game now uses the original Folken Pixel font inside its 640×480 overlays. New combat void and image dice, eight distinguishable townsfolk, captive Riley conversations, separate church entry/hall maps, altar effects and the converted Asmodean floor symbol accompany the story fixes. Porch combat resumes into Cimri's rescue after victory.
+
+See [Photoshop UI dimensions](docs/UI_PHOTOSHOP_SPEC.md) for fixed export sizes and scalable borders, [change notes](docs/PRESENTATION_POLISH.md) for the batch, and [generated artwork prompts](docs/PRESENTATION_POLISH_ART_PROMPTS.json) for reproducible asset references. Blank Photoshop skins are pending artwork. 92 automated tests pass; the solo porch fight and subsequent rescue interaction were also verified in the browser.

@@ -1,0 +1,47 @@
+{
+  "method": "Built-in imagegen; original outputs copied unchanged. Atlas metadata and render-time cleanup are separate.",
+  "assets": [
+    {
+      "file": "townsfolk-sheet-v2.png",
+      "prompt": "Create a production sprite atlas for four additional anonymous townsfolk for a high-detail dark gothic pixel-art RPG, matching the supplied campaign's realistic-proportioned small sprites, not chibi. Transparent RGBA background. Four evenly spaced horizontal rows, five evenly spaced columns, no text or grid. Each row depicts ONE consistent character. Row 1 elderly stooped bald man with grey beard, ochre tunic, walking stick. Row 2 stout middle-aged woman in burgundy dress with apron and grey headscarf. Row 3 slim young blond man in muted teal work tunic and brown trousers. Row 4 dark-skinned woman with curly black hair, olive-green long dress, tan shawl. Columns: front idle, front left-foot step, front right-foot step, back idle, right-facing side idle. Full body feet visible, all figures same scale and baseline in their cell, generous transparent margins, no shadows or loose stray pixels. Crisp high-detail pixel clusters, subdued medieval fabrics and warm highlights. Front-facing heads must clearly distinguish each person for dialogue portrait crops. Aspect 5:4, large atlas, no captions or watermark.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-0d08b1dc-33f5-4055-ab67-058f1a65e175.png",
+      "project_path": "art-test/townsfolk-sheet-v2.png",
+      "sha256": "76aa730b4f6f02253f2e98a82210a292d77fd441e1c091d07b5731f311623555"
+    },
+    {
+      "file": "church-entry-v2.png",
+      "prompt": "Generate a transparent-background high-detail pixel-art RPG map, using input image ONLY as STYLE reference for dark Chelish gothic architecture, same isometric overhead camera. This is a DIFFERENT ROOM: the entry vestibule inside the Church of Iomedae. Aspect 8:5, symmetrical broad walkable stone floor across center and lower half. South-center doorway approach. A shattered tall stained-glass window on the left wall with iron seams, colored glass fragments beneath it; characters have just broken in through this window. Closed ornate double doors centered at the NORTH wall leading to the inner hallway. Two small votive niches and restrained red/gold Iomedaean sunburst banners, a couple low benches against the outer sides only. No altar, no sanctuary throne, no characters, no labels or text. Whole building room cutout and its entrance, clean genuine transparency outside walls. Keep main center floor clear for party movement. Crisp richly detailed pixel clusters matching reference style.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-bd95e19a-ff54-483b-81a9-03d63abc88c3.png",
+      "project_path": "art-test/church-entry-v2.png",
+      "sha256": "2c436b239629c53c951a45296dd68eb935932d1dca44208bbe5151521c575f77"
+    },
+    {
+      "file": "church-hall-v2.png",
+      "prompt": "Create a high-detail dark gothic pixel-art RPG map in the exact architectural style/camera/palette of reference image, but a separate interior HALLWAY of the Church of Iomedae. Transparent outside clean room cutout. 8:5 composition, full room visible. Broad stone central aisle leading from SOUTH entry to ornate double doors centered NORTH wall which lead to sanctuary; gothic piers, sunburst red/gold banners, some splintered wooden pews at far left/right, candles in niches, a smashed stained-glass SIDE window with iron lattice. No main altar or sanctuary throne, no characters, no text. Keep middle and lower walkway mostly clear. Rich pixel clusters, warm candle points, grey stone, consistent overhead isometric angle, match supplied game map.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-e136744d-3b47-4db8-84fc-84fee1b35192.png",
+      "project_path": "art-test/church-hall-v2.png",
+      "sha256": "4ec02109db8340c7d32aa529fda8cc781a9dd6aef0634fd735e423287a750709"
+    },
+    {
+      "file": "combat-void-v2.png",
+      "prompt": "High-detail gothic pixel-art RPG battle backdrop. Widescreen 40:23 composition, image used at 640x368. A dark infernal combat void, charcoal black and very deep burgundy, subtle dark red magical concentric circular arcs and faint antique gold etched arcane rings sweeping into the corners, shadowy smoke texture like ink, fine sparse ember specks. Match Hell's Vengeance game art: dark iron, muted blood-red, antique brass. Abstract only: no dungeon, no landscape, no walls, no furniture, no characters, no text, no symbols tied to another deity. Keep whole central and lower area low contrast quiet so battle sprites dominate, top-left very dark for dice overlay. Sharp pixel clusters rather than glossy smooth gradients; atmosphere and detail extremely restrained. Flat full background no border, no transparency.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-ff8d5acb-c0e4-4843-abf2-e26ace690aca.png",
+      "project_path": "art-test/combat-void-v2.png",
+      "sha256": "cdc8dbec1778e361357777e438e61796afd85e19c8f251edc832acd031cd2c29"
+    },
+    {
+      "file": "dice-atlas-v1.png",
+      "prompt": "Production game UI sprite atlas, genuinely transparent background. FIVE evenly spaced columns in ONE horizontal row. Left-to-right five different dice: tetrahedral D4, cubic D6, octahedral D8, ten-sided pentagonal trapezohedron D10, icosahedral D20. Each die front-center facing camera, consistent size, crisp high-detail pixel art suitable for a dark gothic fantasy RPG. Faceted deep burgundy stone enamel with antique brass edges, subtly chipped iron corners, warm pale central face blank for a programmatic number overlay. Empty central face wide and unobstructed; no numbers, no pips, no lettering anywhere. Clear correctly distinct geometric silhouettes, no duplicate dice, no extra objects, no shadows beyond the die, clean alpha margin around each die. 5:1 wide atlas, equal cells, dice centered in each cell, dimensions approximately 256 pixels per die. NOT photorealistic, no smooth 3D render.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-3b06e550-15bf-4b22-a393-cb2813ca0430.png",
+      "project_path": "art-test/dice-atlas-v1.png",
+      "sha256": "096298ae367b1a30110f310450c2182643d7cea027b9406c43a70f209cbc21ce"
+    },
+    {
+      "file": "church-asmodeus-v2.png",
+      "prompt": "Edit image 1, the existing converted church map. Image 2 is the exact Asmodeus religious symbol reference, a red inverted pentagram with the prominent downward point. Keep image 1 architecture, room shape, walkable spaces, camera, candles, pews, carpet, doors and transparency unchanged. Add that same red inverted pentagram worked into the church's central stone FLOOR, visible between the left and right pews, partially tucked under their edges. It should be perspective-matched to the floor plane, a blood-red engraved/inlaid star, not glowing neon and no circle. Replace the small incorrect upright gold pentagrams on existing banners and altar cloth with small red inverted pentagram marks matching image 2. Same high-detail pixel-art rendering, clean transparent outside edges, no text, no characters, no other alterations.",
+      "original_output": "C:\\Users\\Brian\\.codex\\generated_images\\01a11891-2024-7292-b1c4-5d4cd278b5ff\\exec-4732c6f0-0ea6-4388-a371-3e14fbf49d36.png",
+      "project_path": "art-test/church-asmodeus-v2.png",
+      "sha256": "47c64d0ba5fea8fb38c6d44b24b823d4c93222b6bd67f601cbda5111eb90e345"
+    }
+  ]
+}

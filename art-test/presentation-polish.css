@@ -1,0 +1,49 @@
+@font-face{font-family:FolkenPixel;src:url('folken-pixel.ttf') format('truetype');font-display:swap;font-weight:100 900}
+.stage{--game-font:FolkenPixel,monospace}
+#dialog,#journey,#battle,#dice-panel,#enemy-intents,#initiative-reveal,#pause-panel,#intro,#level-up,#title-screen{font-family:var(--game-font)}
+#dialog{left:2.5%;right:2.5%;bottom:2.5%;height:27.5cqw;padding:1.5cqw;border-width:2px;border-radius:0;font-size:1.875cqw;overflow:hidden;box-sizing:border-box}
+#dialog.has-choices{height:35cqw}
+#portrait{width:10cqw;height:10cqw;border-width:2px;margin:0 1.5cqw 1cqw 0}
+.has-portrait .dialog-copy{margin-left:11.5cqw}
+#speaker{font:2.1875cqw/1.2 var(--game-font);padding:0 0 .6cqw;margin:0 0 1cqw;letter-spacing:0;min-height:3cqw}
+#dialog #line{font:1.875cqw/1.45 var(--game-font);margin:0;max-height:16cqw;overflow:hidden}
+#choices{gap:.625cqw;margin-top:1cqw;grid-template-columns:repeat(2,minmax(0,1fr))}
+#choices button,#close{font:1.72cqw/1.2 var(--game-font);min-height:4.375cqw;padding:.7cqw 1cqw;box-shadow:none;border-width:1px}
+#close{position:absolute;bottom:1.5cqw;right:1.5cqw;width:15cqw;height:4.375cqw;text-align:center}
+#choices button:before{display:none}
+#journey-title{font:3.125cqw/1.35 var(--game-font)}
+#journey-summary{font:2.03cqw/1.55 var(--game-font)}
+#journey .eyebrow,#journey-continue{font-family:var(--game-font)}
+#journey-continue{min-width:18.75cqw;height:5cqw;font-size:1.875cqw;padding:.7cqw 2cqw}
+#battle{grid-template-rows:3.125cqw 14.375cqw;font-family:var(--game-font)}
+.battle-head{grid-template-columns:43.125% 36.875% 20%}
+.battle-bottom{grid-template-columns:43.125% 56.875%}
+#battle-title,#combat-target,#heal-target,#battle-message,#combat-log,.command-title,.command-subtitle,#enemy-intents,#enemy-intents strong{font-family:var(--game-font);letter-spacing:0}
+#battle-title,#battle-message{font-size:1.72cqw;line-height:1.3}
+#combat-log{font-size:1.4cqw}
+#enemy-intents{font-size:1.25cqw;line-height:1.55}
+#enemy-intents strong{font-size:1.25cqw}
+#actions,#actions.has-aux{padding:.9375cqw;gap:.625cqw;grid-template-columns:repeat(2,27.1875cqw);grid-template-rows:repeat(2,5.9375cqw);justify-content:center}
+#actions.has-aux{grid-template-columns:repeat(3,17.8125cqw)}
+.command-title{font-size:1.72cqw;line-height:1.1}
+.command-subtitle{font-size:1.4cqw;line-height:1.25}
+#actions button{padding:.3cqw .6cqw;border-radius:0;gap:.2cqw}
+#dice-panel,body.is-combat #dice-panel{width:30.9375cqw;height:16.25cqw;left:1.5%;right:auto;top:2%;font:1.4cqw/1.35 var(--game-font);box-sizing:border-box;overflow:hidden}
+.die{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.die-art{width:6.5cqw;height:6.5cqw;position:relative;background-image:url('dice-atlas-v1.png');background-size:500% 100%;image-rendering:pixelated}
+.die-number{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff0c5;font:2.3cqw var(--game-font);text-shadow:1px 1px #180e13,-1px -1px #180e13;transform:translateY(.3cqw)}
+.die small{font:1.25cqw var(--game-font);margin-top:.4cqw}
+#pause-title,#pause-details,#pause-options button,#pause-help,#intro-name,#intro-role,#intro-bio,#intro-ability,#intro-start,#intro-roster button,#level-title,.level-row,#title-menu-heading,#title-options button,#title-push{font-family:var(--game-font)}
+#journey.decree-page .journey-card{background:radial-gradient(ellipse at center,#e4cda2 0,#c6a574 74%,#7f5a36 100%);color:#33231c;box-shadow:inset 0 0 0 10px #38231d,inset 0 0 0 12px #a8824c}
+#journey.decree-page .eyebrow{color:#765136}
+#journey.decree-page #journey-title{font-size:2.8cqw;color:#462c22}
+#journey.decree-page #journey-summary{font-size:1.875cqw;color:#35241e;line-height:1.55;max-width:84cqw}
+
+.die-art{background:none}.die-art canvas{width:100%;height:100%;image-rendering:pixelated}#choices button{height:6.25cqw;min-height:6.25cqw}
+
+#dialog *,#journey *,#battle *,#dice-panel *,#enemy-intents *,#initiative-reveal *,#pause-panel *,#intro *,#level-up *,#title-screen *{font-family:var(--game-font)!important}
+
+.rolling .die-art{animation:die-tumble .16s steps(2,end) infinite}@media(prefers-reduced-motion:reduce){.rolling .die-art{animation:none}}
+#journey{padding:0;opacity:1;transition:none}#journey .journey-card{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4cqw;border:0}#journey-summary{max-width:84cqw}#journey.decree-page .journey-card{box-shadow:inset 0 0 0 1.5cqw #38231d,inset 0 0 0 1.8cqw #a8824c}
+
+#initiative-results .die-art{width:5cqw;height:5cqw}#initiative-results .die-number{font-size:1.8cqw}
