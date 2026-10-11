@@ -313,7 +313,7 @@ async function templeStoryStrike(){
  const lost=hp.jamal;hp.jamal=0;quest.templeWound=true;flash(target,'−'+lost,'#ee9a88');
  log(enemy.name+' catches J’Mal with a devastating strike. He collapses; the others must finish the fight.');paintParty();await delay(reduce.matches?120:650);
  while(battle&&battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
- if(battle){battle.busy=false;paintBattle();}
+ if(battle){planEnemyRound();battle.busy=false;paintBattle();}
 }
 async function encounter(){
  await say('viggo','You walk into a holy place with drawn steel. Then you are what the fires are for.');
@@ -327,11 +327,13 @@ async function encounter(){
  await say(null,count===1?'A single zealot steps from behind a pillar. The others never heard the bell.':count===2?'Two zealots step from behind the pillars.':'Three zealots come down the stairs behind you. The bell did its work.');
  startBattle(count,shaken);await templeStoryStrike();if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
+function planEnemyRound(){if(battle)EnemyTactics.plan(battle.enemies,units,hp,STATS,battle.round);}
+function paintEnemyIntent(){const panel=$('enemy-intents');panel.hidden=!battle;if(!battle)return;panel.replaceChildren();const heading=document.createElement('strong');heading.textContent='ENEMY INTENT · R'+battle.round;panel.append(heading);for(const e of battle.enemies.filter(e=>e.hp>0)){const row=document.createElement('div');row.textContent=EnemyTactics.preview(e,NAMES);row.title=row.textContent;row.className=e.intent?.heavy?'heavy':'';panel.append(row);}}
 function startBattle(count,shaken,config=null){
  const places=[[312,280],[264,296],[360,296],[280,328],[344,328],[392,328]];
  units.forEach((u,i)=>{u.x=places[i][0];u.y=places[i][1];u.dir='up';u.step=null;u.guard=false;});path=[];
  const enemies=config?.enemies||[{id:'viggo',name:'Viggo',x:312,y:136,hp:34,max:34,shaken:shaken?2:0},...Array.from({length:count},(_,i)=>({id:'cultist',name:'Zealot '+(i+1),x:[248,392,552][i],y:[152,152,280][i],hp:12,max:12}))];
- battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Choose a target. '+units.length+' companions, one mission.');paintBattle();updateObjective();
+ battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Read enemy intent. Guard halves incoming damage.');planEnemyRound();paintBattle();updateObjective();
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
 function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';e.textContent=text;e.title=text;panel.append(e);}}
@@ -351,12 +353,12 @@ function commandSummary(action,id){
  const stat=STATS[id],skill=SPECIAL[id],hit='D20 '+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),remaining=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
  if(action==='attack'){const move=Inventory.weapon(inventory,id).move;return 'Attack | '+move+' · Hit '+hit+' vs AC · Damage '+rollSummary(stat.dmg)+'.';}
  if(action==='special'){let effect='Damage '+rollSummary(skill.dmg);if(id==='jamal')effect+='; +1D6 if target already hit this round';if(skill.drain)effect+='; heal self by damage dealt';if(id==='jason')effect+='; fire burst on selected foe';if(id==='draymus')effect+='; necromantic touch, no self-healing';return 'Skill | '+skill.name+' ['+remaining+'/'+skill.uses+'] · '+(skill.auto?'Automatic hit':'Hit '+hit+' vs AC')+' · '+effect+'.';}
- if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+combatAC(id)+' → '+(combatAC(id)+4)+' until the next round. Uses this turn.';
+ if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+combatAC(id)+' → '+(combatAC(id)+4)+' until the next round; halve damage from hits. Uses this turn.';
  if(action==='potion')return 'Potion | '+NAMES[id]+' heals '+ally+' · Restore 2D4 +2 HP (up to max) · ['+potions+'/2].';
  if(action==='mend')return 'Mend | Infernal Mending · Jason heals '+ally+' for 2D8 +3 HP (up to max) · ['+mendUses+'/2].';
  if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
 }
-function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return Inventory.weapon(inventory,id).move+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return (id==='jason'?'Fire · Burning Hands':id==='draymus'?'Touch · Chill Touch':skill.name)+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+combatAC(id)+' → '+(combatAC(id)+4)+'\nThis round';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
+function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return Inventory.weapon(inventory,id).move+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return (id==='jason'?'Fire · Burning Hands':id==='draymus'?'Touch · Chill Touch':skill.name)+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+combatAC(id)+' → '+(combatAC(id)+4)+'\nHalf incoming damage';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
 function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
@@ -395,7 +397,7 @@ function handleCombatKey(e){
  return true;
 }
 function paintBattle(){
- if(!battle)return;while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
+ if(!battle)return;paintEnemyIntent();while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
  if(battle.turn>=units.length){return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
  const actor=activeUnit();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
@@ -413,7 +415,7 @@ async function performActionImpl(action){
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
  const refusal=action==='potion'?potionRefusal(battle.ally||actor.id):'';if(refusal){battle.control.mode='commands';battle.control.action=null;log(refusal);paintBattle();return;}
  battle.control.mode='commands';battle.control.action=null;battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
- if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 this round.');}
+ if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 and incoming damage halved this round.');}
  else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action,true,()=>{hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');});log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
  else if(action==='smoke'){await animateAction(actor,target,'smoke');quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
  else{
@@ -426,16 +428,25 @@ async function performActionImpl(action){
  battle.turn++;
  while(battle.turn<units.length&&hp[units[battle.turn].id]<=0)battle.turn++;
  if(battle.turn>=units.length){log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':battle.kind==='wereboar'?'Bolgart charges with tusks and brute force.':battle.kind==='bolgart'?'Bolgart fights back.':'The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
- units.forEach(u=>u.guard=false);battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));
+ units.forEach(u=>u.guard=false);battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));planEnemyRound();
  }
  battle.busy=false;paintBattle();
 }
-async function enemyStrike(enemy,token){const live=units.filter(u=>hp[u.id]>0);if(!live.length)return;const target=live[Math.floor(Math.random()*live.length)],penalty=(battle.smoke?4:0)+(enemy.shaken?2:0),bonus=STATS[enemy.id].atk-penalty,total=await rollDice(enemy.name+' → '+NAMES[target.id],20,1,bonus,'AC '+(combatAC(target.id)+(target.guard?4:0))),roll=total-bonus;
- if(roll===20||roll!==1&&roll+STATS[enemy.id].atk-penalty>=combatAC(target.id)+(target.guard?4:0)){const value=await damage(STATS[enemy.id].dmg,enemy.name+' · Damage');await animateAction(enemy,target,'attack',true,()=>{hp[target.id]=Math.max(0,hp[target.id]-value);GameAudio.effect('hit');flash(target,'−'+value,'#ee9a88');});log(enemy.name+' hits '+NAMES[target.id]+' for '+value+'.');}else{await animateAction(enemy,target,'attack',false);flash(target,'MISS','#bfc1d1');log(enemy.name+' misses '+NAMES[target.id]+'.');}paintParty();await delay(220);if(token!==epoch)return;}
+async function enemyStrike(enemy,token){
+ if(!battle||token!==epoch)return;
+ if(!enemy.intent)planEnemyRound();
+ const intent=enemy.intent,target=units.find(u=>u.id===intent?.target);
+ // Keep the announced target: a fallen target costs the enemy this action.
+ if(!target||hp[target.id]<=0){log(enemy.name+' loses the opening; the intended target is down.');return;}
+ const penalty=(battle.smoke?4:0)+(enemy.shaken?2:0),bonus=STATS[enemy.id].atk-penalty,ac=combatAC(target.id)+(target.guard?4:0),total=await rollDice(enemy.name+' · '+intent.move+' → '+NAMES[target.id],20,1,bonus,'AC '+ac),roll=total-bonus;
+ if(token!==epoch||!battle)return;
+ if(roll===20||roll!==1&&total>=ac){const rolled=await damage(STATS[enemy.id].dmg,enemy.name+' · Damage'),raw=rolled+intent.extra,value=EnemyTactics.damage(raw,target.guard);await animateAction(enemy,target,'attack',true,()=>{hp[target.id]=Math.max(0,hp[target.id]-value);GameAudio.effect('hit');flash(target,'−'+value,'#ee9a88');});log(enemy.name+' uses '+intent.move+' on '+NAMES[target.id]+': '+value+' damage.'+(target.guard?' Guard absorbs '+(raw-value)+'.':''));}else{await animateAction(enemy,target,'attack',false);flash(target,'MISS','#bfc1d1');log(enemy.name+' misses '+NAMES[target.id]+(target.guard?'’s guard.':'.'));}paintParty();await delay(220);
+}
 async function fail(text){await say('Defeat',text);const c=await say(null,'Return to the last checkpoint?',['[Retry the encounter]','[Restart the chapter]']);if(c===0)reset(true);else reset();}
 function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=gy*T+8,dx=tx-u.x,dy=ty-u.y;u.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';u.step={sx:u.x,sy:u.y,tx,ty,p:0};return true;}
 function advance(u,dt,speed){if(!u.step)return false;u.step.p=Math.min(1,u.step.p+dt*speed);u.x=u.step.sx+(u.step.tx-u.step.sx)*u.step.p;u.y=u.step.sy+(u.step.ty-u.step.sy)*u.step.p;u.anim+=dt;if(u.step.p>=1){u.x=u.step.tx;u.y=u.step.ty;u.step=null;return true;}return false;}
 function walkTo(gx,gy){if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
+function beginWalkTap(d){if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished()||!DIR[d]||units[0].step)return false;const u=units[0],a=cell(u.x,u.y),v=DIR[d];path=[];u.dir=d;return stepUnit(u,a[0]+v[0],a[1]+v[1]);}
 function update(dt){if(Handheld.isOpen()||$('save-import-dialog').open)return;if(ready&&!introOpen&&!journeyOpen&&!levelOpen&&!briefingOpen&&!dialogOpen&&!taskBusy&&!battle)updateCitizens(dt);
  for(const u of units){u.flash=Math.max(0,(u.flash||0)-dt);u.lunge=Math.max(0,(u.lunge||0)-dt);}for(const e of battle?.enemies||[]){e.flash=Math.max(0,(e.flash||0)-dt);e.lunge=Math.max(0,(e.lunge||0)-dt);}
  fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;
@@ -500,7 +511,7 @@ document.addEventListener('keydown',e=>{if(e.repeat&&dialogOpen&&['Enter',' ','e
  const menu=dialogOpen&&$('choices').children.length?$('choices'):battle&&!battle.busy?$('actions'):null;
  if(menu&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const buttons=Array.from(menu.querySelectorAll('button')).filter(b=>!b.disabled),index=buttons.indexOf(document.activeElement),delta={ArrowUp:-2,ArrowDown:2,ArrowLeft:-1,ArrowRight:1}[e.key];buttons[index<0?0:(index+delta+buttons.length*2)%buttons.length]?.focus();return;}
  if(dialogOpen){if(['Escape','Enter',' '].includes(e.key)&&!$('close').hidden){e.preventDefault();finishDialog();}if(/^[1-9]$/.test(e.key)){const b=$('choices').children[Number(e.key)-1];if(b){e.preventDefault();b.click();}}if(e.key==='Tab'){e.preventDefault();const focusable=Array.from($('dialog').querySelectorAll('button')).filter(b=>!b.hidden);const index=focusable.indexOf(document.activeElement),next=(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length;focusable[next]?.focus();}return;}
- if(KEY[e.key]){e.preventDefault();if(!battle&&!taskBusy)keys.add(KEY[e.key]);}
+ if(KEY[e.key]){e.preventDefault();if(!battle&&!taskBusy){keys.add(KEY[e.key]);if(!e.repeat)beginWalkTap(KEY[e.key]);}}
  else if(['e','E','Enter',' '].includes(e.key)&&e.target.tagName!=='BUTTON'){e.preventDefault();if(!e.repeat)interact();}
  else if(battle&&/^[1-9]$/.test(e.key)){const b=$('actions').children[Number(e.key)-1];if(b&&!b.disabled)b.click();}
 });

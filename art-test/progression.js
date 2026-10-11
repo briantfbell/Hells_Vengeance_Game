@@ -6,5 +6,13 @@ window.Progression=(()=>{
  function migrate(quest){const p=fresh();if(quest.decreesIssued){p.milestones=[milestone];for(const id of members)p.levels[id]=2;}return p;}
  const stats=(base,id,level)=>({...base,hp:base.hp+(level===2?hpGain[id]:0),atk:base.atk+(level===2?1:0),dmg:[...base.dmg]});
  const skill=(base,level,id)=>({...base,uses:base.uses+(level===2?1:0),dmg:id==='jason'?[level,4,0]:id==='freya'?[1,10,4+level]:[...base.dmg]});
- return {milestone,members,hpGain,fresh,validate,migrate,stats,skill};
+ function history(q,p){const rows=[];
+  if(q.scimitar)rows.push(q.scimitarDisposed?'Viggo’s scimitar · recovered, then planted on the pirate captain.':'Viggo’s scimitar · recovered; available to Freya.');
+  if(p.milestones.includes(milestone))rows.push('Ash House rest · Freya, J’Mal, Jason and Draymus reach level 2. More HP, +1 to hit and +1 skill use; Challenge and Burning Hands grow stronger.');
+  if(q.reeseJoined)rows.push('Reese joins in Longacre · basic bow and armor.');
+  if(q.guapoReturned)rows.push('21 Neth · El Guapo rejoins the company.');
+  if(!rows.length)rows.push('No campaign milestones reached yet.');
+  return rows;
+ }
+ return {milestone,members,hpGain,fresh,validate,migrate,stats,skill,history};
 })();

@@ -1,0 +1,200 @@
+[
+  {
+    "height": 480,
+    "location": "Kintargo · Night of Ashes",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26El Guapo · Lv 1 · 34/34",
+    "section": "02 · Kintargo streets",
+    "task": "Find the Silver Star.",
+    "width": 640,
+    "status": "Replaying 02 · Kintargo streets. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Silver Star · Musical Instruments",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26El Guapo · Lv 1 · 34/34",
+    "section": "03 · The Silver Star",
+    "task": "Decide whether to silence the bell, then find the cellar.",
+    "width": 640,
+    "status": "Replaying 03 · The Silver Star. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Beneath the Silver Star",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26El Guapo · Lv 1 · 34/34",
+    "section": "04 · Viggo’s temple",
+    "task": "Approach Viggo at the altar.",
+    "width": 640,
+    "status": "Replaying 04 · Viggo’s temple. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Chapter Two · The Western Star",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26El Guapo · Lv 1 · 34/34",
+    "section": "05 · The Western Star",
+    "task": "Sail via Pezzack and Corentyn to Remesiana.",
+    "width": 640,
+    "status": "Replaying 05 · The Western Star. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Remesiana · Harbor Market",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26El Guapo · Lv 1 · 34/34",
+    "section": "06 · Remesiana harbor",
+    "task": "Visit the outfitter.",
+    "width": 640,
+    "status": "Replaying 06 · Remesiana harbor. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · Louslik Tannery",
+    "party": "J’Mal · Lv 1 · 30/30",
+    "section": "07 · J’Mal scouts the tannery",
+    "task": "Scout the tannery.",
+    "width": 640,
+    "status": "Replaying 07 · J’Mal scouts the tannery. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26",
+    "section": "08 · Ash House employer",
+    "task": "Meet the employer behind the screens.",
+    "width": 640,
+    "status": "Replaying 08 · Ash House employer. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26",
+    "section": "09 · Rest at Ash House",
+    "task": "Eat and rest at Ash House.",
+    "width": 640,
+    "status": "Replaying 09 · Rest at Ash House. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Ash House · Something in the Water",
+    "party": "J’Mal · Lv 1 · 30/30",
+    "section": "10 · The upstairs bath",
+    "task": "Investigate the tub with J’Mal.",
+    "width": 640,
+    "status": "Replaying 10 · The upstairs bath. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Chapter Three · Longacre Square",
+    "party": "Freya · Lv 1 · 38/38J’Mal · Lv 1 · 30/30Jason · Lv 1 · 32/32Draymus · Lv 1 · 26/26",
+    "section": "11 · Allamar’s sermon",
+    "task": "Attend Allamar’s sermon.",
+    "width": 640,
+    "status": "Replaying 11 · Allamar’s sermon. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30",
+    "section": "12 · Posting the decrees",
+    "task": "Post the public notices [0/4].",
+    "width": 640,
+    "status": "Replaying 12 · Posting the decrees. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · Western Gate and Jail",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30",
+    "section": "13 · Rhona’s dismissal",
+    "task": "Post the public notices [3/4].",
+    "width": 640,
+    "status": "Replaying 13 · Rhona’s dismissal. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · Western Gate and Jail",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30",
+    "section": "14 · Former deputies’ ambush",
+    "task": "Leave the jail courtyard.",
+    "width": 640,
+    "status": "Replaying 14 · Former deputies’ ambush. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Scarlet Manor · The Hellfire Compact",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30",
+    "section": "15 · The Hellfire Compact",
+    "task": "Meet Archbaron Fex.",
+    "width": 640,
+    "status": "Replaying 15 · The Hellfire Compact. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Scarlet Manor · The Hellfire Compact",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30Reese · Lv 1 · 30/30",
+    "section": "16 · The Last Stand",
+    "task": "Continue to the Last Stand.",
+    "width": 640,
+    "status": "Replaying 16 · The Last Stand. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · Rohalendi Hospice",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30Reese · Lv 1 · 30/30",
+    "section": "17 · Gerya’s intercepted letter",
+    "task": "Speak to Gerya about the intercepted letter.",
+    "width": 640,
+    "status": "Replaying 17 · Gerya’s intercepted letter. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Outside Longacre · The Angel Knight’s Hill",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30Reese · Lv 1 · 30/30",
+    "section": "18 · The predawn hill search",
+    "task": "Investigate the hill Riley describes.",
+    "width": 640,
+    "status": "Replaying 18 · The predawn hill search. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30Reese · Lv 1 · 30/30",
+    "section": "19 · Ingoe’s dockside rumors",
+    "task": "Meet Razelago’s dockside contact.",
+    "width": 640,
+    "status": "Replaying 19 · Ingoe’s dockside rumors. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30Reese · Lv 1 · 30/30",
+    "section": "20 · Political Movement",
+    "task": "Continue: Political Movement.",
+    "width": 640,
+    "status": "Replaying 20 · Political Movement. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "The Ash House · A Hidden Employer",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30El Guapo · Lv 1 · 34/34Reese · Lv 1 · 30/30",
+    "section": "21 · Church standoff and watch",
+    "task": "Approach Allamar at the church.",
+    "width": 640,
+    "status": "Replaying 21 · Church standoff and watch. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · The Broken Jail",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30El Guapo · Lv 1 · 34/34Reese · Lv 1 · 30/30",
+    "section": "22 · Jailbreak investigation",
+    "task": "Check on Cimri at the jail.",
+    "width": 640,
+    "status": "Replaying 22 · Jailbreak investigation. Your previous progress is preserved."
+  },
+  {
+    "height": 480,
+    "location": "Longacre · Dusk in the Square",
+    "party": "Freya · Lv 2 · 44/44J’Mal · Lv 2 · 35/35Jason · Lv 2 · 37/37Draymus · Lv 2 · 30/30El Guapo · Lv 1 · 34/34Reese · Lv 1 · 30/30",
+    "section": "23 · Dusk execution",
+    "task": "Prepare the execution square.",
+    "width": 640,
+    "status": "Replaying 23 · Dusk execution. Your previous progress is preserved."
+  }
+]

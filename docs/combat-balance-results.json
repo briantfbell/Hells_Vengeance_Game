@@ -5,8 +5,8 @@
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.1,
-      "meanPotionsRemaining": 1.98,
+      "meanRounds": 3.15,
+      "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -15,7 +15,7 @@
       "trials": 200,
       "winPercent": 100,
       "meanRounds": 5.01,
-      "meanPotionsRemaining": 1.85,
+      "meanPotionsRemaining": 1.67,
       "meanMendingRemaining": 1.99,
       "meanAdditionalDowned": 0
     },
@@ -23,8 +23,8 @@
       "encounter": "Former deputies",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.35,
-      "meanPotionsRemaining": 1.98,
+      "meanRounds": 4.29,
+      "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -41,8 +41,8 @@
       "encounter": "Bolgart · wereboar",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.75,
-      "meanPotionsRemaining": 1.98,
+      "meanRounds": 2.73,
+      "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -50,7 +50,7 @@
       "encounter": "Gate guardian",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 1.89,
+      "meanRounds": 1.9,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -59,7 +59,7 @@
       "encounter": "Angel Knight and rioters",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.11,
+      "meanRounds": 3.06,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -68,7 +68,7 @@
       "encounter": "Human → wereboar, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanPotionsRemaining": 1.97
+      "meanPotionsRemaining": 1.99
     }
   ]
 }

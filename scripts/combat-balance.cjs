@@ -14,14 +14,14 @@ const cases=[
 ];
 function create(c,seed,carry){
  const w={window:null,structuredClone,console,epoch:1,dialogOpen:false,taskBusy:false,Handheld:{isOpen:()=>false},GameAudio:{effect:()=>{}},CANCEL:Symbol('cancel'),scene:'temple',lead:c.roster[0],ready:true};w.window=w;vm.createContext(w);
- for(const name of ['inventory.js','progression.js'])vm.runInContext(read(name),w);
+ for(const name of ['inventory.js','progression.js','enemy-tactics.js'])vm.runInContext(read(name),w);
  const data=vm.runInContext('(()=>{'+head+'return {CORE,NAMES,STATS,SPECIAL,BASE_STATS,BASE_SPECIAL,WEAPONS,ATTACKS,SKILL_TEXT,inventory,progression};})()',w);Object.assign(w,data);
  for(const file of ['last-stand-chapter.js','political-movement.js'])for(const match of read(file).matchAll(/STATS\.\w+=\{[^}]+\}/g))vm.runInContext(match[0],w);
  for(let i=1;i<=4;i++)w.STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])w.STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
  w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',chapter6:['ovinnik','execution'].includes(c.kind)};w.progression=w.Progression.migrate(w.quest);
  vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();
  w.hp=Object.fromEntries(w.CORE.map(id=>[id,w.STATS[id].hp]));w.uses=Object.fromEntries(w.CORE.map(id=>[id,0]));w.potions=w.mendUses=2;if(carry){Object.assign(w.hp,carry.hp);Object.assign(w.uses,carry.uses);w.potions=carry.potions;w.mendUses=carry.mendUses;}if(c.down)w.hp[c.down]=0;
- w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.lastRound=1;
+ w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.lastRound=1;w.planEnemyRound=()=>w.EnemyTactics.plan(w.enemies,w.units,w.hp,w.STATS,w.battle.round);w.planEnemyRound();
  const nodes={};w.$=id=>nodes[id]??={hidden:false,disabled:false,classList:{remove:()=>{}},textContent:''};w.keys={clear:()=>{}};w.delay=async()=>{};w.animateAction=async(_a,_t,_type,_hit,impact)=>impact?.();w.flash=()=>{};w.log=()=>{};w.paintParty=w.updateObjective=w.save=()=>{};w.run=()=>{};
  w.paintBattle=()=>{if(!w.battle)return;w.lastRound=w.battle.round;while(w.battle.turn<w.units.length&&w.hp[w.units[w.battle.turn].id]<=0)w.battle.turn++;};
  w.activeUnit=()=>w.battle?w.units[w.battle.turn]:null;w.livingEnemy=()=>w.battle?.enemies.find(e=>e.hp>0);w.combatAC=id=>w.STATS[id].ac+(c.kind==='execution'&&id==='jason'?2:0);
