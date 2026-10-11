@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains twelve playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains thirteen playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -112,3 +112,11 @@ Early initiative modifiers are provisional game values, not inferred from later 
 Standard browser gamepads now use D-pad / left stick, A to confirm, B to back or pause, and B + direction to run. X opens inventory, Y opens party details, Start pauses/resumes, and Select opens quest details or combat help. Keyboard shortcuts I / O / F1 offer those same screens; arrows/WASD and Enter/E remain unchanged. The pause menu also provides quest/help access.
 
 Connect a standard-mapped controller, press and release a button, then use it in the focused game tab. Physical controller and Miyoo validation remain pending. See docs/CONTROLLER_SUPPORT.md for mapping, held-button safeguards and native-port limits.
+
+## Chapter Thirteen: Quiet Knives
+
+Continue from the completed dock/tower operation, or replay section 86. Stir the market riot, ambush a militia patrol and plant the false account, compromise the labor guild records, steal the unnamed manor artifacts, then escape the burning Uskwood and recover in the Fungus Caves. Corrine returns as the assigned liaison. Sections 86–102 cover this continuation; there are now 102 replay checkpoints.
+
+Four new transparent map foregrounds and two anonymous civilian models match the existing style. All views retain the 640×480 logical frame. The prison aftermath remains unresolved, and this chapter grants no inferred level-ups or unidentified magic items. See [chapter notes](docs/chapter-thirteen.md).
+
+Validation: 83 automated tests pass, including portable-save round trips for every replay checkpoint and objective reachability on the new maps. The combat harness covers 200 seeded runs per encounter and chapter chains; results describe its skill-first/healing strategy, not every possible player choice.

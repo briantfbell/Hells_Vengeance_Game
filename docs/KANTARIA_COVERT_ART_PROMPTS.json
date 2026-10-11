@@ -1,0 +1,37 @@
+{
+  "tool": "built-in imagegen",
+  "prompts": [
+    {
+      "asset": "kantaria-market-v1.png",
+      "prompt": "Create a NEW project map, using the referenced Uskwood room ONLY as pixel-art style reference, not an edit target. Very detailed crisp dark fantasy pixel art, warm russet and charcoal stone, handheld RPG overhead three-quarter cutaway viewpoint. Landscape 8:5 map foreground with genuine transparent surroundings, no scenery behind the outer edge. Kantaria market courtyard: cobblestone floor from left 15% to right 85%, y35% to85%, unobstructed central cross-shaped walking space, open centered southern entrance extending to bottom95%. Small closed shop fronts at top, muted red and cream canvas stalls at far left and far right, produce baskets and cloth bolts placed along perimeter only. No people, no UI, no letters, no objective markers, no water. Broad empty central floor must accommodate six moving characters and a few civilians. Keep furniture away from central x42%-58% vertical corridor and central y45%-70% horizontal corridor. Cutaway playable foreground only, crisp pixels not painterly, no heavy perspective vanishing point."
+    },
+    {
+      "asset": "kantaria-guild-v1.png",
+      "prompt": "Create a NEW game map using referenced room ONLY as pixel art style reference. Very high-detail crisp pixel-art overhead three-quarter cutaway dark fantasy RPG foreground, landscape 8:5, genuinely transparent surroundings outside building. Kantaria labor guild records room, burgundy banners, timber and dark stone, amber candles, orderly ledgers and scroll shelving along rear wall and extreme left/right perimeter. Small clerk desk at top-left, locked file chest at far right midline. Wide unobstructed central stone floor occupying x25%-75%, y40%-85%, open centered south door at bottom. No people, no UI, no readable letters, no symbols with words, no large central table. All props on perimeter, floor suitable for six-person moving party. Match warm candlelit rust-and-charcoal palette and ornate handcrafted pixels in reference. Map foreground only, no ground plane outside walls, no painterly blur."
+    },
+    {
+      "asset": "kantaria-manor-v1.png",
+      "prompt": "NEW map, referenced room is style reference only. High-detail crisp dark-fantasy pixel art overhead three-quarter cutaway, landscape 8:5 RPG playable map foreground with genuine transparent surroundings. Narikopolus Manor display gallery occupied by a military force: gray stone and aged burgundy draperies, ornate amber candelabras, carved shelves, small unnamed antique sculptures and sealed artifact cases against far left/right and rear walls. No identifiable magical weapons, no people, no UI, no lettering. Broad empty central rectangular tiled floor x25%-75%, y40%-80%, open central south entrance reaching bottom95%. Two narrow side alcoves containing display cabinets at x15% and85%, not blocking party movement. Rich warm handcrafted pixel detail, muted rather than bright, correct overhead game perspective. Do not put tables, statues or chandeliers across central walk corridors. Exterior is transparent, floor is opaque."
+    },
+    {
+      "asset": "kantaria-caves-v1.png",
+      "prompt": "NEW game map using referenced room ONLY as crisp pixel-art detail and game-perspective reference, do NOT retain architecture. Dark fantasy Fungus Caves shelter near Kantaria: overhead three-quarter cutaway cave chamber, landscape8:5 playable foreground with truly transparent area outside rugged irregular cave rim. Damp charcoal slate, moss-dark teal stone, small muted green mushrooms along outer walls, shallow still puddles at perimeter only, bedroll bundles near far left, tiny sheltered amber lantern at far right. Broad empty dry stone floor x25%-75% y40%-85%, unobstructed central vertical walking route, open southern cave mouth x44%-56% extending to bottom95%. No people, no text, no UI, no bodies, no giant glowing mushroom trees. Restrained green bioluminescence, hand-laid highly detailed pixel art, sharply defined pixels. Floor opaque, outside cave transparent, no black painted background. Playable floor must allow six companions to gather without props blocking them."
+    },
+    {
+      "asset": "kantaria-civilians-v1.png",
+      "prompt": "Create a game sprite atlas, NOT a scene. Very high-detail crisp dark-fantasy pixel art matching an ornate handheld RPG, genuine fully transparent background. Exactly six separate full-body human sprites arranged as a regular 3-column by 2-row grid in landscape 3:2, no text or labels. Each cell has one centered person with generous transparent padding and entire body visible; no sprite touches another. Row1 same market trader in front, right profile, back: lean middle-aged human man, short dark beard, soft brown cap, faded rust tunic, apron, simple belt pouch, plain shoes, no weapon. Row2 same guild clerk in front, right profile, back: middle-aged human woman, dark brown hair in bun, modest charcoal-blue gown with tan vest, sleeve cuffs, ink-stained fingers, slim ledger tucked at her hip, plain shoes, no weapon. Normal body proportions, small heads matching realistic detailed pixel party sprites. Neutral stationary poses, consistent height and foot baseline in each row, no ground shadows, no checkerboard baked in. Muted burgundy, charcoal, ochre highlights. Faces clear and centered in front pose for portrait cropping. Interpretations of anonymous civilian roles, no invented named characters, no decorative flourish outside their silhouettes."
+    },
+    {
+      "asset": "kantaria-civilians-v2.png",
+      "prompt": "Edit this sprite atlas ONLY to remove every pixel of the brown/black gradient backdrop and all glows between and around the six human silhouettes. Preserve the six characters, their exact faces, clothing, poses, scale and grid positions. Output genuine transparent alpha everywhere outside each character, and opaque pixels on the characters. No ground shadows, no halo, no haze, no gradient. Keep crisp detailed pixel edges. This must be an isolated six-sprite game atlas, not people inside dark rectangular backgrounds.",
+      "editSource": "kantaria-civilians-v1.png"
+    }
+  ],
+  "assets": {
+    "kantaria-market-v1.png": "exec-801a4c72-1b65-47e9-8056-4374606a02dd.png",
+    "kantaria-guild-v1.png": "exec-4441a70e-6a08-4fc9-a13b-1c91670c1f8c.png",
+    "kantaria-manor-v1.png": "exec-fad4acd9-7227-477c-b9f4-94fb55506572.png",
+    "kantaria-caves-v1.png": "exec-ebb08306-4108-415f-b24c-f2b679ab6f27.png",
+    "kantaria-civilians-v1.png": "exec-05fbf7dc-cbfd-421a-8b05-02dfc7758e8a.png"
+  }
+}

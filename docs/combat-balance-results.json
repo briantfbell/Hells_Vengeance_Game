@@ -119,6 +119,24 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Quiet Knives · militia ambush",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.89,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Quiet Knives · Uskwood escape",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.89,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Kantaria disruption · docks",
       "trials": 200,
       "winPercent": 100,
@@ -237,6 +255,12 @@
       "trials": 200,
       "winPercent": 100,
       "meanPotionsRemaining": 1.94
+    },
+    {
+      "encounter": "Full Quiet Knives operation, no rest between",
+      "trials": 200,
+      "winPercent": 100,
+      "meanAdditionalDowned": 0
     }
   ]
 }

@@ -29,6 +29,13 @@ window.Progression=(()=>{
   if(q.docksBurned)rows.push('Kantaria docks destroyed; the rebellion’s dock income interrupted.');
   if(q.jonasEscaped)rows.push('Jonas Reikman escaped wounded; south tower damaged.');
   if(q.westTowerBurned)rows.push('North tower assaulted; west tower burned; Angel-Bro defeated.');
+  if(q.marketRiot)rows.push('Kantaria market · the company causes a riot.');
+  if(q.falseBlame)rows.push('Militia ambushes · the company falsely blames homeless freed slaves.');
+  if(q.guildRecordsTampered)rows.push('Labor guild · records compromised during a burglary.');
+  if(q.manorArtifactsTaken)rows.push('Narikopolus Manor · priceless artifacts stolen.');
+  if(q.uskwoodBurned)rows.push('Uskwood fight · fireballs destroy the company’s shelter.');
+  if(q.cavesReached)rows.push('Fungus Caves · the company withdraws to recover.');
+  if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }
