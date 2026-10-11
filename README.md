@@ -43,7 +43,7 @@ This is a static website: index.html and art-test/ can be served by a static web
 
 ## Handheld direction
 
-The web build is the current playable prototype. Final handheld packaging, native gamepad mapping, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
+The web build is the current playable prototype. Final handheld packaging, native handheld input adapters, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
 
 ## Validation
 
@@ -106,3 +106,9 @@ Campaign progression is paginated in four-entry pages inside the game frame. Arr
 Each combatant rolls D20 + initiative once when combat begins. A skippable ranked reveal shows the dice, modifiers and totals. Press Enter/E/Space or click Start battle to begin; B also skips the reveal. Party and enemies share that fixed order throughout the fight. Now/Next stays visible above enemy intentions, and fallen combatants are skipped. Guard grants +4 AC and halves landed damage until the character’s next turn. This replaces the previous enemy-response timing.
 
 Early initiative modifiers are provisional game values, not inferred from later Foundry sheets. See docs/INITIATIVE.md for the modifiers, tie handling, scripted openings and verification.
+
+## Controller support and quest help
+
+Standard browser gamepads now use D-pad / left stick, A to confirm, B to back or pause, and B + direction to run. X opens inventory, Y opens party details, Start pauses/resumes, and Select opens quest details or combat help. Keyboard shortcuts I / O / F1 offer those same screens; arrows/WASD and Enter/E remain unchanged. The pause menu also provides quest/help access.
+
+Connect a standard-mapped controller, press and release a button, then use it in the focused game tab. Physical controller and Miyoo validation remain pending. See docs/CONTROLLER_SUPPORT.md for mapping, held-button safeguards and native-port limits.

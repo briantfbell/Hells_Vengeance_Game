@@ -10,9 +10,9 @@ Intro, dialogue, journey, level-up and pause/inventory overlays use the full sta
 
 Validation: stage/canvas bounds and all combat command cards checked at 320×240, 640×480, 800×480 and 1440×1000 host viewports. Intro, briefing, dialogue, travel, pause, inventory and real level-up retain identical stage bounds. Exploration clicks target the shifted map correctly. Existing saves decode without coordinate migration. Inventory equipment/potion tests, actual combat damage, Last Stand story tests and the ten save/progression tests pass. Ship, intro and combat screenshots were visually inspected; background and sprite proportions are preserved. This is browser preparation for the Miyoo display, not a completed native device port.
 
-## Planned Miyoo controls — saved for later
+## Miyoo control plan — browser mapping implemented
 
-Brian accepted this control plan on October 9, 2026. This is a future mapping; no input behavior is changed by this note. Retain WASD/arrows and Enter/E during development.
+Brian accepted this control plan on October 9, 2026. The standard browser controller mapping and shortcuts are now implemented; see CONTROLLER_SUPPORT.md. Native Miyoo packaging remains future work. Retain WASD/arrows and Enter/E during development.
 
 | Button | Exploration | Combat / menus |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ Brian accepted this control plan on October 9, 2026. This is a future mapping; n
 | Start | Pause | Pause |
 | Select | Current quest details | Combat help |
 
-B advances ordinary dialogue but never automatically chooses a dialogue action. All essential gameplay remains reachable using D-pad + A/B; X/Y are shortcuts. The run/pause distinction needs physical-device testing. Native button mapping, shortcuts, quest details and combat-help screens are still future implementation.
+B advances ordinary dialogue but never automatically chooses a dialogue action. All essential gameplay remains reachable using D-pad + A/B; X/Y are shortcuts. The run/pause distinction needs physical-device testing. The browser adapter implements shortcuts, quest details and combat help. Native hardware mapping remains to be validated.
 
 ## Remaining agenda
 
