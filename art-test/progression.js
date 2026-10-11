@@ -23,6 +23,9 @@ window.Progression=(()=>{
   if(q.rhonaDefeated)rows.push('Court of Spears · Rhona Staelish dies in the assault.');
   if(q.lenciaEscaped)rows.push('Lencia Visserene escapes · winged armor with feather-fall.');
   if(q.courtReported)rows.push('Longacre operation complete · four weeks furlough; next assignment Kantaria.');
+  if(q.uskwoodBriefed)rows.push('Kantaria · Loredana employs the company at the Uskwood Inn.');
+  if(q.zaraFreed)rows.push('Zara Orcelani extracted from Hardship’s Hearth with her gear.');
+  if(q.zaraHidden)rows.push('Zara concealed at the Uskwood; docks and towers are the next targets.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }

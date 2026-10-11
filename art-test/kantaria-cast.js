@@ -1,0 +1,11 @@
+"use strict";
+Object.assign(COMBAT_IDLES,{"loredana": {"src": "kantaria-cast-packed-v1.png", "frames": [{"x": 49, "y": 32, "w": 211, "h": 478, "anchorX": 155.0, "anchorY": 510}, {"x": 363, "y": 30, "w": 203, "h": 480, "anchorX": 465.0, "anchorY": 510}, {"x": 672, "y": 36, "w": 205, "h": 474, "anchorX": 775.0, "anchorY": 510}], "maxHeight": 480, "cycle": [0, 1, 0, 2]}, "zara": {"src": "kantaria-cast-packed-v1.png", "frames": [{"x": 61, "y": 546, "w": 188, "h": 490, "anchorX": 155.0, "anchorY": 1036}, {"x": 370, "y": 544, "w": 189, "h": 492, "anchorX": 465.0, "anchorY": 1036}, {"x": 681, "y": 548, "w": 188, "h": 488, "anchorX": 775.0, "anchorY": 1036}], "maxHeight": 492, "cycle": [0, 1, 0, 2]}, "jalila": {"src": "kantaria-cast-packed-v1.png", "frames": [{"x": 16, "y": 1068, "w": 278, "h": 494, "anchorX": 155.0, "anchorY": 1562}, {"x": 329, "y": 1072, "w": 272, "h": 490, "anchorX": 465.0, "anchorY": 1562}, {"x": 642, "y": 1070, "w": 265, "h": 492, "anchorX": 775.0, "anchorY": 1562}], "maxHeight": 494, "cycle": [0, 1, 0, 2]}});
+LORE_CAST.loredana={"src": "kantaria-cast-packed-v1.png", "source": "kantaria-cast-packed-v1.png", "frame": {"x": 49, "y": 32, "w": 211, "h": 478, "anchorX": 155.0, "anchorY": 510}};
+FUTURE_NPCS.loredana=LORE_CAST.loredana;
+LORE_CAST.zara={"src": "kantaria-cast-packed-v1.png", "source": "kantaria-cast-packed-v1.png", "frame": {"x": 61, "y": 546, "w": 188, "h": 490, "anchorX": 155.0, "anchorY": 1036}};
+FUTURE_NPCS.zara=LORE_CAST.zara;
+LORE_CAST.jalila={"src": "kantaria-cast-packed-v1.png", "source": "kantaria-cast-packed-v1.png", "frame": {"x": 16, "y": 1068, "w": 278, "h": 494, "anchorX": 155.0, "anchorY": 1562}};
+FUTURE_NPCS.jalila=LORE_CAST.jalila;
+DIALOGUE_FACE_CROPS.loredana={"x": 113, "y": 32, "w": 94, "h": 110};
+DIALOGUE_FACE_CROPS.zara={"x": 98, "y": 550, "w": 96, "h": 108};
+DIALOGUE_FACE_CROPS.jalila={"x": 118, "y": 1096, "w": 92, "h": 108};

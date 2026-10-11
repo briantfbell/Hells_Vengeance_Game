@@ -92,6 +92,33 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Kantaria · patrol",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.71,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Kantaria · prison yard",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.71,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Kantaria · warden’s hall",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 3.95,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
@@ -152,6 +179,12 @@
       "meanRounds": 3.06,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Full Kantaria opening, no rest between",
+      "trials": 200,
+      "winPercent": 100,
       "meanAdditionalDowned": 0
     },
     {
