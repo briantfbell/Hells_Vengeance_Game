@@ -1,0 +1,32 @@
+# Chapter Ten — Court of Spears
+
+## Campaign evidence
+The earlier archive's `Pathfinder_Gift_01_Reference/Pathfinder_Campaign_RPG_Gift/raw_posts/P039.txt` preserves Freya's “Ketchup” field report. It records an assault on the Court of Spears, Rhona Staelish's death, Lencia Visserene surviving, minimal injuries and no fatalities in the assault force. Lencia is a paladin of Iomedae, wearing angel-themed armor with built-in feather-fall and carrying a longsword and shield. Rhona's class is uncertain in that report; the game does not assert one. The old tree-town location is established by the preceding reconnaissance.
+
+The GM timeline's `sources/gm_timeline_source.json` entry for 4716.11.23 explicitly records Lencia escaping and Rhona being killed. The older field report labels this operation with Arodus dates and its later report with Rova; those dates conflict with the corrected campaign timeline. No disputed date is displayed in this chapter. The manual page-5-and-6 export ends at the fort and does not provide the Court assault itself.
+
+Brian confirmed Reese and El Guapo participated. The playable roster is Freya, J’Mal, Jason, Draymus, El Guapo and Reese. The first El Guapo departure and recorded reunion are preserved. The field report also records Fex being satisfied, granting four weeks' furlough, and assigning the next operation in Kantaria.
+
+## Adaptation boundaries
+The forest approach, two connected platform maps, three encounter groups, defender counts, collision layout, battle statistics, and spoken dialogue are playable adaptations. No matching original Court scene or Lencia/Rhona sheet was located in the inspected Foundry index. These are not reconstructed historical PF1 encounter statistics.
+
+Lencia's escape and Rhona's death are fixed campaign outcomes. Defeating Lencia in combat leaves her alive for an escape interaction. Her descent using the documented feather-fall armor is inferred staging; the source does not specify the exact escape choreography. Securing the stronghold stabilizes any downed companions to preserve the recorded absence of fatalities; a complete combat defeat still uses normal retry behavior. Destruction means defeat of the rebel base, without an invented burning sequence. No XP awards, historical level-up dates, or newly acquired equipment are invented.
+
+El Guapo's lighthouse/bishop one-liner is comic adaptation, not recorded campaign history. Lencia's dark hair and armor colors are visual interpretations; Rhona preserves the established auburn-haired model with two hand axes for this encounter.
+
+## Implementation and verification
+`art-test/court-of-spears.js` implements the operation and debrief. `court-cast.js` registers three-frame idle models and portraits. Transparent platform exteriors sit above a separate forest-color underlay with restrained moving leaf specks. Exploration and combat retain the 640×480 game canvas.
+
+Version 2 saves remain compatible. Ten ordered flags and four location prerequisites reject inconsistent imports. Nine new replay entries occupy sections 52–60. All 57 automated tests pass, including all 60 replay export/import round trips. Actual-engine balance simulations won all 200 trials of the complete three-fight Court sequence without an intervening rest. Browser checks cover six-member combat, keyboard attack/target confirmation, and the lower-to-upper bridge transition at 640×480. These checks are not a full campaign playthrough or physical-device test.
+
+## Artwork and generation prompts
+Mode: built-in image generation. References: `art-test/whisperwood-trail-v1.png` for environment style and `art-test/lore-authority-v2.png` for Rhona's identity. Final files are under `art-test/`: `court-platforms-v1.png`, `court-upper-v1.png`, `court-cast-v1.png`, `court-cast-packed-v1.png`, and the packed JSON metadata. The packing script extracts and aligns isolated alpha silhouettes without changing the generated artwork. Original generated images remain in the local generation archive.
+
+Lower platforms prompt:
+> New RPG environment matching reference detailed Gothic pixel art overhead 3/4 camera. Old druidic TREE SETTLEMENT platform level: WIDE horizontal wooden platform spanning LEFT to RIGHT across middle y40%-70%, central ladder/stair at BOTTOM CENTER rising to that platform, broad clear central walkway, massive trunks near sides and a few wooden treehouse huts at TOP perimeter, rope rails and spear racks on edges. At UPPER CENTER a clear bridge leads onward into another canopy area. Transparent exterior ALL AROUND wooden platforms/trunks, so forest depth is rendered independently underneath. 8:5 wide composition. No people creatures text UI. Actual walkable floor mostly EMPTY with no trunks in center. Crisp square pixel clusters restrained greens brown wood charcoal amber.
+
+Upper court prompt:
+> New detailed Gothic pixel art overhead 3/4 GAME MAP of old druidic tree-town upper council platform. Broad rectangular wooden deck CENTER across middle x25%-75% y30%-75%, wide bridge entering BOTTOM CENTER, clear large fighting space, rear/top wooden treehouse facade under huge tree canopy, rope-railed edge, wood posts and spear racks only at perimeter. Open platform exit on RIGHT edge with narrow rope bridge. Transparent exterior beyond deck/trunks for independent forest-depth underlay. 8:5 wide. No characters, creatures, text, UI. Match reference mature highly detailed pixel style; no perspective horizon, no central obstructions. Doors clearly visible at rear edge.
+
+Defender atlas prompt:
+> New transparent production sprite atlas matching reference highly detailed gothic pixel art. EXACT 2 ROWS x 3 COLUMNS, full body silhouettes generous transparent gaps, no text floor shadows glow or background. Top row same female paladin LENCIA three subtle idle weight-shift frames facing LEFT three-quarter: longsword and shield, silver armor designed to resemble an ANGEL with mechanical ornamental feather-like WINGS integrated into armor (not real biological wings), white/navy cloth, adult composed face, practical dark hair. No invented heraldic text. Bottom row RHONA three ready idle frames with TWO HAND AXES instead of crossbow: preserve identity of woman in THIRD ROW of reference, auburn hair pulled up, weathered practical leather dark cloak with red clasp, older stern face; full body leftward ready stance. Three consistent frames each, isolated full weapons/wings entirely inside each cell. Genuinely transparent alpha outside sprites.

@@ -1,0 +1,74 @@
+{
+  "lencia": {
+    "src": "court-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 38,
+        "y": 24,
+        "w": 385,
+        "h": 469,
+        "anchorX": 230.5,
+        "anchorY": 493
+      },
+      {
+        "x": 498,
+        "y": 25,
+        "w": 387,
+        "h": 468,
+        "anchorX": 691.5,
+        "anchorY": 493
+      },
+      {
+        "x": 950,
+        "y": 24,
+        "w": 405,
+        "h": 469,
+        "anchorX": 1152.5,
+        "anchorY": 493
+      }
+    ],
+    "maxHeight": 469,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "court_rhona": {
+    "src": "court-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 24,
+        "y": 526,
+        "w": 412,
+        "h": 476,
+        "anchorX": 230.5,
+        "anchorY": 1002
+      },
+      {
+        "x": 487,
+        "y": 525,
+        "w": 408,
+        "h": 477,
+        "anchorX": 691.5,
+        "anchorY": 1002
+      },
+      {
+        "x": 938,
+        "y": 526,
+        "w": 429,
+        "h": 476,
+        "anchorX": 1152.5,
+        "anchorY": 1002
+      }
+    ],
+    "maxHeight": 477,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  }
+}

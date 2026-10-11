@@ -1,4 +1,5 @@
 window.QuestGuide={current(){
+ if(window.CourtArc?.goal())return {text:CourtArc.goal(),target:CourtArc.target()};
  if(window.FortArc?.goal())return {text:FortArc.goal(),target:FortArc.target()};
  if(window.ArmoryArc?.goal())return {text:ArmoryArc.goal(),target:ArmoryArc.target()};
  if(window.ChurchArc?.goal())return {text:ChurchArc.goal(),target:ChurchArc.target()};

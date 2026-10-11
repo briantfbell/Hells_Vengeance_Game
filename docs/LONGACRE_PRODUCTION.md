@@ -1,3 +1,5 @@
+> Historical batch notes below describe the initial art preparation. Current Court of Spears implementation uses an old druidic tree-town, not the obsolete ruined-fort draft. Chapter Ten is playable through the Fex debrief and Kantaria handoff; see [chapter-ten.md](chapter-ten.md) for source boundaries, assets and validation. Later character work also supersedes the provisional Reese/Bruce and deferred Corrine notes below.
+
 # Longacre production batch
 
 ## Playable Chapter Three

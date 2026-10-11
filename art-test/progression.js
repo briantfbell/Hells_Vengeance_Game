@@ -20,6 +20,9 @@ window.Progression=(()=>{
   if(q.fortScouted)rows.push('Fort Estazano · hidden archer and manticore force the scouts to retreat.');
   if(q.manticoreDefeated)rows.push('Fort secured · Jason’s final hammer throw downs the manticore.');
   if(q.patrolQuestioned)rows.push('Returning patrol · hidden settlement named the Court of Spears.');
+  if(q.rhonaDefeated)rows.push('Court of Spears · Rhona Staelish dies in the assault.');
+  if(q.lenciaEscaped)rows.push('Lencia Visserene escapes · winged armor with feather-fall.');
+  if(q.courtReported)rows.push('Longacre operation complete · four weeks furlough; next assignment Kantaria.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }

@@ -65,6 +65,33 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Court · lower crossing",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.46,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Court · Rhona",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 3.41,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Court · Lencia",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 4.53,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
@@ -125,6 +152,12 @@
       "meanRounds": 3.06,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Full Court assault, no rest between",
+      "trials": 200,
+      "winPercent": 100,
       "meanAdditionalDowned": 0
     },
     {
