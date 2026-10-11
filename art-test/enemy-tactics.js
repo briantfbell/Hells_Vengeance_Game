@@ -28,7 +28,7 @@ window.EnemyTactics=(()=>{
    else if(['twin1','twin2'].includes(e.id)){move='Heavy mace';}
    else if(e.id==='allamar'){move=round%2?'Sword strike':'Spiritual sword';extra=round%2?0:2;}
    else if(e.id==='celestial_wolf'){move='Celestial bite';}
-   // Rank-and-file pairs focus together; intentions still give the target a defensive turn.
+   // Rank-and-file pairs focus together; intentions remain visible while initiative determines when they act.
    if(['kantaria_guard','court_ranger','church_acolyte','heist_ranger'].includes(e.id))target=live[(round-1+Math.floor(i/2))%live.length];
    e.intent={target:target.id,move,extra,heavy:extra>0,round};
   });

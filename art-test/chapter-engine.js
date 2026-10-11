@@ -196,7 +196,7 @@ function renderBattle(t){
  $('prompt').hidden=true;
 }
 function finishDialog(value=0){if(!dialogOpen||performance.now()-dialogOpenedAt<180)return;GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus();if(resolve)resolve(value);}
-function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;if(!journeyOpen)$('journey').hidden=true;updateObjective();}});}
+function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;if(battle?.pendingInit)beginInitiative();if(!journeyOpen)$('journey').hidden=true;updateObjective();}});}
 const ROSTER=[...CORE,'bruce'];
 const BIOS={
  freya:{name:'Freya Kusanagi',role:'Half-elf · Samurai',bio:'An army captain raised by an officer father. Trained in swordsmanship, horsemanship, and tactics, Freya wants to earn a reputation beyond her family name. Her Hellknight induction lies ahead.',ability:'Challenge · Focused samurai strike against one foe.'},
@@ -219,7 +219,7 @@ function paintIntro(){const id=ROSTER[introIndex],bio=BIOS[id];drawIntroArt($('i
 function showIntro(){introOpen=true;document.body.classList.add('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;$('intro').hidden=false;$('intro-resume').hidden=!readSave();$('intro-roster').replaceChildren();ROSTER.forEach((id,i)=>{const b=document.createElement('button'),c=document.createElement('canvas'),name=document.createElement('span');c.width=110;c.height=130;drawIntroArt(c,id);name.textContent=NAMES[id]||BIOS[id].name;b.append(c,name);b.setAttribute('aria-label',BIOS[id].name+(OPENING_ROSTER.includes(id)?'':', joins later'));if(!OPENING_ROSTER.includes(id)){const tag=document.createElement('small');tag.textContent='Later';b.append(tag);}b.onclick=()=>{introIndex=i;paintIntro();};$('intro-roster').append(b);});introIndex=Math.max(0,ROSTER.indexOf(lead));paintIntro();$('intro-start').focus();}
 function reset(resume=false,selected=null){
  TitleScreen.hide();Handheld.close();
- epoch++;cancelJourney();cancelLevel();briefingOpen=false;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;$('combat-log').replaceChildren();showCombatMessage('');taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
+ epoch++;$('initiative-reveal').hidden=true;cancelJourney();cancelLevel();briefingOpen=false;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;$('combat-log').replaceChildren();showCombatMessage('');taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
  if(!resume&&!selected){showIntro();return;}
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;
  if(!resume&&selected){try{const previous=localStorage.getItem(SAVE);if(previous){localStorage.setItem(SAVE+'-before-import',previous);$('save-restore').hidden=false;}}catch{}}
@@ -337,17 +337,17 @@ async function encounter(){
  startBattle(count,shaken);await templeStoryStrike();if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
 function planEnemyRound(){if(battle)EnemyTactics.plan(battle.enemies,units,hp,STATS,battle.round);}
-function paintEnemyIntent(){const panel=$('enemy-intents');panel.hidden=!battle;if(!battle)return;panel.replaceChildren();const heading=document.createElement('strong');heading.textContent='ENEMY INTENT · R'+battle.round;panel.append(heading);for(const e of battle.enemies.filter(e=>e.hp>0)){const row=document.createElement('div');row.textContent=EnemyTactics.preview(e,NAMES);row.title=row.textContent;row.className=e.intent?.heavy?'heavy':'';panel.append(row);}}
+function paintEnemyIntent(){const panel=$('enemy-intents');panel.hidden=!battle;if(!battle)return;panel.replaceChildren();const heading=document.createElement('strong');heading.textContent='R'+battle.round+' · NOW '+(battle.order?.[battle.turn]?.name||activeUnit()?.id&&NAMES[activeUnit().id]||'Initiative');panel.append(heading);if(battle.order){const next=Initiative.next(battle.order,battle.turn,units,battle.enemies,hp,battle.round,battle.paralyzed),line=document.createElement('div');line.className='turn-next';line.textContent='NEXT '+(next?.name||'—');panel.append(line);}for(const e of battle.enemies.filter(e=>e.hp>0)){const row=document.createElement('div');row.textContent=EnemyTactics.preview(e,NAMES);row.title=row.textContent;row.className=e.intent?.heavy?'heavy':'';panel.append(row);}}
 function startBattle(count,shaken,config=null){
  const places=[[312,280],[264,296],[360,296],[280,328],[344,328],[392,328]];
  units.forEach((u,i)=>{u.x=places[i][0];u.y=places[i][1];u.dir='up';u.step=null;u.guard=false;});path=[];
  const enemies=config?.enemies||[{id:'viggo',name:'Viggo',x:312,y:136,hp:34,max:34,shaken:shaken?2:0},...Array.from({length:count},(_,i)=>({id:'cultist',name:'Zealot '+(i+1),x:[248,392,552][i],y:[152,152,280][i],hp:12,max:12}))];
- battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Read enemy intent. Guard halves incoming damage.');planEnemyRound();paintBattle();updateObjective();
+ battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0,pendingInit:true};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Roll initiative. Guard lasts until your next turn.');planEnemyRound();paintBattle();updateObjective();
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
 function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';e.textContent=text;e.title=text;panel.append(e);}}
 function log(text){if(!battle)return;$('battle-message').classList.remove('command-preview');if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,2);battle.current=text;showCombatMessage(text);paintCombatHistory();}
-function activeUnit(){return battle?units[battle.turn]:null;}
+function activeUnit(){if(!battle)return null;if(!battle.order)return units[battle.turn];const entry=battle.order[battle.turn];return entry?.side==='party'?Initiative.actor(entry,units,battle.enemies):null;}
 function livingEnemy(){return battle?.enemies.find(e=>e.hp>0);}
 function flash(target,value,color='#f0d5a0'){const position=battle?battlePosition(target):{x:target.x,y:target.y,height:55};fx.push({x:position.x,y:position.y-position.height+(battle?.enemies.includes(target)?24:0),text:String(value),color,life:.9});target.flash=.18;}
 function hitTarget(attacker,target,value){GameAudio.effect('hit');target.hp=Math.max(0,target.hp-value);attacker.lunge=.22;flash(target,'−'+value);return value;}
@@ -362,7 +362,7 @@ function commandSummary(action,id){
  const stat=STATS[id],skill=SPECIAL[id],hit='D20 '+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),remaining=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
  if(action==='attack'){const move=Inventory.weapon(inventory,id).move;return 'Attack | '+move+' · Hit '+hit+' vs AC · Damage '+rollSummary(stat.dmg)+'.';}
  if(action==='special'){let effect='Damage '+rollSummary(skill.dmg);if(id==='jamal')effect+='; +1D6 if target already hit this round';if(skill.drain)effect+='; heal self by damage dealt';if(id==='jason')effect+='; fire burst on selected foe';if(id==='draymus')effect+='; necromantic touch, no self-healing';return 'Skill | '+skill.name+' ['+remaining+'/'+skill.uses+'] · '+(skill.auto?'Automatic hit':'Hit '+hit+' vs AC')+' · '+effect+'.';}
- if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+combatAC(id)+' → '+(combatAC(id)+4)+' until the next round; halve damage from hits. Uses this turn.';
+ if(action==='guard')return 'Guard | '+NAMES[id]+' braces · AC '+combatAC(id)+' → '+(combatAC(id)+4)+' until their next turn; halve damage from hits. Uses this turn.';
  if(action==='potion')return 'Potion | '+NAMES[id]+' heals '+ally+' · Restore 2D4 +2 HP (up to max) · ['+potions+'/2].';
  if(action==='mend')return 'Mend | Infernal Mending · Jason heals '+ally+' for 2D8 +3 HP (up to max) · ['+mendUses+'/2].';
  if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
@@ -388,7 +388,7 @@ function cycleCombatTarget(mode,delta){
 function handleCombatKey(e){
  const key=e.key.toLowerCase(),direction=KEY[e.key],confirm=['enter','e',' '].includes(key),cancel=['escape','b'].includes(key);
  if(!direction&&!confirm&&!cancel&&!['q','h'].includes(key)&&! /^[1-9]$/.test(key))return false;
- e.preventDefault();keys.clear();if(battle.busy||taskBusy||e.repeat&&confirm)return true;
+ e.preventDefault();keys.clear();if(battle.reveal){if((confirm||cancel)&&!e.repeat)startInitiative();return true;}if(battle.busy||taskBusy||e.repeat&&confirm)return true;
  const c=battle.control,buttons=combatButtons();
  if(cancel){c.mode='commands';c.action=null;paintBattle();combatButtons()[c.index]?.focus({preventScroll:true});return true;}
  if(c.mode!=='commands'){
@@ -406,8 +406,8 @@ function handleCombatKey(e){
  return true;
 }
 function paintBattle(){
- if(!battle)return;paintEnemyIntent();while(battle.turn<units.length&&(hp[units[battle.turn].id]<=0||(battle.paralyzed===units[battle.turn].id&&battle.round===1)))battle.turn++;
- if(battle.turn>=units.length){return;}
+ if(!battle)return;paintEnemyIntent();const acting=activeUnit();
+ if(!acting||battle.reveal){$('actions').replaceChildren();$('heal-target').disabled=true;$('combat-target').disabled=true;$('battle-title').textContent=battle.reveal?'Initiative · Battle order':'R'+battle.round+' · '+(battle.order?.[battle.turn]?.name||'Resolving turn');paintParty();return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
  const actor=activeUnit();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',SPECIAL[actor.id].name+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
@@ -424,7 +424,7 @@ async function performActionImpl(action){
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
  const refusal=action==='potion'?potionRefusal(battle.ally||actor.id):'';if(refusal){battle.control.mode='commands';battle.control.action=null;log(refusal);paintBattle();return;}
  battle.control.mode='commands';battle.control.action=null;battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
- if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 and incoming damage halved this round.');}
+ if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 and incoming damage halved until their next turn.');}
  else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action,true,()=>{hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');});log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
  else if(action==='smoke'){await animateAction(actor,target,'smoke');quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
  else{
@@ -434,18 +434,40 @@ async function performActionImpl(action){
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
  if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind.startsWith('disruption_')){updateObjective();paintParty();run(()=>DisruptionArc.afterBattle(kind));return;}if(kind.startsWith('kantaria_')){updateObjective();paintParty();run(()=>KantariaArc.afterBattle(kind));return;}if(kind.startsWith('court_')){updateObjective();paintParty();run(()=>CourtArc.afterBattle(kind));return;}if(kind.startsWith('fort_')){updateObjective();paintParty();run(()=>FortArc.afterBattle(kind));return;}if(kind.startsWith('armory_')){updateObjective();paintParty();run(()=>ArmoryArc.afterBattle(kind));return;}if(kind.startsWith('church_')){updateObjective();paintParty();run(()=>ChurchArc.afterBattle(kind));return;}if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
- // A telegraphed enemy responds after its target's command, giving that target a chance to Guard.
- for(const enemy of battle.enemies.filter(e=>e.hp>0&&e.actedRound!==battle.round&&e.intent?.target===actor.id)){
-  await enemyStrike(enemy,token);if(token!==epoch||!battle)return;
-  if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail('The party is overwhelmed. Return to the checkpoint before this encounter.'));return;}
- }
- battle.turn++;
- while(battle.turn<units.length&&(hp[units[battle.turn].id]<=0||(battle.paralyzed===units[battle.turn].id&&battle.round===1)))battle.turn++;
- if(battle.turn>=units.length){await ChurchArc.support();if(battle.enemies.some(e=>e.hp>0&&e.actedRound!==battle.round))log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':battle.kind==='wereboar'?'Bolgart charges with tusks and brute force.':battle.kind==='bolgart'?'Bolgart fights back.':'The remaining enemies press forward.');for(const enemy of battle.enemies.filter(e=>e.hp>0&&e.actedRound!==battle.round)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
- units.forEach(u=>u.guard=false);battle.round++;if(battle.paralyzed&&battle.round===2){battle.paralyzed=null;log('J’Mal shakes off the paralysis and rejoins the fight.');}battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));planEnemyRound();
- }
- battle.busy=false;paintBattle();
+ await advanceInitiative(true,token);
 }
+function beginInitiative(){
+ if(!battle?.pendingInit)return;const current=battle,token=epoch;current.pendingInit=false;current.busy=true;current.reveal=true;
+ current.order=Initiative.roll(units,current.enemies,NAMES,()=>1+Math.floor(Math.random()*20));current.turn=0;
+ const list=$('initiative-results');list.replaceChildren();current.order.forEach((entry,i)=>{
+  const row=document.createElement('li');row.className='init-'+entry.side;row.style.setProperty('--rank',i);const rank=document.createElement('span'),die=document.createElement('span'),copy=document.createElement('span'),name=document.createElement('strong'),math=document.createElement('small');
+  rank.textContent=i+1;die.className='init-die';die.innerHTML=dieMarkup(20,entry.die);name.className='init-name';name.textContent=entry.name;math.textContent='D20 '+entry.die+' '+signed(entry.modifier)+' = '+entry.total;copy.append(name,math);row.append(rank,die,copy);list.append(row);
+ });
+ $('initiative-reveal').hidden=false;$('dice-panel').hidden=true;$('initiative-start').textContent=reduce.matches?'Start battle · Enter / E':'Skip reveal · Enter / E';$('initiative-start').focus({preventScroll:true});paintBattle();
+ delay(reduce.matches?0:1500).then(()=>{if(epoch===token&&battle===current&&current.reveal)$('initiative-start').textContent='Start battle · Enter / E';});
+}
+async function startInitiative(){
+ if(!battle?.reveal)return;const token=epoch;battle.reveal=false;$('initiative-reveal').hidden=true;keys.clear();
+ try{await advanceInitiative(false,token);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}
+}
+function initiativeDefeat(){if(!battle||!units.every(u=>hp[u.id]<=0))return false;battle=null;$('battle').hidden=true;$('initiative-reveal').hidden=true;$('character').disabled=false;run(()=>fail('The party is overwhelmed. Return to the checkpoint before this encounter.'));return true;}
+async function advanceInitiative(increment,token){
+ if(!battle||token!==epoch)return;if(increment)battle.turn++;
+ while(battle&&token===epoch){
+  if(initiativeDefeat())return;
+  if(battle.turn>=battle.order.length){
+   await ChurchArc.support();if(!battle||token!==epoch)return;
+   battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));
+   if(battle.paralyzed&&battle.round===2){battle.paralyzed=null;log('J’Mal shakes off the paralysis and rejoins the fight.');}planEnemyRound();
+  }
+  const entry=battle.order[battle.turn];if(!Initiative.eligible(entry,units,battle.enemies,hp,battle.round,battle.paralyzed)){battle.turn++;continue;}
+  const actor=Initiative.actor(entry,units,battle.enemies);
+  if(entry.side==='party'){actor.guard=false;battle.busy=false;paintBattle();canvas.focus({preventScroll:true});return;}
+  battle.busy=true;paintBattle();await enemyStrike(actor,token);if(!battle||token!==epoch)return;if(initiativeDefeat())return;battle.turn++;
+ }
+}
+$('initiative-start').onclick=startInitiative;
+
 async function enemyStrike(enemy,token){
  if(!battle||token!==epoch||enemy.actedRound===battle.round)return;
  enemy.actedRound=battle.round;

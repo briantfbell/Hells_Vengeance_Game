@@ -1,11 +1,11 @@
 {
-  "method": "Actual game action and enemy-turn code; 200 seeded runs each; skills first, heal living allies below 45%; fixed story injuries; instant animation; no browser saves touched.",
+  "method": "Actual game action and enemy-turn code; 200 seeded runs each; rolled D20 initiative and fixed mixed turn order; skills first, heal living allies below 45%; fixed story injuries; instant animation; no browser saves touched.",
   "rows": [
     {
       "encounter": "Church · entrance",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.58,
+      "meanRounds": 2.77,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -14,16 +14,16 @@
       "encounter": "Church · hallway",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.05,
+      "meanRounds": 4.25,
       "meanPotionsRemaining": 1.96,
-      "meanMendingRemaining": 2,
+      "meanMendingRemaining": 1.99,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Church · sanctuary",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.71,
+      "meanRounds": 2.81,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -32,7 +32,7 @@
       "encounter": "Church · Allamar",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.46,
+      "meanRounds": 3.63,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -41,8 +41,8 @@
       "encounter": "Armory · Bo, Dent and rangers",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 5.87,
-      "meanPotionsRemaining": 1.97,
+      "meanRounds": 6.07,
+      "meanPotionsRemaining": 1.95,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -50,8 +50,8 @@
       "encounter": "Jail porch · El Guapo alone",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 5.01,
-      "meanPotionsRemaining": 1.99,
+      "meanRounds": 5.23,
+      "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -59,16 +59,16 @@
       "encounter": "Fort Estazano · manticore",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 5.12,
-      "meanPotionsRemaining": 1.56,
-      "meanMendingRemaining": 1.99,
+      "meanRounds": 5.66,
+      "meanPotionsRemaining": 1.5,
+      "meanMendingRemaining": 1.86,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Court · lower crossing",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.54,
+      "meanRounds": 2.65,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -77,7 +77,7 @@
       "encounter": "Court · Rhona",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.44,
+      "meanRounds": 3.58,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -86,16 +86,16 @@
       "encounter": "Court · Lencia",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.63,
-      "meanPotionsRemaining": 1.99,
-      "meanMendingRemaining": 1.96,
+      "meanRounds": 4.82,
+      "meanPotionsRemaining": 1.96,
+      "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Kantaria · patrol",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.74,
+      "meanRounds": 2.89,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -104,7 +104,7 @@
       "encounter": "Kantaria · prison yard",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.74,
+      "meanRounds": 2.89,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -113,16 +113,16 @@
       "encounter": "Kantaria · warden’s hall",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4,
+      "meanRounds": 4.12,
       "meanPotionsRemaining": 2,
-      "meanMendingRemaining": 1.97,
+      "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Kantaria disruption · docks",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.44,
+      "meanRounds": 3.54,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -131,7 +131,7 @@
       "encounter": "Kantaria disruption · north tower",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.74,
+      "meanRounds": 2.89,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -140,17 +140,17 @@
       "encounter": "Kantaria disruption · angel defender",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.58,
-      "meanPotionsRemaining": 2,
-      "meanMendingRemaining": 1.96,
+      "meanRounds": 4.72,
+      "meanPotionsRemaining": 1.97,
+      "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3,
-      "meanPotionsRemaining": 2,
+      "meanRounds": 3.35,
+      "meanPotionsRemaining": 1.98,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -158,17 +158,17 @@
       "encounter": "Temple · sounded bell",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.93,
-      "meanPotionsRemaining": 1.84,
-      "meanMendingRemaining": 1.7,
+      "meanRounds": 5.26,
+      "meanPotionsRemaining": 1.63,
+      "meanMendingRemaining": 1.88,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Former deputies",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 4.35,
-      "meanPotionsRemaining": 2,
+      "meanRounds": 4.54,
+      "meanPotionsRemaining": 1.99,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -176,7 +176,7 @@
       "encounter": "Bolgart · human",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.56,
+      "meanRounds": 2.71,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -185,16 +185,16 @@
       "encounter": "Bolgart · wereboar",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.77,
-      "meanPotionsRemaining": 2,
-      "meanMendingRemaining": 1.89,
+      "meanRounds": 2.89,
+      "meanPotionsRemaining": 1.93,
+      "meanMendingRemaining": 1.99,
       "meanAdditionalDowned": 0
     },
     {
       "encounter": "Gate guardian",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 1.88,
+      "meanRounds": 2,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -203,7 +203,7 @@
       "encounter": "Angel Knight and rioters",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 3.15,
+      "meanRounds": 3.17,
       "meanPotionsRemaining": 2,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
@@ -218,25 +218,25 @@
       "encounter": "Full dock and tower operation, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanAdditionalDowned": 0.01
+      "meanAdditionalDowned": 0
     },
     {
       "encounter": "Full Court assault, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanAdditionalDowned": 0.02
+      "meanAdditionalDowned": 0.01
     },
     {
       "encounter": "Full church assault, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanPotionsRemaining": 1.52
+      "meanPotionsRemaining": 1.41
     },
     {
       "encounter": "Human → wereboar, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanPotionsRemaining": 2
+      "meanPotionsRemaining": 1.94
     }
   ]
 }
