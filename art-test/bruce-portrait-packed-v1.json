@@ -1,0 +1,110 @@
+{
+  "bruce_front": {
+    "src": "bruce-portrait-packed-v1.png",
+    "frames": [
+      {
+        "x": 39,
+        "y": 28,
+        "w": 208,
+        "h": 449,
+        "anchorX": 143.5,
+        "anchorY": 477
+      },
+      {
+        "x": 327,
+        "y": 22,
+        "w": 207,
+        "h": 455,
+        "anchorX": 430.5,
+        "anchorY": 477
+      },
+      {
+        "x": 611,
+        "y": 26,
+        "w": 213,
+        "h": 451,
+        "anchorX": 717.5,
+        "anchorY": 477
+      }
+    ],
+    "maxHeight": 455,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "bruce_side": {
+    "src": "bruce-portrait-packed-v1.png",
+    "frames": [
+      {
+        "x": 55,
+        "y": 541,
+        "w": 176,
+        "h": 429,
+        "anchorX": 143.5,
+        "anchorY": 970
+      },
+      {
+        "x": 309,
+        "y": 542,
+        "w": 243,
+        "h": 428,
+        "anchorX": 430.5,
+        "anchorY": 970
+      },
+      {
+        "x": 590,
+        "y": 547,
+        "w": 255,
+        "h": 423,
+        "anchorX": 717.5,
+        "anchorY": 970
+      }
+    ],
+    "maxHeight": 429,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "bruce_back": {
+    "src": "bruce-portrait-packed-v1.png",
+    "frames": [
+      {
+        "x": 37,
+        "y": 1011,
+        "w": 212,
+        "h": 452,
+        "anchorX": 143.5,
+        "anchorY": 1463
+      },
+      {
+        "x": 325,
+        "y": 1002,
+        "w": 210,
+        "h": 461,
+        "anchorX": 430.5,
+        "anchorY": 1463
+      },
+      {
+        "x": 609,
+        "y": 1002,
+        "w": 216,
+        "h": 461,
+        "anchorX": 717.5,
+        "anchorY": 1463
+      }
+    ],
+    "maxHeight": 461,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  }
+}

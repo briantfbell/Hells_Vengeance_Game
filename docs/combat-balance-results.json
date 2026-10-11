@@ -38,6 +38,24 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Armory · Bo, Dent and rangers",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 5.88,
+      "meanPotionsRemaining": 1.97,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Jail porch · El Guapo alone",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 5.01,
+      "meanPotionsRemaining": 1.99,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,

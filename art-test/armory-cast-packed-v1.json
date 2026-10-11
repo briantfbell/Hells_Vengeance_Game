@@ -1,0 +1,146 @@
+{
+  "armory_bo": {
+    "src": "armory-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 41,
+        "y": 17,
+        "w": 212,
+        "h": 355,
+        "anchorX": 147.0,
+        "anchorY": 372
+      },
+      {
+        "x": 330,
+        "y": 24,
+        "w": 221,
+        "h": 348,
+        "anchorX": 441.0,
+        "anchorY": 372
+      },
+      {
+        "x": 619,
+        "y": 23,
+        "w": 231,
+        "h": 349,
+        "anchorX": 735.0,
+        "anchorY": 372
+      }
+    ],
+    "maxHeight": 355,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "armory_dent": {
+    "src": "armory-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 30,
+        "y": 407,
+        "w": 234,
+        "h": 353,
+        "anchorX": 147.0,
+        "anchorY": 760
+      },
+      {
+        "x": 324,
+        "y": 408,
+        "w": 233,
+        "h": 352,
+        "anchorX": 441.0,
+        "anchorY": 760
+      },
+      {
+        "x": 622,
+        "y": 407,
+        "w": 226,
+        "h": 353,
+        "anchorX": 735.0,
+        "anchorY": 760
+      }
+    ],
+    "maxHeight": 353,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "heist_ranger": {
+    "src": "armory-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 18,
+        "y": 805,
+        "w": 257,
+        "h": 343,
+        "anchorX": 147.0,
+        "anchorY": 1148
+      },
+      {
+        "x": 310,
+        "y": 808,
+        "w": 262,
+        "h": 340,
+        "anchorX": 441.0,
+        "anchorY": 1148
+      },
+      {
+        "x": 617,
+        "y": 810,
+        "w": 236,
+        "h": 338,
+        "anchorX": 735.0,
+        "anchorY": 1148
+      }
+    ],
+    "maxHeight": 343,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "accuser": {
+    "src": "armory-cast-packed-v1.png",
+    "frames": [
+      {
+        "x": 64,
+        "y": 1181,
+        "w": 165,
+        "h": 355,
+        "anchorX": 147.0,
+        "anchorY": 1536
+      },
+      {
+        "x": 350,
+        "y": 1180,
+        "w": 182,
+        "h": 356,
+        "anchorX": 441.0,
+        "anchorY": 1536
+      },
+      {
+        "x": 654,
+        "y": 1185,
+        "w": 161,
+        "h": 351,
+        "anchorX": 735.0,
+        "anchorY": 1536
+      }
+    ],
+    "maxHeight": 356,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  }
+}

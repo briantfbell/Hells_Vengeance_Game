@@ -1,0 +1,15 @@
+"use strict";
+Object.assign(COMBAT_IDLES,{"armory_bo": {"src": "armory-cast-packed-v1.png", "frames": [{"x": 41, "y": 17, "w": 212, "h": 355, "anchorX": 147.0, "anchorY": 372}, {"x": 330, "y": 24, "w": 221, "h": 348, "anchorX": 441.0, "anchorY": 372}, {"x": 619, "y": 23, "w": 231, "h": 349, "anchorX": 735.0, "anchorY": 372}], "maxHeight": 355, "cycle": [0, 1, 0, 2]}, "armory_dent": {"src": "armory-cast-packed-v1.png", "frames": [{"x": 30, "y": 407, "w": 234, "h": 353, "anchorX": 147.0, "anchorY": 760}, {"x": 324, "y": 408, "w": 233, "h": 352, "anchorX": 441.0, "anchorY": 760}, {"x": 622, "y": 407, "w": 226, "h": 353, "anchorX": 735.0, "anchorY": 760}], "maxHeight": 353, "cycle": [0, 1, 0, 2]}, "heist_ranger": {"src": "armory-cast-packed-v1.png", "frames": [{"x": 18, "y": 805, "w": 257, "h": 343, "anchorX": 147.0, "anchorY": 1148}, {"x": 310, "y": 808, "w": 262, "h": 340, "anchorX": 441.0, "anchorY": 1148}, {"x": 617, "y": 810, "w": 236, "h": 338, "anchorX": 735.0, "anchorY": 1148}], "maxHeight": 343, "cycle": [0, 1, 0, 2]}, "accuser": {"src": "armory-cast-packed-v1.png", "frames": [{"x": 64, "y": 1181, "w": 165, "h": 355, "anchorX": 147.0, "anchorY": 1536}, {"x": 350, "y": 1180, "w": 182, "h": 356, "anchorX": 441.0, "anchorY": 1536}, {"x": 654, "y": 1185, "w": 161, "h": 351, "anchorX": 735.0, "anchorY": 1536}], "maxHeight": 356, "cycle": [0, 1, 0, 2]}});
+LORE_CAST.armory_bo={"src": "armory-cast-packed-v1.png", "source": "armory-cast-packed-v1.png", "frame": {"x": 41, "y": 17, "w": 212, "h": 355, "anchorX": 147.0, "anchorY": 372}};
+FUTURE_NPCS.armory_bo=LORE_CAST.armory_bo;
+DIALOGUE_FACE_CROPS.armory_bo={"x": 104, "y": 25, "w": 88, "h": 88};
+LORE_CAST.armory_dent={"src": "armory-cast-packed-v1.png", "source": "armory-cast-packed-v1.png", "frame": {"x": 30, "y": 407, "w": 234, "h": 353, "anchorX": 147.0, "anchorY": 760}};
+FUTURE_NPCS.armory_dent=LORE_CAST.armory_dent;
+DIALOGUE_FACE_CROPS.armory_dent={"x": 100, "y": 415, "w": 88, "h": 88};
+LORE_CAST.heist_ranger={"src": "armory-cast-packed-v1.png", "source": "armory-cast-packed-v1.png", "frame": {"x": 18, "y": 805, "w": 257, "h": 343, "anchorX": 147.0, "anchorY": 1148}};
+FUTURE_NPCS.heist_ranger=LORE_CAST.heist_ranger;
+DIALOGUE_FACE_CROPS.heist_ranger={"x": 95, "y": 813, "w": 85, "h": 85};
+LORE_CAST.accuser={"src": "armory-cast-packed-v1.png", "source": "armory-cast-packed-v1.png", "frame": {"x": 64, "y": 1181, "w": 165, "h": 355, "anchorX": 147.0, "anchorY": 1536}};
+FUTURE_NPCS.accuser=LORE_CAST.accuser;
+DIALOGUE_FACE_CROPS.accuser={"x": 113, "y": 1189, "w": 88, "h": 88};
+COMBAT_IDLES.bruce={"src": "bruce-portrait-packed-v1.png", "frames": [{"x": 37, "y": 1011, "w": 212, "h": 452, "anchorX": 143.5, "anchorY": 1463}, {"x": 325, "y": 1002, "w": 210, "h": 461, "anchorX": 430.5, "anchorY": 1463}, {"x": 609, "y": 1002, "w": 216, "h": 461, "anchorX": 717.5, "anchorY": 1463}], "maxHeight": 461, "cycle": [0, 1, 0, 2]};

@@ -8,6 +8,8 @@ const cases=[
  {name:'Church · hallway',kind:'church_hall',roster:['freya','jason','draymus','guapo','reese'],enemies:['twin1','twin2','church_acolyte','church_acolyte'],level2:true,church:true},
  {name:'Church · sanctuary',kind:'church_sanctuary',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['twin2','church_acolyte','church_acolyte'],level2:true,church:true,paralyzed:'jamal'},
  {name:'Church · Allamar',kind:'church_allamar',roster:['freya','jamal','jason','guapo','reese'],enemies:['allamar','celestial_wolf'],level2:true,church:true},
+ {name:'Armory · Bo, Dent and rangers',kind:'armory_heist',roster:['freya','jamal','jason','draymus'],enemies:['armory_dent','armory_bo','heist_ranger','heist_ranger','heist_ranger'],level2:true,church:true},
+ {name:'Jail porch · El Guapo alone',kind:'armory_porch',roster:['guapo'],enemies:['porch_guard','porch_guard'],level2:true},
  {name:'Temple · silent bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist'],down:'jamal'},
  {name:'Temple · sounded bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist','cultist','cultist'],down:'jamal'},
  {name:'Former deputies',kind:'deputies',roster:['freya','jamal','jason','draymus'],enemies:['deputy1','deputy2','deputy3','deputy4'],level2:true},
@@ -18,18 +20,19 @@ const cases=[
 ];
 function create(c,seed,carry){
  const w={window:null,structuredClone,console,epoch:1,dialogOpen:false,taskBusy:false,Handheld:{isOpen:()=>false},GameAudio:{effect:()=>{}},CANCEL:Symbol('cancel'),scene:'temple',lead:c.roster[0],ready:true};w.window=w;w.ChurchArc={support:async()=>{}};vm.createContext(w);
- for(const name of ['inventory.js','progression.js','enemy-tactics.js','church-assault.js'])vm.runInContext(read(name),w);
+ for(const name of ['inventory.js','progression.js','enemy-tactics.js','church-assault.js','armory-jail-chapter.js'])vm.runInContext(read(name),w);
  const data=vm.runInContext('(()=>{'+head+'return {CORE,NAMES,STATS,SPECIAL,BASE_STATS,BASE_SPECIAL,WEAPONS,ATTACKS,SKILL_TEXT,inventory,progression};})()',w);Object.assign(w,data);
  for(const file of ['last-stand-chapter.js','political-movement.js'])for(const match of read(file).matchAll(/STATS\.\w+=\{[^}]+\}/g))vm.runInContext(match[0],w);
  vm.runInContext(read('church-assault.js').match(/Object.assign\(STATS,\{church_acolyte[^\n]+/)[0],w);
+ vm.runInContext(read('armory-jail-chapter.js').match(/Object.assign\(STATS,\{armory_bo[^\n]+/)[0],w);
  for(let i=1;i<=4;i++)w.STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])w.STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
  w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',chapter6:['ovinnik','execution'].includes(c.kind)};w.quest.churchLoadout=!!c.church;w.inventory=w.Inventory.fresh(w.quest);w.progression=w.Progression.migrate(w.quest);
- vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();
+ vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();if(c.kind==='armory_heist')w.SPECIAL.draymus={...w.SPECIAL.draymus,name:'Shocking Grasp',dmg:[1,6,0]};
  w.hp=Object.fromEntries(w.CORE.map(id=>[id,w.STATS[id].hp]));w.uses=Object.fromEntries(w.CORE.map(id=>[id,0]));w.potions=w.mendUses=2;if(carry){Object.assign(w.hp,carry.hp);Object.assign(w.uses,carry.uses);w.potions=carry.potions;w.mendUses=carry.mendUses;}if(c.down)w.hp[c.down]=0;
  w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.battle.paralyzed=c.paralyzed;if(c.kind==='church_entry')w.enemies.forEach(e=>e.shaken=2);w.lastRound=1;w.planEnemyRound=()=>w.EnemyTactics.plan(w.enemies,w.units,w.hp,w.STATS,w.battle.round);w.planEnemyRound();
  const nodes={};w.$=id=>nodes[id]??={hidden:false,disabled:false,classList:{remove:()=>{}},textContent:''};w.keys={clear:()=>{}};w.delay=async()=>{};w.animateAction=async(_a,_t,_type,_hit,impact)=>impact?.();w.flash=()=>{};w.log=()=>{};w.paintParty=w.updateObjective=w.save=()=>{};w.run=()=>{};
  w.paintBattle=()=>{if(!w.battle)return;w.lastRound=w.battle.round;while(w.battle.turn<w.units.length&&(w.hp[w.units[w.battle.turn].id]<=0||w.battle.paralyzed===w.units[w.battle.turn].id&&w.battle.round===1))w.battle.turn++;};
- w.activeUnit=()=>w.battle?w.units[w.battle.turn]:null;w.livingEnemy=()=>w.battle?.enemies.find(e=>e.hp>0);w.combatAC=id=>w.STATS[id].ac+(c.kind==='execution'&&id==='jason'?2:0);
+ w.activeUnit=()=>w.battle?w.units[w.battle.turn]:null;w.livingEnemy=()=>w.battle?.enemies.find(e=>e.hp>0);w.combatAC=id=>w.STATS[id].ac+(c.kind==='execution'&&id==='jason'?2:0)-(c.kind==='armory_heist'&&['freya','jason'].includes(id)?1:0);
  w.dice=n=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return 1+Math.floor(seed/4294967296*n);};w.Math=Object.create(Math);w.Math.random=()=>w.dice(1000000)/1000001;
  w.rollDice=async(_label,sides,count=1,modifier=0)=>Array.from({length:count},()=>w.dice(sides)).reduce((a,b)=>a+b,modifier);w.damage=async(spec,label)=>w.rollDice(label,spec[1],spec[0],spec[2]);
  w.hitTarget=(_actor,target,value)=>{target.hp=Math.max(0,target.hp-value);return value;};

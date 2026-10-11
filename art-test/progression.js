@@ -14,6 +14,9 @@ window.Progression=(()=>{
   if(q.churchLoadout)rows.push('Church assault · Freya uses her naginata, Jason a lucerne hammer, J’Mal a kukri.');
   if(q.mantisTraining)rows.push('Red Mantis training · twenty-four hours; sword belt and blades gifted to J’Mal. Historical level and enchantments remain unconfirmed.');
   if(q.churchConverted)rows.push('Jason appointed head pastor · church converted; Cimri becomes sheriff.');
+  if(q.armoryCleared)rows.push('Armory heist thwarted · Bo returns alive; Dent and three rangers fight alongside her.');
+  if(q.cimriRecovered)rows.push('Jail fire · Cimri recovered; Rhona escapes.');
+  if(q.prisonersQuestioned)rows.push('Prisoner interrogation · rebel supplies at Fort Estazano.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }
