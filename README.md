@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 85 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete twelve-chapter playthrough or physical handheld validation.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 102 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete thirteen-chapter playthrough or physical handheld validation.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -61,7 +61,7 @@ Continue from the Ash House briefing into the sermon, four decrees, deputy ambus
 
 Combat now uses a parchment chronicle beside crimson command buttons. The current action appears above completed actions, newest first; older entries drop off automatically, and the history clears for each fight. The visible row count adapts to the screen without scrolling.
 
-Exploration now has a visible task overlay and context-correct quest markers; public notices show `[X/4]`. Combat uses weapon-ready three-frame idles, larger right-aligned dice inside the dice panel, and rules subtitles on every command. Open **Combat Animation Studio.html** (`/idles`) for 23 prepared combatant models/forms. See docs/UI_AND_COMBAT_POLISH.md. For the campaign soundtrack, docs/SUNO_SOUNDTRACK_PROMPTS.md contains 67 instrumental generation prompts and combat variations; temporary instrumental music and effects are playable, with pause-menu volume and mute controls.
+Exploration now has a visible task overlay and context-correct quest markers; public notices show `[X/4]`. Combat uses weapon-ready three-frame idles, sprite dice in the top-left roll panel, and rules subtitles on every command. Open **Combat Animation Studio.html** (`/idles`) for 23 prepared combatant models/forms. See docs/UI_AND_COMBAT_POLISH.md. For the campaign soundtrack, docs/SUNO_SOUNDTRACK_PROMPTS.md contains 67 instrumental generation prompts and combat variations; temporary instrumental music and effects are playable, with pause-menu volume and mute controls.
 
 ## Chapter Four and handheld menus
 
