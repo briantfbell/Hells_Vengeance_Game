@@ -119,6 +119,33 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Kantaria disruption · docks",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 3.39,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Kantaria disruption · north tower",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.71,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Kantaria disruption · angel defender",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 4.5,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
@@ -183,6 +210,12 @@
     },
     {
       "encounter": "Full Kantaria opening, no rest between",
+      "trials": 200,
+      "winPercent": 100,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Full dock and tower operation, no rest between",
       "trials": 200,
       "winPercent": 100,
       "meanAdditionalDowned": 0

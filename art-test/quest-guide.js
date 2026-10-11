@@ -1,5 +1,5 @@
 window.QuestGuide={current(){
- if(window.KantariaArc?.goal())return {text:KantariaArc.goal(),target:KantariaArc.target()};
+ if(window.DisruptionArc?.goal())return {text:DisruptionArc.goal(),target:DisruptionArc.target()};if(window.KantariaArc?.goal())return {text:KantariaArc.goal(),target:KantariaArc.target()};
  if(window.CourtArc?.goal())return {text:CourtArc.goal(),target:CourtArc.target()};
  if(window.FortArc?.goal())return {text:FortArc.goal(),target:FortArc.target()};
  if(window.ArmoryArc?.goal())return {text:ArmoryArc.goal(),target:ArmoryArc.target()};

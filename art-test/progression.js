@@ -25,7 +25,10 @@ window.Progression=(()=>{
   if(q.courtReported)rows.push('Longacre operation complete · four weeks furlough; next assignment Kantaria.');
   if(q.uskwoodBriefed)rows.push('Kantaria · Loredana employs the company at the Uskwood Inn.');
   if(q.zaraFreed)rows.push('Zara Orcelani extracted from Hardship’s Hearth with her gear.');
-  if(q.zaraHidden)rows.push('Zara concealed at the Uskwood; docks and towers are the next targets.');
+  if(q.zaraHidden)rows.push('Zara concealed at the Uskwood.');
+  if(q.docksBurned)rows.push('Kantaria docks destroyed; the rebellion’s dock income interrupted.');
+  if(q.jonasEscaped)rows.push('Jonas Reikman escaped wounded; south tower damaged.');
+  if(q.westTowerBurned)rows.push('North tower assaulted; west tower burned; Angel-Bro defeated.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }
