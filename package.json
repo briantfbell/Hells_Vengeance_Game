@@ -2,7 +2,7 @@
   "name": "hells-vengeance-game",
   "version": "0.1.0",
   "private": true,
-  "description": "Hells Bubbies playable Night of Ashes chapter",
+  "description": "Hell’s Bubbies twelve-chapter campaign prototype",
   "scripts": {
     "start": "node server.cjs",
     "test": "node --test tests/*.test.cjs",

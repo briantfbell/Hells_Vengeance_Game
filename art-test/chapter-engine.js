@@ -434,15 +434,21 @@ async function performActionImpl(action){
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
  if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind.startsWith('disruption_')){updateObjective();paintParty();run(()=>DisruptionArc.afterBattle(kind));return;}if(kind.startsWith('kantaria_')){updateObjective();paintParty();run(()=>KantariaArc.afterBattle(kind));return;}if(kind.startsWith('court_')){updateObjective();paintParty();run(()=>CourtArc.afterBattle(kind));return;}if(kind.startsWith('fort_')){updateObjective();paintParty();run(()=>FortArc.afterBattle(kind));return;}if(kind.startsWith('armory_')){updateObjective();paintParty();run(()=>ArmoryArc.afterBattle(kind));return;}if(kind.startsWith('church_')){updateObjective();paintParty();run(()=>ChurchArc.afterBattle(kind));return;}if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
+ // A telegraphed enemy responds after its target's command, giving that target a chance to Guard.
+ for(const enemy of battle.enemies.filter(e=>e.hp>0&&e.actedRound!==battle.round&&e.intent?.target===actor.id)){
+  await enemyStrike(enemy,token);if(token!==epoch||!battle)return;
+  if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail('The party is overwhelmed. Return to the checkpoint before this encounter.'));return;}
+ }
  battle.turn++;
  while(battle.turn<units.length&&(hp[units[battle.turn].id]<=0||(battle.paralyzed===units[battle.turn].id&&battle.round===1)))battle.turn++;
- if(battle.turn>=units.length){await ChurchArc.support();log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':battle.kind==='wereboar'?'Bolgart charges with tusks and brute force.':battle.kind==='bolgart'?'Bolgart fights back.':'The faithful strike back.');for(const enemy of battle.enemies.filter(e=>e.hp>0)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
+ if(battle.turn>=units.length){await ChurchArc.support();if(battle.enemies.some(e=>e.hp>0&&e.actedRound!==battle.round))log(battle.kind==='deputies'?'The former deputies strike back.':battle.kind==='ovinnik'?'The guardian lashes out.':battle.kind==='execution'?'The attackers press forward.':battle.kind==='wereboar'?'Bolgart charges with tusks and brute force.':battle.kind==='bolgart'?'Bolgart fights back.':'The remaining enemies press forward.');for(const enemy of battle.enemies.filter(e=>e.hp>0&&e.actedRound!==battle.round)){await enemyStrike(enemy,token);if(token!==epoch||!battle)return;if(units.every(u=>hp[u.id]<=0)){battle=null;$('battle').hidden=true;$('character').disabled=false;run(()=>fail(quest.chapter6?'The party is overwhelmed. Return to the checkpoint before this encounter.':scene==='longacre_jail'?'The former deputies overwhelm the party. Return to the checkpoint before their ambush.':'The hidden temple keeps your names. Try the encounter again.'));return;}}
  units.forEach(u=>u.guard=false);battle.round++;if(battle.paralyzed&&battle.round===2){battle.paralyzed=null;log('J’Mal shakes off the paralysis and rejoins the fight.');}battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));planEnemyRound();
  }
  battle.busy=false;paintBattle();
 }
 async function enemyStrike(enemy,token){
- if(!battle||token!==epoch)return;
+ if(!battle||token!==epoch||enemy.actedRound===battle.round)return;
+ enemy.actedRound=battle.round;
  if(!enemy.intent)planEnemyRound();
  const intent=enemy.intent,target=units.find(u=>u.id===intent?.target);
  // Keep the announced target: a fallen target costs the enemy this action.

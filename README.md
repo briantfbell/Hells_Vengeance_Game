@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains six playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star tavern, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains twelve playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -12,7 +12,7 @@ Alternatively, with Node.js 18 or newer installed, run `npm start` in the extrac
 
 Every launch opens the animated **Hell’s Rebels — a Hell’s Vengeance story** title screen, using Brian’s supplied Folken Games artwork. The screen flickers on and **Push A to Start** fades in. Press Enter/E/Space (or A at the title prompt) to open the main menu. Continue resumes the latest checkpoint; New game opens character selection; Load game offers four manual slots and portable save import; Settings contains audio and controls. Browsing or backing out of character selection preserves the existing checkpoint.
 
-Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese and Bruce join later. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
+Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese joins in Longacre. Bruce’s portrait is available in the gallery; his recruitment awaits a confirmed joining point. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
 
 ## Controls
 
@@ -26,10 +26,10 @@ Choose one of the five opening companions, then receive the mission through Frey
 
 - Five following prologue companions, connected scenes, turn-based combat, signature abilities, healing, bell-rope reinforcements, and checkpoint recovery.
 - Compact retro command menus and visual D20/D4/D6/D8/D10 rolls. Command subtitles show ability details and remaining uses.
-- Dim interior light effects. Harbor ripple animation has been removed. Reduced-motion settings pause ambient effects.
+- Dim interior light effects. Separate water underlays animate beneath supported ship, dock and island foregrounds; the old full-map ripple distortion is removed. Reduced-motion settings pause ambient effects.
 - Reusable Barzillai Thrune and Archbaron Darellus Fex character models, with three facings and automatic dialogue portraits. See docs/QUESTGIVERS.md.
 - Speaker headshots and title names inside dialogue banners. Portraits reuse close-up crops of existing character artwork.
-- Party Sprite Studio.html: seven-character art gallery. Reese and Bruce are clearly provisional and do not join this prologue.
+- Party Sprite Studio.html: seven-character art gallery. Reese and Bruce use the approved character references and do not join this prologue.
 - legacy/: preserved original game for reference.
 - docs/: artwork provenance and implementation notes. The raw campaign archive is not included.
 
@@ -47,9 +47,9 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-The Chapter Two browser walkthrough covers the complete continuation, Guapo viewpoint selection, roster persistence after reload, and a 320px viewport.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 85 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete twelve-chapter playthrough or physical handheld validation.
 
-The source prototype passed a complete chapter walkthrough, checkpoint reload, reinforcement and defeat branches, healing/smoke/enemy turns, visual dice checks, and mobile width checks. The repository build is checked separately for offline startup and bundled asset completeness.
+Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
 ## Next chapter and map layers
 
@@ -57,11 +57,11 @@ See docs/NEXT_PHASE_PLAN.md for the source-grounded voyage/Longacre production p
 
 ## Chapter Three and future art
 
-Continue from the Ash House briefing into the sermon, four decrees, deputy ambush, and Fex audience. All seven party walking cycles now include opposite-foot poses. Open **Longacre Art Studio.html** (`/art`) for nine layered environments and eighteen NPC models/forms covering several upcoming story arcs. Later arcs have art prepared; their gameplay is still to build. See docs/LONGACRE_PRODUCTION.md. Portable saves, all three chapter walkthroughs, the future art gallery, offline startup, and a 320px layout were checked in the browser.
+Continue from the Ash House briefing into the sermon, four decrees, deputy ambush, and Fex audience. All seven party walking cycles now include opposite-foot poses. Open **Longacre Art Studio.html** (`/art`) for nine layered environments and eighteen NPC models/forms covering several upcoming story arcs. Gameplay now extends through the Kantaria docks and towers; later artwork remains available for subsequent arcs. See docs/LONGACRE_PRODUCTION.md. Portable saves, all three chapter walkthroughs, the future art gallery, offline startup, and a 320px layout were checked in the browser.
 
 Combat now uses a parchment chronicle beside crimson command buttons. The current action appears above completed actions, newest first; older entries drop off automatically, and the history clears for each fight. The visible row count adapts to the screen without scrolling.
 
-Exploration now has a visible task overlay and context-correct quest markers; public notices show `[X/3]`. Combat uses weapon-ready three-frame idles, larger right-aligned dice inside the dice panel, and rules subtitles on every command. Open **Combat Animation Studio.html** (`/idles`) for 23 prepared combatant models/forms. See docs/UI_AND_COMBAT_POLISH.md. For the campaign soundtrack, docs/SUNO_SOUNDTRACK_PROMPTS.md contains 67 instrumental generation prompts and combat variations; audio playback is not yet installed.
+Exploration now has a visible task overlay and context-correct quest markers; public notices show `[X/4]`. Combat uses weapon-ready three-frame idles, larger right-aligned dice inside the dice panel, and rules subtitles on every command. Open **Combat Animation Studio.html** (`/idles`) for 23 prepared combatant models/forms. See docs/UI_AND_COMBAT_POLISH.md. For the campaign soundtrack, docs/SUNO_SOUNDTRACK_PROMPTS.md contains 67 instrumental generation prompts and combat variations; temporary instrumental music and effects are playable, with pause-menu volume and mute controls.
 
 ## Chapter Four and handheld menus
 
@@ -81,11 +81,11 @@ The game now uses one 640×480 (4:3) surface across exploration, combat, charact
 
 Three-phase weapon/casting sprites accompany eight-frame Burning Hands, healing and Chill Touch effects. Freya displays her equipped katana or recovered scimitar. Reduced motion uses brief static effects. Pause → Audio cycles music/effect volumes and mute; preferences stay in this browser. Original temporary instrumental cues include three combat variations, ready to be replaced by campaign tracks.
 
-Chapter Five, Debts and Rumors, visits Gerya’s hospice and the church in an explicitly labeled earlier-day sequence, then returns to the present for Ingoe’s ten-gold weekly agreement. Completed Chapter Four saves can continue directly; the section replay menu also offers Chapter Five. No additional advancement is inferred. See docs/COMBAT_AUDIO_AND_DEBTS.md.
+Chapter Five, Debts and Rumors, visits Gerya’s hospice and the church in chronological order before the hill search and wereboar confrontation. The later dockside visit establishes Ingoe’s ten-gold weekly agreement. Completed Chapter Four saves can continue directly; the section replay menu also offers Chapter Five. No additional advancement is inferred. See docs/COMBAT_AUDIO_AND_DEBTS.md.
 
 ## Chapter Six: Political Movement
 
-Continue from a completed Chapter Five checkpoint, or use section replay 18. Investigate the gate’s Ovinnik, back away from the church standoff, keep watch with J’Mal, inspect the jailbreak and vanishing trail, release Bolgart, then follow the recorded dusk confrontation and Riley reveal. Sections 19–21 offer additional replay starts. There is no inferred new level-up.
+Continue from a completed Chapter Five checkpoint, or use section replay 20. Investigate the gate’s Ovinnik, back away from the church standoff, keep watch with J’Mal, inspect the jailbreak and vanishing trail, release Bolgart, then follow the recorded dusk confrontation and Riley reveal. Sections 21–23 offer additional replay starts. There is no inferred new level-up.
 
 Combat targets have amber attack brackets and green healing brackets. Choose a command, choose a target with directions, then confirm; B returns to commands. With a mouse, click a command then its target, or click the command again to confirm the current target. Completed actions stay in the left-hand log.
 
@@ -94,3 +94,13 @@ Open Political Movement Art Studio.html to inspect the new characters, mounted F
 ### Chapter Seven: The Missing Dead
 
 Continue from Chapter Six into the missing-remains investigation, four staged church encounters, the Red Mantis master’s release and training, and the church’s conversion. Replay sections 24–32 cover the new arc. Combat remains 640×480, with source-based weapons and new attack poses. See [chapter notes](docs/chapter-seven.md) for provenance and adaptation boundaries.
+
+## Chapters Eight through Twelve
+
+The playable continuation covers the accusation against Cimri, the armory ambush and jail fire, Fort Estazano, the Court of Spears, Zara’s extraction from Hardship’s Hearth, and the Kantaria dock and tower operations. See docs/chapter-eight.md through docs/chapter-twelve.md for source facts, staging choices, and unresolved evidence. The prison aftermath remains pending reconciliation; Bruce’s attendance and later advancement are not inferred.
+
+## Menus, ready poses and combat tactics
+
+Campaign progression is paginated in four-entry pages inside the game frame. Arrows/WASD select Previous, Next or Back; Enter/E confirms and B returns. Weapon-upgraded companions keep a subtle three-pose weight shift using their approved silhouettes, with motion disabled for reduced-motion settings or downed characters.
+
+Enemy intentions stay fixed for the round; rank-and-file pairs can focus on the same companion. Completed responses are marked Done this round. A living enemy responds after its announced target’s command and acts at most once per round; any remaining response occurs at round end. Guard still provides +4 AC and halves landed damage for that round. Eliminating an announced attacker prevents its response. This timing is an intentional game adaptation, not a claim about the original tabletop initiative order.

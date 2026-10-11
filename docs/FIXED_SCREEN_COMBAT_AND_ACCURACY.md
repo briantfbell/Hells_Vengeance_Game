@@ -1,3 +1,5 @@
+> Historical implementation notes: the 640×400 measurements below describe a superseded build. Current exploration, combat and menus use 640×480 (4:3); see SCREEN_LAYOUT_640480.md. Current campaign extent and controls are listed in README.md. Weapon-ready poses and enemy response timing were updated in the October 2026 audit follow-up.
+
 # Fixed-screen combat, attack audit and story rolls
 
 Implemented 2026-10-08.

@@ -1,3 +1,5 @@
+> October 2026 audit follow-up: enemies now respond after their announced target’s command, once per round. Remaining responses occur at round end; pairs of ordinary guards/rangers/acolytes can focus the same target. Guard’s +4 AC and half-damage benefit remain unchanged. No creature HP, character levels, story rolls or historical feats were changed. Campaign history now uses four-entry D-pad pages. The current canvas is 640×480; earlier implementation notes below are historical.
+
 # Enemy intent, Guard and campaign progression
 
 ## Game behavior
