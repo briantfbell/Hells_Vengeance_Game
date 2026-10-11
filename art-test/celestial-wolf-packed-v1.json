@@ -1,0 +1,38 @@
+{
+  "celestial_wolf": {
+    "src": "celestial-wolf-packed-v1.png",
+    "frames": [
+      {
+        "x": 16,
+        "y": 95,
+        "w": 684,
+        "h": 588,
+        "anchorX": 358.0,
+        "anchorY": 683
+      },
+      {
+        "x": 767,
+        "y": 16,
+        "w": 613,
+        "h": 667,
+        "anchorX": 1074.0,
+        "anchorY": 683
+      },
+      {
+        "x": 1485,
+        "y": 16,
+        "w": 610,
+        "h": 667,
+        "anchorX": 1790.0,
+        "anchorY": 683
+      }
+    ],
+    "maxHeight": 667,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  }
+}

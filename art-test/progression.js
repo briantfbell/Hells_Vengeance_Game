@@ -11,6 +11,9 @@ window.Progression=(()=>{
   if(p.milestones.includes(milestone))rows.push('Ash House rest · Freya, J’Mal, Jason and Draymus reach level 2. More HP, +1 to hit and +1 skill use; Challenge and Burning Hands grow stronger.');
   if(q.reeseJoined)rows.push('Reese joins in Longacre · basic bow and armor.');
   if(q.guapoReturned)rows.push('21 Neth · El Guapo rejoins the company.');
+  if(q.churchLoadout)rows.push('Church assault · Freya uses her naginata, Jason a lucerne hammer, J’Mal a kukri.');
+  if(q.mantisTraining)rows.push('Red Mantis training · twenty-four hours; sword belt and blades gifted to J’Mal. Historical level and enchantments remain unconfirmed.');
+  if(q.churchConverted)rows.push('Jason appointed head pastor · church converted; Cimri becomes sheriff.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }

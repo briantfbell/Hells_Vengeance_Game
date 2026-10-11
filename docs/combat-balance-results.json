@@ -2,6 +2,42 @@
   "method": "Actual game action and enemy-turn code; 200 seeded runs each; skills first, heal living allies below 45%; fixed story injuries; instant animation; no browser saves touched.",
   "rows": [
     {
+      "encounter": "Church · entrance",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.56,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Church · hallway",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 4.01,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Church · sanctuary",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 2.62,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
+      "encounter": "Church · Allamar",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 3.43,
+      "meanPotionsRemaining": 2,
+      "meanMendingRemaining": 2,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
@@ -41,8 +77,8 @@
       "encounter": "Bolgart · wereboar",
       "trials": 200,
       "winPercent": 100,
-      "meanRounds": 2.73,
-      "meanPotionsRemaining": 2,
+      "meanRounds": 2.76,
+      "meanPotionsRemaining": 1.92,
       "meanMendingRemaining": 2,
       "meanAdditionalDowned": 0
     },
@@ -65,10 +101,16 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Full church assault, no rest between",
+      "trials": 200,
+      "winPercent": 100,
+      "meanPotionsRemaining": 1.66
+    },
+    {
       "encounter": "Human → wereboar, no rest between",
       "trials": 200,
       "winPercent": 100,
-      "meanPotionsRemaining": 1.99
+      "meanPotionsRemaining": 1.96
     }
   ]
 }

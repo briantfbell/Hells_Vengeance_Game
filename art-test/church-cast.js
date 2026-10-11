@@ -1,0 +1,21 @@
+"use strict";
+Object.assign(COMBAT_IDLES,{"church_acolyte": {"src": "church-cast-packed-v1.png", "frames": [{"x": 45, "y": 106, "w": 293, "h": 334, "anchorX": 192, "anchorY": 440}, {"x": 477, "y": 94, "w": 198, "h": 346, "anchorX": 576, "anchorY": 440}, {"x": 808, "y": 123, "w": 304, "h": 317, "anchorX": 960, "anchorY": 440}], "maxHeight": 346, "cycle": [0, 1, 0, 2]}, "kuribu": {"src": "church-cast-packed-v1.png", "frames": [{"x": 65, "y": 574, "w": 253, "h": 314, "anchorX": 192, "anchorY": 888}, {"x": 394, "y": 542, "w": 363, "h": 346, "anchorX": 576, "anchorY": 888}, {"x": 821, "y": 568, "w": 277, "h": 320, "anchorX": 960, "anchorY": 888}], "maxHeight": 346, "cycle": [0, 1, 0, 2]}, "ghast_riley": {"src": "church-cast-packed-v1.png", "frames": [{"x": 45, "y": 1026, "w": 293, "h": 310, "anchorX": 192, "anchorY": 1336}, {"x": 454, "y": 1018, "w": 244, "h": 318, "anchorX": 576, "anchorY": 1336}, {"x": 815, "y": 1028, "w": 289, "h": 308, "anchorX": 960, "anchorY": 1336}], "maxHeight": 318, "cycle": [0, 1, 0, 2]}, "mantis_master": {"src": "church-cast-packed-v1.png", "frames": [{"x": 17, "y": 1368, "w": 349, "h": 416, "anchorX": 192, "anchorY": 1784}, {"x": 434, "y": 1374, "w": 283, "h": 410, "anchorX": 576, "anchorY": 1784}, {"x": 789, "y": 1382, "w": 342, "h": 402, "anchorX": 960, "anchorY": 1784}], "maxHeight": 416, "cycle": [0, 1, 0, 2]}});
+LORE_CAST.church_acolyte={"src": "church-cast-packed-v1.png", "source": "church-cast-packed-v1.png", "frame": {"x": 45, "y": 106, "w": 293, "h": 334, "anchorX": 192, "anchorY": 440}};
+FUTURE_NPCS.church_acolyte=LORE_CAST.church_acolyte;
+DIALOGUE_FACE_CROPS.church_acolyte={"x": 152, "y": 114, "w": 90, "h": 90};
+LORE_CAST.kuribu={"src": "church-cast-packed-v1.png", "source": "church-cast-packed-v1.png", "frame": {"x": 65, "y": 574, "w": 253, "h": 314, "anchorX": 192, "anchorY": 888}};
+FUTURE_NPCS.kuribu=LORE_CAST.kuribu;
+DIALOGUE_FACE_CROPS.kuribu={"x": 152, "y": 582, "w": 90, "h": 90};
+LORE_CAST.ghast_riley={"src": "church-cast-packed-v1.png", "source": "church-cast-packed-v1.png", "frame": {"x": 45, "y": 1026, "w": 293, "h": 310, "anchorX": 192, "anchorY": 1336}};
+FUTURE_NPCS.ghast_riley=LORE_CAST.ghast_riley;
+DIALOGUE_FACE_CROPS.ghast_riley={"x": 152, "y": 1034, "w": 90, "h": 90};
+LORE_CAST.mantis_master={"src": "church-cast-packed-v1.png", "source": "church-cast-packed-v1.png", "frame": {"x": 17, "y": 1368, "w": 349, "h": 416, "anchorX": 192, "anchorY": 1784}};
+FUTURE_NPCS.mantis_master=LORE_CAST.mantis_master;
+DIALOGUE_FACE_CROPS.mantis_master={"x": 152, "y": 1376, "w": 90, "h": 90};
+
+window.CHURCH_WEAPON_FRAMES={"freya": {"src": "church-weapons-packed-v1.png", "frames": [{"x": 87, "y": 16, "w": 339, "h": 403, "anchorX": 256.5, "anchorY": 419}, {"x": 530, "y": 16, "w": 479, "h": 403, "anchorX": 769.5, "anchorY": 419}, {"x": 1108, "y": 70, "w": 348, "h": 349, "anchorX": 1282.5, "anchorY": 419}], "maxHeight": 403, "cycle": [0, 1, 0, 2]}, "jason": {"src": "church-weapons-packed-v1.png", "frames": [{"x": 111, "y": 453, "w": 290, "h": 401, "anchorX": 256.5, "anchorY": 854}, {"x": 529, "y": 521, "w": 481, "h": 333, "anchorX": 769.5, "anchorY": 854}, {"x": 1111, "y": 540, "w": 343, "h": 314, "anchorX": 1282.5, "anchorY": 854}], "maxHeight": 401, "cycle": [0, 1, 0, 2]}, "jamal": {"src": "church-weapons-packed-v1.png", "frames": [{"x": 115, "y": 902, "w": 282, "h": 387, "anchorX": 256.5, "anchorY": 1289}, {"x": 558, "y": 945, "w": 423, "h": 344, "anchorX": 769.5, "anchorY": 1289}, {"x": 1141, "y": 945, "w": 283, "h": 344, "anchorX": 1282.5, "anchorY": 1289}], "maxHeight": 387, "cycle": [0, 1, 0, 2]}};
+
+DIALOGUE_FACE_CROPS.mantis_master={x:LORE_CAST.mantis_master.frame.x+85,y:LORE_CAST.mantis_master.frame.y+20,w:105,h:105};
+
+Object.assign(COMBAT_IDLES,{"celestial_wolf": {"src": "celestial-wolf-packed-v1.png", "frames": [{"x": 16, "y": 95, "w": 684, "h": 588, "anchorX": 358.0, "anchorY": 683}, {"x": 767, "y": 16, "w": 613, "h": 667, "anchorX": 1074.0, "anchorY": 683}, {"x": 1485, "y": 16, "w": 610, "h": 667, "anchorX": 1790.0, "anchorY": 683}], "maxHeight": 667, "cycle": [0, 1, 0, 2]}});
+FUTURE_NPCS.celestial_wolf={"source": "celestial-wolf-packed-v1.png", "frame": {"x": 16, "y": 95, "w": 684, "h": 588, "anchorX": 358.0, "anchorY": 683}};

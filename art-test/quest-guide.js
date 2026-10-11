@@ -1,4 +1,5 @@
 window.QuestGuide={current(){
+ if(window.ChurchArc?.goal())return {text:ChurchArc.goal(),target:ChurchArc.target()};
  if(PoliticalMovement.goal())return {text:PoliticalMovement.goal(),target:PoliticalMovement.target()};
  if(DebtsRumors.goal())return {text:DebtsRumors.goal(),target:DebtsRumors.target()};
  if(LastStand.goal())return {text:LastStand.goal(),target:LastStand.target()};

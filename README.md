@@ -90,3 +90,7 @@ Continue from a completed Chapter Five checkpoint, or use section replay 18. Inv
 Combat targets have amber attack brackets and green healing brackets. Choose a command, choose a target with directions, then confirm; B returns to commands. With a mouse, click a command then its target, or click the command again to confirm the current target. Completed actions stay in the left-hand log.
 
 Open Political Movement Art Studio.html to inspect the new characters, mounted Freya and layered execution-square map. See docs/POLITICAL_MOVEMENT.md for source facts, adaptation decisions and art provenance.
+
+### Chapter Seven: The Missing Dead
+
+Continue from Chapter Six into the missing-remains investigation, four staged church encounters, the Red Mantis master’s release and training, and the church’s conversion. Replay sections 24–32 cover the new arc. Combat remains 640×480, with source-based weapons and new attack poses. See [chapter notes](docs/chapter-seven.md) for provenance and adaptation boundaries.

@@ -1,0 +1,110 @@
+{
+  "freya": {
+    "src": "church-weapons-packed-v1.png",
+    "frames": [
+      {
+        "x": 87,
+        "y": 16,
+        "w": 339,
+        "h": 403,
+        "anchorX": 256.5,
+        "anchorY": 419
+      },
+      {
+        "x": 530,
+        "y": 16,
+        "w": 479,
+        "h": 403,
+        "anchorX": 769.5,
+        "anchorY": 419
+      },
+      {
+        "x": 1108,
+        "y": 70,
+        "w": 348,
+        "h": 349,
+        "anchorX": 1282.5,
+        "anchorY": 419
+      }
+    ],
+    "maxHeight": 403,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "jason": {
+    "src": "church-weapons-packed-v1.png",
+    "frames": [
+      {
+        "x": 111,
+        "y": 453,
+        "w": 290,
+        "h": 401,
+        "anchorX": 256.5,
+        "anchorY": 854
+      },
+      {
+        "x": 529,
+        "y": 521,
+        "w": 481,
+        "h": 333,
+        "anchorX": 769.5,
+        "anchorY": 854
+      },
+      {
+        "x": 1111,
+        "y": 540,
+        "w": 343,
+        "h": 314,
+        "anchorX": 1282.5,
+        "anchorY": 854
+      }
+    ],
+    "maxHeight": 401,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  },
+  "jamal": {
+    "src": "church-weapons-packed-v1.png",
+    "frames": [
+      {
+        "x": 115,
+        "y": 902,
+        "w": 282,
+        "h": 387,
+        "anchorX": 256.5,
+        "anchorY": 1289
+      },
+      {
+        "x": 558,
+        "y": 945,
+        "w": 423,
+        "h": 344,
+        "anchorX": 769.5,
+        "anchorY": 1289
+      },
+      {
+        "x": 1141,
+        "y": 945,
+        "w": 283,
+        "h": 344,
+        "anchorX": 1282.5,
+        "anchorY": 1289
+      }
+    ],
+    "maxHeight": 387,
+    "cycle": [
+      0,
+      1,
+      0,
+      2
+    ]
+  }
+}
