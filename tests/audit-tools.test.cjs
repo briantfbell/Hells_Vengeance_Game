@@ -1,0 +1,6 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {winPercent,playPair,create,cases}=require('../scripts/combat-balance.cjs');
+test('a rare simulated loss cannot be rounded into a perfect success rate',()=>{const results=Array.from({length:400},(_,i)=>({won:i!==0}));assert.equal(winPercent(results),99.75);assert.equal(winPercent([]),0);});
+test('a chain retains first-fight defeats instead of excluding them from its denominator',async()=>{const calls=[];const result=await playPair('human','wereboar',1,2,async fight=>{calls.push(fight);return {won:false,potions:1};});assert.equal(result.won,false);assert.deepEqual(calls,['human']);assert.equal(winPercent([result,{won:true}]),50);});
+test('a successful first fight carries injuries and resources into the second',async()=>{const first={won:true,hp:{freya:12},potions:1},calls=[];await playPair('human','wereboar',1,2,async(fight,seed,carry)=>{calls.push({fight,seed,carry});return first;});assert.equal(calls[1].carry,first);assert.equal(calls[1].seed,2);});
+test('the solo porch benchmark uses the live second guard health',()=>{const w=create(cases.find(c=>c.kind==='armory_porch'),1001);assert.deepEqual(w.enemies.map(e=>e.hp),[12,8]);});
