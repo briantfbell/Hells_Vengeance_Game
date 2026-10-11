@@ -12,6 +12,7 @@ window.EnemyTactics=(()=>{
    else if(e.id==='bolgart'){move='Brawling swing';target=live[(round-1)%Math.min(2,live.length)];}
    else if(e.id==='viggo'){move=round%2?'Scimitar cut':'Heavy slash';extra=round%2?0:2;}
    else if(e.id==='false_knight'){move=round%2?'Sword strike':'Heavy strike';extra=round%2?0:2;}
+   else if(e.id==='manticore'){move=round%2?'Tail-spine volley':'Diving claws';extra=round%2?0:2;target=live.find(u=>u.id==='jason')||target;}
    else if(e.id==='armory_bo'){target=live.find(u=>u.id==='freya')||target;move='Repeating crossbow';}
    else if(e.id==='armory_dent'){move='Longsword';}
    else if(e.id==='heist_ranger'){move='Hand axe';}

@@ -17,6 +17,9 @@ window.Progression=(()=>{
   if(q.armoryCleared)rows.push('Armory heist thwarted · Bo returns alive; Dent and three rangers fight alongside her.');
   if(q.cimriRecovered)rows.push('Jail fire · Cimri recovered; Rhona escapes.');
   if(q.prisonersQuestioned)rows.push('Prisoner interrogation · rebel supplies at Fort Estazano.');
+  if(q.fortScouted)rows.push('Fort Estazano · hidden archer and manticore force the scouts to retreat.');
+  if(q.manticoreDefeated)rows.push('Fort secured · Jason’s final hammer throw downs the manticore.');
+  if(q.patrolQuestioned)rows.push('Returning patrol · hidden settlement named the Court of Spears.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
  }

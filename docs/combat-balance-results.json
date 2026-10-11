@@ -56,6 +56,15 @@
       "meanAdditionalDowned": 0
     },
     {
+      "encounter": "Fort Estazano · manticore",
+      "trials": 200,
+      "winPercent": 100,
+      "meanRounds": 5.18,
+      "meanPotionsRemaining": 1.51,
+      "meanMendingRemaining": 1.98,
+      "meanAdditionalDowned": 0
+    },
+    {
       "encounter": "Temple · silent bell",
       "trials": 200,
       "winPercent": 100,
