@@ -133,7 +133,7 @@ function battlePosition(actor){
 }
 function healthBadge(x,y,w,name,value,max,selected=false,enemy=false){
  ctx.save();ctx.fillStyle='#131922ed';ctx.strokeStyle=selected?'#e4c581':'#766343';ctx.lineWidth=selected?2:1;ctx.beginPath();ctx.moveTo(x-w/2+5,y);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w/2,y+27);ctx.lineTo(x-w/2,y+27);ctx.lineTo(x-w/2,y+5);ctx.closePath();ctx.fill();ctx.stroke();
- ctx.textAlign='left';ctx.font='11px FolkenPixel';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';ctx.fillText(name,x-w/2+6,y+10,w-12);
+ ctx.textAlign='left';ctx.font='10px FolkenPixel';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';const label=name.replace(/^(Sanctuary |Church |Porch )/,'').replace('El Guapo','Guapo').replace('Celestial Wolf','Cel. Wolf').replace(/^(Loran|Lacall) Allamar$/,'$1');let shown=label;while(ctx.measureText(shown).width>w-12&&shown.length>1)shown=shown.slice(0,-1);if(shown!==label)shown=shown.slice(0,-1)+'…';ctx.fillText(shown,x-w/2+6,y+10);
  ctx.font='9px FolkenPixel';ctx.fillStyle='#bcb8ab';ctx.fillStyle=value===0?'#dc9a87':'#bcb8ab';ctx.fillText(value===0?'DOWN':value+'/'+max,x-w/2+6,y+21);
  const barX=x-w/2+38,barW=w-44;rect(barX,y+16,barW,5,'#35333a');rect(barX,y+16,barW*Math.max(0,value/max),5,enemy?'#b86454':'#9dab77');if(selected){ctx.fillStyle='#e4c581';ctx.beginPath();ctx.moveTo(x-4,y-5);ctx.lineTo(x+4,y-5);ctx.lineTo(x,y-1);ctx.fill();}ctx.restore();
 }
@@ -342,7 +342,7 @@ function startBattle(count,shaken,config=null){
  battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0,pendingInit:true};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Roll initiative. Guard lasts until your next turn.');planEnemyRound();paintBattle();updateObjective();
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
-function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';e.textContent=text;e.title=text;panel.append(e);}}
+function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';const lines=text.split('\n');e.textContent=lines.length>1?lines[0].split(/ · | casts /)[0]+' → '+lines[1]:text;e.title=text;panel.append(e);}}
 function log(text){if(!battle)return;$('battle-message').classList.remove('command-preview');if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,2);battle.current=text;showCombatMessage(text);paintCombatHistory();}
 function activeUnit(){if(!battle)return null;if(!battle.order)return units[battle.turn];const entry=battle.order[battle.turn];return entry?.side==='party'?Initiative.actor(entry,units,battle.enemies):null;}
 function livingEnemy(){return battle?.enemies.find(e=>e.hp>0);}
@@ -364,7 +364,15 @@ function commandSummary(action,id){
  if(action==='mend')return 'Mend | Infernal Mending · Jason heals '+ally+' for 2D8 +3 HP (up to max) · ['+mendUses+'/2].';
  if(action==='smoke')return 'Smoke | Jamal throws a bomb · Enemies −4 to hit for 2 rounds · ['+(quest.smokeUsed?0:1)+'/1].';
 }
-function commandCardSummary(action,id){const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];if(action==='attack')return Inventory.weapon(inventory,id).move+'\n'+hit+' · '+roll(stat.dmg);if(action==='special')return (id==='jason'?'Fire · Burning Hands':id==='draymus'?'Touch · '+skill.name:skill.name)+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';if(action==='guard')return 'AC '+combatAC(id)+' → '+(combatAC(id)+4)+'\nHalf incoming damage';if(action==='potion'||action==='mend')return ally+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';return 'Enemies −4 to hit\n2 rounds ['+(quest.smokeUsed?0:1)+'/1]';}
+function commandCardSummary(action,id){
+ const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
+ const weapon=({freya:'Katana',jamal:'Daggers',jason:'Mace',draymus:'Dagger',guapo:'Rapier',reese:'Bow',naginata:'Naginata',lucerne:'Lucerne',kukri:'Kukri',mantis_blades:'Paired blades',scimitar:'Scimitar'})[inventory.equipped[id]]||WEAPONS[id];
+ if(action==='attack')return weapon+'\n'+hit+' '+roll(stat.dmg);
+ if(action==='special')return ({freya:'Challenge',jamal:'Sneak Attack',jason:'Burning Hands',draymus:skill.name==='Shocking Grasp'?'Shock Grasp':'Chill Touch',guapo:'Panache',reese:'Aimed Shot'})[id]+'\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';
+ if(action==='guard')return 'AC '+combatAC(id)+' → '+(combatAC(id)+4)+'\nHalf damage';
+ if(action==='potion'||action==='mend')return (ally==='El Guapo'?'Guapo':ally)+' ['+(action==='mend'?mendUses:potions)+'/2]\n'+(action==='mend'?'2D8+3':'2D4+2')+' HP';
+ return 'Foes: −4 hit\n2 turns ['+(quest.smokeUsed?0:1)+'/1]';
+}
 function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
@@ -416,6 +424,15 @@ function paintBattle(){
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
 function potionRefusal(id){return battle?.kind==='temple'&&quest.templeWound&&id==='jamal'?'J’Mal is too badly injured to swallow a potion. He cannot consume it.':'';}
+function combatOutcome(actor,target,skill,value,roll,bonus){
+ const move=skill?(actor.id==='draymus'&&battle.kind==='armory_heist'?'Shocking Grasp':skill.name):Inventory.weapon(inventory,actor.id).move;
+ const caster=skill&&['jason','draymus'].includes(actor.id);
+ const first=NAMES[actor.id]+(caster?' casts ':' · ')+move;
+ const outcome=target.name+': '+(value===null?'miss':'−'+value+' HP');
+ const usesLeft=skill?'['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+'] uses':'';
+ const detail=value===null?'D20 '+roll+' '+(bonus>=0?'+':'−')+Math.abs(bonus)+(usesLeft?' · '+usesLeft:''):actor.id==='draymus'&&battle.kind==='armory_heist'&&skill?'Spectral Hand · '+usesLeft:usesLeft;
+ return [first,outcome,detail].filter(Boolean).join('\n');
+}
 async function performActionImpl(action){
  if(Handheld.isOpen()||!battle||battle.busy||dialogOpen||taskBusy)return;const token=epoch,actor=activeUnit();if(!actor)return;const target=battle.enemies[battle.target]?.hp>0?battle.enemies[battle.target]:livingEnemy();if(!target)return;
  if(action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses||action==='potion'&&potions<=0||action==='mend'&&mendUses<=0||action==='smoke'&&quest.smokeUsed)return;
@@ -427,7 +444,7 @@ async function performActionImpl(action){
  else{
   const skill=action==='special'?SPECIAL[actor.id]:null;if(skill)uses[actor.id]++;
   const bonus=STATS[actor.id].atk+(skill?.bonus||0),total=skill?.auto?null:await rollDice(NAMES[actor.id]+' · Attack',20,1,bonus,'AC '+STATS[target.id].ac),roll=total===null?null:total-bonus,hit=skill?.auto||roll===20||roll!==1&&total>=STATS[target.id].ac;
-  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true,()=>hitTarget(actor,target,value));target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(NAMES[actor.id]+' '+(skill?(actor.id==='freya'?'challenges the foe and cuts with her '+WEAPONS.freya:(actor.id==='draymus'&&battle.kind==='armory_heist'?'casts Shocking Grasp through his Spectral Hand':SKILL_TEXT[actor.id])):ATTACKS[actor.id])+' at '+target.name+': '+value+' damage.'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(NAMES[actor.id]+' '+(skill?(actor.id==='freya'?'challenges the foe and cuts with her '+WEAPONS.freya:(actor.id==='draymus'&&battle.kind==='armory_heist'?'casts Shocking Grasp through his Spectral Hand':SKILL_TEXT[actor.id])):ATTACKS[actor.id])+' but misses '+target.name+' ('+roll+' + '+bonus+').'+(skill?' ['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+' remaining]':''));}
+  if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true,()=>hitTarget(actor,target,value));target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(combatOutcome(actor,target,skill,value,roll,bonus));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(combatOutcome(actor,target,skill,null,roll,bonus));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
  if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind.startsWith('covert_')){updateObjective();paintParty();run(()=>CovertArc.afterBattle(kind));return;}if(kind.startsWith('disruption_')){updateObjective();paintParty();run(()=>DisruptionArc.afterBattle(kind));return;}if(kind.startsWith('kantaria_')){updateObjective();paintParty();run(()=>KantariaArc.afterBattle(kind));return;}if(kind.startsWith('court_')){updateObjective();paintParty();run(()=>CourtArc.afterBattle(kind));return;}if(kind.startsWith('fort_')){updateObjective();paintParty();run(()=>FortArc.afterBattle(kind));return;}if(kind.startsWith('armory_')){updateObjective();paintParty();run(()=>ArmoryArc.afterBattle(kind));return;}if(kind.startsWith('church_')){updateObjective();paintParty();run(()=>ChurchArc.afterBattle(kind));return;}if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}

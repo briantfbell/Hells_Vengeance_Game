@@ -47,3 +47,16 @@
 #journey{padding:0;opacity:1;transition:none}#journey .journey-card{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4cqw;border:0}#journey-summary{max-width:84cqw}#journey.decree-page .journey-card{box-shadow:inset 0 0 0 1.5cqw #38231d,inset 0 0 0 1.8cqw #a8824c}
 
 #initiative-results .die-art{width:5cqw;height:5cqw}#initiative-results .die-number{font-size:1.8cqw}
+
+/* Fixed native text metrics: three intentional lines per command, no mid-word wrapping. */
+#battle,#dice-panel,#enemy-intents{font-synthesis:none}
+#actions button{align-items:stretch;gap:0;padding:.3125cqw .625cqw}
+.command-title{font-size:1.71875cqw;line-height:1.875cqw;flex:none}
+.command-subtitle{font-size:1.5625cqw;line-height:1.5625cqw;white-space:pre;word-break:normal;overflow-wrap:normal;flex:none}
+#battle-message{display:block;font-size:1.71875cqw;line-height:2.03125cqw;white-space:normal;word-break:normal;overflow-wrap:normal;hyphens:none;-webkit-line-clamp:unset}
+.battle-dispatch{padding:.625cqw .9375cqw;grid-template-rows:62% 38%}
+#combat-log{font-size:1.40625cqw;line-height:1.5625cqw}
+.combat-entry{line-height:1.5625cqw;white-space:nowrap;text-indent:0}
+.die-number{color:#fff6d9;-webkit-text-stroke:.7px #000;paint-order:stroke fill;text-shadow:-1px -1px 0 #000,0 -1px 0 #000,1px -1px 0 #000,-1px 0 0 #000,1px 0 0 #000,-1px 1px 0 #000,0 1px 0 #000,1px 1px 0 #000,0 0 4px #000,0 0 7px #000}
+
+#battle-message{white-space:pre-line}
