@@ -1,0 +1,25 @@
+[
+  {
+    "encounter": "Stranglehold · mine defenders",
+    "trials": 200,
+    "winPercent": 100,
+    "meanRounds": 2.885
+  },
+  {
+    "encounter": "Stranglehold · Lamashtu cult",
+    "trials": 200,
+    "winPercent": 100,
+    "meanRounds": 3.135
+  },
+  {
+    "encounter": "Stranglehold · perimeter garrison",
+    "trials": 200,
+    "winPercent": 100,
+    "meanRounds": 3.755
+  },
+  {
+    "encounter": "Full Stranglehold, no rest",
+    "trials": 200,
+    "winPercent": 100
+  }
+]

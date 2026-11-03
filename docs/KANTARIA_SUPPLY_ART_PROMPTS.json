@@ -1,0 +1,30 @@
+{
+  "tool": "Built-in image_gen",
+  "styleReference": "art-test/kantaria-caves-v1.png",
+  "assets": [
+    {
+      "id": "mine",
+      "prompt": "New environment for the existing Hell's Vengeance pixel-art RPG. Reference image is STYLE REFERENCE only: match its detailed Gothic pixel clusters, overhead three-quarter game camera, charcoal rock, amber lantern light, transparent outer silhouette and broad walkable empty floor. Create a working ORE MINE chamber near Kantaria: timber-supported tunnel mouths at rear/top, ore carts and tool racks on far left/right perimeter, mineral seams, rear supplies. A broad EMPTY central floor from x20%-80%,y38%-76%, and an empty bottom-center entrance corridor from x45%-55% to bottom edge. No rails, props or obstacles in this central route. Assets are top foreground floor/structures, with true transparent alpha beyond outer cave walls, for animated underlay. Wide 8:5 scene, no horizon. No people, creatures, text, letters or UI. Restrained square pixels, not smooth painted gradients.",
+      "originalGeneratedFile": "exec-b12135ed-7273-453b-8b9b-77de170f62bb.png",
+      "asset": "art-test/kantaria-mines-v1.png",
+      "sha256": "c50c52989dbb52f9e7ebf1831bae07124585c5fe1f4a78a6f24fd2b799000ef9",
+      "processing": "Copied unchanged; frame metadata measured by read-only alpha inspection."
+    },
+    {
+      "id": "cult",
+      "prompt": "New environment for the existing Hell's Vengeance pixel-art RPG. Reference is STYLE REFERENCE only. Detailed Gothic overhead three-quarter pixel-art CAVERN CULT SHRINE, small underground Lamashtu cult hideout: irregular black rock perimeter walls, crude three-eyed jackal-like relief above a small rear stone altar, dark ochre cloth, candles, bones and ritual vessels confined to rear and side perimeter. No gore, no people or monsters. Broad EMPTY central gray rock floor x20%-80%,y38%-76% and EMPTY bottom-center entry corridor x45%-55% reaching bottom edge. No centerpiece obstructing this walkable space. Transparent alpha beyond outer floor/wall silhouette, to layer over dark independent background. Wide 8:5, no horizon, no text/UI. Match reference crisp intricate square pixel clusters, muted charcoal/umber, amber lantern accents, restrained sickly green ritual light. Distinct from an Iomedaean church.",
+      "originalGeneratedFile": "exec-0e963794-60e6-4ead-ab41-c2daa1e97e83.png",
+      "asset": "art-test/lamashtu-grotto-v1.png",
+      "sha256": "922865979abc493709ec920e6586fc148b88ae18c93ee70dfff6d9ba99e5fc77",
+      "processing": "Copied unchanged; frame metadata measured by read-only alpha inspection."
+    },
+    {
+      "id": "defenders",
+      "prompt": "Transparent production sprite atlas for mature detailed Gothic pixel-art RPG. EXACTLY TWO ROWS and THREE COLUMNS, six isolated full body poses, each centered in its own equal cell with generous transparent margins. Top row: SAME anonymous adult Lamashtu cult sentry in all three frames, lean hooded dark-ochre and charcoal rough robes, leather bracers, short curved blade, sinister simple bone pendant; three subtle combat idle poses shifting weight, facing LEFT three-quarter toward heroes. Bottom row: SAME anonymous cult adept in all three frames, dark moss/umber hooded robe, staff with small bone charm, three LEFT-facing combat idle poses with restrained casting-ready hands. No priestly white/gold uniforms, no named campaign identity, no horns or monstrous anatomy invented. Crisp highly detailed square pixel clusters matching Hell's Vengeance game sprites. No platform, shadow ellipse, glow cloud, text, grid lines or background. Full blades/staves/hoods/feet entirely within each cell. Every exterior pixel transparent.",
+      "originalGeneratedFile": "exec-1b960c43-fa57-4c0d-8a62-9cc6859d47a8.png",
+      "asset": "art-test/lamashtu-defenders-v1.png",
+      "sha256": "2cdbb7c0112a88849f7d31c92dd5fb5ac6de815d9964dd85841248fd246be4b9",
+      "processing": "Copied unchanged; frame metadata measured by read-only alpha inspection."
+    }
+  ]
+}

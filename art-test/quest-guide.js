@@ -1,4 +1,5 @@
 window.QuestGuide={current(){
+ if(window.SupplyArc?.goal())return {text:SupplyArc.goal(),target:SupplyArc.target()};
  if(window.CovertArc?.goal())return {text:CovertArc.goal(),target:CovertArc.target()};
  if(window.DisruptionArc?.goal())return {text:DisruptionArc.goal(),target:DisruptionArc.target()};if(window.KantariaArc?.goal())return {text:KantariaArc.goal(),target:KantariaArc.target()};
  if(window.CourtArc?.goal())return {text:CourtArc.goal(),target:CourtArc.target()};

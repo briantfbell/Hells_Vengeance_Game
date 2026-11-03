@@ -22,6 +22,9 @@ const cases=[
  {name:'Kantaria disruption · docks',kind:'disruption_docks',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['jonas', 'kantaria_guard', 'kantaria_guard'],level2:true,church:true},
  {name:'Kantaria disruption · north tower',kind:'disruption_north',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['kantaria_guard', 'kantaria_guard', 'kantaria_guard'],level2:true,church:true},
  {name:'Kantaria disruption · angel defender',kind:'disruption_angel',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['angel_bro', 'kantaria_guard', 'kantaria_guard'],level2:true,church:true},
+ {name:'Stranglehold · mine defenders',kind:'supply_mines',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['kantaria_guard','kantaria_guard','kantaria_guard'],level2:true,church:true},
+ {name:'Stranglehold · Lamashtu cult',kind:'supply_cult',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['lamashtu_sentry','lamashtu_sentry','lamashtu_adept'],level2:true,church:true},
+ {name:'Stranglehold · perimeter garrison',kind:'supply_fort',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['kantaria_guard','kantaria_guard','kantaria_guard','kantaria_guard'],level2:true,church:true},
  {name:'Temple · silent bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist'],down:'jamal'},
  {name:'Temple · sounded bell',kind:'temple',roster:['freya','jamal','jason','draymus','guapo'],enemies:['viggo','cultist','cultist','cultist'],down:'jamal'},
  {name:'Former deputies',kind:'deputies',roster:['freya','jamal','jason','draymus'],enemies:['deputy1','deputy2','deputy3','deputy4'],level2:true},
@@ -34,7 +37,7 @@ const winPercent=results=>results.length?+(100*results.filter(r=>r.won).length/r
 async function playPair(first,second,firstSeed,secondSeed,runner=play){const result=await runner(first,firstSeed);return result.won?runner(second,secondSeed,result):result;}
 function create(c,seed,carry){
  const w={window:null,structuredClone,console,epoch:1,dialogOpen:false,taskBusy:false,Handheld:{isOpen:()=>false},GameAudio:{effect:()=>{}},CANCEL:Symbol('cancel'),scene:'temple',lead:c.roster[0],ready:true};w.window=w;w.ChurchArc={support:async()=>{}};vm.createContext(w);
- for(const name of ['inventory.js','progression.js','enemy-tactics.js','initiative.js','church-assault.js','armory-jail-chapter.js','fort-estazano.js','court-of-spears.js','kantaria-opening.js','kantaria-disruption.js','kantaria-covert.js'])vm.runInContext(read(name),w);
+ for(const name of ['inventory.js','progression.js','enemy-tactics.js','initiative.js','church-assault.js','armory-jail-chapter.js','fort-estazano.js','court-of-spears.js','kantaria-opening.js','kantaria-disruption.js','kantaria-covert.js','kantaria-supply.js'])vm.runInContext(read(name),w);
  const data=vm.runInContext('(()=>{'+head+'return {CORE,NAMES,STATS,SPECIAL,BASE_STATS,BASE_SPECIAL,WEAPONS,ATTACKS,SKILL_TEXT,inventory,progression};})()',w);Object.assign(w,data);
  for(const file of ['last-stand-chapter.js','political-movement.js'])for(const match of read(file).matchAll(/STATS\.\w+=\{[^}]+\}/g))vm.runInContext(match[0],w);
  vm.runInContext(read('church-assault.js').match(/Object.assign\(STATS,\{church_acolyte[^\n]+/)[0],w);
@@ -43,6 +46,7 @@ function create(c,seed,carry){
  vm.runInContext(read('court-of-spears.js').match(/Object.assign\(STATS,\{court_rhona[^\n]+/)[0],w);
  vm.runInContext(read('kantaria-opening.js').match(/Object.assign\(STATS,\{kantaria_guard[^\n]+/)[0],w);
  vm.runInContext(read('kantaria-disruption.js').match(/Object.assign\(STATS,\{jonas[^\n]+/)[0],w);
+ vm.runInContext(read('kantaria-supply.js').match(/Object.assign\(STATS,\{lamashtu_sentry[^\n]+/)[0],w);
  for(let i=1;i<=4;i++)w.STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])w.STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
  w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',chapter6:['ovinnik','execution'].includes(c.kind)};w.quest.churchLoadout=!!c.church;w.inventory=w.Inventory.fresh(w.quest);w.progression=w.Progression.migrate(w.quest);
  vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();if(c.kind==='armory_heist')w.SPECIAL.draymus={...w.SPECIAL.draymus,name:'Shocking Grasp',dmg:[1,6,0]};

@@ -1,6 +1,6 @@
 # Hell’s Bubbies — Hell’s Vengeance Game
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains thirteen playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains fourteen playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
 
 ## Play on another computer
 
@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 102 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete thirteen-chapter playthrough or physical handheld validation.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 118 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete fourteen-chapter playthrough or physical handheld validation.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -126,3 +126,10 @@ Validation: 83 automated tests pass, including portable-save round trips for eve
 The game now uses the original Folken Pixel font inside its 640×480 overlays. New combat void and image dice, eight distinguishable townsfolk, captive Riley conversations, separate church entry/hall maps, altar effects and the converted Asmodean floor symbol accompany the story fixes. Porch combat resumes into Cimri's rescue after victory.
 
 See [Photoshop UI dimensions](docs/UI_PHOTOSHOP_SPEC.md) for fixed export sizes and scalable borders, [change notes](docs/PRESENTATION_POLISH.md) for the batch, and [generated artwork prompts](docs/PRESENTATION_POLISH_ART_PROMPTS.json) for reproducible asset references. Blank Photoshop skins are pending artwork. 92 automated tests pass; the solo porch fight and subsequent rescue interaction were also verified in the browser.
+
+
+## Chapter Fourteen — Stranglehold
+
+Continue after Corrine’s Fungus Caves briefing, or replay section **103**. Secure the mines, destroy the Lamashtu cult, strike rebel suppliers, and isolate the perimeter forts. Three battles, two narrated supplier operations, two new map foregrounds and two new defender models lead to a report at the refuge. The chapter stops before Valor’s Fastness.
+
+There are now **118 replay checkpoints** and **104 passing automated tests**. Existing saves continue into the new chapter. Live browser verification of this batch is pending because local browser use is disabled in the app’s Work settings. See [chapter notes](docs/chapter-fourteen.md) for source limits, artwork and validation.

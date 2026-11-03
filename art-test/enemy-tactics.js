@@ -15,6 +15,8 @@ window.EnemyTactics=(()=>{
    else if(e.id==='jonas'){move='Cutlass strike';}
    else if(e.id==='angel_bro'){move=round%2?'Longsword cut':'Heavy sword strike';extra=round%2?0:2;}
    else if(e.id==='jalila'){move=round%2?'Unarmed strike':'Driving palm';extra=round%2?0:2;}
+   else if(e.id==='lamashtu_sentry'){move='Curved blade';}
+   else if(e.id==='lamashtu_adept'){move=round%2?'Staff strike':'Heavy staff';extra=round%2?0:2;}
    else if(e.id==='kantaria_guard'){move='Sword strike';}
    else if(e.id==='court_rhona'){move=round%2?'Twin hand axes':'Press the crossing';extra=round%2?1:0;}
    else if(e.id==='lencia'){move=round%2?'Longsword cut':'Shield-led strike';extra=round%2?0:2;}

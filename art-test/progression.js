@@ -35,6 +35,10 @@ window.Progression=(()=>{
   if(q.manorArtifactsTaken)rows.push('Narikopolus Manor · priceless artifacts stolen.');
   if(q.uskwoodBurned)rows.push('Uskwood fight · fireballs destroy the company’s shelter.');
   if(q.cavesReached)rows.push('Fungus Caves · the company withdraws to recover.');
+  if(q.minesSecured)rows.push('Kantaria mines secured · rebel income and equipment cut off.');
+  if(q.cultDestroyed)rows.push('The Lamashtu cult is destroyed.');
+  if(q.captainStruck)rows.push('Merchant and shipping suppliers struck.');
+  if(q.perimeterCleared)rows.push('Perimeter forts isolated and attacked.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
