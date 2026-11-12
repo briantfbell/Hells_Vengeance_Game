@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 118 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete fourteen-chapter playthrough or physical handheld validation.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and every one of the 122 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus; this is not a claim of a complete fourteen-chapter playthrough or physical handheld validation.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -133,3 +133,7 @@ See [Photoshop UI dimensions](docs/UI_PHOTOSHOP_SPEC.md) for fixed export sizes 
 Continue after Corrine’s Fungus Caves briefing, or replay section **103**. Secure the mines, destroy the Lamashtu cult, strike rebel suppliers, and isolate the perimeter forts. Three battles, two narrated supplier operations, two new map foregrounds and two new defender models lead to a report at the refuge. The chapter stops before Valor’s Fastness.
 
 There are now **118 replay checkpoints** and **104 passing automated tests**. Existing saves continue into the new chapter. Live browser verification of this batch is pending because local browser use is disabled in the app’s Work settings. See [chapter notes](docs/chapter-fourteen.md) for source limits, artwork and validation.
+
+## Chapter Fifteen · Valor’s Fastness outer gate
+
+Continue after Stranglehold or select replay **119**. Muster the reanimated soldiers, send them against the guards, and secure the breach. Replays **119–122** cover the section. The outer gate was played through and reloaded in the browser. See [the section audit and source notes](docs/chapter-fifteen-gate.md).

@@ -1,7 +1,7 @@
 {
-  "scripts": 48,
-  "scenes": 70,
-  "replays": 118,
+  "scripts": 49,
+  "scenes": 71,
+  "replays": 122,
   "framesInspected": 459,
   "framesChecked": 459,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 266080814,
+  "assetBytes": 269523496,
   "largestAssets": [
     {
       "name": "court-of-spears.png",
@@ -27,6 +27,10 @@
     {
       "name": "kintargo-map.png",
       "bytes": 3506692
+    },
+    {
+      "name": "valor-fastness-gate-v1.png",
+      "bytes": 3436587
     },
     {
       "name": "longacre-jail.png",
@@ -51,16 +55,12 @@
     {
       "name": "longacre-square.png",
       "bytes": 3106937
-    },
-    {
-      "name": "hardship-hall-v1.png",
-      "bytes": 3104867
     }
   ],
   "startupComplete": true,
-  "startupAssets": 97,
-  "startupCompressedBytes": 211342410,
-  "startupDecodedRgbaBytes": 602166704,
+  "startupAssets": 98,
+  "startupCompressedBytes": 214778997,
+  "startupDecodedRgbaBytes": 608459952,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -158,6 +158,7 @@
     "townsfolk-sheet-v1.png",
     "townsfolk-sheet-v2.png",
     "uskwood-inn-v1.png",
+    "valor-fastness-gate-v1.png",
     "whisperwood-trail-v1.png"
   ]
 }
