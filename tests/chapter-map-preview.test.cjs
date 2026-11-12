@@ -9,7 +9,20 @@ const path=require('node:path');
 const assets=path.join(__dirname,'..','art-test');
 const env={window:{}};
 vm.runInNewContext(fs.readFileSync(path.join(assets,'chapter-map-preview.js'),'utf8'),env);
-const {layouts,cast,passable,select,key,nearbyStop}=env.window.ChapterMapPreview;
+const {layouts,cast,passable,select,key,nearbyStop,castSources,draw}=env.window.ChapterMapPreview;
+
+test('the observatory draws Oda at the prepared location in the planning preview',()=>{
+ const id='barleybridge-observatory-v1',source=cast.barleybridge_oda.src,image={};
+ assert.deepEqual([...castSources(id)],[source]);
+ assert.deepEqual([...castSources('barleybridge-roof-v1')],[]);
+ const calls=[],g={save(){},restore(){},fillRect(){},fillText(){},measureText:()=>({width:40}),drawImage:(...args)=>calls.push(args)};
+ select(id);
+ draw(g,{castImages:{[source]:image}});
+ assert.equal(calls.length,1);
+ assert.equal(calls[0][0],image);
+ assert.deepEqual(calls[0].slice(6,7),[128]);
+ assert.equal(calls[0].at(-1),88);
+});
 
 test('chapter map previews can reach their marked destinations on the game grid',()=>{
  const reachable=new Map();

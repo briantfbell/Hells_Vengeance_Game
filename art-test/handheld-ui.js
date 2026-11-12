@@ -1,7 +1,7 @@
 'use strict';
 window.Handheld=(()=>{
  let open=false,view='home',slotMode='save',member=0,frozen=0,page=0,itemId=null,itemBusy=false,historyPage=0;
- let planId=null,planImage=null,planPaths=false;
+ let planId=null,planImage=null,planCast={},planPaths=false;
  const planningMaps={
   'barleybridge-approach-v1':'Barleybridge · Scout’s approach',
   'barleybridge-town-v1':'Barleybridge · Gate and market',
@@ -70,12 +70,15 @@ window.Handheld=(()=>{
   details(['Reference layouts for the Barleybridge and Warlock Island plans.']);
  }
  async function openPlanMap(id,arrival){
-  planId=id;planImage=null;view='plan-map';ChapterMapPreview.select(id,arrival);paint();
+  planId=id;planImage=null;planCast={};view='plan-map';ChapterMapPreview.select(id,arrival);paint();
   message('Opening map…');
   try{
-   const loaded=await imageLoad(id+'.png');
+   const [loaded,figures]=await Promise.all([
+    imageLoad(id+'.png'),
+    Promise.all(ChapterMapPreview.castSources(id).map(async src=>[src,await imageLoad(src).catch(()=>null)]))
+   ]);
    if(!open||view!=='plan-map'||planId!==id)return;
-   planImage=loaded;drawPlanMap();refreshPlanPrompt();
+   planImage=loaded;planCast=Object.fromEntries(figures);drawPlanMap();refreshPlanPrompt();
   }catch{
    if(open&&view==='plan-map'&&planId===id)message('The map could not load. Press B to return.');
   }
@@ -86,7 +89,7 @@ window.Handheld=(()=>{
   if(!planImage)return;
   g.imageSmoothingEnabled=false;
   SceneLayers.foreground(g,planImage,{contain:true});
-  ChapterMapPreview.draw(g,{font:'12px FolkenPixel, Georgia'});
+  ChapterMapPreview.draw(g,{font:'12px FolkenPixel, Georgia',castImages:planCast});
  }
  function hasPlanStops(){
   return ChapterMapPreview.layouts[planId]?.points.some(p=>p.note||p.destination);

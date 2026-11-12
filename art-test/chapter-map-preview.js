@@ -74,6 +74,7 @@ window.ChapterMapPreview=(()=>{
   'barleybridge-observatory-v1':{
    spawn:[440,280],
    walk:[[144,240,352,64],[64,256,96,16],[304,224,96,32]],
+   figures:[{id:'barleybridge_oda',x:448,y:216,height:88}],
    points:[
     {label:'Return stairs',x:488,y:280,destination:'barleybridge-lords-chambers-v1',arrival:[152,264]},
     {label:'Observation floor',x:344,y:232,note:'The prepared map places Lord Oda Nobunaga here with a guardsman, bowman, and samurai.'},
@@ -113,6 +114,11 @@ window.ChapterMapPreview=(()=>{
   }
  };
  const cast={
+  barleybridge_oda:{name:'Lord Oda Nobunaga',caption:'Standing, fan raised, and ceremonial bow',src:'barleybridge-oda-v1.png',frames:[
+   {x:209,y:5,w:337,h:713,anchorX:369},
+   {x:918,y:6,w:336,h:712,anchorX:1067},
+   {x:1643,y:70,w:345,h:648,anchorX:1788}
+  ]},
   barleybridge_bowman:{name:'Barleybridge Bowman',caption:'Composite longbow · ready, draw and recover',src:'barleybridge-bowman-v1.png',frames:[
    {x:72,y:10,w:472,h:705,anchorX:362},
    {x:794,y:0,w:528,h:715,anchorX:1124},
@@ -150,7 +156,10 @@ window.ChapterMapPreview=(()=>{
   return true;
  }
  function togglePaths(){showPaths=!showPaths;return showPaths;}
- function draw(g,{font='11px system-ui'}={}){
+ function castSources(id){
+  return [...new Set((layouts[id]?.figures||[]).map(figure=>cast[figure.id].src))];
+ }
+ function draw(g,{font='11px system-ui',castImages={}}={}){
   if(!selected)return;
   g.save();
   if(showPaths){
@@ -159,6 +168,14 @@ window.ChapterMapPreview=(()=>{
     const x=col*tile,y=row*tile;
     if(passable(selected,x+tile/2,y+tile/2))g.fillRect(x+1,y+1,tile-2,tile-2);
    }
+  }
+  for(const figure of selected.figures||[]){
+   const model=cast[figure.id],image=castImages[model.src];
+   if(!image)continue;
+   const frame=model.frames[0],scale=figure.height/frame.h;
+   const left=Math.round(figure.x-(frame.anchorX-frame.x)*scale);
+   g.imageSmoothingEnabled=false;
+   g.drawImage(image,frame.x,frame.y,frame.w,frame.h,left,figure.y-figure.height,Math.round(frame.w*scale),figure.height);
   }
   g.font=font;
   g.textAlign='center';
@@ -182,5 +199,5 @@ window.ChapterMapPreview=(()=>{
   g.fillRect(x-3,y-3,7,7);
   g.restore();
  }
- return {layouts,cast,select,key,passable,nearbyStop,togglePaths,draw};
+ return {layouts,cast,select,key,passable,nearbyStop,togglePaths,castSources,draw};
 })();
