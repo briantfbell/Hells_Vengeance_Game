@@ -676,7 +676,12 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  let npcs=window.BarleybridgeScout?.npcs()||window.IlniusFountain?.npcs()||window.DinyarRecon?.npcs()||window.MolthuneCoffin?.npcs()||window.SkadiParley?.npcs()||window.DarkRain?.npcs()||window.TathlumHunt?.npcs()||window.Menador?.npcs()||window.BarrowCovenant?.npcs()||window.BarrowTrail?.npcs()||window.VyreWish?.npcs()||window.SethicMansion?.npcs()||window.BellflowerBarn?.npcs()||window.BellflowerBarge?.npcs()||window.Pezzack?.npcs()||window.Rachikan?.npcs()||window.Ballerina?.npcs()||window.HinjiTavern?.npcs()||window.Belde?.npcs()||window.PaleBall?.npcs()||window.NicoloArc?.npcs()||window.SethicLedgers?.npcs()||window.SethicFarm?.npcs()||window.EgorianFeud?.npcs()||window.EgorianSting?.npcs()||window.EfisioArc?.npcs()||window.Hinji?.npcs()||window.Westcrown?.npcs()||window.RemesianaMarket?.npcs()||window.EgorianFountain?.npcs()||window.EgorianDischarge?.npcs()||window.AregoExit?.npcs(t)||window.AregoReturn?.npcs(t)||window.AregoAmbush?.npcs()||window.InfernoGate?.npcs(t)||window.FortArego?.npcs()||window.SenaraGraveyard?.npcs()||window.SenaraWagon?.npcs()||window.WhisperwoodGlade?.npcs()||window.WhisperwoodCamp?.npcs()||window.SenaraCitadel?.npcs()||window.SenaraDaggers?.npcs()||window.SenaraCover?.npcs()||window.SenaraArrival?.npcs()||window.EgorianExecution?.npcs()||window.EgorianMort?.npcs()||window.EgorianTrial?.npcs()||window.EgorianNight?.npcs()||window.EgorianArrival?.npcs()||window.SouthRoad?.npcs()||window.KantariaAftermath?.npcs()||window.FastnessArc?.npcs()||window.SupplyArc?.npcs()||window.CovertArc?.npcs()||DisruptionArc.npcs()||KantariaArc.npcs()||CourtArc.npcs()||FortArc.npcs()||ArmoryArc.npcs()||ChurchArc.npcs()||PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}]);
  if(PresentationPolish.captive()&&!npcs.some(n=>n.id==='riley'))npcs=npcs.concat({id:'riley',x:scene==='angel_hill'?400:456,y:216});
   const drawables=[...units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya')),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
- for(const u of drawables){if(CORE.includes(u.id)&&u.pose!=='prone')drawActor(ctx,u);else drawNPC(u);}
+ for(const u of drawables){
+  const flight=window.MolthuneCoffin?.flightPose(u);
+  if(flight){ctx.save();ctx.translate(flight.x,flight.y);ctx.globalAlpha=flight.opacity;}
+  if(CORE.includes(u.id)&&u.pose!=='prone')drawActor(ctx,u);else drawNPC(u);
+  if(flight)ctx.restore();
+ }
  window.EgorianExecution?.effects(ctx);
  window.EgorianMort?.effects(ctx);
  const guide=QuestGuide.current();if($('quest-task-text').textContent!==guide.text)$('quest-task-text').textContent=guide.text;
@@ -1079,6 +1084,7 @@ function replaySections(){
  add('molthune-lift','432 · Retrieve the travel coffin','molthune_remorhaz_slope',[200,256],'molthuneBaitSet');
  add('molthune-breach','433 · Beyond the dragon’s ward','molthune_remorhaz_slope',[464,216],'molthuneCoffinLifted');
  add('molthune-escape','434 · Escape the Wight Mother','molthune_remorhaz_slope',[328,336],'molthuneBreach');
+ add('molthune-fly-out','434A · Fly clear of the lower pass','molthune_remorhaz_slope',[440,232],'molthuneFlightReady');
  add('molthune-violetta','435 · Meet Lady Violetta Pavel','molthune_waystation',[328,344],'molthuneEscaped');
  add('molthune-papers','436 · Violetta’s papers','molthune_waystation',[456,224],'molthuneIntroduced');
  add('dinyar-split','437 · The company splits','molthune_waystation',[456,224],'molthuneComplete');

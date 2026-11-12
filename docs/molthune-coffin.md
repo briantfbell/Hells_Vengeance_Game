@@ -6,7 +6,15 @@ Beyond the dragon’s ward, the Wight Mother sends undead through portals. The p
 
 The natural 2 during Reese’s scouting, the exact map and enemy positions, and dialogue beyond the recorded events are adaptations. The Violetta portrait is provisional. The Foundry archive identifies her actor as `Actor.moKkAXWInbbCsoPs`. The source portrait returned 404 and the wildcard token reference was unresolved. The game shows her in her ordinary guise.
 
+## Flight from the lower pass
+
+Replays 434 and 434A stage the encounter by the hut and the takeoff at the southern mouth of the pass. The route and Freya’s direction are adaptations of the recorded escape. A checkpoint after Violetta’s warning restores the takeoff objective. Earlier saves inside the new hut’s footprint resume on the adjacent snow.
+
 ## Artwork prompts
+
+**Slope shelter edit** · `art-test/molthune-slope-v2.png`
+
+Edit the provided detailed pixel art landscape game map by adding exactly one small abandoned stone waymark hut against the right-side rocky bank, with a weathered timber door, a snow-covered dark pitched roof and a low narrow footprint. At the 640×400 game scale the hut should fit between x=408 and x=508 and y=174 and y=237, with its base near y=237. Put it at the edge of the main clearing. Keep the broad open ground south and west of the hut for 16-pixel grid game characters. Preserve the original wide 8:5 framing, color, pixel art rendering, path, pale snow, cliffs, terrain silhouettes, and every other part of the map. No people, creatures, writing, fires, visual effects, new paths, interface, or other structures.
 
 **slope** · `art-test/molthune-slope-v1.png`
 

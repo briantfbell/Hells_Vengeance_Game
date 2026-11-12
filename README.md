@@ -51,7 +51,7 @@ The admin toolbar’s **Find replay** field filters checkpoints by number, scene
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 473 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 474 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -352,7 +352,7 @@ Continue from the dragon skull or select replay **423**. Scout the settlement, a
 
 ### The Coffin Recovery in Molthune
 
-Continue from Skadi’s feast hall or select replay **429**. Scout as Reese, use the animated bear to draw away the remorhaz, and get Lady Violetta Pavel beyond the Wight Mother’s reach. Replays **429–436** cover the rescue. See [the section notes](docs/molthune-coffin.md) for sources, artwork and verification.
+Continue from Skadi’s feast hall or select replay **429**. Scout as Reese, use the animated bear to draw away the remorhaz, and lead Lady Violetta Pavel out through the lower pass in replay **434A**. Replays **429–436** cover the rescue. See [the section notes](docs/molthune-coffin.md) for sources, artwork and verification.
 
 ### Nidal and Citadel Dinyar
 

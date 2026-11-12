@@ -2,24 +2,26 @@
 
 window.MolthuneCoffin=(()=>{
  const hall='frost_giant_hall',slope='molthune_remorhaz_slope',shelter='molthune_waystation';
- const slopeArt='molthune-slope-v1.png',shelterArt='molthune-waystation-v1.png';
+ const slopeArt='molthune-slope-v2.png',shelterArt='molthune-waystation-v1.png';
  const beastArt='molthune-remorhaz-v1.png',coffinArt='molthune-coffin-v1.png';
  const portrait='molthune-violetta-v1.png',undeadArt='molthune-wight-warrior-v1.png';
  const violet='violetta',unknown='pavel_unknown',wight='molthune_wight';
- const coffin=[466,181];
- let chase=null,breach=null;
+ const coffin=[430,185];
+ const flightDuration=950;
+ let chase=null,breach=null,flight=null;
 
  function install(){
   scenes[hall].points.push({id:'molthuneDepart',x:328,y:344,label:'Descend toward Molthune'});
   scenes[slope]={
-   name:'Molthune · The Remorhaz Slope',image:slopeArt,spawn:[328,344],blocks:[],
+   name:'Molthune · The Remorhaz Slope',image:slopeArt,spawn:[328,344],blocks:[{x:464,y:160,w:64,h:32}],
    walk:[{x:112,y:160,w:416,h:160},{x:288,y:320,w:80,h:80}],lights:[],
    points:[
     {id:'molthuneScout',x:408,y:248,label:'Scout the box as Reese'},
     {id:'molthuneBait',x:200,y:256,label:'Animate the bear and set the diversion'},
-    {id:'molthuneLift',x:464,y:216,label:'Lift the travel coffin'},
+    {id:'molthuneLift',x:432,y:216,label:'Lift the travel coffin'},
     {id:'molthuneBreach',x:328,y:336,label:'Carry the coffin beyond the dragon’s ward'},
-    {id:'molthuneEscape',speaker:unknown,x:400,y:280,label:'Follow the woman away from the undead'}
+    {id:'molthuneEscape',speaker:unknown,x:440,y:232,label:'Reach the woman by the shelter'},
+    {id:'molthuneFlyOut',x:328,y:376,label:'Fly clear of the lower pass'}
    ]
   };
   scenes[shelter]={
@@ -58,7 +60,8 @@ window.MolthuneCoffin=(()=>{
   if(scene===hall&&quest.skadiComplete)return [point('molthuneDepart')];
   if(scene===slope){
    const id=!quest.molthuneScouted?'molthuneScout':!quest.molthuneBaitSet?'molthuneBait':
-    !quest.molthuneCoffinLifted?'molthuneLift':!quest.molthuneBreach?'molthuneBreach':'molthuneEscape';
+    !quest.molthuneCoffinLifted?'molthuneLift':!quest.molthuneBreach?'molthuneBreach':
+    !quest.molthuneFlightReady?'molthuneEscape':'molthuneFlyOut';
    return [point(id)];
   }
   if(scene!==shelter)return null;
@@ -71,8 +74,15 @@ window.MolthuneCoffin=(()=>{
   if(scene===shelter)return [{id:quest.molthuneIntroduced?violet:unknown,x:456,y:193,height:57}];
   if(scene!==slope)return null;
   if(!quest.molthuneBreach)return [];
-  return [{id:wight,x:172,y:192,height:83},{id:wight,x:486,y:186,height:91},
-   {id:unknown,x:400,y:246,height:56}];
+  const woman=quest.molthuneFlightReady?[352,355]:[456,200];
+  return [{id:wight,x:172,y:192,height:83},{id:wight,x:544,y:208,height:91},
+   {id:unknown,x:woman[0],y:woman[1],height:56}];
+ }
+ function flightPose(unit){
+  if(scene!==slope||flight?.epoch!==epoch||reduce.matches)return null;
+  if(unit.id!==unknown&&!units.includes(unit))return null;
+  const progress=Math.min(1,(performance.now()-flight.at)/flightDuration);
+  return {x:Math.round(36*progress),y:-Math.round(84*progress**1.5),opacity:Math.min(1,2.5*(1-progress))};
  }
  function drawProp(g,source,x,y,width){
   const im=art[source];
@@ -97,7 +107,7 @@ window.MolthuneCoffin=(()=>{
   else if(quest.molthuneBreach)drawProp(g,coffinArt,347,305,37);
   else if(units[0])drawProp(g,coffinArt,units[0].x+19,units[0].y-9,34);
   if(!quest.molthuneBreach&&breach?.epoch!==epoch)return;
-  for(const [x,y] of [[172,144],[486,135]]){
+  for(const [x,y] of [[172,144],[544,157]]){
    g.save();
    g.globalAlpha=reduced?.56:.5+Math.sin(t*3+x)*.1;
    const glow=g.createRadialGradient(x,y,4,x,y,37);
@@ -106,6 +116,14 @@ window.MolthuneCoffin=(()=>{
    glow.addColorStop(1,'#34274200');
    g.fillStyle=glow;
    g.fillRect(x-38,y-38,76,76);
+   g.globalAlpha=.8;
+   g.fillStyle='#352343';
+   g.fillRect(x-8,y-24,16,43);
+   g.fillStyle='#141019';
+   g.fillRect(x-5,y-21,10,39);
+   g.fillStyle='#c09be9';
+   g.fillRect(x-7,y-18,2,29);
+   g.fillRect(x+5,y-11,1,23);
    g.restore();
   }
  }
@@ -154,9 +172,21 @@ window.MolthuneCoffin=(()=>{
    }
    case 'molthuneEscape':
     await say(unknown,'We should go.');
+    await say('freya','To the mouth of the pass. We can get clear from there.');
+    quest.molthuneFlightReady=true;
+    break;
+   case 'molthuneFlyOut': {
+    const token=epoch;
+    if(!reduce.matches){
+     flight={epoch:token,at:performance.now()};
+     await delay(flightDuration);
+     if(token!==epoch)return false;
+    }
     quest.molthuneEscaped=true;
     await travel(shelter,328,344);
+    flight=null;
     break;
+   }
    case 'molthuneMeetVioletta':
     quest.molthuneIntroduced=true;
     await say(violet,'Lady Violetta Pavel of Nidal. I’m a diplomat. I’ve been shut in that coffin for nearly a year. And yes, I’m a vampire.');
@@ -174,5 +204,5 @@ window.MolthuneCoffin=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,effects,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,effects,flightPose,interact};
 })();
