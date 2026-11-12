@@ -57,13 +57,13 @@ window.Handheld=(()=>{
   entries([...Object.entries(planningMaps).map(([id,label])=>[label,()=>openPlanMap(id)]),['Back',()=>{view='quest';paint();}]]);
   details(['Reference layouts for the Barleybridge and Warlock Island plans.']);
  }
- async function openPlanMap(id){
-  planId=id;planImage=null;view='plan-map';ChapterMapPreview.select(id);paint();
+ async function openPlanMap(id,arrival){
+  planId=id;planImage=null;view='plan-map';ChapterMapPreview.select(id,arrival);paint();
   message('Opening map…');
   try{
    const loaded=await imageLoad(id+'.png');
    if(!open||view!=='plan-map'||planId!==id)return;
-   planImage=loaded;drawPlanMap();message('D-pad / arrows: move marker · E: toggle paths · B: back');
+   planImage=loaded;drawPlanMap();refreshPlanPrompt();
   }catch{
    if(open&&view==='plan-map'&&planId===id)message('The map could not load. Press B to return.');
   }
@@ -76,6 +76,25 @@ window.Handheld=(()=>{
   SceneLayers.foreground(g,planImage,{contain:true});
   ChapterMapPreview.draw(g,{font:'12px FolkenPixel, Georgia'});
  }
+ function hasPlanStops(){
+  return ChapterMapPreview.layouts[planId]?.points.some(p=>p.note||p.destination);
+ }
+ function refreshPlanPrompt(){
+  if(!hasPlanStops()){
+   message('D-pad / arrows: move marker · E: toggle paths · B: back');
+   return;
+  }
+  const stop=ChapterMapPreview.nearbyStop(),button=$('plan-inspect');
+  button.disabled=!stop;
+  button.textContent=stop?.destination?'Use passage':'Inspect';
+  message(stop?'A / Enter: '+stop.label+' · X: paths · B: back':'D-pad / arrows: move · A / Enter: inspect · X: paths · B: back');
+ }
+ function inspectPlanStop(){
+  if(!planImage)return;
+  const stop=ChapterMapPreview.nearbyStop();
+  if(stop?.destination)openPlanMap(stop.destination,stop.arrival);
+  else if(stop?.note)message(stop.note);
+ }
  function togglePlanPaths(){
   planPaths=ChapterMapPreview.togglePaths();
   $('pause-options').querySelector('button').textContent=planPaths?'Hide paths':'Show paths';
@@ -86,10 +105,23 @@ window.Handheld=(()=>{
   $('pause-title').textContent=title;
   map.setAttribute('aria-label',title+'. Move the planning marker with the direction controls.');
   map.hidden=false;
-  entries([[planPaths?'Hide paths':'Show paths',togglePlanPaths],['Back',()=>{view='planning-maps';paint();}]]);
+  const options=[[planPaths?'Hide paths':'Show paths',togglePlanPaths],['Back',()=>{view='planning-maps';paint();}]];
+  const interactive=hasPlanStops();
+  if(interactive)options.splice(1,0,['Inspect',inspectPlanStop,true]);
+  entries(options);
+  if(interactive)$('pause-options').children[1].id='plan-inspect';
   drawPlanMap();
  }
- function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=({item:'inventory','plan-map':'planning-maps','planning-maps':'quest'})[view]||'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='plan-map'){if(DIR[d]){ChapterMapPreview.key(e);drawPlanMap();}else if(confirm(e.key))togglePlanPaths();return true;}if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
+ function handlePlanKey(e,d){
+  if(!planImage)return;
+  if(DIR[d]&&ChapterMapPreview.key(e)){
+   drawPlanMap();
+   refreshPlanPrompt();
+  }else if(confirm(e.key)){
+   if(hasPlanStops())inspectPlanStop();else togglePlanPaths();
+  }else if(!e.repeat&&e.key.toLowerCase()==='i')togglePlanPaths();
+ }
+ function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=({item:'inventory','plan-map':'planning-maps','planning-maps':'quest'})[view]||'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='plan-map'){handlePlanKey(e,d);return true;}if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
  function dialogKey(e){if(!dialogOpen)return false;const d=KEY[e.key],buttons=[...$('choices').querySelectorAll('button')];if(d){e.preventDefault();navigate(buttons,d);return true;}if(confirm(e.key)){e.preventDefault();if(!e.repeat){if(buttons.length){(buttons.includes(document.activeElement)?document.activeElement:buttons[0])?.click();}else $('close').click();}return true;}if(back(e.key)){e.preventDefault();if(!buttons.length)$('close').click();return true;}return false;}
  function importKey(e){if(!$('save-import-dialog').open)return false;const d=KEY[e.key];if(d){e.preventDefault();navigate([$ ('import-confirm'),$('import-cancel')],d);}else if(confirm(e.key)){e.preventDefault();if(!e.repeat)(['import-confirm','import-cancel'].includes(document.activeElement.id)?document.activeElement:$('import-confirm')).click();}else if(back(e.key)){e.preventDefault();$('import-cancel').click();}return true;}
  function install(){ $('pause-toggle').onclick=show;}

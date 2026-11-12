@@ -11,16 +11,23 @@ window.ChapterMapPreview=(()=>{
     [160,64,80,32],[224,48,192,32],[400,64,80,32],[464,80,80,48],
     [512,224,48,32],[528,144,48,96],[544,96,48,64],[560,48,48,64]
    ],
-   points:[{label:'Reading dais',x:328,y:184},{label:'Gallery passage',x:584,y:56}]
+   points:[
+    {label:'Reading dais',x:328,y:184,note:'The central aisle ends at the dais. Follow the outer aisle east to reach the gallery passage.'},
+    {label:'Gallery passage',x:584,y:56,destination:'warlock-archive-v1',arrival:[296,344]}
+   ]
   },
   'warlock-archive-v1':{
-   spawn:[328,376],
+   spawn:[296,376],
    walk:[
-    [272,320,64,80],[32,288,576,32],[64,240,80,48],[64,176,16,64],
-    [272,224,32,64],[224,208,112,32],[464,240,48,48],[464,128,32,112],
+    [272,320,64,80],[32,288,576,48],[64,240,80,48],[64,176,16,64],
+    [272,224,32,64],[224,208,112,32],[416,256,48,32],[448,240,48,32],[464,128,32,112],
     [368,112,224,32],[560,96,32,48],[544,32,32,80]
    ],
-   points:[{label:'Document stacks',x:72,y:248},{label:'Display gallery',x:472,y:184}]
+   points:[
+    {label:'Library passage',x:296,y:376,destination:'warlock-library-v1',arrival:[584,88]},
+    {label:'Document stacks',x:72,y:248,note:'The western stacks open off the main corridor. The desk narrows the approach.'},
+    {label:'Display gallery',x:472,y:184,note:'The display cases divide the eastern gallery. Use the aisle between them.'}
+   ]
   },
   'barleybridge-throne-v1':{
    spawn:[328,376],
@@ -59,16 +66,22 @@ window.ChapterMapPreview=(()=>{
   return x>=0&&x<columns*tile&&y>=0&&y<rows*tile&&layout.walk.some(([left,top,width,height])=>
    x>=left&&x<left+width&&y>=top&&y<top+height);
  }
- function select(id){
+ function select(id,arrival){
   selected=layouts[id]||null;
-  position=selected?[...selected.spawn]:null;
+  position=selected?[...(arrival||selected.spawn)]:null;
+ }
+ function nearbyStop(){
+  if(!selected)return null;
+  return selected.points.find(p=>(p.note||p.destination)&&Math.abs(p.x-position[0])+Math.abs(p.y-position[1])<=tile)||null;
  }
  function key(event){
   const direction=directions[event.key]||directions[event.key.toLowerCase()];
   if(!selected||!direction)return;
   event.preventDefault();
   const next=position.map((coordinate,index)=>coordinate+direction[index]*tile);
-  if(passable(selected,...next))position=next;
+  if(!passable(selected,...next))return false;
+  position=next;
+  return true;
  }
  function togglePaths(){showPaths=!showPaths;return showPaths;}
  function draw(g,{font='11px system-ui'}={}){
@@ -83,12 +96,15 @@ window.ChapterMapPreview=(()=>{
   }
   g.font=font;
   g.textAlign='center';
-  for(const {label,x,y} of selected.points){
+  const active=nearbyStop();
+  for(const point of selected.points){
+   const {label,x,y}=point;
    g.fillStyle='#13141ddd';
    const width=Math.ceil(g.measureText(label).width)+10;
-   g.fillRect(x-width/2,y-24,width,15);
-   g.fillStyle='#f0d8aa';
-   g.fillText(label,x,y-13);
+   const labelX=Math.max(width/2,Math.min(columns*tile-width/2,x));
+   g.fillRect(labelX-width/2,y-24,width,15);
+   g.fillStyle=point===active?'#ffcd71':'#f0d8aa';
+   g.fillText(label,labelX,y-13);
    g.fillRect(x-2,y-2,5,5);
   }
   const [x,y]=position;
@@ -100,5 +116,5 @@ window.ChapterMapPreview=(()=>{
   g.fillRect(x-3,y-3,7,7);
   g.restore();
  }
- return {layouts,cast,select,key,passable,togglePaths,draw};
+ return {layouts,cast,select,key,passable,nearbyStop,togglePaths,draw};
 })();

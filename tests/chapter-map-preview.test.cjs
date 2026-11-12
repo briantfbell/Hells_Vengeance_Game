@@ -9,9 +9,10 @@ const path=require('node:path');
 const assets=path.join(__dirname,'..','art-test');
 const env={window:{}};
 vm.runInNewContext(fs.readFileSync(path.join(assets,'chapter-map-preview.js'),'utf8'),env);
-const {layouts,cast,passable}=env.window.ChapterMapPreview;
+const {layouts,cast,passable,select,key,nearbyStop}=env.window.ChapterMapPreview;
 
 test('chapter map previews can reach their marked destinations on the game grid',()=>{
+ const reachable=new Map();
  for(const [id,layout] of Object.entries(layouts)){
   assert(fs.existsSync(path.join(assets,id+'.png')),id);
   assert(passable(layout,...layout.spawn),id);
@@ -26,10 +27,23 @@ test('chapter map previews can reach their marked destinations on the game grid'
     }
    }
   }
+  reachable.set(id,visited);
   for(const point of layout.points)assert(visited.has([point.x,point.y].join(',')),id+' · '+point.label);
   assert(!passable(layout,-8,200));
   assert(!passable(layout,648,200));
  }
+ for(const [id,layout] of Object.entries(layouts)){
+  for(const stop of layout.points.filter(point=>point.destination)){
+   assert(reachable.get(stop.destination)?.has(stop.arrival.join(',')),stop.label+' arrival');
+   assert(layouts[stop.destination].points.some(point=>point.destination===id),stop.label+' return');
+   select(stop.destination,stop.arrival);
+   assert.equal(nearbyStop(),null,stop.label+' landing');
+  }
+ }
+ select('warlock-library-v1',[328,216]);
+ assert.equal(nearbyStop(),null);
+ assert(key({key:'ArrowUp',preventDefault(){}}));
+ assert.equal(nearbyStop().label,'Reading dais');
  for(const model of Object.values(cast)){
   const png=fs.readFileSync(path.join(assets,model.src));
   const width=png.readUInt32BE(16),height=png.readUInt32BE(20);

@@ -2,7 +2,7 @@
 
 The GM timeline lists the Archive of Redacted Histories on Warlock Island as a planned target. The Foundry folder Book5 / Warlock Island Library includes Magic Library (`Scene.AHKdFTaUaJ1sP66c`) and Museum Archives (`Scene.AKXADR2Bz9BDgrpN`). Their exported layouts informed the circular stacks and the divided museum wing. The exact arrangement of walkable routes and the marked destinations are game layout decisions.
 
-Open Longacre Art Studio and choose either Warlock Island environment. Focus the map and move the marker with arrows or WASD. Show walkable tiles to inspect the routes. The previews are outside campaign progression. Neither map has encounter triggers or affects a save.
+Open Longacre Art Studio and choose either Warlock Island environment. Focus the map and move the marker with arrows or WASD. Show walkable tiles to inspect the routes. After reviewing the Tathlum briefing in replay **464**, open **Current quest → Planning maps** and choose either Warlock Island environment. Walk to the marked passage and press **A**, **E**, or **Enter** to move between the library and archive. The reading dais, document stacks, and display gallery offer route notes. Use **X** on a controller or **I** on the keyboard to toggle paths. The link between the two maps is planning-stage layout, and the expedition’s outcome remains open. The route preview leaves campaign progress and saves untouched.
 
 ## Artwork prompts
 
@@ -19,3 +19,5 @@ Create a game-ready 8:5 wide environment for a 640x400 high-detail dark fantasy 
 ## Verification
 
 Both preview maps and the path overlay loaded in the browser without console errors. Keyboard movement reached the reading dais and display gallery. The automated route test verified all four marked destinations are reachable from their respective entrances on the game’s 16-pixel grid. All 169 automated tests and the campaign structural audit passed.
+
+The linked-route audit opened both floors from replay 464 at 640×480, inspected the reading dais and display gallery, toggled the path overlay, walked through the passage in both directions, and returned to Barleybridge with no console errors. All 174 tests passed. The structural audit checked 168 scenes, 475 replays, and 659 sprite frames.

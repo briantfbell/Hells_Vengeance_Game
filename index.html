@@ -100,6 +100,7 @@ body.is-combat .die{width:6.5cqw}body.is-combat .die svg{width:100%;height:auto}
 #pause-panel[data-view=plan-map] #pause-body{flex-direction:column;align-items:center;justify-content:center;gap:1cqw}
 #pause-plan-map{width:78cqw;max-width:100%;height:auto;image-rendering:pixelated;border:1px solid #8e734c;background:#14151f}
 #pause-panel[data-view=plan-map] #pause-options{width:78cqw;max-width:100%;flex:none}
+#pause-panel[data-view=plan-map] #pause-options:has(> :nth-child(3)){grid-template-columns:repeat(3,minmax(0,1fr))}
 body.inventory-roll #dice-panel{z-index:35}
 /* Initiative stays inside the existing 640×480 game surface. */
 #initiative-reveal{position:absolute;inset:0;z-index:24;padding:3cqw 4cqw;display:flex;flex-direction:column;background:linear-gradient(135deg,#211522f5,#09080ffb);color:#eed7a6;border:1px solid #997044}
