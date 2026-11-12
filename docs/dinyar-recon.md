@@ -1,0 +1,23 @@
+# Nidal and the approach to Citadel Dinyar
+
+GM timeline rows S141 and S142 date the split to 14 Gozran, 4717. Draymus, Violetta Pavel and Corrine travel to Nidal to seek an operation to remove Draymus’s brain. The campaign blog P001, “Fuck-It List,” records that the group teleports there while Freya, J’Mal, Reese and Jason scout Dinyar. The Nidal scene depicts their arrival and plans to seek a physician. The campaign record leaves the outcome of the operation open at this point.
+
+Corrine learned about the concealed entrance from a young Hellknight signifier who escaped to warn the capital. The fortress consists of two keeps connected by a bridge over a deep chasm. The Glorious Reclamation has held it for nearly a year. J’Mal and Reese locate the entrance, and the group hopes to find surviving Godclaw Hellknights below. The exact briefing dialogue, arrival courtyard, observation route, and position of the hidden entrance are adaptations.
+
+The exported Foundry journal `JournalEntry.KCdVUuF4I36HvXIj` contains an image reference for Citadel Dinyar. The referenced artwork returned HTTP 404 in the archive. The game uses the blog’s architectural description for the new map.
+
+## Artwork prompts
+
+Both maps were created with the built-in image generator.
+
+**Nidal arrival court** · `art-test/nidal-arrival-court-v1.png`
+
+High-detail dark fantasy pixel art environment for a fixed 640x400 RPG game map, 8:5 landscape ratio. Orthographic top-down 3/4 view of a discreet covered arrival courtyard in Nidal, empty. Tall narrow gothic black-stone buildings, wine purple shadows, dark slate tiles, one distant closed ironbound double doorway centered against north wall with subtle warm violet lamps. Clear central southern entrance, broad continuous walkable dark gray stone court within x 20 to 80 percent and y 40 to 90 percent. Detailed handmade clusters and quiet ambient lighting, grounded, somber. No characters, no creature, no signs or words, no game grid or UI, no circular floor sigil, no actual portal.
+
+**Citadel Dinyar ridge** · `art-test/dinyar-ridge-v1.png`
+
+Wide 8:5 landscape overhead three-quarter orthographic map for a detailed dark fantasy pixel RPG with fine hard pixel clusters, used as a playable 640x400 canvas. Citadel Dinyar, rocky mountain fortress of two separate gray-black stone keeps connected by a high narrow masonry bridge crossing a very deep rocky chasm, two distinct keeps and connecting bridge clearly recognizable along upper half. The nearer keep on the upper left, other on upper right, everything north of y 54 percent. In the foreground a broad continuous rocky observation shelf spans x 16 to 83 percent from y 57 to 88 percent, connected with a clear footpath exiting bottom center. The rock face of the nearer keep meets the shelf at x 24 percent near midline, with an unremarkable masonry seam near there suggesting a hidden postern. A low ledge on the right provides a view of the bridge. No people, no labels, no grid, no game UI. Muted iron blue and charcoal, gray slate and sparse amber torches, detailed evening lighting and rock textures.
+
+## Verification
+
+The browser playthrough started from the Molthune checkpoint, followed the briefing, reloaded in Nidal, verified both playable rosters, and completed the ridge scouting and lower-approach plan. The final checkpoint loaded at 640×480 with no browser console errors. All 165 automated tests passed. The structural audit checked 158 scenes, 445 replays and 645 sprite frames.

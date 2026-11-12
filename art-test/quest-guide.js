@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const dinyar=window.DinyarRecon?.goal();
+ if(dinyar)return {text:dinyar,target:DinyarRecon.target()};
  const coffin=window.MolthuneCoffin?.goal();
  if(coffin)return {text:coffin,target:MolthuneCoffin.target()};
  const skadi=window.SkadiParley?.goal();

@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.dinyarReconComplete)rows.push('Isger · J’Mal and Reese find the concealed entrance at Citadel Dinyar. Freya plans to search for surviving Godclaw Hellknights.');
+  if(q.nidalOperationSought)rows.push('14 Gozran, 4717 · Draymus, Violetta and Corrine travel to Nidal to seek a physician. Freya takes J’Mal, Reese and Jason to scout Dinyar.');
   if(q.molthuneComplete)rows.push('Molthune · Lady Violetta Pavel, a diplomat from Nidal, offers to help the company after her escape from the coffin.');
   if(q.molthuneEscaped)rows.push('Molthune · 13 Gozran, 4717. The company diverts the ancient remorhaz and escapes the Wight Mother’s undead.');
   if(q.skadiComplete)rows.push('Isger · 12 Gozran, 4717. Freya wins passage from Skadi and agrees to remove the box near an ancient remorhaz in Molthune.');

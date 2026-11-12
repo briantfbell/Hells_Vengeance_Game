@@ -1,7 +1,7 @@
 {
-  "scripts": 97,
-  "scenes": 156,
-  "replays": 440,
+  "scripts": 98,
+  "scenes": 158,
+  "replays": 445,
   "framesInspected": 645,
   "framesChecked": 645,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 653971936,
+  "assetBytes": 660435710,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 260,
-  "startupCompressedBytes": 598765896,
-  "startupDecodedRgbaBytes": 1627778312,
+  "startupAssets": 262,
+  "startupCompressedBytes": 605222861,
+  "startupDecodedRgbaBytes": 1640364808,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -125,6 +125,7 @@
     "darkrain-skull-v1.png",
     "darkrain-wight-mother-v1.png",
     "dice-atlas-v1.png",
+    "dinyar-ridge-v1.png",
     "dottari.png",
     "draymus-chair-walk-v1.png",
     "draymus-opposite-step-v3.png",
@@ -231,6 +232,7 @@
     "molthune-waystation-v1.png",
     "molthune-wight-warrior-v1.png",
     "mounted-freya-v1.png",
+    "nidal-arrival-court-v1.png",
     "ovinnik-idle-v1.png",
     "pale-cabin-v1.png",
     "pale-graveyard-v1.png",

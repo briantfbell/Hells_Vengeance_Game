@@ -349,3 +349,7 @@ Continue from the dragon skull or select replay **423**. Scout the settlement, a
 ### The Coffin Recovery in Molthune
 
 Continue from Skadi’s feast hall or select replay **429**. Scout as Reese, use the animated bear to draw away the remorhaz, and get Lady Violetta Pavel beyond the Wight Mother’s reach. Replays **429–436** cover the rescue. See [the section notes](docs/molthune-coffin.md) for sources, artwork and verification.
+
+### Nidal and Citadel Dinyar
+
+Continue from the Molthune wayside or select replay **437**. Follow Draymus to Nidal, then scout Citadel Dinyar with Freya, J’Mal, Reese and Jason. Replays **437–441** cover the split and discovery of the hidden entrance. See [the section notes](docs/dinyar-recon.md) for sources, maps and verification.
