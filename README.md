@@ -51,7 +51,7 @@ The admin toolbar’s **Find replay** field filters checkpoints by number, scene
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 468 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 470 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 

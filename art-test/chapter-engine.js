@@ -649,7 +649,7 @@ function drawActor(g,u,height=55){
  const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);if(hp[u.id]===0)g.globalAlpha=.38;
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
-function drawNPC(u){if(u.pose==='prone'||u.hp!==undefined&&u.hp<=0){ctx.save();ctx.globalAlpha=u.pose==='prone'?1:.65;ctx.translate(u.x,u.y);ctx.rotate(-Math.PI/2);const flat={...u,x:0,y:0,hp:undefined,pose:null};if(CORE.includes(u.id))drawActor(ctx,flat);else drawNPC(flat);ctx.restore();return;}if(u.id==='bruce'){drawActor(ctx,{...u,step:null,anim:0},55);return;}if(u.id==='reese'){drawActor(ctx,{...u,dir:'up',step:null,anim:0},55);return;}if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
+function drawNPC(u){if(window.TathlumHunt?.drawPatrol(ctx,u))return;if(u.pose==='prone'||u.hp!==undefined&&u.hp<=0){ctx.save();ctx.globalAlpha=u.pose==='prone'?1:.65;ctx.translate(u.x,u.y);ctx.rotate(-Math.PI/2);const flat={...u,x:0,y:0,hp:undefined,pose:null};if(CORE.includes(u.id))drawActor(ctx,flat);else drawNPC(flat);ctx.restore();return;}if(u.id==='bruce'){drawActor(ctx,{...u,step:null,anim:0},55);return;}if(u.id==='reese'){drawActor(ctx,{...u,dir:'up',step:null,anim:0},55);return;}if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
  if(u.id==='krenshar')return;
   if(u.id.startsWith('citizen-')||u.id.startsWith('execution-citizen-')){drawCitizen(u);return;}
  if(u.id==='tria'||u.id==='corrine'){drawQuestgiver(u.id,u.x,u.y,u.height||58);return;}
@@ -1048,6 +1048,8 @@ function replaySections(){
  add('tathlum-return','407 · Return to Egorian','menador_pass',[328,144],'menadorComplete');
  add('tathlum-orders','408 · The Tathlum assignment','tathlum_orders',[328,344],'tathlumOrdersReached');
  add('tathlum-nidal-road','409 · Leave for Nidal','tathlum_orders',[328,272],'tathlumBriefed');
+ add('tathlum-patrol','409A · The Gheistano patrol','gheistano_road',[328,344],'tathlumBorderReached');
+ add('tathlum-cover','409B · Slip past the patrol','gheistano_road',[296,248],'tathlumPatrolSpotted');
  add('tathlum-village','410 · Investigate the giant attacks','nidal_hunt_village',[328,344],'tathlumNidalReached');
  add('tathlum-track','411 · Follow the cave-giant trail','nidal_hunt_village',[216,200],'tathlumThrallMade');
  add('tathlum-bait','412 · The cave-giant lair','nidal_giant_lair',[328,344],'tathlumLairReached');
@@ -1113,7 +1115,7 @@ function replaySearchText(value){
 function matchingReplaySections(sections,query){
  const terms=replaySearchText(query);
  if(!terms)return sections;
- if(/^\d+$/.test(terms))return sections.filter(section=>Number(section.name.match(/^\d+/)?.[0])===Number(terms));
+ if(/^\d+$/.test(terms))return sections.filter(section=>Number(section.name.match(/^\d+(?=\s*·)/)?.[0])===Number(terms));
  const words=terms.split(' ');
  return sections.filter(section=>{
   const entry=replaySearchText(section.name+' '+(scenes[section.scene]?.name||'')+' '+section.scene);

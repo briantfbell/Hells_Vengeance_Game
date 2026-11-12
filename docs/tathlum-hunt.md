@@ -4,6 +4,12 @@ GM timeline row S136 dates Freya’s Tathlum assignment to 4 Gozran, 4717. S137 
 
 Corrine delivers the Queen’s instructions in the game. The village, lair, exact number of three duels, enemy statistics and dialogue are adaptations. The party recovers before the expedition. The game records the cave-giant rune as awakening on the belt Freya already has in the blog. Freya’s Foundry Championship Belt item B8WdcS4xvdExMyJb records 120 ft. darkvision and a bonus to finding hidden panels and doors for this rune, along with the earlier Yunero result. The inventory describes those properties. The game currently leaves them as lore. The sources do not date the belt’s original acquisition.
 
+## Citadel Gheistano
+
+The approach is playable in sections 409A and 409B. The player spots the patrol from the clearing, then follows the covered path to the left. P001 records the company seeing the citadel and avoiding the Nidalese patrols despite their alliance, so they could travel without delay. The route, two guards and dialogue are adaptations. The patrol’s armor and shield reference the generic Foundry Nidalese Soldier (Actor.kFPeBUr3yxv6peS7).
+
+The approach map is `art-test/gheistano-road-v1.png`. The patrol uses a transparent three-frame sheet at `art-test/nidal-patrol-v1.png` with a standing pose and alternate footfalls.
+
 ## Artwork prompts
 
 **Nidal village** · `art-test/tathlum-nidal-village-v1.png`
