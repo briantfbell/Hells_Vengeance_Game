@@ -454,6 +454,28 @@ test('Riley’s interrogation yields both facts before the letter unlocks the ho
   assert.equal(w.LastStand.target().id,'hillRoad');
  }
 });
+test('the hill can be searched in either order and returns older completed saves to jail',async()=>{
+ for(const checks of [['hillTree','hillRidge'],['hillRidge','hillTree'],[]]){
+  const w=world();
+  vm.runInContext(read('last-stand-chapter.js'),w);
+  w.scene='angel_hill';
+  w.quest={chapter4:true,bolgartSubdued:true,prisonersJailed:true,rileyQuestioned:true,churchDoorsRepaired:true,hillSearched:checks.length===0};
+  if(checks.length){
+   assert.equal(await w.LastStand.interact(checks[0]),false);
+   await w.LastStand.interact('hillSearch');
+   assert.equal(w.LastStand.goal(),'Search the hill [0/2].');
+   await w.LastStand.interact(checks[0]);
+   assert.equal(w.LastStand.goal(),'Search the hill [1/2].');
+   assert.equal(await w.LastStand.interact('hillReturn'),false);
+   await w.LastStand.interact(checks[1]);
+   assert(w.quest.hillSearched);
+  }
+  assert.equal(w.LastStand.target().id,'hillReturn');
+  await w.LastStand.interact('hillReturn');
+  assert.equal(w.scene,'longacre_jail');
+  assert.equal(w.LastStand.target().id,'bolgartStocks');
+ }
+});
 test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.quest={chapter6:true};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});
 
 test('six-character battles start safely and stay within the fixed combat field',()=>{const w=world(),s=read('chapter-engine.js');w.units=w.CORE.map(id=>({id}));w.showCombatMessage=w.paintBattle=()=>{};vm.runInContext(s.slice(s.indexOf('function startBattle('),s.indexOf('function showCombatMessage(')),w);w.startBattle(0,false,{kind:'ovinnik',enemies:[{id:'ovinnik',name:'Ovinnik',hp:38,max:38}]});assert.equal(w.units.length,6);assert(w.units.some(u=>u.id==='reese'));w.battlefieldHeight=()=>368;w.activeUnit=()=>w.units[0];vm.runInContext(s.slice(s.indexOf('function battlePosition('),s.indexOf('function healthBadge(')),w);const places=w.units.map(u=>w.battlePosition(u));assert.equal(new Set(places.map(p=>p.x)).size,6);assert(places.every(p=>p.x-34>=0&&p.x+34<=640&&p.y+34<368));});

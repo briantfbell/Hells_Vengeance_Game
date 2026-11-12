@@ -3,9 +3,10 @@ window.LastStand=(()=>{
  const r=(x,y,w,h)=>({x,y,w,h});
  const rearDoor=[328,111],bardStage=[467,119],bar=[280,176],tavernFloor=[300,250],tavernEntry=[328,328];
  const jailCells='longacre_cells';
+ const hillChecks={hillTree:{flag:'hillTreeSearched',speaker:'jamal',line:'Nothing fresh beneath the tree. No footprints I can follow.'},hillRidge:{flag:'hillRidgeSearched',speaker:'reese',line:'I can see both sides of the ridge from here. Nobody’s coming, and there’s no trail down.'}};
  const panDuration=420,captureDuration=880;
  let tavernBeat=null;
- const maps={last_stand:{name:'Chapter Four · The Last Stand',image:'last-stand.png',spawn:[328,328],walk:[r(144,144,336,176),r(272,304,80,80),r(272,80,80,80),r(480,176,64,96)],blocks:[],lights:[[116,116],[248,104],[520,176]],points:[{id:'lastDecree',x:328,y:328,label:'Repost the torn decree'},{id:'lastPatrons',x:424,y:256,label:'Speak to the patrons'},{id:'takePrisoners',x:328,y:352,label:'Escort the prisoners to jail'}]},angel_hill:{name:'Outside Longacre · The Angel Knight’s Hill',image:'angel-knight-hill.png',spawn:[328,344],walk:[r(272,272,96,112),r(144,128,336,176)],blocks:[],lights:[],points:[{id:'hillSearch',x:312,y:176,label:'Inspect Riley’s meeting place'},{id:'hillReturn',x:328,y:352,label:'Return to the jail'}]}};
+ const maps={last_stand:{name:'Chapter Four · The Last Stand',image:'last-stand.png',spawn:[328,328],walk:[r(144,144,336,176),r(272,304,80,80),r(272,80,80,80),r(480,176,64,96)],blocks:[],lights:[[116,116],[248,104],[520,176]],points:[{id:'lastDecree',x:328,y:328,label:'Repost the torn decree'},{id:'lastPatrons',x:424,y:256,label:'Speak to the patrons'},{id:'takePrisoners',x:328,y:352,label:'Escort the prisoners to jail'}]},angel_hill:{name:'Outside Longacre · The Angel Knight’s Hill',image:'angel-knight-hill.png',spawn:[328,344],walk:[r(288,240,80,144),r(176,128,288,128)],blocks:[],lights:[],points:[{id:'hillSearch',x:312,y:176,label:'Ask Riley to point out the spot'},{id:'hillTree',x:200,y:152,label:'Search beneath the tree'},{id:'hillRidge',x:440,y:152,label:'Check the ridge'},{id:'hillReturn',x:328,y:352,label:'Return to the jail'}]}};
  maps[jailCells]={
   name:'Longacre Jail · The Cells',image:'longacre-jail-cells-v1.png',spawn:[328,344],
   walk:[r(144,208,352,96),r(288,288,64,96)],blocks:[],lights:[[191,129],[448,128],[582,111]],
@@ -13,9 +14,9 @@ window.LastStand=(()=>{
  };
  function install(){Object.assign(scenes,maps);JOURNEYS[jailCells]='Bolgart remains in the courtyard pillory. Riley is locked in a cell inside the jail.';scenes.longacre_jail.walk.push(r(128,232,48,80));for(const [id,s] of Object.entries(maps))MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#121820'}};NAMES.bolgart='Bolgart Caggan';NAMES.bolgart_wereboar='Bolgart · Wereboar';NAMES.riley='Riley Kels';STATS.bolgart={hp:46,ac:13,atk:4,dmg:[1,6,2]};STATS.bolgart_wereboar={hp:64,ac:14,atk:6,dmg:[1,8,3]};scenes.scarlet_manor.points.push({id:'lastStandRoad',x:328,y:352,label:'Continue to the Last Stand'});scenes.longacre_jail.points.push({id:'jailCells',x:440,y:200,label:'Enter the jail to question Riley'},{id:'hospiceRoad',x:328,y:352,label:'Open Razelago’s letter'},{id:'hillRoad',x:328,y:352,label:'Follow Riley to the hill'},{id:'bolgartStocks',x:152,y:264,label:'Approach Bolgart in the stocks'},{id:'lastReport',x:328,y:352,label:'Report to Razelago'});}
  async function load(loader){for(const [id,s] of Object.entries(maps))art[id]=await loader(s.image);art.later=await loader('longacre-later-cast.png');art.bolgartStocks=await loader('bolgart-stocks-v1.png');}
- function goal(){if(!quest.chapter4)return quest.chapter3Complete?'Continue to the Last Stand.':null;if(quest.chapter4Complete)return 'Chapter complete · The town’s resistance is growing.';return !quest.bolgartSubdued?'Repost the torn decree at the Last Stand.':!quest.prisonersJailed?'Escort Bolgart and Riley to the jail.':!quest.rileyQuestioned?(scene===jailCells?'Question Riley about the Angel Knight.':'Enter the jail to question Riley.'):!quest.churchDoorsRepaired?'Open Razelago’s letter.':!quest.hillSearched?'Investigate the hill Riley describes.':!quest.bolgartSecured?'Return to the jail and approach Bolgart.':'Report the captures to Razelago.';}
- function target(){const id=!quest.chapter4?'lastStandRoad':!quest.bolgartSubdued?'lastDecree':!quest.prisonersJailed?'takePrisoners':!quest.rileyQuestioned?(scene===jailCells?'rileyQuestion':'jailCells'):!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?(scene==='angel_hill'?'hillSearch':'hillRoad'):!quest.bolgartSecured?(scene==='angel_hill'?'hillReturn':'bolgartStocks'):'lastReport';return point(id);}
- function points(){if(!quest.chapter4)return null;if(scene==='last_stand')return scenes[scene].points.filter(p=>p.id==='lastPatrons'||p.id===(quest.bolgartSubdued?'takePrisoners':'lastDecree'));if(scene===jailCells)return [point(quest.rileyQuestioned?'hospiceRoad':'rileyQuestion')];if(scene==='angel_hill')return scenes[scene].points.filter(p=>p.id===(quest.hillSearched?'hillReturn':'hillSearch'));if(scene==='longacre_jail')return scenes[scene].points.filter(p=>p.id===(!quest.rileyQuestioned?(scene===jailCells?'rileyQuestion':'jailCells'):!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?'hillRoad':!quest.bolgartSecured?'bolgartStocks':'lastReport'));if(scene==='ash_house'&&quest.chapter4Complete)return [point('razelago')];return null;}
+ function goal(){if(scene==='angel_hill'&&quest.chapter4&&!quest.chapter4Complete)return hillGoal();if(!quest.chapter4)return quest.chapter3Complete?'Continue to the Last Stand.':null;if(quest.chapter4Complete)return 'Chapter complete · The town’s resistance is growing.';return !quest.bolgartSubdued?'Repost the torn decree at the Last Stand.':!quest.prisonersJailed?'Escort Bolgart and Riley to the jail.':!quest.rileyQuestioned?(scene===jailCells?'Question Riley about the Angel Knight.':'Enter the jail to question Riley.'):!quest.churchDoorsRepaired?'Open Razelago’s letter.':!quest.hillSearched?'Investigate the hill Riley describes.':!quest.bolgartSecured?'Return to the jail and approach Bolgart.':'Report the captures to Razelago.';}
+ function target(){if(scene==='angel_hill'&&quest.chapter4)return hillPoints()[0];const id=!quest.chapter4?'lastStandRoad':!quest.bolgartSubdued?'lastDecree':!quest.prisonersJailed?'takePrisoners':!quest.rileyQuestioned?(scene===jailCells?'rileyQuestion':'jailCells'):!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?(scene==='angel_hill'?'hillSearch':'hillRoad'):!quest.bolgartSecured?(scene==='angel_hill'?'hillReturn':'bolgartStocks'):'lastReport';return point(id);}
+ function points(){if(!quest.chapter4)return null;if(scene==='last_stand')return scenes[scene].points.filter(p=>p.id==='lastPatrons'||p.id===(quest.bolgartSubdued?'takePrisoners':'lastDecree'));if(scene===jailCells)return [point(quest.rileyQuestioned?'hospiceRoad':'rileyQuestion')];if(scene==='angel_hill')return hillPoints();if(scene==='longacre_jail')return scenes[scene].points.filter(p=>p.id===(!quest.rileyQuestioned?(scene===jailCells?'rileyQuestion':'jailCells'):!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?'hillRoad':!quest.bolgartSecured?'bolgartStocks':'lastReport'));if(scene==='ash_house'&&quest.chapter4Complete)return [point('razelago')];return null;}
  function currentBeat(){return scene==='last_stand'&&tavernBeat&&tavernBeat.epoch===epoch?tavernBeat:null;}
  function beatProgress(beat,duration){return reduce.matches?1:Math.min(1,(performance.now()-beat.start)/duration);}
  function tavernActors(){
@@ -33,7 +34,7 @@ window.LastStand=(()=>{
    ...(quest.rileyQuestioned?[{id:'riley',x:456,y:216}]:[]),
    quest.bolgartSecured?{id:'bolgart',pose:'stocks',x:224,y:248}:{id:'bolgart',pose:'stocks',x:120,y:264}
   ];
-  if(scene==='angel_hill')return [{id:'riley',x:400,y:216}];
+  if(scene==='angel_hill')return [{id:'riley',x:328,y:163}];
   return null;
  }
  function drawCellBars(g){
@@ -107,6 +108,26 @@ window.LastStand=(()=>{
   updateObjective();
  }
 
+ function hillPoints(){
+  if(quest.hillSearched)return [point('hillReturn')];
+  if(!quest.hillSpotShown)return [point('hillSearch')];
+  return Object.entries(hillChecks).filter(([,check])=>!quest[check.flag]).map(([id])=>point(id));
+ }
+ function hillGoal(){
+  if(quest.hillSearched)return 'Return to the jail with Riley.';
+  if(!quest.hillSpotShown)return 'Have Riley show you where he saw the knight.';
+  const count=Object.values(hillChecks).filter(check=>quest[check.flag]).length;
+  return 'Search the hill ['+count+'/2].';
+ }
+ async function searchHill(id){
+  const {flag,speaker,line}=hillChecks[id];
+  if(quest[flag])return;
+  await say(speaker==='reese'&&!quest.reeseJoined?'freya':speaker,line);
+  const complete=Object.values(hillChecks).every(check=>check.flag===flag||quest[check.flag]);
+  if(complete)await say('freya','The knight’s gone and we have no trail. Bring Riley back to the jail.');
+  quest[flag]=true;
+  if(complete)quest.hillSearched=true;
+ }
  async function interact(id){if(id==='lastStandRoad'){await begin();return true;}if(!quest.chapter4)return false;
  if(id==='lastDecree'&&!quest.bolgartSubdued)await confrontBolgart();
  else if(id==='lastPatrons')await say('Tavern patron',quest.bolgartSubdued?'We’re leaving. There’s no need for more trouble.':'Riley sings about a knight he saw outside town. We came to hear the story.');
@@ -132,8 +153,13 @@ window.LastStand=(()=>{
  }
 
  else if(id==='hillRoad'){if(!quest.churchDoorsRepaired)return false;await journeyCard('Outside Longacre · Before dawn','The hospice visit and church investigation are complete. The party takes Riley two miles out of town to the hill he described.');await travel('angel_hill',328,344);}
- else if(id==='hillSearch'){await say('riley','Here. This is where I saw her, before dawn.');await say('Chronicle','The party searches the hill and the surrounding ground. There is no sign of the Angel Knight and no new trail to follow. Riley remains their prisoner.');quest.hillSearched=true;}
- else if(id==='hillReturn')await travel('longacre_jail',328,312);
+ else if(id==='hillSearch'&&scene==='angel_hill'&&!quest.hillSearched&&!quest.hillSpotShown){
+  await say('riley','There, in the clearing. She was kneeling in prayer. I thought I had seen an angel.');
+  await say('freya','Stay here with us. Check beneath the tree and along the ridge.');
+  quest.hillSpotShown=true;
+ }
+ else if(scene==='angel_hill'&&quest.hillSpotShown&&!quest.hillSearched&&Object.hasOwn(hillChecks,id))await searchHill(id);
+ else if(id==='hillReturn'&&scene==='angel_hill'&&quest.hillSearched)await travel('longacre_jail',328,312);
  else if(id==='bolgartStocks'){await say('Chronicle','Back at the jail in the early morning, Bolgart looks remarkably recovered. He taunts the party from the stocks.');await say('jamal','You are still in our custody. Keep that in mind.');await say('Chronicle','Bolgart strains against the pillory. His body swells and twists; tusks push from his face. The hidden wereboar breaks free and charges J’Mal.');await say('Chronicle','Freya moves to her mount, Sleipnir, and readies her lance while the others hold Bolgart back.');startBattle(0,false,{kind:'wereboar',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',hp:64,max:64}]});}
  else if(id==='lastReport'){await travel('ash_house',328,296);await say('razelago','The tavern’s gathering is ended, and both prisoners are secured. Keep your sashes visible. Longacre is watching you.');quest.chapter4Complete=true;await say('Chapter Four complete','Riley’s claimed meeting led to an empty hill. Bolgart’s hidden curse has been exposed. The prisoners remain alive in custody; their later fate is still ahead.');}
  else return false;save();updateObjective();return true;}

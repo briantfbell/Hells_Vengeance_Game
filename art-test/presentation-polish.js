@@ -9,7 +9,7 @@ window.PresentationPolish=(()=>{
  function paintDice(){const im=art['dice-atlas-v1.png'];if(!im)return;for(const c of document.querySelectorAll('#dice-tray canvas[data-die],#initiative-results canvas[data-die]')){const f=diceFrames[Number(c.dataset.die)],g=c.getContext('2d'),scale=Math.min(60/f.w,60/f.h);g.clearRect(0,0,64,64);g.imageSmoothingEnabled=false;g.drawImage(im,f.x,f.y,f.w,f.h,(64-f.w*scale)/2,(64-f.h*scale)/2,f.w*scale,f.h*scale);}}
  function citizenMeta(variant){return variant<4?CITIZEN_FRAMES[variant]:window.EXTRA_CITIZEN_FRAMES?.[variant-4]||CITIZEN_FRAMES[0];}
  function citizenPortrait(id,g){const u=townsfolk().find(u=>u.id===id),variant=u?.variant??0,m=citizenMeta(variant),f=m.frames[0],im=variant<4?art.citizens:art['townsfolk-sheet-v2.png'];if(!im)return false;g.clearRect(0,0,96,96);g.fillStyle='#25212a';g.fillRect(0,0,96,96);g.imageSmoothingEnabled=false;const side=Math.min(f.w,f.h*.28);g.drawImage(im,f.x+(f.w-side)/2,f.y,side,side,3,3,90,90);return true;}
- const captiveLocations={last_stand:[397,277],longacre_cells:[328,180],longacre_jail:[456,216],rohalendi_hospice:[392,280],longacre_church_front:[389,222],longacre_church:[392,216],angel_hill:[400,216]};
+ const captiveLocations={last_stand:[397,277],longacre_cells:[328,180],longacre_jail:[456,216],rohalendi_hospice:[392,280],longacre_church_front:[389,222],longacre_church:[392,216],angel_hill:[328,163]};
  function captive(){
   return !!(quest.rileyCaptured&&!quest.jailbreakHeard&&!quest.chapter7&&captiveLocations[scene]&&(scene!=='longacre_jail'||quest.rileyQuestioned));
  }
