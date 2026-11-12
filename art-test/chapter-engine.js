@@ -57,10 +57,10 @@ const JOURNEYS={
  tavern:'Shensen, the famous actress, is absent from her musical instrument shop, the Silver Star. Jason searches for the entrance to the hidden temple of Sarenrae.',
  temple:'Descend beneath the Silver Star. Find Viggo, end the temple, and leave the false evidence.',
  western_star:'Kintargo falls behind the party. The first stop on the voyage is Pezzack.',
- remesiana:'10 Neth, 4716. The Western Star reaches Remesiana. Meet Cimri and arrange the road to Freya’s next assignment in Longacre.',
+ remesiana:'10 Neth, 4716. The Western Star reaches Remesiana. The company has time to shop before Freya meets her contact.',
  last_stand:'The posted decree has been torn down. Repost it while J’Mal watches the back door. Subdue resistance and take the prisoners to jail.',
  angel_hill:'Riley describes a meeting two miles outside Longacre. Keep him under guard and inspect the hill before returning to the jail.',
- tannery:'Cimri leads the party northwest to Longacre, where the rental horses are returned. Razelago’s first test is a robbery: take the payroll from Louslik Tannery. J’Mal approaches the palisade alone.',
+ tannery:'Cimri leads the party northwest to Longacre, where they return the rental horses. Louslik Tannery lies about a mile west of town.',
  ash_house:'Cimri guides the party to the ruined Ash House. Razelago waits behind the screens.',
  bathroom:'J’Mal investigates the splashing alone. His companions wait on the landing.',
  longacre_square:'Enter Longacre’s church square and carry out Razelago’s instructions.',
@@ -357,7 +357,7 @@ async function awardSermonMilestone(){
 function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
 // Later Ash House interactions are exposed only by their chapter’s gated points() handler.
 function storyPointAvailable(p){
- if(['western_star','western_star_corentyn','western_star_pezzack'].includes(scene))return p.id===NextChapter.target()?.id;
+ if(['western_star','western_star_corentyn','western_star_pezzack','remesiana'].includes(scene))return p.id===NextChapter.target()?.id;
  const completed={supplies:'supplied',cimri:'metCimri',guapoDeparture:'guapoAway',scout:'scouted',owner:'ownerDeal',payroll:'payroll',rest:'rested',bathStairs:'spiritCalmed',sermon:'sermonDispersed',noticeDecree:'noticePosted',tavernDecree:'tavernPosted',gateDecree:'gatePosted',jailDecree:'rhonaDismissed'};
  if(completed[p.id]&&quest[completed[p.id]])return false;
  if(['noticeDecree','tavernDecree','gateDecree','jailDecree'].includes(p.id)&&!quest.decreesIssued)return false;
@@ -491,7 +491,7 @@ function commandSummary(action,id){
 }
 function commandCardSummary(action,id){
  const stat=STATS[id],skill=SPECIAL[id],roll=d=>rollSummary(d).replaceAll(' ',''),hit='D20'+signed(stat.atk+(action==='special'?(skill.bonus||0):0)),left=Math.max(0,skill.uses-uses[id]),ally=NAMES[battle.ally||id];
- const weapon=({freya:'Katana',jamal:'Daggers',jason:'Mace',draymus:'Dagger',guapo:'Rapier',reese:'Bow',naginata:'Naginata',lucerne:'Lucerne',kukri:'Kukri',mantis_blades:'Paired blades',scimitar:'Scimitar'})[inventory.equipped[id]]||WEAPONS[id];
+ const weapon=({freya:'Katana',jamal:'Daggers',masterwork_daggers:'Masterwork',jason:'Mace',draymus:'Dagger',guapo:'Rapier',reese:'Bow',naginata:'Naginata',lucerne:'Lucerne',kukri:'Kukri',mantis_blades:'Paired blades',scimitar:'Scimitar'})[inventory.equipped[id]]||WEAPONS[id];
  if(action==='attack'&&unarmedWeapon(id))return 'Unarmed\n'+hit+' '+roll(unarmedWeapon(id).dmg);
  if(action==='attack'&&window.SouthRoad?.lance(id,battle?.kind))return 'Lance charge\n'+hit+' '+roll(SouthRoad.damageDice(id,battle.kind,stat.dmg));
  if(action==='attack')return stat.frostDice?'Sentry +1D6\n'+hit+' '+roll(stat.dmg):weapon+'\n'+hit+' '+roll(stat.dmg);
@@ -854,7 +854,11 @@ function replaySections(){
  add('ship-prize-sale','05E · Hand over the prize','western_star_corentyn',[472,216],'scimitarDisposed');
  add('ship-refit','05F · Refit at Corentyn','western_star_corentyn',[280,168],'voyagePrizeTurnedIn');
  add('market','06 · Remesiana harbor','remesiana',[520,280],'voyageCorentynSupplied');
- add('tannery','07 · J’Mal scouts the tannery','tannery',[136,280],'supplied metCimri guapoAway');q.activeRoster=OPENING_ROSTER.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
+ add('market-contact','06A · Meet Cimri in Remesiana','remesiana',[200,200],'supplied');
+ add('market-farewell','06B · See El Guapo off','remesiana',[424,200],'metCimri');
+ add('market-road','06C · Ride to Longacre','remesiana',[520,280],'guapoAway');
+ q.activeRoster=OPENING_ROSTER.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
+ add('tannery','07 · J’Mal scouts the tannery','tannery',[136,280]);q.activeRoster=OPENING_ROSTER.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
  add('employer','08 · Ash House employer','ash_house',[328,328],'scouted ownerDeal payroll');q.goldReward=100;add('rest','09 · Rest at Ash House','ash_house',[328,296],'reward');add('bath','10 · The upstairs bath','bathroom',[328,328],'rested');
  add('sermon','11 · Allamar’s sermon','longacre_square',[328,296],'bathStarted jamalRescued spiritCalmed chapter2Complete chapter3');
  add('decrees','12 · Posting the decrees','ash_house',[328,296],'sermonDispersed decreesIssued');add('dismissal','13 · Rhona’s dismissal','longacre_jail',[328,312],'noticePosted tavernPosted gatePosted');add('ambush','14 · Former deputies’ ambush','longacre_jail',[328,312],'jailPosted rhonaDismissed');

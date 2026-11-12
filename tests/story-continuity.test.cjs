@@ -3,7 +3,35 @@ const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'
 function world(){const nodes={},w={quest:{},scene:'ash_house',lead:'freya',OPENING_ROSTER:['freya','jamal','jason','draymus','guapo'],CORE:['freya','jamal','jason','draymus','guapo','reese'],NAMES:{},STATS:{},hp:{},uses:{},units:[],potions:2,mendUses:2,inventory:{equipped:{}},transcript:[],journeys:[],travels:[],saved:0,performance:{now:()=>0},structuredClone};w.window=w;w.$=id=>nodes[id]??={textContent:'',replaceChildren:()=>{}};for(const id of w.CORE)w.STATS[id]={hp:20};w.say=async(name,text,choices)=>{w.transcript.push({name,text,choices});return 0;};w.journeyCard=async(title,text,commit)=>{w.journeys.push({title,text});commit?.();};w.travel=async(scene)=>{w.scene=scene;w.travels.push(scene);};w.save=()=>w.saved++;for(const name of ['paintParty','updateObjective','seedParty','applyProgression','awardSermonMilestone'])w[name]=()=>{};w.point=id=>({id,x:0,y:0});w.visiblePoints=()=>[];w.partyRoster=()=>w.quest.activeRoster||w.CORE;w.soloParty=()=>false;w.document={querySelector:()=>null};w.battle=null;w.planEnemyRound=()=>{};vm.createContext(w);vm.runInContext(read('enemy-tactics.js'),w);for(const name of ['next-chapter.js','next-arc.js','political-movement.js'])vm.runInContext(read(name),w);w.NextChapter.syncRoster=()=>{};return w;}
 test('party authors the restrictions, and all four notices are counted',async()=>{const w=world();w.quest={chapter3:true,sermonDispersed:true};await w.NextArc.interact('razelago');assert(w.transcript.some(x=>x.text.includes('carte blanche')));assert(w.transcript.some(x=>x.text.includes('six people privately or twelve publicly')));assert(w.transcript.some(x=>x.text.includes('party’s choices')));w.PoliticalMovement.goal=()=>null;w.DebtsRumors={goal:()=>null};w.LastStand={goal:()=>null};vm.runInContext(read('quest-guide.js'),w);w.quest.noticePosted=w.quest.tavernPosted=w.quest.gatePosted=true;w.scene='longacre_jail';assert.equal(w.QuestGuide.current().text,'Post the public notices [3/4].');assert.equal(w.QuestGuide.current().target.id,'jailDecree');await w.NextArc.interact('jailDecree');assert(w.quest.jailPosted);assert(w.quest.rhonaDismissed);assert(w.transcript.some(x=>x.text.includes('fourth copy')));assert(w.transcript.some(x=>x.text.includes('Other deputies remain')));assert.equal(w.QuestGuide.current().text,'Leave the jail courtyard.');});
 test('completed payroll cannot be obtained twice',async()=>{const w=world();w.scene='tannery';w.quest={ownerDeal:true};await w.NextChapter.interact('payroll');await w.NextChapter.interact('payroll');assert.equal(w.transcript.filter(x=>x.text.includes('Obtained:')).length,1);});
-test('scouting instruction follows arrival and identifies theft',async()=>{const w=world();w.quest={metCimri:true,supplied:true,guapoAway:true};await w.NextChapter.interact('road');assert.equal(w.travels[0],'tannery');assert(w.transcript[0].text.includes('steal the payroll'));assert(w.transcript[1].text.includes('scout over the palisade'));});
+test('Remesiana purchases and Cimri’s assignment gate the road to the tannery',async()=>{
+ const w=world();
+ vm.runInContext(read('inventory.js'),w);
+ w.inventory=w.Inventory.fresh();
+ w.scene='remesiana';
+ w.quest={chapter2:true};
+ assert.equal(await w.NextChapter.interact('guapoDeparture'),false);
+ assert.equal(await w.NextChapter.interact('cimri'),false);
+ await w.NextChapter.interact('supplies');
+ assert.equal(w.inventory.equipped.jamal,'masterwork_daggers');
+ const items=w.Inventory.items(w.quest,2).map(item=>item.id);
+ assert(items.includes('remesiana_jason_armor'));
+ assert(items.includes('remesiana_arcane_supplies'));
+ const base={atk:7,dmg:[1,4,5]};
+ assert.equal(w.Inventory.stats(base,w.inventory,'jamal',w.quest).atk,8);
+ assert.equal(w.Inventory.validate(w.Inventory.fresh(),w.quest).equipped.jamal,'jamal');
+ assert.throws(()=>w.Inventory.validate(w.inventory,{}),/Invalid equipped weapon/);
+ await w.NextChapter.interact('cimri');
+ assert(w.transcript.some(line=>/Fex wants someone to look into rebel activity in Longacre/.test(line.text)));
+ assert.equal(await w.NextChapter.interact('road'),false);
+ w.$('character').options=[];
+ await w.NextChapter.interact('guapoDeparture');
+ const speak=w.say;
+ w.say=async(...args)=>{assert.equal(w.scene,'tannery');return speak(...args);};
+ await w.NextChapter.interact('road');
+ assert.equal(w.travels[0],'tannery');
+ assert.match(w.transcript.at(-2).text,/steal the Louslik Tannery payroll/);
+ assert.match(w.transcript.at(-1).text,/scout over the palisade/);
+});
 test('Pezzack and the lookout gate the Western Star boarding',async()=>{
  const w=world();
  w.scene='western_star';
