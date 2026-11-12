@@ -1,9 +1,9 @@
 {
-  "scripts": 96,
-  "scenes": 154,
-  "replays": 432,
-  "framesInspected": 642,
-  "framesChecked": 642,
+  "scripts": 97,
+  "scenes": 156,
+  "replays": 440,
+  "framesInspected": 645,
+  "framesChecked": 645,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 638638456,
+  "assetBytes": 653971936,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -49,18 +49,18 @@
       "bytes": 3647774
     },
     {
-      "name": "barrow-road-v1.png",
-      "bytes": 3640632
+      "name": "molthune-waystation-v1.png",
+      "bytes": 3641348
     },
     {
-      "name": "egorian-tailor-street-v1.png",
-      "bytes": 3639028
+      "name": "barrow-road-v1.png",
+      "bytes": 3640632
     }
   ],
   "startupComplete": true,
-  "startupAssets": 254,
-  "startupCompressedBytes": 583443508,
-  "startupDecodedRgbaBytes": 1590025712,
+  "startupAssets": 260,
+  "startupCompressedBytes": 598765896,
+  "startupDecodedRgbaBytes": 1627778312,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -224,6 +224,12 @@
     "lore-creatures-v2.png",
     "lore-longacre-v2.png",
     "menador-pass-v1.png",
+    "molthune-coffin-v1.png",
+    "molthune-remorhaz-v1.png",
+    "molthune-slope-v1.png",
+    "molthune-violetta-v1.png",
+    "molthune-waystation-v1.png",
+    "molthune-wight-warrior-v1.png",
     "mounted-freya-v1.png",
     "ovinnik-idle-v1.png",
     "pale-cabin-v1.png",

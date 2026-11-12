@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const coffin=window.MolthuneCoffin?.goal();
+ if(coffin)return {text:coffin,target:MolthuneCoffin.target()};
  const skadi=window.SkadiParley?.goal();
  if(skadi)return {text:skadi,target:SkadiParley.target()};
  const darkrain=window.DarkRain?.goal();

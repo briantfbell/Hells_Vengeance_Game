@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.molthuneComplete)rows.push('Molthune · Lady Violetta Pavel, a diplomat from Nidal, offers to help the company after her escape from the coffin.');
+  if(q.molthuneEscaped)rows.push('Molthune · 13 Gozran, 4717. The company diverts the ancient remorhaz and escapes the Wight Mother’s undead.');
   if(q.skadiComplete)rows.push('Isger · 12 Gozran, 4717. Freya wins passage from Skadi and agrees to remove the box near an ancient remorhaz in Molthune.');
   if(q.darkrainComplete)rows.push('Dark Rain · The company passes through an immense dragon skull whose bones appear to immobilize nearby undead.');
   if(q.darkrainClothed)rows.push('Dark Rain · Reese hunts the dire polar bear alone and makes winter clothing from its hide.');

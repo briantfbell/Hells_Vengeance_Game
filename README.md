@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 432 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 440 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -345,3 +345,7 @@ Continue from the cave-giant lair or select replay **415**. Bargain for passage,
 ### Skadi and the Frost Giants
 
 Continue from the dragon skull or select replay **423**. Scout the settlement, ask Skadi for a hearing, and win Freya’s case for passage over the feast. Replays **423–428** cover the negotiation. See [the section notes](docs/skadi-parley.md) for the source accounts and artwork.
+
+### The Coffin Recovery in Molthune
+
+Continue from Skadi’s feast hall or select replay **429**. Scout as Reese, use the animated bear to draw away the remorhaz, and get Lady Violetta Pavel beyond the Wight Mother’s reach. Replays **429–436** cover the rescue. See [the section notes](docs/molthune-coffin.md) for sources, artwork and verification.

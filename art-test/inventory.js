@@ -44,7 +44,8 @@ window.Inventory=(()=>{
  );
  if(q.skadiComplete)result.push({id:'skadi_cultural_items',name:'Objects recovered by the Frost Giants',kind:'quest',description:'Skadi gives the company several cultural objects as part of the passage agreement.'});
  if(q.darkrainClothed)result.push({id:'polar_bear_winter_clothing',name:'Polar-bear winter clothing',owner:'reese',kind:'gear',description:'Reese makes warm clothing for the company from the hide of the dire polar bear.'});
- if(q.darkrainBearWon)result.push({id:'polar_bear_carcass',name:'Dire polar bear carcass',kind:'quest',description:'The company keeps the carcass after taking the hide.'});
+ if(q.molthuneCoffinLifted&&!q.molthuneBreach)result.push({id:'nidal_travel_coffin',name:'Reinforced travel coffin',kind:'quest',description:'Recovered from the ancient remorhaz’s territory.'});
+ if(q.darkrainBearWon&&!q.molthuneBaitSet)result.push({id:'polar_bear_carcass',name:'Dire polar bear carcass',kind:'quest',description:'The company keeps the carcass after taking the hide.'});
  if(q.tathlumDuels===3)result.push({id:'championship_belt',name:'Championship Belt',owner:'freya',kind:'gear',description:'Freya’s dwarven belt. The Cave Giant rune grants 120 ft. darkvision and aids detection of hidden doors. The Ogre Magi rune records her victory over Yunero.'});
  if(q.covenantComplete)result.push({id:'abbies_ring',name:'Abbie’s Ring',owner:'jason',kind:'gear',description:'Given to Jason by Queen Abrogail after the covenant. The Foundry sheet records Freedom of Movement and fire resistance.'});
  if(hasFreyaPlate(q))result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
