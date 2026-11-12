@@ -7,19 +7,25 @@ window.FastnessArc = (() => {
  const study = 'fastness_study';
  const landing = 'fastness_landing';
  const gallery = 'fastness_gallery';
+ const summit = 'fastness_summit';
+ const towerBase = 'fastness_tower_base';
  const images = {
   [gate]:'valor-fastness-gate-v1.png',
   [hall]:'valor-fastness-hall-v1.png',
   [chapel]:'valor-fastness-chapel-v1.png',
   [study]:'valor-fastness-study-v1.png',
   [landing]:'valor-fastness-landing-v1.png',
-  [gallery]:'valor-fastness-gallery-v1.png'
+  [gallery]:'valor-fastness-gallery-v1.png',
+  [summit]:'valor-fastness-summit-v1.png',
+  [towerBase]:'valor-fastness-tower-base-v1.png'
  };
  const combatStats = {
   fastness_paladin:{hp:26,ac:14,atk:5,dmg:[1,8,1]},
   fastness_cleric:{hp:25,ac:13,atk:4,dmg:[1,6,2]},
   fastness_mage:{hp:36,ac:13,atk:5,dmg:[1,8,1]},
-  fastness_warpriest:{hp:44,ac:15,atk:6,dmg:[1,10,1]}
+  fastness_warpriest:{hp:44,ac:15,atk:6,dmg:[1,10,1]},
+  oppian:{hp:66,ac:14,atk:6,dmg:[1,8,2]},
+  fastness_archon:{hp:37,ac:14,atk:5,dmg:[1,8,1]}
  };
  const encounters = {
   [gate]:{cleared:'fastnessGateCleared',defenders:[
@@ -43,6 +49,9 @@ window.FastnessArc = (() => {
   ]},
   [gallery]:{cleared:'fastnessLenciaSlain',defenders:[
    ['lencia','Lencia',328,192]
+  ]},
+  [summit]:{cleared:'fastnessSummitWon',defenders:[
+   ['oppian','Oppian',312,192,8], ['fastness_archon','Archon',408,200]
   ]}
  };
  const towerFloors = {
@@ -69,7 +78,8 @@ window.FastnessArc = (() => {
  function installCast() {
   Object.assign(STATS,combatStats);
   Object.assign(NAMES,{fastness_paladin:'Reclamation Paladin',fastness_cleric:'Reclamation Cleric',
-   fastness_mage:'Tower Mage',fastness_warpriest:'Tower Warpriest'});
+   fastness_mage:'Tower Mage',fastness_warpriest:'Tower Warpriest',
+   oppian:'Oppian Nevilindor',fastness_archon:'Archon'});
   const atlas = 'valor-fastness-defenders-v1.png';
   const poses = {
    fastness_paladin:[[55,35,338,436,264],[570,29,338,442,776],[1079,39,341,432,1288]],
@@ -85,11 +95,20 @@ window.FastnessArc = (() => {
    fastness_mage:[[129,20,276,470,272],[641,20,269,470,784],[1153,19,274,471,1296]],
    fastness_warpriest:[[53,528,393,477,267],[568,539,385,466,779],[1081,530,391,475,1291]]
   };
-  for (const [id,rects] of Object.entries(towerPoses)) {
-   const frames = rects.map(([x,y,w,h,anchorX])=>({x,y,w,h,anchorX,anchorY:y+h}));
-   COMBAT_IDLES[id] = {src:towerAtlas,frames,maxHeight:Math.max(...frames.map(frame=>frame.h)),cycle:[0,1,2,1]};
-   FUTURE_NPCS[id] = {source:towerAtlas,frame:frames[0]};
+  const summitAtlas = 'valor-fastness-summit-cast-v1.png';
+  const summitPoses = {
+   oppian:[[134,17,277,452,268],[635,19,272,449,780],[1134,13,276,456,1292]],
+   fastness_archon:[[157,516,225,485,268],[648,523,227,480,780],[1143,513,234,488,1292]]
+  };
+  for (const [sheet,models] of [[towerAtlas,towerPoses],[summitAtlas,summitPoses]]) {
+   for (const [id,rects] of Object.entries(models)) {
+    const frames = rects.map(([x,y,w,h,anchorX])=>({x,y,w,h,anchorX,anchorY:y+h}));
+    COMBAT_IDLES[id] = {src:sheet,frames,maxHeight:Math.max(...frames.map(frame=>frame.h)),cycle:[0,1,2,1]};
+    FUTURE_NPCS[id] = {source:sheet,frame:frames[0]};
+   }
   }
+  LORE_CAST.oppian = {...FUTURE_NPCS.oppian,src:summitAtlas};
+  DIALOGUE_FACE_CROPS.oppian = {x:214,y:13,w:104,h:104};
  }
 
  function install() {
@@ -137,13 +156,35 @@ window.FastnessArc = (() => {
    };
    JOURNEYS[id] = floor.arrival;
   }
+  scenes[gallery].points.push({id:'fastnessSummitRoad',x:328,y:152,label:'Climb to the summit'});
+  scenes[summit] = {
+   name:'Valor’s Fastness · Summit',image:images[summit],spawn:[328,344],blocks:[],
+   walk:[{x:144,y:160,w:368,h:128},{x:288,y:288,w:64,h:96},{x:448,y:144,w:48,h:16}],
+   lights:[[121,119],[518,119],[78,293],[559,293]],
+   points:[
+    {id:'fastnessOppianFight',x:328,y:224,label:'Face Oppian and the Archon'},
+    {id:'fastnessOppianRescue',x:472,y:152,label:'Go after Oppian'}
+   ]
+  };
+  scenes[towerBase] = {
+   name:'Valor’s Fastness · Tower Base',image:images[towerBase],spawn:[328,344],blocks:[],
+   walk:[{x:144,y:160,w:368,h:128},{x:288,y:288,w:64,h:96}],
+   lights:[[258,96],[379,96],[253,324],[386,324]],
+   points:[
+    {id:'fastnessOppianCapture',x:328,y:208,label:'Take Oppian into custody'},
+    {id:'fastnessCampaignReport',x:328,y:344,label:'Prepare for the capital'}
+   ]
+  };
   for (const [id,foreground] of Object.entries(images)) {
    MAP_LAYERS[id] = {foreground,background:{type:'solid',color:'#151820'}};
   }
   MAP_LAYERS[gallery].background = {type:'sky'};
+  MAP_LAYERS[summit].background = {type:'sky'};
   JOURNEYS[gate] = 'Valor’s Fastness is both a temple of Iomedae and the Reclamation’s main barracks. Its tower rises over Kantaria. The company gathers below its gates.';
   JOURNEYS[hall] = 'The company storms the fortress. The defenders form a line among the weapon racks, holding the passage to the chapel.';
   JOURNEYS[chapel] = 'The fight moves to the inner chapel. A cleric and two paladins stand between the company and the tower stairs.';
+  JOURNEYS[summit] = 'The stair opens onto the summit. Oppian Nevilindor, Kantaria’s mayor and the Reclamation’s Fourth Sword Knight, stands at the parapet with his Archon bodyguard.';
+  JOURNEYS[towerBase] = 'The company follows Oppian over the edge and breaks his fall. He is injured and alive when they reach the stones below the tower.';
  }
 
  async function load(loader) {
@@ -165,8 +206,13 @@ window.FastnessArc = (() => {
    return [point(quest.fastnessChapelCleared ? 'fastnessStairs' : 'fastnessChapelFight')];
   }
   const floor = towerFloors[scene];
-  if (floor && !quest.fastnessAscentComplete) {
+  if (scene === gallery && quest.fastnessAscentComplete) return [point('fastnessSummitRoad')];
+  if (floor) {
    return [point((quest[encounters[scene].cleared] ? floor.exit : floor.fight)[0])];
+  }
+  if (scene === summit) return [point(quest.fastnessSummitWon ? 'fastnessOppianRescue' : 'fastnessOppianFight')];
+  if (scene === towerBase && !quest.chapter15Complete) {
+   return [point(quest.fastnessOppianCaptured ? 'fastnessCampaignReport' : 'fastnessOppianCapture')];
   }
   return [];
  }
@@ -174,11 +220,13 @@ window.FastnessArc = (() => {
  function target() { return points()?.[0] || null; }
  function goal() {
   if (!quest.chapter14Complete) return null;
-  if (quest.fastnessAscentComplete) return 'The way to the summit is secured.';
+  if (quest.chapter15Complete) return 'Kantaria is secured. Oppian awaits transport to Egorian.';
   return target()?.label || null;
  }
 
  function npcs() {
+  if (scene === towerBase) return [{id:'oppian',x:328,y:192}];
+  if (scene === summit && quest.fastnessSummitWon) return [];
   const fight = encounters[scene];
   if (!fight) return null;
   const guards = fight.defenders.map(([id,,x,y]) => ({id,x,y,...(quest[fight.cleared] && {hp:0})}));
@@ -205,7 +253,7 @@ window.FastnessArc = (() => {
  function encounter(kind = gate) {
   return {kind,enemies:encounters[kind].defenders.map(([id,name,,,injury=0])=>{
    const max = STATS[id].hp;
-   return {id,name,max,hp:max-injury};
+   return {id,name,max,hp:max-injury,...(id==='oppian' && {resolve:true})};
   })};
  }
 
@@ -245,7 +293,8 @@ window.FastnessArc = (() => {
    [chapel]:'The last chapel defenders fall. The stair beside the altar leads into the tower.',
    [study]:'The mage and the study guards fall. The company clears the stair beyond the shelves.',
    [landing]:'The warpriest falls. Beyond the landing, the stair turns toward the open gallery.',
-   [gallery]:'Lencia Visserene falls on the gallery. The Angel Knight who escaped at the Court of Spears is dead.'
+   [gallery]:'Lencia Visserene falls on the gallery. The Angel Knight who escaped at the Court of Spears is dead.',
+   [summit]:'The Archon is driven back. With his defense broken, Oppian staggers toward the edge of the tower.'
   };
   await say('Chronicle',aftermath[kind]);
   paintParty();
@@ -294,6 +343,9 @@ window.FastnessArc = (() => {
    case 'fastnessGalleryRoad':
     await travel(gallery,328,344);
     break;
+   case 'fastnessSummitRoad':
+    await travel(summit,328,344);
+    break;
    case 'fastnessHallFight':
    case 'fastnessChapelFight':
    case 'fastnessMageFight':
@@ -312,6 +364,28 @@ window.FastnessArc = (() => {
    case 'fastnessAscentEnd':
     await journeyCard('The Last Stair','The mage, warpriest and Angel Knight have fallen. One last stair leads to the summit of Valor’s Fastness.');
     quest.fastnessAscentComplete = true;
+    break;
+   case 'fastnessOppianFight':
+    await say('oppian','This is my home. If Thrune wants it back, he can come for it himself.');
+    await say('freya','He sent us. You’re coming down alive, Oppian.');
+    await say('Chronicle','A blow from the stolen hammer of Oppian’s closest friend drives him back. The Archon moves in front of him. Break their defense and take the knight alive.');
+    beginEncounter(summit);
+    return true;
+   case 'fastnessOppianRescue':
+    await say('Chronicle','At the last, someone Oppian loves betrays him. Rather than be taken, he steps from the broken parapet.');
+    await say('freya','Over the edge. Catch him!');
+    await storyRoll('Catch Oppian',17,0,'The company catches him in the fall');
+    quest.fastnessOppianRescued = true;
+    await travel(towerBase,328,344);
+    break;
+   case 'fastnessOppianCapture':
+    await say('oppian','You could have let me fall.');
+    await say('freya','You’re answering for Kantaria. Bind his hands and keep him alive.');
+    quest.fastnessOppianCaptured = true;
+    break;
+   case 'fastnessCampaignReport':
+    await journeyCard('Kantaria Secured','With Oppian in custody, the Kantaria rebellion is broken. The company prepares to deliver him to Egorian for judgment.');
+    quest.chapter15Complete = true;
     break;
   }
   save();

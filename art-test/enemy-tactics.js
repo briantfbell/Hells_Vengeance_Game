@@ -22,6 +22,8 @@ window.EnemyTactics=(()=>{
    else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='fastness_mage'){move=round%2?'Arcane bolt':'Charged bolt';extra=round%2?0:3;effect='arcaneBolt';}
    else if(e.id==='fastness_warpriest'){move=round%2?'Warhammer strike':'Overhead hammer';extra=round%2?0:2;}
+   else if(e.id==='oppian'){move=round%2?'Sword cut':'Heavy sword cut';extra=round%2?0:2;}
+   else if(e.id==='fastness_archon'){move=round%2?'Greatsword cut':'Radiant strike';extra=round%2?0:2;}
    else if(e.id==='court_rhona'){move=round%2?'Twin hand axes':'Press the crossing';extra=round%2?1:0;}
    else if(e.id==='lencia'){move=round%2?'Longsword cut':'Shield-led strike';extra=round%2?0:2;}
    else if(e.id==='court_ranger'){move='Hand axe';}
@@ -39,7 +41,11 @@ window.EnemyTactics=(()=>{
    e.intent={target:target.id,move,extra,heavy:extra>0,round,effect,canMend:e.id==='fastness_cleric'&&round%2===0,battlePrayer:e.id==='fastness_warpriest'&&round%2===0&&!e.prayerSpent};
   });
  }
+ function defense(target,enemies,stats){
+  const covered=target.resolve&&enemies.some(enemy=>enemy.id==='fastness_archon'&&enemy.hp>0);
+  return stats[target.id].ac+(covered?2:0);
+ }
  const damage=(value,guard)=>guard?Math.max(1,Math.floor(value/2)):value;
  const preview=(enemy,names)=>enemy.intent?enemy.name+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.battlePrayer?'Battle prayer at half HP':enemy.intent.move+' → '+names[enemy.intent.target])):'';
- return {plan,damage,preview};
+ return {plan,defense,damage,preview};
 })();

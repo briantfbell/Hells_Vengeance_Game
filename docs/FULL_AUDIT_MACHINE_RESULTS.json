@@ -1,20 +1,20 @@
 {
   "scripts": 49,
-  "scenes": 76,
-  "replays": 134,
-  "framesInspected": 475,
-  "framesChecked": 475,
+  "scenes": 78,
+  "replays": 139,
+  "framesInspected": 484,
+  "framesChecked": 484,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 36,
+  "combatStats": 38,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 291649033,
+  "assetBytes": 299848534,
   "largestAssets": [
     {
       "name": "court-of-spears.png",
@@ -37,6 +37,10 @@
       "bytes": 3505140
     },
     {
+      "name": "valor-fastness-tower-base-v1.png",
+      "bytes": 3501201
+    },
+    {
       "name": "valor-fastness-study-v1.png",
       "bytes": 3499436
     },
@@ -51,16 +55,12 @@
     {
       "name": "longacre-jail.png",
       "bytes": 3228027
-    },
-    {
-      "name": "reese-early-portrait.png",
-      "bytes": 3211686
     }
   ],
   "startupComplete": true,
-  "startupAssets": 105,
-  "startupCompressedBytes": 236891596,
-  "startupDecodedRgbaBytes": 652509104,
+  "startupAssets": 108,
+  "startupCompressedBytes": 245085375,
+  "startupDecodedRgbaBytes": 671387056,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -166,6 +166,9 @@
     "valor-fastness-hall-v1.png",
     "valor-fastness-landing-v1.png",
     "valor-fastness-study-v1.png",
+    "valor-fastness-summit-cast-v1.png",
+    "valor-fastness-summit-v1.png",
+    "valor-fastness-tower-base-v1.png",
     "whisperwood-trail-v1.png"
   ]
 }

@@ -50,3 +50,21 @@ test('the warpriest can spend one even turn on a prayer after reaching half heal
  assert.equal(await w.FastnessArc.enemySupport(enemy),false);
  assert.equal(enemy.hp,10);
 });
+
+test('the hammer opens the summit fight with reduced resolve and the Archon covers Oppian until defeated',()=>{
+ const w={};
+ w.window=w;
+ vm.createContext(w);
+ for (const file of ['enemy-tactics.js','valor-fastness.js']) {
+  vm.runInContext(fs.readFileSync('art-test/'+file,'utf8'),w);
+ }
+ w.STATS=w.FastnessArc.combatStats;
+ const {enemies}=w.FastnessArc.encounter('fastness_summit');
+ const [oppian,archon]=enemies;
+ assert.equal(oppian.resolve,true);
+ assert.equal(oppian.max-oppian.hp,8);
+ assert.equal(w.EnemyTactics.defense(oppian,enemies,w.STATS),w.STATS.oppian.ac+2);
+ assert.equal(w.EnemyTactics.defense(archon,enemies,w.STATS),w.STATS.fastness_archon.ac);
+ archon.hp=0;
+ assert.equal(w.EnemyTactics.defense(oppian,enemies,w.STATS),w.STATS.oppian.ac);
+});

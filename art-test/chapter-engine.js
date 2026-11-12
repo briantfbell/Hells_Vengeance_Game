@@ -45,7 +45,7 @@ const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++)
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return window.SupplyArc?.roster()||window.CovertArc?.roster()||DisruptionArc.roster()||KantariaArc.roster()||CourtArc.roster()||FortArc.roster()||ArmoryArc.roster()|| (soloParty()?['jamal']:(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)));}
-function finished(){return !!quest.fastnessAscentComplete;}
+function finished(){return !!quest.chapter15Complete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -184,7 +184,7 @@ function drawTargetBrackets(t=0){
 }
 function renderBattle(t){
  const field=battlefieldHeight();drawCombatBackdrop(t);
- ChurchArc.drawSupport(t);for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;if(enemy.id==='celestial_wolf'){ctx.shadowColor='#dce4ff';ctx.shadowBlur=9;}if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,battle.enemies.length>=5?72:88,enemy.name,enemy.hp,enemy.max,battle.enemies[battle.target]===enemy&&battle.control?.mode!=='ally',true);}
+ ChurchArc.drawSupport(t);for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?1:.22;if(enemy.id==='celestial_wolf'){ctx.shadowColor='#dce4ff';ctx.shadowBlur=9;}if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,battle.enemies.length>=5?72:88,(enemy.resolve?enemy.name+' (R)':enemy.name),enemy.hp,enemy.max,battle.enemies[battle.target]===enemy&&battle.control?.mode!=='ally',true);}
 
  const ordered=units.map(u=>({u,v:battlePosition(u)})).sort((a,b)=>a.v.y-b.v.y);
  for(const {u,v} of ordered){if(hp[u.id]===0)drawCombatFallen(ctx,u,v);else if(!drawCombatIdle(ctx,u,v,t))drawActor(ctx,{...u,x:v.x,y:v.y,dir:'up',step:null},v.height);healthBadge(v.x,v.y+7,units.length>5?68:76,NAMES[u.id],hp[u.id],STATS[u.id].hp,activeUnit()===u||battle.control?.mode==='ally'&&battle.ally===u.id);}
@@ -416,7 +416,7 @@ function paintBattle(){
  if(!battle)return;paintEnemyIntent();const acting=activeUnit();
  if(!acting||battle.reveal){$('actions').replaceChildren();$('heal-target').disabled=true;$('combat-target').disabled=true;$('battle-title').textContent=battle.reveal?'Initiative · Battle order':'R'+battle.round+' · '+(battle.order?.[battle.turn]?.name||'Resolving turn');paintParty();return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
- const actor=activeUnit();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
+ const actor=activeUnit();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy;$('battle-title').textContent='R'+battle.round+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max+(e.resolve?' resolve':'');o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy;
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',SPECIAL[actor.id].name+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(actor.id==='jason')commands.splice(2,0,['mend','Mending ('+mendUses+')']);
  if(actor.id==='jamal')commands.splice(2,0,['smoke','Smoke Bomb']);
@@ -430,7 +430,7 @@ function combatOutcome(actor,target,skill,value,roll,bonus){
  const move=skill?(actor.id==='draymus'&&battle.kind==='armory_heist'?'Shocking Grasp':skill.name):Inventory.weapon(inventory,actor.id).move;
  const caster=skill&&['jason','draymus'].includes(actor.id);
  const first=NAMES[actor.id]+(caster?' casts ':' · ')+move;
- const outcome=target.name+': '+(value===null?'miss':'−'+value+' HP');
+ const outcome=target.name+': '+(value===null?'miss':'−'+value+(target.resolve?' resolve':' HP'));
  const usesLeft=skill?'['+Math.max(0,skill.uses-uses[actor.id])+'/'+skill.uses+'] uses':'';
  const detail=value===null?'D20 '+roll+' '+(bonus>=0?'+':'−')+Math.abs(bonus)+(usesLeft?' · '+usesLeft:''):actor.id==='draymus'&&battle.kind==='armory_heist'&&skill?'Spectral Hand · '+usesLeft:usesLeft;
  return [first,outcome,detail].filter(Boolean).join('\n');
@@ -445,7 +445,8 @@ async function performActionImpl(action){
  else if(action==='smoke'){await animateAction(actor,target,'smoke');quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
  else{
   const skill=action==='special'?SPECIAL[actor.id]:null;if(skill)uses[actor.id]++;
-  const bonus=STATS[actor.id].atk+(skill?.bonus||0),total=skill?.auto?null:await rollDice(NAMES[actor.id]+' · Attack',20,1,bonus,'AC '+STATS[target.id].ac),roll=total===null?null:total-bonus,hit=skill?.auto||roll===20||roll!==1&&total>=STATS[target.id].ac;
+  const defense=EnemyTactics.defense(target,battle.enemies,STATS);
+  const bonus=STATS[actor.id].atk+(skill?.bonus||0),total=skill?.auto?null:await rollDice(NAMES[actor.id]+' · Attack',20,1,bonus,'AC '+defense),roll=total===null?null:total-bonus,hit=skill?.auto||roll===20||roll!==1&&total>=defense;
   if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true,()=>hitTarget(actor,target,value));target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(combatOutcome(actor,target,skill,value,roll,bonus));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(combatOutcome(actor,target,skill,null,roll,bonus));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
@@ -631,6 +632,11 @@ function replaySections(){
  add('fastness-landing-exit','132 · The gallery passage','fastness_landing',[328,216],'fastnessWarpriestCleared');
  add('fastness-gallery','133 · Lencia returns','fastness_gallery',[328,344]);
  add('fastness-last-stair','134 · The last stair','fastness_gallery',[328,216],'fastnessLenciaSlain');
+ add('fastness-summit-road','135 · Climb to the summit','fastness_gallery',[328,152],'fastnessAscentComplete');
+ add('fastness-summit','136 · Oppian and the Archon','fastness_summit',[328,344]);
+ add('fastness-rescue','137 · Over the parapet','fastness_summit',[472,168],'fastnessSummitWon');
+ add('fastness-capture','138 · Oppian alive','fastness_tower_base',[328,344],'fastnessOppianRescued');
+ add('fastness-report','139 · Kantaria secured','fastness_tower_base',[328,344],'fastnessOppianCaptured');
  return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
