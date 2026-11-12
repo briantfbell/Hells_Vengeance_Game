@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const skadi=window.SkadiParley?.goal();
+ if(skadi)return {text:skadi,target:SkadiParley.target()};
  const darkrain=window.DarkRain?.goal();
  if(darkrain)return {text:darkrain,target:DarkRain.target()};
  const tathlum=window.TathlumHunt?.goal();

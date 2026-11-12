@@ -1,9 +1,9 @@
 {
-  "scripts": 95,
-  "scenes": 152,
-  "replays": 426,
-  "framesInspected": 639,
-  "framesChecked": 639,
+  "scripts": 96,
+  "scenes": 154,
+  "replays": 432,
+  "framesInspected": 642,
+  "framesChecked": 642,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,11 +14,15 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 627660044,
+  "assetBytes": 638638456,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
       "bytes": 3901533
+    },
+    {
+      "name": "skadi-settlement-v1.png",
+      "bytes": 3884453
     },
     {
       "name": "darkrain-skull-v1.png",
@@ -37,6 +41,10 @@
       "bytes": 3763759
     },
     {
+      "name": "skadi-feast-hall-v1.png",
+      "bytes": 3662728
+    },
+    {
       "name": "south-road-ambush-v1.png",
       "bytes": 3647774
     },
@@ -47,20 +55,12 @@
     {
       "name": "egorian-tailor-street-v1.png",
       "bytes": 3639028
-    },
-    {
-      "name": "court-of-spears.png",
-      "bytes": 3582358
-    },
-    {
-      "name": "court-platforms-v1.png",
-      "bytes": 3578233
     }
   ],
   "startupComplete": true,
-  "startupAssets": 250,
-  "startupCompressedBytes": 572474900,
-  "startupDecodedRgbaBytes": 1564853608,
+  "startupAssets": 254,
+  "startupCompressedBytes": 583443508,
+  "startupDecodedRgbaBytes": 1590025712,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -273,6 +273,10 @@
     "sethic-trickster-v1.png",
     "ship-deck-foreground.png",
     "silver-star-music-shop-v2.png",
+    "skadi-feast-guests-v1.png",
+    "skadi-feast-hall-v1.png",
+    "skadi-frost-giant-v1.png",
+    "skadi-settlement-v1.png",
     "south-road-ambush-v1.png",
     "south-road-camp-v1.png",
     "south-road-cavalry-v1.png",

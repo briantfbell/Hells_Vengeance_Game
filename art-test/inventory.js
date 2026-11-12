@@ -42,6 +42,7 @@ window.Inventory=(()=>{
   {id:'dragon_helm',name:'Dragon Helm',kind:'gear',owner:'jason',description:'Maximize rolls full Burning Hands damage and spends a spell use. '+giftCharges(q,'jason')+'/3 charges remain.'},
   {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'}
  );
+ if(q.skadiComplete)result.push({id:'skadi_cultural_items',name:'Objects recovered by the Frost Giants',kind:'quest',description:'Skadi gives the company several cultural objects as part of the passage agreement.'});
  if(q.darkrainClothed)result.push({id:'polar_bear_winter_clothing',name:'Polar-bear winter clothing',owner:'reese',kind:'gear',description:'Reese makes warm clothing for the company from the hide of the dire polar bear.'});
  if(q.darkrainBearWon)result.push({id:'polar_bear_carcass',name:'Dire polar bear carcass',kind:'quest',description:'The company keeps the carcass after taking the hide.'});
  if(q.tathlumDuels===3)result.push({id:'championship_belt',name:'Championship Belt',owner:'freya',kind:'gear',description:'Freya’s dwarven belt. The Cave Giant rune grants 120 ft. darkvision and aids detection of hidden doors. The Ogre Magi rune records her victory over Yunero.'});

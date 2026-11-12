@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 426 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 432 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -341,3 +341,7 @@ Continue from Menador or select replay **407**. Take the Queen’s assignment, f
 ### The Pass of Dark Rain
 
 Continue from the cave-giant lair or select replay **415**. Bargain for passage, hunt the dire polar bear as Reese, and cross through the dragon’s skull. Replays **415–422** cover the pass and ascent. See [the section notes](docs/darkrain.md) for sources, combat and artwork.
+
+### Skadi and the Frost Giants
+
+Continue from the dragon skull or select replay **423**. Scout the settlement, ask Skadi for a hearing, and win Freya’s case for passage over the feast. Replays **423–428** cover the negotiation. See [the section notes](docs/skadi-parley.md) for the source accounts and artwork.
