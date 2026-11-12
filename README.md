@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 369 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 374 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -305,3 +305,7 @@ Continue after taking the coastal watch or select replay **357**. Land at Rachik
 ### The burning of the Pezzack manse
 
 Continue from Rachikan or select replay **361**. Witness Bruce’s attack, open the prisoners’ way out, and return to Egorian during the Strix raid. Replays **361–365** cover the visit. See [the section notes](docs/pezzack.md) for sources and artwork.
+
+### The Bellflower barge
+
+Continue after returning from Pezzack or select replay **366**. Help prepare Corrine’s trap, hold off the rescuers, and escape with Jason’s word of recall. Replays **366–370** cover the barge. See [the section notes](docs/bellflower-barge.md) for the sources, combat and artwork.

@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const bellflower=window.BellflowerBarge?.goal();
+ if(bellflower)return {text:bellflower,target:BellflowerBarge.target()};
  const pezzack=window.Pezzack?.goal();
  if(pezzack)return {text:pezzack,target:Pezzack.target()};
  const rachikan=window.Rachikan?.goal();

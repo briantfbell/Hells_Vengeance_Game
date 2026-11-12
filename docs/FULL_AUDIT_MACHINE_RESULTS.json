@@ -1,20 +1,20 @@
 {
-  "scripts": 86,
-  "scenes": 137,
-  "replays": 369,
-  "framesInspected": 612,
-  "framesChecked": 612,
+  "scripts": 87,
+  "scenes": 139,
+  "replays": 374,
+  "framesInspected": 616,
+  "framesChecked": 616,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 59,
+  "combatStats": 60,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 562322937,
+  "assetBytes": 568356974,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 224,
-  "startupCompressedBytes": 507218060,
-  "startupDecodedRgbaBytes": 1401261128,
+  "startupAssets": 227,
+  "startupCompressedBytes": 513243294,
+  "startupDecodedRgbaBytes": 1420138640,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -88,6 +88,9 @@
     "belde-square-liberated-v1.png",
     "belde-square-v1.png",
     "belde-yunero-v1.png",
+    "bellflower-barge-v1.png",
+    "bellflower-boarders-v1.png",
+    "bellflower-migos-v1.png",
     "bolgart-stocks-v1.png",
     "bruce-foundry-portrait.webp",
     "bruce-portrait-packed-v1.png",
