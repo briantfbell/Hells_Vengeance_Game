@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.efisioDefeated)rows.push('Egorian · 23 Calistril, 4717. Freya follows Efisio Pera through a fifth-story window and defeats him in the street.');
+  if(q.efisioReeseRestrained)rows.push('Egorian · Visperthul turns Reese against the company through the soul-contract. His companions restrain him.');
   if(q.westcrownComplete)rows.push('Westcrown · The company completes Brado Pachia’s small favors.');
   if(q.westcrownHired)rows.push('Westcrown · 20 Calistril, 4717. Brado Pachia hires Freya’s company for a series of small favors.');
   if(q.remesianaMarketDestroyed)rows.push('Remesiana · 16 Calistril, 4717. Freya’s company destroys Florio Cento’s rival slave market.');

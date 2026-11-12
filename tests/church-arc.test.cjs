@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 298 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,298);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 304 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,304);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1071,4 +1071,43 @@ test('Brado’s favors can be completed in any order and preserve partial progre
  assert.equal(saved.quest.westcrownComplete,true);
  saved.quest.westcrownNoteDelivered=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Westcrown sequence/);
+});
+
+
+test('Efisio’s guards fight without Reese and Freya alone follows Efisio into the street',async()=>{
+ const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='efisio-road');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:216,dir:'up'}],
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
+  COMBAT_IDLES:{},DIALOGUE_FACE_CROPS:{}});
+ w.scenes[start.scene].points=[];
+ w.STATS.egorian_bodyguard={hp:15};
+ w.NextChapter.syncRoster=()=>{};
+ vm.runInContext(read('efisio-arc.js'),w);
+ w.EfisioArc.install();
+ const step=async id=>assert.equal(await w.EfisioArc.interact(id),true,id);
+ await step('efisioLeaveWestcrown');
+ assert.equal(await w.EfisioArc.interact('efisioFightGuards'),false);
+ await step('efisioArrest');
+ assert(!w.EfisioArc.roster().includes('reese'));
+ await step('efisioRestrainReese');
+ assert(w.EfisioArc.npcs().some(u=>u.id==='reese'&&u.pose==='prone'));
+ await step('efisioFightGuards');
+ assert.equal(w.battle.kind,'efisio_guards');
+ assert.equal(w.battle.enemies.length,2);
+ assert.equal(await w.EfisioArc.interact('efisioFollowWindow'),false);
+ await w.EfisioArc.afterBattle('efisio_guards',[328,200,'up']);
+ w.hp.freya=0;
+ await step('efisioFollowWindow');
+ assert.equal(w.hp.freya,18);
+ assert.deepEqual(Array.from(w.EfisioArc.roster()),['freya']);
+ w.units=[{x:328,y:264,dir:'down'}];
+ await step('efisioStreetFight');
+ assert.equal(w.battle.enemies[0].id,'efisio');
+ await w.EfisioArc.afterBattle('efisio_duel',[328,264,'down']);
+ assert.equal(w.EfisioArc.roster(),null);
+ assert.equal(w.hp.reese,30);
+ const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...sections.at(-1),quest:w.quest})));
+ assert.equal(saved.quest.efisioDefeated,true);
+ saved.quest.efisioReeseRestrained=false;
+ assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Efisio sequence/);
 });

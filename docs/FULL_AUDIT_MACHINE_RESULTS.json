@@ -1,20 +1,20 @@
 {
-  "scripts": 73,
-  "scenes": 120,
-  "replays": 298,
-  "framesInspected": 582,
-  "framesChecked": 582,
+  "scripts": 74,
+  "scenes": 122,
+  "replays": 304,
+  "framesInspected": 586,
+  "framesChecked": 586,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 54,
+  "combatStats": 55,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 486579986,
+  "assetBytes": 493131080,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 191,
-  "startupCompressedBytes": 431568701,
-  "startupDecodedRgbaBytes": 1193629144,
+  "startupAssets": 194,
+  "startupCompressedBytes": 438110789,
+  "startupDecodedRgbaBytes": 1212505752,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -111,6 +111,9 @@
     "egorian-court-v1.png",
     "egorian-discharge-civilians-v1.png",
     "egorian-discharge-square-v1.png",
+    "egorian-efisio-apartment-v1.png",
+    "egorian-efisio-street-v1.png",
+    "egorian-efisio-v1.png",
     "egorian-excruciation-effects-v1.png",
     "egorian-excruciation-square-v1.png",
     "egorian-falco-manor-v1.png",
