@@ -46,6 +46,7 @@ window.Progression=(()=>{
   if(q.egorianContractAccepted)rows.push('Jaquen’s contract · two days to kill the noble. 5,000 gp and the guard on completion, plus 5,000 gp for a public kill.');
   if(q.egorianVerdict)rows.push('Egorian · Oppian Nevilindor found guilty of high treason after Freya and Jason testify.');
   if(q.zaraGeitta)rows.push('Zara Geitta · Freya receives her fitted adamantine Hellknight plate.');
+  if(q.egorianDisguiseReady)rows.push('Egorian · Draymus raises Joe Kek with Flesh Puppet and prepares an elderly disguise for the excruciation.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;

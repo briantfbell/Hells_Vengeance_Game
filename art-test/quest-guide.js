@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const mort=window.EgorianMort?.goal();
+ if(mort)return {text:mort,target:EgorianMort.target()};
  const trial=window.EgorianTrial?.goal();
  if(trial)return {text:trial,target:EgorianTrial.target()};
  const night=window.EgorianNight?.goal();
