@@ -8,7 +8,15 @@ Skadi’s height, build and chain follow the blog. The settlement, feast, exact 
 
 Replays 426–426A stage the documented approach. Draymus remains behind, and Freya, J’Mal and Reese cross the far side before asking Skadi for a hearing. The false figures and the route through the yard are staging. The blog does not name the spell. Saves after the diversion retain the three-person approach, and earlier saves at the feast remain valid.
 
+## The feast as the argument progresses
+
+After the second successful argument, the feast guests switch to the late-feast poses and J’Mal sways while standing. Freya’s posture stays steady. Reduced motion keeps J’Mal still, and a reloaded checkpoint derives the guest poses from the saved argument count. The particular gestures and dialogue are staging for the recorded feast.
+
 ## Artwork prompts
+
+**Late-feast guests** · `art-test/skadi-feast-guests-v2.png`
+
+Built-in image generator edit prompt: Edit the attached two-character transparent pixel sprite atlas to show the same two frost giant feast guests visibly tipsy late in the feast. Preserve identity, faces, blue skin, braided hair, age, proportions, fur clothing, boots, and brass tankards. Left man leans his upper body to the left with bent knees and a broad amused grin, tankard held low at his belt, left foot planted, right foot bracing. Right woman sways subtly to her right, shoulder dropped, lids heavy and amused, braces with her free hand on her thigh, tankard held low. Keep both standing and balanced on their feet, their faces legible. Exactly two full-body figures, one in each half of the same wide horizontal 2:1 sheet with ample clear space between them, true RGBA alpha zero behind, between, and around the two silhouettes. Both occupy the same height and share the same foot baseline as the reference. Preserve the detailed sharp small pixel clusters and dark fantasy RPG look. No floor, furniture, background, extra mug, effects, text or labels.
 
 **Settlement** · `art-test/skadi-settlement-v1.png`
 
@@ -29,3 +37,5 @@ Two full-body adult Frost Giant feast guests as a wide two-sprite sheet in detai
 ## Verification
 
 The browser playthrough continued from the skull, scouted the settlement, entered the feast, tried a weak argument and retried, reloaded after the first successful argument, and completed the agreement. The completed checkpoint reloaded at 640×480 without console errors. All 163 automated tests passed. The structural audit checked 154 scenes, 432 replays and 642 sprite frames.
+
+The late-feast audit played replay 427 at 640×480, checked a rejected response and two successful rounds, then reloaded with the late-feast sprites and third objective visible. No browser errors appeared. All 174 tests passed, and the structural audit checked 476 replays and 661 sprite frames.

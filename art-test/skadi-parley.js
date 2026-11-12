@@ -3,7 +3,7 @@
 window.SkadiParley=(()=>{
  const skull='darkrain_skull_slope',passage='darkrain_skull_passage',yard='frost_giant_yard',hall='frost_giant_hall',skadi='skadi';
  const yardArt='skadi-settlement-v1.png',hallArt='skadi-feast-hall-v1.png',portrait='skadi-frost-giant-v1.png';
- const guests='skadi-feast-guests-v1.png';
+ const guests='skadi-feast-guests-v1.png',lateGuests='skadi-feast-guests-v2.png';
  const rounds=[
   {
    claim:'You crossed our land without asking. What right had you to come this far?',
@@ -59,12 +59,14 @@ window.SkadiParley=(()=>{
   DIALOGUE_FACE_CROPS[skadi]={x:363,y:8,w:244,h:244};
   FUTURE_NPCS.skadi_guest_one={source:guests,frame:{x:190,y:0,w:480,h:887}};
   FUTURE_NPCS.skadi_guest_two={source:guests,frame:{x:1103,y:0,w:471,h:887}};
+  FUTURE_NPCS.skadi_guest_one_late={source:lateGuests,frame:{x:104,y:8,w:590,h:874}};
+  FUTURE_NPCS.skadi_guest_two_late={source:lateGuests,frame:{x:1056,y:10,w:512,h:873}};
  }
  async function load(loader){
   await Promise.all([
    (async()=>{art[yard]=await loader(yardArt);})(),
    (async()=>{art[hall]=await loader(hallArt);})(),
-   ...[portrait,guests].map(async source=>{art[source]=await loader(source);})
+   ...[portrait,guests,lateGuests].map(async source=>{art[source]=await loader(source);})
   ]);
  }
  function mapImage(){return scene===yard||scene===hall?art[scene]:null;}
@@ -86,11 +88,17 @@ window.SkadiParley=(()=>{
  function npcs(){
   if(scene===yard)return quest.skadiCovered?[{id:skadi,x:328,y:173,height:85},
    {id:'draymus',x:272,y:296,dir:'left'}]:[];
-  return scene===hall?[
+  if(scene!==hall)return null;
+  const late=tally()>=2;
+  return [
    {id:skadi,x:328,y:188,height:88},
-   {id:'skadi_guest_one',x:200,y:190,height:83},
-   {id:'skadi_guest_two',x:456,y:191,height:83}
-  ]:null;
+   {id:late?'skadi_guest_one_late':'skadi_guest_one',x:200,y:190,height:83},
+   {id:late?'skadi_guest_two_late':'skadi_guest_two',x:456,y:191,height:83}
+  ];
+ }
+ function feastPose(unit,t){
+  if(scene!==hall||tally()<2||unit.id!=='jamal'||unit.step||reduce.matches)return null;
+  return {x:0,y:0,opacity:1,tilt:Math.sin(t*3.1)*.07};
  }
  function drawDiversion(g,t){
   if(scene!==yard||!quest.skadiCovered||quest.skadiApproached)return;
@@ -119,12 +127,13 @@ window.SkadiParley=(()=>{
   }
   await say('freya',round.reply);
   await say(skadi,round.result);
-  if(index===1){
-   await say('jamal','I think the tankard has won its argument with me.');
-   await say('Chronicle','The giants keep pouring. J’Mal is drunk by the time Freya presses her last point, and she is still clear-headed.');
-  }
   if(index===2)await storyRoll('Freya · Persuasion',20,0,'Skadi accepts Freya’s terms');
   quest.skadiArguments=index+1;
+  if(index===0)await say(skadi,'Pour them a drink. We have more to discuss.');
+  if(index===1){
+   await say('jamal','I think the tankard has won its argument with me.');
+   await say('Chronicle','The giants lower their tankards and sway where they stand. Freya is still clear-headed as she presses her last point.');
+  }
  }
  async function interact(id){
   if(target()?.id!==id)return false;
@@ -171,5 +180,5 @@ window.SkadiParley=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,drawDiversion,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,feastPose,drawDiversion,interact};
 })();

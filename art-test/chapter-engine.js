@@ -740,10 +740,13 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
   const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya'));
   const drawables=[...partyDrawables.map(u=>window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
  for(const u of drawables){
-  const flight=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u);
-  if(flight){ctx.save();ctx.translate(flight.x,flight.y);ctx.globalAlpha=flight.opacity;}
+  const pose=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u)||window.SkadiParley?.feastPose(u,t);
+  if(pose){
+   ctx.save();ctx.translate(pose.x,pose.y);ctx.globalAlpha=pose.opacity;
+   if(pose.tilt){ctx.translate(u.x,u.y);ctx.rotate(pose.tilt);ctx.translate(-u.x,-u.y);}
+  }
   if(CORE.includes(u.id)&&u.pose!=='prone')drawActor(ctx,u);else drawNPC(u);
-  if(flight)ctx.restore();
+  if(pose)ctx.restore();
  }
  window.DinyarRecon?.drawDeparture(ctx);
  window.IlniusFountain?.drawStrike(ctx);

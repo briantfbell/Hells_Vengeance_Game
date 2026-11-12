@@ -1983,7 +1983,17 @@ test('Skadi grants passage only after Freya completes all three arguments',async
  const capture=()=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('skadi-feast'),quest:w.quest})));
  w.quest=capture().quest;
  assert.equal(w.quest.skadiArguments,1);
+ assert.equal(w.SkadiParley.npcs()[1].id,'skadi_guest_one');
  await step('skadiArgument2');
+ w.quest=capture().quest;
+ assert.equal(w.quest.skadiArguments,2);
+ assert.equal(w.SkadiParley.npcs()[1].id,'skadi_guest_one_late');
+ assert.equal(w.SkadiParley.npcs()[2].id,'skadi_guest_two_late');
+ w.reduce={matches:false};
+ assert.notEqual(w.SkadiParley.feastPose({id:'jamal'},.5).tilt,0);
+ assert.equal(w.SkadiParley.feastPose({id:'freya'},.5),null);
+ w.reduce.matches=true;
+ assert.equal(w.SkadiParley.feastPose({id:'jamal'},.5),null);
  await step('skadiArgument3');
  assert.equal(rolls[0][1],20);
  await step('skadiTerms');
