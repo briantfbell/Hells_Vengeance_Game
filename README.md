@@ -113,7 +113,7 @@ Early initiative modifiers are provisional game values, not inferred from later 
 
 ## Controller support and quest help
 
-Standard browser gamepads now use D-pad / left stick, A to confirm, B to back or pause, and B + direction to run. X opens inventory, Y opens party details, Start pauses/resumes, and Select opens quest details or combat help. Keyboard shortcuts I / O / F1 offer those same screens; arrows/WASD and Enter/E remain unchanged. The pause menu also provides quest/help access.
+Standard browser gamepads now use D-pad / left stick, A to confirm, B to back or pause, and B + direction to run. X opens inventory, Y opens party details, Start pauses/resumes, and Select opens quest details or the selected combat command. Keyboard shortcuts I / O / F1 offer those same screens. In combat, F1 shows the selected command’s full effect without changing your target or recent action log. The pause menu also provides quest/help access.
 
 Connect a standard-mapped controller, press and release a button, then use it in the focused game tab. Physical controller and Miyoo validation remain pending. See docs/CONTROLLER_SUPPORT.md for mapping, held-button safeguards and native-port limits.
 

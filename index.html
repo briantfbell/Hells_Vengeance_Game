@@ -86,13 +86,13 @@ body.is-combat .die{width:6.5cqw}body.is-combat .die svg{width:100%;height:auto}
 #pause-portrait{height:100%;width:26%;object-fit:contain;image-rendering:pixelated;flex:none}
 #pause-details{font:1.9cqw/1.3 Georgia,serif;min-width:0;flex:1}#pause-details p{margin:0 0 1cqw;color:#ddd0b4}
 #pause-help{font:1.6cqw/1.2 Consolas,monospace;color:#bdaa86;margin:1.5cqw 0 0}
-#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help]) #pause-body{flex-direction:column;align-items:stretch;justify-content:center;gap:2cqw}#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help]) #pause-options{width:40%;flex:none}#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help]) #pause-details{flex:none;width:100%}
+#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-body{flex-direction:column;align-items:stretch;justify-content:center;gap:2cqw}#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-options{width:40%;flex:none}#pause-panel:is([data-view=controls],[data-view=audio],[data-view=progression],[data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-details{flex:none;width:100%}
 #pause-panel[data-view=inventory] #pause-options,#pause-panel[data-view=item] #pause-options{width:43%;flex:none}#pause-panel[data-view=inventory] #pause-details,#pause-panel[data-view=item] #pause-details{align-self:center}#pause-panel[data-view=inventory] #pause-options button,#pause-panel[data-view=item] #pause-options button{font-size:1.8cqw;min-height:4.6cqw;padding:.8cqw}
 #pause-title,#pause-help{flex-shrink:0}
-#pause-panel:is([data-view=quest],[data-view=combat-help]) #pause-body{justify-content:space-between;gap:2cqw}
-#pause-panel:is([data-view=quest],[data-view=combat-help]) #pause-details{order:0;flex:1;font-size:2.25cqw;line-height:1.5;padding:2cqw;background:#37212b80;border-left:2px solid #a97748}
-#pause-panel:is([data-view=quest],[data-view=combat-help]) #pause-options{order:1;width:100%}
-#pause-panel:is([data-view=quest],[data-view=combat-help]) #pause-details p{margin-bottom:2cqw}
+#pause-panel:is([data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-body{justify-content:space-between;gap:2cqw}
+#pause-panel:is([data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-details{order:0;flex:1;font-size:2.25cqw;line-height:1.5;padding:2cqw;background:#37212b80;border-left:2px solid #a97748}
+#pause-panel:is([data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-options{order:1;width:100%}
+#pause-panel:is([data-view=quest],[data-view=combat-help],[data-view=combat-command]) #pause-details p{margin-bottom:2cqw}
 #pause-panel[data-view=progression] #pause-body{justify-content:space-between;gap:2cqw}
 #pause-panel[data-view=progression] #pause-details{order:0;flex:1;min-height:0;overflow:auto;font-size:2.15cqw;line-height:1.45}
 #pause-panel[data-view=progression] #pause-options{order:1;width:100%;grid-template-columns:repeat(3,minmax(0,1fr))}

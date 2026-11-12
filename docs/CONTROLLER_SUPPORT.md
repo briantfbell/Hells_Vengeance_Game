@@ -12,9 +12,9 @@ Implemented October 11, 2026. The browser prototype supports controllers exposed
 | X | Inventory, inspect only during combat | I |
 | Y | Party details | O |
 | Start | Pause / resume when safe | P |
-| Select | Current quest during exploration, combat help during a fight | F1 |
+| Select | Current quest during exploration, selected command details during a fight | F1 |
 
-The pause menu also includes Current quest / Combat help, so the shortcuts are optional. Quest details reuse the current objective and its counters. Combat help explains targeting, initiative, Guard and shared healing. Equipment changes, save transfers and consumable use through inventory retain their existing combat locks.
+The pause menu also includes Current quest / Combat help, so the shortcuts are optional. Quest details reuse the current objective and its counters. Combat help explains targeting, initiative and Guard. Select or F1 opens the active command’s details, including hit and damage dice, remaining uses, and the selected target when applicable. Back returns to combat with the same selection and recent action log. Equipment changes, save transfers and consumable use through inventory retain their existing combat locks.
 
 ## Input behavior
 

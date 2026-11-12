@@ -51,7 +51,7 @@ const TitleScreen=(()=>{
    ]);
   }
   if(view==='controls'){
-   $('title-detail').hidden=false;$('title-detail').textContent='D-pad / Arrows / WASD: Move & choose\nA / Enter / E: Confirm; B: Back\nX / I: Inventory; Y / O: Party\nStart / P: Pause; Select / F1: Help';
+   $('title-detail').hidden=false;$('title-detail').textContent='D-pad / Arrows / WASD: Move & choose\nA / Enter / E: Confirm; B: Back\nX / I: Inventory; Y / O: Party\nStart / P: Pause; Select / F1: Quest or command details';
    buttons([['Back',()=>paint('settings')]]);
   }
  }

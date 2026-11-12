@@ -445,6 +445,18 @@ function commandCardSummary(action,id){
  return 'Foes: −4 hit\n2 turns ['+(quest.smokeUsed?0:1)+'/1]';
 }
 function combatButtons(){return Array.from($('actions').querySelectorAll('button'));}
+function selectedCombatCommand(){
+ const actor=activeUnit(),control=battle?.control;
+ if(!actor||!control)return null;
+ const button=combatButtons()[control.index];
+ if(!button)return null;
+ const heading=button.querySelector('.command-title')?.textContent;
+ const description=button.getAttribute('aria-label')||'';
+ const rows=description.replace(/^[^|]+\|\s*/,'').split(' · ');
+ const target=control.mode==='enemy'?battle.enemies[battle.target]?.name:control.mode==='ally'?NAMES[battle.ally]:null;
+ if(target)rows.push('Selected target · '+target);
+ return {heading:heading+' · '+NAMES[actor.id],rows};
+}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
  if(c?.mode==='enemy'||c?.mode==='ally'){
@@ -683,7 +695,7 @@ $('interact').onclick=interact;
 $('heal-target').onclick=()=>{if(!battle||battle.busy)return;cycleCombatTarget('ally',1);paintBattle();};
 $('character').onchange=e=>{if(battle||taskBusy||dialogOpen){e.target.value=lead;return;}const old=lead;if(units[0].step){units[0].x=units[0].step.sx;units[0].y=units[0].step.sy;}lead=e.target.value;const displaced=units.find(u=>u.id===lead);if(displaced)displaced.id=old;units[0].id=lead;units[0].step=null;path=[];keys.clear();paintParty();save();canvas.focus();};
 document.addEventListener('keydown',e=>{if(e.target.id==='section-search')return;if(campaignLoading){e.preventDefault();return;}if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
- if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&['i','o','F1'].includes(e.key)){e.preventDefault();if(!e.repeat)Handheld.show(e.key==='i'?'inventory':e.key==='o'?'character':battle?'combat-help':'quest');return;}
+ if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&['i','o','F1'].includes(e.key)){e.preventDefault();if(!e.repeat)Handheld.show(e.key==='i'?'inventory':e.key==='o'?'character':battle?'combat-command':'quest');return;}
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&(e.key.toLowerCase()==='p'||['Escape','b','B'].includes(e.key)&&(!battle||battle.control?.mode==='commands'))){e.preventDefault();if(!e.repeat)Handheld.show();return;}
  if(levelOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('level-continue').click();else if(e.key==='Tab')$('level-continue').focus();return;}
  if(journeyOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('journey-continue').click();else if(e.key==='Tab')$('journey-continue').focus();return;}
