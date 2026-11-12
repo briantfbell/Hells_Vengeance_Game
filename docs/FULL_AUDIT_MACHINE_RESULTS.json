@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 686332289,
+  "assetBytes": 686332874,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -104,6 +104,25 @@
   "voyageCompressedBytes": 82767919,
   "longacreAssets": 75,
   "longacreCompressedBytes": 153910188,
+  "laterArtStages": {
+    "kantaria": {
+      "files": 53,
+      "bytes": 127502436
+    },
+    "arego": {
+      "files": 64,
+      "bytes": 138837758
+    },
+    "cheliax": {
+      "files": 50,
+      "bytes": 123635676
+    },
+    "tathlum": {
+      "files": 30,
+      "bytes": 87200147
+    }
+  },
+  "missingReplayArt": [],
   "campaignAssets": 272,
   "campaignCompressedBytes": 631086205
 }

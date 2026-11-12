@@ -236,7 +236,7 @@ function showIntro(){introOpen=true;document.body.classList.add('is-intro');canv
 function reset(resume=false,selected=null){
  if(campaignLoading)return;
  const saved=resume?readSave():null;
- const stage=artStage(saved?.quest);
+ const stage=artStage(saved);
  if(stage>loadedArtStage){
   void prepareCampaign(stage).then(loaded=>{if(loaded)reset(resume,selected);});
   return;
@@ -1089,8 +1089,16 @@ function imageLoad(src){
  return imageRequests.get(src);
 }
 let loadedArtStage=0,campaignLoading=false;
-const ART_ENTRY_STAGES={nextChapter:1,chapterThree:2,fortArcRoad:3};
-const artStage=q=>q?.chapter9?3:q?.chapter3?2:q?.chapter2?1:0;
+const ART_ENTRY_STAGES={nextChapter:1,chapterThree:2,fortArcRoad:3,egorianApproach:4,aregoEscape:5,barrowDepart:6};
+function artStage(saved){
+ const q=saved?.quest;
+ if(q?.barrowRoadReached)return 6;
+ if(q?.aregoEgorianEscaped)return 5;
+ if(q?.egorianBridgeMet||saved?.scene==='egorian_bridge')return 4;
+ if(q?.chapter9)return 3;
+ if(q?.chapter3)return 2;
+ return q?.chapter2?1:0;
+}
 
 async function loadCastArt(cast){
  const sources=new Set(cast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
@@ -1129,7 +1137,7 @@ async function loadLongacreArt(){
   (async()=>{art['reese-portrait']=await imageLoad('reese-early-portrait.png');})()
  ]);
 }
-async function loadCampaignArt(){
+async function loadKantariaArt(){
   await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
   await FortArc.load(imageLoad);
   await CourtArc.load(imageLoad);
@@ -1140,6 +1148,9 @@ async function loadCampaignArt(){
   await FastnessArc.load(imageLoad);
   await KantariaAftermath.load(imageLoad);
   await SouthRoad.load(imageLoad);
+  await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(model=>model.src))].map(async src=>{art[src]=await imageLoad(src);}));
+}
+async function loadAregoArt(){
   await EgorianArrival.load(imageLoad);
   await EgorianNight.load(imageLoad);
   await EgorianTrial.load(imageLoad);
@@ -1158,6 +1169,8 @@ async function loadCampaignArt(){
   await AregoAmbush.load(imageLoad);
   await AregoReturn.load(imageLoad);
   await AregoExit.load(imageLoad);
+}
+async function loadCheliaxArt(){
   await EgorianDischarge.load(imageLoad);
   await EgorianFountain.load(imageLoad);
   await RemesianaMarket.load(imageLoad);
@@ -1179,6 +1192,9 @@ async function loadCampaignArt(){
   await BellflowerBarn.load(imageLoad);
   await SethicMansion.load(imageLoad);
   await VyreWish.load(imageLoad);
+  art['bruce-portrait']=await imageLoad('bruce-foundry-portrait.webp');
+}
+async function loadTathlumArt(){
   await BarrowTrail.load(imageLoad);
   await BarrowCovenant.load(imageLoad);
   await Menador.load(imageLoad);
@@ -1189,21 +1205,27 @@ async function loadCampaignArt(){
   await DinyarRecon.load(imageLoad);
   await IlniusFountain.load(imageLoad);
   await BarleybridgeScout.load(imageLoad);
-  await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
-  art['bruce-portrait']=await imageLoad('bruce-foundry-portrait.webp');
 }
 async function prepareCampaign(stage){
  if(loadedArtStage>=stage)return true;
  if(campaignLoading)return false;
  campaignLoading=true;
  keys.clear();
- $('loadingText').textContent=['','Loading the Western Star and Longacre…','Loading the Longacre operations…','Loading campaign artwork…'][stage];
+ const stages=[
+  null,
+  [loadVoyageArt,'Loading the Western Star and Longacre…'],
+  [loadLongacreArt,'Loading the Longacre operations…'],
+  [loadKantariaArt,'Loading Fort Estazano and Kantaria…'],
+  [loadAregoArt,'Loading Egorian, Senara and Fort Arego…'],
+  [loadCheliaxArt,'Loading the operations across Cheliax…'],
+  [loadTathlumArt,'Loading the Barrowood and Tathlum expedition…']
+ ];
+ $('loadingText').textContent=stages[stage][1];
  $('loading').hidden=false;
  $('load-retry').hidden=true;
  try{
-  const loaders=[null,loadVoyageArt,loadLongacreArt,loadCampaignArt];
   while(loadedArtStage<stage){
-   await loaders[loadedArtStage+1]();
+   await stages[loadedArtStage+1][0]();
    loadedArtStage++;
   }
   return true;

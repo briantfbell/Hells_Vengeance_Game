@@ -30,4 +30,49 @@ let prematureImport;try{const v=w.SaveFiles.validate(checkpoint);prematureImport
 const loaded=new Set();w.imageLoad=async name=>{loaded.add(name);if(!fs.existsSync(path.join(root,'art-test',name)))throw Error('Missing loaded asset: '+name);return {width:imageSizes[name]?.[0]||1024,height:imageSizes[name]?.[1]||1024};};w.ROSTER=[...data.core,'bruce'];w.$=()=>({});vm.runInContext('TitleScreen.show=()=>{}',w);vm.runInContext(engine.slice(engine.indexOf('let loadedArtStage=0'),engine.indexOf("$('load-retry').onclick=load;")),w);
 const assets=fs.readdirSync(path.join(root,'art-test')).map(name=>({name,bytes:fs.statSync(path.join(root,'art-test',name)).size}));
 const out={scripts:scripts.length,scenes:Object.keys(data.scenes).length,replays:checks.length,framesInspected:frames,framesChecked:boundsChecked,uncheckedFrames,frameErrors:errors,missingLiteralAssets:missing,invalidGeometry:checks.filter(c=>!c.spawnValid||c.unreachable.length),combatStats:enemies.length,enemiesWithoutKnownFrames:noFrame,prematureImport,assetBytes:assets.reduce((n,a)=>n+a.bytes,0),largestAssets:assets.sort((a,b)=>b.bytes-a.bytes).slice(0,10)};
-w.load().then(async()=>{out.startupComplete=w.ready===true;out.startupAssets=loaded.size;out.startupCompressedBytes=[...loaded].reduce((n,f)=>n+fs.statSync(path.join(root,'art-test',f)).size,0);out.startupDecodedRgbaBytes=[...loaded].reduce((n,f)=>n+(imageSizes[f]?imageSizes[f][0]*imageSizes[f][1]*4:0),0);out.startupAssetFiles=[...loaded].sort();await w.loadVoyageArt();out.voyageAssets=loaded.size;out.voyageCompressedBytes=[...loaded].reduce((n,f)=>n+fs.statSync(path.join(root,'art-test',f)).size,0);await w.loadLongacreArt();out.longacreAssets=loaded.size;out.longacreCompressedBytes=[...loaded].reduce((n,f)=>n+fs.statSync(path.join(root,'art-test',f)).size,0);await w.loadCampaignArt();out.campaignAssets=loaded.size;out.campaignCompressedBytes=[...loaded].reduce((n,f)=>n+fs.statSync(path.join(root,'art-test',f)).size,0);fs.writeFileSync(path.join(root,'docs','FULL_AUDIT_MACHINE_RESULTS.json'),JSON.stringify(out,null,2)+'\n');console.log(JSON.stringify({...out,prematureImport:{accepted:out.prematureImport.accepted,section:out.prematureImport.section},startupAssetFiles:undefined},null,2));if(out.frameErrors.length||out.missingLiteralAssets.length||out.invalidGeometry.length||out.enemiesWithoutKnownFrames.length||out.prematureImport.accepted||!out.startupComplete||out.uncheckedFrames.length)process.exitCode=1;});
+function compressedBytes(files){
+ return [...files].reduce((total,file)=>total+fs.statSync(path.join(root,'art-test',file)).size,0);
+}
+async function auditLoading(){
+ await w.load();
+ out.startupComplete=w.ready===true;
+ out.startupAssets=loaded.size;
+ out.startupCompressedBytes=compressedBytes(loaded);
+ out.startupDecodedRgbaBytes=[...loaded].reduce((total,file)=>{
+  const [width,height]=imageSizes[file]||[0,0];
+  return total+width*height*4;
+ },0);
+ out.startupAssetFiles=[...loaded].sort();
+ const artByStage=[new Set(loaded)];
+ await w.loadVoyageArt();
+ artByStage.push(new Set(loaded));
+ out.voyageAssets=loaded.size;
+ out.voyageCompressedBytes=compressedBytes(loaded);
+ await w.loadLongacreArt();
+ artByStage.push(new Set(loaded));
+ out.longacreAssets=loaded.size;
+ out.longacreCompressedBytes=compressedBytes(loaded);
+ out.laterArtStages={};
+ const stages=[['kantaria',w.loadKantariaArt],['arego',w.loadAregoArt],
+  ['cheliax',w.loadCheliaxArt],['tathlum',w.loadTathlumArt]];
+ for(const [name,load] of stages){
+  const before=artByStage.at(-1);
+  await load();
+  artByStage.push(new Set(loaded));
+  const files=[...loaded].filter(file=>!before.has(file));
+  out.laterArtStages[name]={files:files.length,bytes:compressedBytes(files)};
+ }
+ out.missingReplayArt=data.sections.flatMap(section=>{
+  const stage=w.artStage(section),file=data.scenes[section.scene].image;
+  return file&&!artByStage[stage].has(file)?[{id:section.id,stage,file}]:[];
+ });
+ out.campaignAssets=loaded.size;
+ out.campaignCompressedBytes=compressedBytes(loaded);
+ fs.writeFileSync(path.join(root,'docs','FULL_AUDIT_MACHINE_RESULTS.json'),JSON.stringify(out,null,2)+'\n');
+ const {prematureImport,startupAssetFiles,...summary}=out;
+ console.log(JSON.stringify({...summary,prematureImport:{accepted:prematureImport.accepted,section:prematureImport.section}},null,2));
+ if(out.frameErrors.length||out.missingLiteralAssets.length||out.invalidGeometry.length||
+    out.enemiesWithoutKnownFrames.length||prematureImport.accepted||!out.startupComplete||
+    out.uncheckedFrames.length||out.missingReplayArt.length)process.exitCode=1;
+}
+auditLoading().catch(error=>{console.error(error);process.exitCode=1;});
