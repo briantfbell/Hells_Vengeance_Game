@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const senara=window.SenaraArrival?.goal();
+ if(senara)return {text:senara,target:SenaraArrival.target()};
  const excruciation=window.EgorianExecution?.goal();
  if(excruciation)return {text:excruciation,target:EgorianExecution.target()};
  const mort=window.EgorianMort?.goal();

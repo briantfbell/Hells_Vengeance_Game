@@ -49,6 +49,9 @@ window.Progression=(()=>{
   if(q.egorianDisguiseReady)rows.push('Egorian · Draymus raises Joe Kek with Flesh Puppet and prepares an elderly disguise for the excruciation.');
   if(q.egorianDottariHeard)rows.push('Egorian · the Dottari open an inquiry into the death of a noble.');
   if(q.egorianExcruciated)rows.push('The public excruciation resumes and Oppian’s soul is given to Asmodeus.');
+  if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
+  if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
+  if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;

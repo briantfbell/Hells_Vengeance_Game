@@ -53,7 +53,7 @@ window.EgorianMort=(()=>{
  }
  function mapImage(){return scene===alley?art[alley]:null;}
  function roster(){return scene===alley?solo:null;}
- function movement(){return quest.egorianDisguiseReady&&art[disguise.src]?{meta:disguise,image:art[disguise.src]}:null;}
+ function movement(){return quest.egorianDisguiseReady&&!quest.egorianExcruciated&&art[disguise.src]?{meta:disguise,image:art[disguise.src]}:null;}
  function npcs(){
   if(scene!==alley)return null;
   if(!quest.egorianAmbushResolved){
