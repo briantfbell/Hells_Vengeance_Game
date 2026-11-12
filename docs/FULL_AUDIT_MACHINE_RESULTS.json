@@ -1,7 +1,7 @@
 {
-  "scripts": 75,
-  "scenes": 123,
-  "replays": 308,
+  "scripts": 76,
+  "scenes": 124,
+  "replays": 313,
   "framesInspected": 588,
   "framesChecked": 588,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 498024950,
+  "assetBytes": 498030723,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",

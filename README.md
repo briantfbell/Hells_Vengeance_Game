@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 308 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 313 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -255,3 +255,8 @@ Continue from Hinji or select replay **293**. Meet Brado at the canal quay and c
 ### Efisio Pera in Egorian
 
 Continue after Brado’s favors or select replay **299**. Attempt the arrest, hold off the guards, and follow Efisio into the street as Freya. Replays **299–304** cover the confrontation. See [the section notes](docs/efisio-arc.md) for sources, artwork and verification.
+
+
+### Corrine’s sting and the Crown’s debrief
+
+Continue after defeating Efisio or select replay **305**. Hear the reports from across Cheliax, learn the Crown’s decision, and receive the Queen’s next assignment. Replays **305–309** cover the debrief. See [the section notes](docs/egorian-sting.md) for the conflicting rank records and verification.

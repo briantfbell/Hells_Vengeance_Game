@@ -52,6 +52,9 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.egorianStingDebriefed)rows.push('Egorian · The Queen asks the company to settle a feud between two nobles. Corrine conveys the assignment.');
+  if(q.egorianStandingRestored)rows.push('Egorian · Freya’s military rank and Hellknight standing are restored. The Church of Asmodeus recognizes Jason’s service.');
+  if(q.egorianStingComplete)rows.push('Cheliax · 24 Calistril, 4717. Corrine’s sting brings down Visperthul’s criminal network. Four leading agents are captured or killed.');
   if(q.efisioDefeated)rows.push('Egorian · 23 Calistril, 4717. Freya follows Efisio Pera through a fifth-story window and defeats him in the street.');
   if(q.efisioReeseRestrained)rows.push('Egorian · Visperthul turns Reese against the company through the soul-contract. His companions restrain him.');
   if(q.westcrownComplete)rows.push('Westcrown · The company completes Brado Pachia’s small favors.');

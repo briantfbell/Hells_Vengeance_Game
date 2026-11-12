@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const sting=window.EgorianSting?.goal();
+ if(sting)return {text:sting,target:EgorianSting.target()};
  const efisio=window.EfisioArc?.goal();
  if(efisio)return {text:efisio,target:EfisioArc.target()};
  const hinji=window.Hinji?.goal();

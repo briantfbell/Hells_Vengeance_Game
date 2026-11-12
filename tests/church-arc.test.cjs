@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 308 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,308);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 313 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,313);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1106,7 +1106,7 @@ test('Efisio’s guards fight without Reese and Freya alone follows Efisio into 
  await w.EfisioArc.afterBattle('efisio_duel',[328,264,'down']);
  assert.equal(w.EfisioArc.roster(),null);
  assert.equal(w.hp.reese,30);
- const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...sections.at(-1),quest:w.quest})));
+ const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...sections.find(s=>s.id==='efisio-duel'),quest:w.quest})));
  assert.equal(saved.quest.efisioDefeated,true);
  saved.quest.efisioReeseRestrained=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Efisio sequence/);
@@ -1143,4 +1143,34 @@ test('Hinji sits between Remesiana and Westcrown while legacy Westcrown saves re
  const forged=structuredClone(modern);
  forged.quest.hinjiComplete=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Hinji is still in progress/);
+});
+
+
+test('Corrine’s reports precede reinstatement and the next orders while clerical restrictions persist',async()=>{
+ const w=world(),sections=w.replaySections(),replay=id=>sections.find(s=>s.id===id);
+ const start=replay('sting-road');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),
+  journeyCard:async(name,text,commit)=>{w.transcript.push({name,text});commit();}});
+ w.scenes[start.scene].points=[];
+ w.scenes.egorian_court={image:'court.png',spawn:[328,344],walk:[{x:144,y:176,w:352,h:176}],blocks:[],lights:[],points:[]};
+ vm.runInContext(read('egorian-sting.js'),w);
+ w.EgorianSting.install();
+ const step=async id=>assert.equal(await w.EgorianSting.interact(id),true,id);
+ await step('stingGoToCorrine');
+ assert.equal(w.scene,'egorian_sting_hall');
+ assert.equal(await w.EgorianSting.interact('stingStanding'),false);
+ await step('stingBriefing');
+ await step('stingReports');
+ assert(w.transcript.some(l=>l.text.includes('four leading agents')));
+ await step('stingStanding');
+ assert(w.quest.egorianStandingRestored);
+ assert.equal(w.Inventory.skill({uses:4},'jason',w.quest).uses,0);
+ assert(!w.Inventory.items(w.quest,2).some(i=>i.id==='zara_geitta'));
+ await step('stingNewOrders');
+ assert.equal(w.EgorianSting.points().length,0);
+ const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('sting-orders'),quest:w.quest})));
+ assert.equal(saved.quest.egorianStingDebriefed,true);
+ assert.equal(saved.mendUses,0);
+ saved.quest.egorianStingComplete=false;
+ assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Egorian sting sequence/);
 });
