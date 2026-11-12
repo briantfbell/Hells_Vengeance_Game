@@ -3,7 +3,7 @@
 window.DinyarRecon=(()=>{
  const wayside='molthune_waystation',nidal='nidal_arrival_court',ridge='dinyar_ridge';
  const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png';
- const lower='dinyar_lower_works',bridge='dinyar_bridge_ward';
+ const lower='dinyar_lower_works',bridge='dinyar_bridge_ward',court='egorian_westcrown_orders';
  const lowerArt='dinyar-lower-works-v1.png',bridgeArt='dinyar-bridge-ward-v1.png',dragonArt='parnoneryx-v1.png';
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
  const dragon='parnoneryx',watch=['fastness_paladin','kantaria_guard'];
@@ -46,9 +46,19 @@ window.DinyarRecon=(()=>{
    walk:[{x:112,y:208,w:416,h:128},{x:288,y:336,w:80,h:64}],lights:[],
    points:[
     {id:'dinyarDragon',x:328,y:256,label:'Confront Parnoneryx'},
-    {id:'dinyarTrophy',x:328,y:232,label:'Recover Parnoneryx’s head'}
+    {id:'dinyarTrophy',x:328,y:232,label:'Recover Parnoneryx’s head'},
+    {id:'dinyarReturn',x:328,y:344,label:'Return to Egorian'}
    ]
   };
+  scenes[court]={
+   ...scenes.egorian_court,name:'Egorian · Westcrown Orders',
+   points:[
+    {id:'westcrownCommission',speaker:'corrine',x:328,y:264,label:'Receive Freya’s promotion'},
+    {id:'westcrownDeployment',x:328,y:344,label:'Depart for Westcrown'}
+   ]
+  };
+  MAP_LAYERS[court]=MAP_LAYERS.egorian_court;
+  JOURNEYS[court]='16 Gozran, 4717. After the victory at Dinyar, Freya is summoned to Egorian. The Glorious Reclamation still holds Westcrown.';
   MAP_LAYERS[lower]={foreground:lowerArt,contain:true,background:{type:'solid',color:'#1b2028'}};
   MAP_LAYERS[bridge]={foreground:bridgeArt,contain:true,background:{type:'solid',color:'#242b35'}};
   JOURNEYS[lower]='15 Gozran, 4717. The company passes through the hidden door and enters the lower works. Search for Godclaw prisoners and find a route above.';
@@ -65,9 +75,10 @@ window.DinyarRecon=(()=>{
  async function load(loader){
   await Promise.all([[nidal,nidalArt],[ridge,ridgeArt],[lower,lowerArt],[bridge,bridgeArt],[dragonArt,dragonArt]].map(async ([id,source])=>{art[id]=await loader(source);}));
  }
- function mapImage(){return [nidal,ridge,lower,bridge].includes(scene)?art[scene]:null;}
+ function mapImage(){return scene===court?art.egorian_court:[nidal,ridge,lower,bridge].includes(scene)?art[scene]:null;}
  function roster(){
   if(scene===nidal)return nidalParty;
+  if(scene===court)return ['freya'];
   if([ridge,lower,bridge].includes(scene))return ridgeParty;
   return null;
  }
@@ -78,6 +89,7 @@ window.DinyarRecon=(()=>{
   if(scene===nidal)return [
    {id:'violetta',x:328,y:192,height:57},{id:'corrine',x:392,y:208,height:53}
   ];
+  if(scene===court)return [{id:'corrine',x:328,y:232,height:58}];
   if(scene===ridge)return [];
   if(scene===lower)return watch.map((id,i)=>({id,x:guardPositions[i][0],y:guardPositions[i][1],height:55,pose:quest.dinyarWatchCleared?'prone':null}));
   if(scene===bridge)return quest.dinyarCleared?[]:[{id:dragon,x:328,y:214,height:94,pose:quest.dinyarDragonSlain?'prone':null}];
@@ -88,11 +100,12 @@ window.DinyarRecon=(()=>{
   if(scene===nidal)return [point('nidalConsult')];
   if(scene===ridge)return [point(!quest.dinyarSurveyed?'dinyarView':!quest.dinyarEntranceFound?'dinyarPostern':!quest.dinyarReconComplete?'dinyarPlan':'dinyarDescend')];
   if(scene===lower)return [point(!quest.dinyarWatchCleared?'dinyarWatch':!quest.dinyarCellsChecked?'dinyarCells':'dinyarClimb')];
-  if(scene===bridge)return quest.dinyarCleared?[]:[point(quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
+  if(scene===bridge)return [point(quest.dinyarCleared?'dinyarReturn':quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
+  if(scene===court)return quest.westcrownDeployed?[]:[point(quest.freyaFieldMarshal?'westcrownDeployment':'westcrownCommission')];
   return null;
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===bridge&&quest.dinyarCleared?'Citadel Dinyar is cleared. Parnoneryx’s head is secured.':null);}
+ function goal(){return target()?.label||(scene===court&&quest.westcrownDeployed?'Field Marshal Freya is bound for Westcrown.':null);}
  function beginFight(kind,ids,opening){
   const {x,y,dir}=units[0];
   const enemies=ids.map(id=>({id,name:NAMES[id],hp:STATS[id].hp,max:STATS[id].hp}));
@@ -183,6 +196,19 @@ window.DinyarRecon=(()=>{
    case 'dinyarTrophy':
     await say('Chronicle','With Citadel Dinyar cleared, the company takes the gold dragon’s head.');
     quest.dinyarCleared=true;
+    break;
+   case 'dinyarReturn':
+    quest.westcrownOrdersReached=true;
+    await travel(court,328,344);
+    break;
+   case 'westcrownCommission':
+    await say('corrine','By order of the Crown, you are promoted to Field Marshal. Your assignment is Westcrown.');
+    await say('freya','The Reclamation still has the city?');
+    await say('corrine','They’ve held it since the second of Gozran. That’s where the Crown is sending you.');
+    quest.freyaFieldMarshal=true;
+    break;
+   case 'westcrownDeployment':
+    await journeyCard('Orders for Westcrown','16 Gozran, 4717. Field Marshal Freya sets out for Westcrown, still held by the Glorious Reclamation.',()=>{quest.westcrownDeployed=true;});
     break;
   }
   save();

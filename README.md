@@ -357,3 +357,7 @@ Continue from the Molthune wayside or select replay **437**. Follow Draymus to N
 ### The assault on Citadel Dinyar
 
 Continue from the ridge or select replay **442**. Open the concealed entrance, clear the lower works, and defeat Parnoneryx at the bridge ward. Replays **442–447** cover the assault and recovery of the gold dragon’s head. See [the section notes](docs/dinyar-assault.md) for sources, artwork and verification.
+
+### Freya’s Westcrown orders
+
+After recovering Parnoneryx’s head, return to Egorian for Freya’s promotion and Westcrown assignment. Replays **448–450** cover the return, promotion, and departure. The GM timeline records the promotion and assignment on 16 Gozran, 4717 (S145) and the Glorious Reclamation’s capture of Westcrown on 2 Gozran (S132). The game reuses the Egorian court map and stages the promotion as a private briefing with Corrine. The orders are recorded in the journal and inventory.
