@@ -10,6 +10,7 @@ window.Handheld=(()=>{
   'barleybridge-councillor-v1':'Barleybridge · Councillor’s floor',
   'barleybridge-lords-chambers-v1':'Barleybridge · Lord’s chambers',
   'barleybridge-observatory-v1':'Barleybridge · Observatory',
+  'barleybridge-roof-v1':'Barleybridge · Castle roof',
   'warlock-library-v1':'Warlock Island · Circular library',
   'warlock-archive-v1':'Warlock Island · Museum archive'
  };

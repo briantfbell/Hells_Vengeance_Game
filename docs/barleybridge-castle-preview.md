@@ -18,6 +18,10 @@ Foundry scene `Scene.iiniVv5xhDqdz7mp` shows the private quarters, including tat
 
 Foundry scene `Scene.TgwO6xXhcXfFGlKs` shows an upper observation floor and west balcony. The prepared placements include Lord Oda Nobunaga (`Actor.Dp2eF1CD16Bp3eJc`), a Guardsman, a Bowman and a Samurai. Inspect the marked observation floor for that placement note. The brass instrument and the route from the lord’s chambers are game adaptations. Players can trace the route and return in Planning maps.
 
+## Castle roof
+
+Foundry scene `Scene.H7MffmAjwdlYeF0W` shows the castle’s snowy roof with zero prepared tokens. The planning map adds a maintenance walkway and west lookout so the player can inspect the roof at handheld scale. The observatory’s east landing links to the roof, and the roof access returns to the observatory. The walkway and access route are adaptations.
+
 ## Artwork prompts
 
 The built-in image generator produced these assets from written descriptions of the Foundry references. For the councillor’s floor, the in-game throne room supplied the style reference. The new map places the west staircase beside an open landing, with the council room and library above it.

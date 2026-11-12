@@ -77,7 +77,17 @@ window.ChapterMapPreview=(()=>{
    points:[
     {label:'Return stairs',x:488,y:280,destination:'barleybridge-lords-chambers-v1',arrival:[152,264]},
     {label:'Observation floor',x:344,y:232,note:'The prepared map places Lord Oda Nobunaga here with a guardsman, bowman, and samurai.'},
-    {label:'West balcony',x:88,y:264,note:'The west balcony looks over the castle roofs and the snowy valley.'}
+    {label:'West balcony',x:88,y:264,note:'The west balcony looks over the castle roofs and the snowy valley.'},
+    {label:'Trace roof access',x:456,y:248,destination:'barleybridge-roof-v1',arrival:[520,296]}
+   ]
+  },
+  'barleybridge-roof-v1':{
+   spawn:[520,296],
+   walk:[[128,272,448,32],[48,256,96,16],[128,256,16,32],[528,224,32,64]],
+   points:[
+    {label:'Return to observatory',x:536,y:232,destination:'barleybridge-observatory-v1',arrival:[440,280]},
+    {label:'Snowy gables',x:328,y:280,note:'Snow rests on the steep tile slopes above the narrow maintenance walkway.'},
+    {label:'West lookout',x:72,y:264,note:'From the railing, the river crossing and village roofs are visible below.'}
    ]
   },
   'barleybridge-basement-v1':{
