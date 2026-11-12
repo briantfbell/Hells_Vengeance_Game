@@ -3,6 +3,7 @@ window.Handheld=(()=>{
  let open=false,view='home',slotMode='save',member=0,frozen=0,page=0,itemId=null,itemBusy=false,historyPage=0;
  let planId=null,planImage=null,planPaths=false;
  const planningMaps={
+  'barleybridge-approach-v1':'Barleybridge · Scout’s approach',
   'barleybridge-town-v1':'Barleybridge · Gate and market',
   'barleybridge-throne-v1':'Barleybridge · Castle throne room',
   'barleybridge-basement-v1':'Barleybridge · Castle basement',
@@ -49,7 +50,7 @@ window.Handheld=(()=>{
  else{
   const goal=QuestGuide.current();
   const parallel=window.DinyarRecon?.parallelObjective();
-  const guidance=quest.barleybridgePlanReviewed?['Select Planning maps to inspect the routes.']:
+  const guidance=quest.barleybridgePlanReviewed?['Open Planning maps and start at the scout’s approach to trace the route from the river.']:
    parallel?[parallel]:
    ['Follow the diamond marker to the next interaction.','A / Enter / E interacts when you are close enough.'];
   details([scenes[scene].name,goal.text,...guidance]);

@@ -40,6 +40,17 @@ test('chapter map previews can reach their marked destinations on the game grid'
    assert.equal(nearbyStop(),null,stop.label+' landing');
   }
  }
+ select('barleybridge-approach-v1');
+ assert.equal(nearbyStop().label,'Near-bank trail');
+ const move=(direction,count)=>{for(let i=0;i<count;i++)assert(key({key:direction,preventDefault(){}}));};
+ move('ArrowUp',6);
+ move('ArrowLeft',10);
+ move('ArrowUp',1);
+ const crossing=nearbyStop();
+ assert.equal(crossing.label,'Trace the crossing');
+ select(crossing.destination,crossing.arrival);
+ move('ArrowDown',1);
+ assert.equal(nearbyStop().destination,'barleybridge-approach-v1');
  select('warlock-library-v1',[328,216]);
  assert.equal(nearbyStop(),null);
  assert(key({key:'ArrowUp',preventDefault(){}}));

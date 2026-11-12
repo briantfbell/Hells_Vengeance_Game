@@ -29,6 +29,15 @@ window.ChapterMapPreview=(()=>{
     {label:'Display gallery',x:472,y:184,note:'The display cases divide the eastern gallery. Use the aisle between them.'}
    ]
   },
+  'barleybridge-approach-v1':{
+   spawn:[328,344],
+   walk:[[112,208,416,128],[112,192,64,16],[256,336,112,64]],
+   points:[
+    {label:'Near-bank trail',x:328,y:344,note:'El Guapo waited on the near bank. The route across the river is for planning.'},
+    {label:'Gate lookout',x:456,y:232,note:'The gate is visible from here. The scout could not count the paladins.'},
+    {label:'Trace the crossing',x:168,y:216,destination:'barleybridge-town-v1',arrival:[328,344]}
+   ]
+  },
   'barleybridge-throne-v1':{
    spawn:[328,376],
    walk:[[304,288,48,112],[144,144,352,160],[256,112,128,48],[480,160,128,32],[560,112,48,64]],
@@ -52,6 +61,7 @@ window.ChapterMapPreview=(()=>{
    walk:[[288,224,64,176],[80,192,496,48],[112,160,416,32],[240,112,224,48],[448,144,80,48]],
    occluder:[288,240,64,64],
    points:[
+    {label:'River approach',x:328,y:376,destination:'barleybridge-approach-v1',arrival:[184,248]},
     {label:'Market square',x:328,y:200,note:'The main gate opens into the market, with lanes toward the inn and pagoda.'},
     {label:'Inn lane',x:184,y:168},
     {label:'Pagoda lane',x:472,y:152},

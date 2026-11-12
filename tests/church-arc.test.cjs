@@ -2395,8 +2395,11 @@ test('Barleybridge uses El Guapo’s solo roster and gates the scout report',asy
  assert.match(plans[0].text,/outcome at Barleybridge remains unknown/);
  assert.match(plans[1].text,/After St. Ilnius.*last component/);
  assert.match(plans[2].text,/intends to bring/);
- assert.match(plans[2].text,/Current quest.*Planning maps/);
+ assert.match(plans[2].text,/Current quest.*Planning maps.*scout’s approach/);
  assert(w.quest.barleybridgePlanReviewed);
+ w.quest=capture().quest;
+ assert.equal(w.BarleybridgeScout.target(),null);
+ assert.deepEqual([...w.BarleybridgeScout.roster()],['guapo']);
  assert.match(w.BarleybridgeScout.goal(),/El Guapo waits outside Barleybridge/);
  saved.quest.barleybridgeGateSeen=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Barleybridge scouting sequence/);
