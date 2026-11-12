@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const westcrown=window.Westcrown?.goal();
+ if(westcrown)return {text:westcrown,target:Westcrown.target(),targets:Westcrown.points()};
  const market=window.RemesianaMarket?.goal();
  if(market)return {text:market,target:RemesianaMarket.target()};
  const fountain=window.EgorianFountain?.goal();
