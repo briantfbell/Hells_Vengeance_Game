@@ -1,24 +1,28 @@
 {
-  "scripts": 94,
-  "scenes": 150,
-  "replays": 418,
-  "framesInspected": 634,
-  "framesChecked": 634,
+  "scripts": 95,
+  "scenes": 152,
+  "replays": 426,
+  "framesInspected": 639,
+  "framesChecked": 639,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 64,
+  "combatStats": 65,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 616697449,
+  "assetBytes": 627660044,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
       "bytes": 3901533
+    },
+    {
+      "name": "darkrain-skull-v1.png",
+      "bytes": 3874359
     },
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -51,16 +55,12 @@
     {
       "name": "court-platforms-v1.png",
       "bytes": 3578233
-    },
-    {
-      "name": "tathlum-cave-lair-v1.png",
-      "bytes": 3559696
     }
   ],
   "startupComplete": true,
-  "startupAssets": 246,
-  "startupCompressedBytes": 561522583,
-  "startupDecodedRgbaBytes": 1539685544,
+  "startupAssets": 250,
+  "startupCompressedBytes": 572474900,
+  "startupDecodedRgbaBytes": 1564853608,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -120,6 +120,10 @@
     "court-cast-packed-v1.png",
     "court-platforms-v1.png",
     "court-upper-v1.png",
+    "darkrain-dire-bear-v1.png",
+    "darkrain-pass-v1.png",
+    "darkrain-skull-v1.png",
+    "darkrain-wight-mother-v1.png",
     "dice-atlas-v1.png",
     "dottari.png",
     "draymus-chair-walk-v1.png",

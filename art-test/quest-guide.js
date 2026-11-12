@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const darkrain=window.DarkRain?.goal();
+ if(darkrain)return {text:darkrain,target:DarkRain.target()};
  const tathlum=window.TathlumHunt?.goal();
  if(tathlum)return {text:tathlum,target:TathlumHunt.target()};
  const menador=window.Menador?.goal();

@@ -52,6 +52,9 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.darkrainComplete)rows.push('Dark Rain · The company passes through an immense dragon skull whose bones appear to immobilize nearby undead.');
+  if(q.darkrainClothed)rows.push('Dark Rain · Reese hunts the dire polar bear alone and makes winter clothing from its hide.');
+  if(q.darkrainPact)rows.push('Isger · 10 Gozran, 4717. Draymus secures passage from the Wight Mother in exchange for removing the Frost Giants.');
   if(q.tathlumHuntComplete)rows.push('Nidal · Freya defeats the cave giants in single combat and awakens their rune on the dwarven champion’s belt.');
   if(q.tathlumBriefed)rows.push('Egorian · 4 Gozran, 4717. Lieutenant Colonel Freya receives the Queen’s Tathlum assignment.');
   if(q.menadorComplete)rows.push('Menador · 3 Gozran, 4717. Meeting of the Twins.');
