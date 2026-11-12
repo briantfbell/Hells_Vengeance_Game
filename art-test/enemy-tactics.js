@@ -35,6 +35,10 @@ window.EnemyTactics=(()=>{
    else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
    else if(e.id==='darkrain_bear'){move=round%2?'Raking claws':'Bite';extra=round%2?0:2;}
+   else if(e.id==='ilnius_sylvestra'){
+    move=round%2?'Silent Vigil shot':'Silent Vigil aimed shot';
+    extra=round%2?0:3;
+   }
    else if(e.id==='ilnius_archon_statue'){
     const hammer=(round+i)%3===0;
     move=hammer?'Hammer slam':'Stone hammer';

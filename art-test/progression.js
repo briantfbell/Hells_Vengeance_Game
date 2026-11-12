@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.ilniusDefiled)rows.push('St. Ilnius · 20 Gozran, 4717. J’Mal kills Sylvestra Hanel, and Jason defiles the temple with Parnoneryx’s head. An ancient library is still needed.');
   if(q.ilniusStatuesCleared)rows.push('St. Ilnius Fountain · Bruce escapes the guardians’ opening strike with Blink. The company defeats the five archon statues.');
   if(q.freyaFieldMarshal)rows.push('Egorian · 16 Gozran, 4717. Freya is promoted to Field Marshal and assigned to Westcrown.');
   if(q.dinyarCleared)rows.push('Isger · 15 Gozran, 4717. Citadel Dinyar is cleared. The company takes the gold dragon Parnoneryx’s head.');

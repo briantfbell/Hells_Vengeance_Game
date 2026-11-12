@@ -365,3 +365,7 @@ After recovering Parnoneryx’s head, return to Egorian for Freya’s promotion 
 ### St. Ilnius Fountain
 
 After Freya’s Westcrown deployment, follow the Nidal expedition or select replay **451**. Meet Bruce, follow the creek, and clear the five archon statues. Replays **451–455** cover the approach and the shrine court. See [the section notes](docs/ilnius-fountain.md) for sources, artwork, and verification.
+
+### St. Ilnius’s inner temple
+
+Continue from the fountain court or select replay **456**. Break Sylvestra Hanel’s resolve, then bring Parnoneryx’s head to Jason at the basin. Replays **456–459** cover the confrontation, ritual, and ancient-library lead. See [the section notes](docs/ilnius-inner-temple.md) for sources, art and verification.
