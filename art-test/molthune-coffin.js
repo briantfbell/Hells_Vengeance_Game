@@ -8,7 +8,8 @@ window.MolthuneCoffin=(()=>{
  const violet='violetta',unknown='pavel_unknown',wight='molthune_wight';
  const coffin=[430,185];
  const flightDuration=950;
- let chase=null,breach=null,flight=null;
+ const scoutCover=[328,312],scoutDuration=1050;
+ let scout=null,chase=null,breach=null,flight=null;
 
  function install(){
   scenes[hall].points.push({id:'molthuneDepart',x:328,y:344,label:'Descend toward Molthune'});
@@ -78,6 +79,18 @@ window.MolthuneCoffin=(()=>{
   return [{id:wight,x:172,y:192,height:83},{id:wight,x:544,y:208,height:91},
    {id:unknown,x:woman[0],y:woman[1],height:56}];
  }
+ function scoutProgress(){
+  return scout?.epoch===epoch?Math.min(1,(performance.now()-scout.at)/scoutDuration):0;
+ }
+ function scoutPose(unit){
+  if(scene!==slope||unit.id!=='reese'||quest.molthuneScouted||scout?.epoch!==epoch)return null;
+  const progress=reduce.matches?1:scoutProgress();
+  const back=Math.max(0,(progress-.16)/.84);
+  const [x,y]=scoutCover;
+  return {...unit,x:unit.x+(x-unit.x)*back,y:unit.y+(y-unit.y)*back,
+   dir:back===0?'up':x===unit.x?'down':'left',
+   step:back>0&&back<1,anim:back*1.05};
+ }
  function flightPose(unit){
   if(scene!==slope||flight?.epoch!==epoch||reduce.matches)return null;
   if(unit.id!==unknown&&!units.includes(unit))return null;
@@ -96,7 +109,8 @@ window.MolthuneCoffin=(()=>{
   const elapsed=chase?.epoch===epoch?(performance.now()-chase.at)/1600:0;
   if(!quest.molthuneBaitSet){
    const progress=reduced&&elapsed>0?.32:Math.min(1,elapsed);
-   drawProp(g,beastArt,427-progress*510,176+progress*70,175);
+   const lunge=quest.molthuneScouted||reduced?0:Math.sin(Math.PI*scoutProgress())**2;
+   drawProp(g,beastArt,427-progress*510-20*lunge,176+progress*70+62*lunge,175+10*lunge);
    const bear=art['darkrain-dire-bear-v1.png'];
    if(bear&&elapsed>0){
     const foot=226+progress*61+(reduced?0:Math.round(Math.sin(elapsed*24)*2));
@@ -137,11 +151,16 @@ window.MolthuneCoffin=(()=>{
    case 'molthuneScout': {
     await say('reese','I can see the box. Carved wood, metal corners. That’s a traveling coffin.');
     await storyRoll('Reese · Stealth',2,0,'The remorhaz nearly catches Reese');
-    await say('Chronicle','The creature lunges. Reese reaches the rocks and gets back with the location.');
-    await say('draymus','A reinforced travel coffin, in these mountains? It may belong to a Nidalese vampire.');
-    const {x,y,dir}=units[0];
+    const token=epoch;
+    scout={epoch:token,at:performance.now()};
+    await delay(reduce.matches?220:scoutDuration);
+    if(token!==epoch)return false;
+    seedParty(...scoutCover,'up');
+    scout=null;
+    await say('Chronicle','The remorhaz lunges. Reese slips back down the slope and brings word to the others.');
     quest.molthuneScouted=true;
-    seedParty(x,y,dir);
+    seedParty(...scoutCover,'up');
+    await say('draymus','A reinforced travel coffin, in these mountains? It may belong to a Nidalese vampire.');
     break;
    }
    case 'molthuneBait': {
@@ -204,5 +223,5 @@ window.MolthuneCoffin=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,effects,flightPose,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,effects,scoutPose,flightPose,interact};
 })();
