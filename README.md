@@ -14,7 +14,7 @@ Every launch opens the animated **Hell’s Rebels — a Hell’s Vengeance story
 
 Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese joins in Longacre. Bruce’s portrait is available in the gallery; his recruitment awaits a confirmed joining point. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
 
-The title and Night of Ashes load with the opening artwork. The rest of the artwork loads when you board the Western Star or open a later checkpoint or replay. Keep the complete `art-test` folder available for the whole story.
+The title and Night of Ashes load with the opening artwork. Chapter Two loads its own artwork when you board the Western Star or open a Chapter Two checkpoint or replay. The remaining campaign art loads at the Longacre sermon or when you open a later checkpoint. Keep the complete `art-test` folder available for the whole story.
 
 ## Controls
 

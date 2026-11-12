@@ -235,8 +235,10 @@ function paintIntro(){const id=ROSTER[introIndex],bio=BIOS[id];drawIntroArt($('i
 function showIntro(){introOpen=true;document.body.classList.add('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;$('intro').hidden=false;$('intro-resume').hidden=!readSave();$('intro-roster').replaceChildren();ROSTER.forEach((id,i)=>{const b=document.createElement('button'),c=document.createElement('canvas'),name=document.createElement('span');c.width=110;c.height=130;drawIntroArt(c,id);name.textContent=NAMES[id]||BIOS[id].name;b.append(c,name);b.setAttribute('aria-label',BIOS[id].name+(OPENING_ROSTER.includes(id)?'':', joins later'));if(!OPENING_ROSTER.includes(id)){const tag=document.createElement('small');tag.textContent='Later';b.append(tag);}b.onclick=()=>{introIndex=i;paintIntro();};$('intro-roster').append(b);});introIndex=Math.max(0,ROSTER.indexOf(lead));paintIntro();$('intro-start').focus();}
 function reset(resume=false,selected=null){
  if(campaignLoading)return;
- if(resume&&!campaignReady&&readSave()?.quest.chapter2){
-  void prepareCampaign().then(loaded=>{if(loaded)reset(resume,selected);});
+ const saved=resume?readSave():null;
+ const stage=artStage(saved?.quest);
+ if(stage>loadedArtStage){
+  void prepareCampaign(stage).then(loaded=>{if(loaded)reset(resume,selected);});
   return;
  }
  TitleScreen.hide();Handheld.close();
@@ -244,7 +246,7 @@ function reset(resume=false,selected=null){
  if(!resume&&!selected){showIntro();return;}
  introOpen=false;$('intro').hidden=true;document.body.classList.remove('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;
  if(!resume&&selected){try{const previous=localStorage.getItem(SAVE);if(previous){localStorage.setItem(SAVE+'-before-import',previous);$('save-restore').hidden=false;}}catch{}}
- const saved=resume?readSave():null;quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
+ quest=saved?.quest||{briefed:false,ropeCut:false,bell:false,victory:false,scimitar:false,planted:false,burned:false,done:false};
  progression=saved?.progression||Progression.fresh();inventory=saved?.inventory||Inventory.fresh();applyProgression();
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
  $('save-file-status').textContent='';
@@ -315,7 +317,8 @@ async function interact(requestedId=null){
  if(Handheld.isOpen()||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;if(p.id==='rileyBanter'){run(()=>PresentationPolish.banter());return;}
  run(async()=>{
   if(p.id.startsWith('citizen-')){await say(p.id,citizenLine(p.id));return;}
-  if(p.id==='nextChapter'&&!await prepareCampaign())return;
+  const nextArtStage=p.id==='nextChapter'?1:p.id==='chapterThree'?2:0;
+  if(nextArtStage&&!await prepareCampaign(nextArtStage))return;
   if(await window.BarleybridgeScout?.interact(p.id)||await window.IlniusFountain?.interact(p.id)||await window.DinyarRecon?.interact(p.id)||await window.MolthuneCoffin?.interact(p.id)||await window.SkadiParley?.interact(p.id)||await window.DarkRain?.interact(p.id)||await window.TathlumHunt?.interact(p.id)||await window.Menador?.interact(p.id)||await window.BarrowCovenant?.interact(p.id)||await window.BarrowTrail?.interact(p.id)||await window.VyreWish?.interact(p.id)||await window.SethicMansion?.interact(p.id)||await window.BellflowerBarn?.interact(p.id)||await window.BellflowerBarge?.interact(p.id)||await window.Pezzack?.interact(p.id)||await window.Rachikan?.interact(p.id)||await window.Ballerina?.interact(p.id)||await window.HinjiTavern?.interact(p.id)||await window.Belde?.interact(p.id)||await window.PaleBall?.interact(p.id)||await window.NicoloArc?.interact(p.id)||await window.SethicLedgers?.interact(p.id)||await window.SethicFarm?.interact(p.id)||await window.EgorianFeud?.interact(p.id)||await window.EgorianSting?.interact(p.id)||await window.EfisioArc?.interact(p.id)||await window.Hinji?.interact(p.id)||await window.Westcrown?.interact(p.id)||await window.RemesianaMarket?.interact(p.id)||await window.EgorianFountain?.interact(p.id)||await window.EgorianDischarge?.interact(p.id)||await window.AregoExit?.interact(p.id)||await window.AregoReturn?.interact(p.id)||await window.AregoAmbush?.interact(p.id)||await window.InfernoGate?.interact(p.id)||await window.FortArego?.interact(p.id)||await window.SenaraGraveyard?.interact(p.id)||await window.SenaraWagon?.interact(p.id)||await window.WhisperwoodGlade?.interact(p.id)||await window.WhisperwoodCamp?.interact(p.id)||await window.SenaraCitadel?.interact(p.id)||await window.SenaraDaggers?.interact(p.id)||await window.SenaraCover?.interact(p.id)||await window.SenaraArrival?.interact(p.id)||await window.EgorianExecution?.interact(p.id)||await window.EgorianMort?.interact(p.id)||await window.EgorianTrial?.interact(p.id)||await window.EgorianNight?.interact(p.id)||await window.EgorianArrival?.interact(p.id)||await window.SouthRoad?.interact(p.id)||await window.KantariaAftermath?.interact(p.id)||await window.FastnessArc?.interact(p.id)||await window.SupplyArc?.interact(p.id)||await window.CovertArc?.interact(p.id)||await DisruptionArc.interact(p.id)||await KantariaArc.interact(p.id)||await CourtArc.interact(p.id)||await FortArc.interact(p.id)||await ArmoryArc.interact(p.id)||await ChurchArc.interact(p.id)||await PoliticalMovement.interact(p.id)||await DebtsRumors.interact(p.id)||await LastStand.interact(p.id)||await window.NextArc.interact(p.id)||await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){await travel('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','Lutes, horns, and instrument cases fill Shensen’s shop. The famous actress is away; a shopkeeper remains. Somewhere beneath the floorboards, chanting rises through the wood.');save();}}
   if(p.id==='outside'){await travel('street',152,152,'down');}
@@ -1085,7 +1088,8 @@ function imageLoad(src){
  }));
  return imageRequests.get(src);
 }
-let campaignReady=false,campaignLoading=false;
+let loadedArtStage=0,campaignLoading=false;
+const artStage=q=>q?.chapter3?2:q?.chapter2?1:0;
 
 async function loadPrologueArt(){
  const maps={briefingRoom:'kintargo-briefing-v1.png',citizens:'townsfolk-sheet-v1.png',
@@ -1102,6 +1106,14 @@ async function loadPrologueArt(){
   }),
   ...Object.entries(QUESTGIVER_MODELS).map(async ([id,model])=>{art[id]=await imageLoad(model.src);}),
   CombatArt.load(imageLoad),PresentationPolish.load(imageLoad)
+ ]);
+}
+async function loadVoyageArt(){
+ const cast=['farmer','cimri','owner','dog','razelago','krenshar','spirit'];
+ const sources=new Set(cast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
+ await Promise.all([
+  window.NextChapter.load(imageLoad),
+  ...[...sources].map(async src=>{art[src]=await imageLoad(src);})
  ]);
 }
 async function loadCampaignArt(){
@@ -1169,22 +1181,27 @@ async function loadCampaignArt(){
   await DinyarRecon.load(imageLoad);
   await IlniusFountain.load(imageLoad);
   await BarleybridgeScout.load(imageLoad);
-  await window.NextChapter.load(imageLoad);
   await window.NextArc.load(imageLoad);
   await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
   await Promise.all(['reese','bruce'].map(async id=>{art[id+'-portrait']=await imageLoad(id==='reese'?'reese-early-portrait.png':'bruce-foundry-portrait.webp');}));
 }
-async function prepareCampaign(){
- if(campaignReady)return true;
+async function prepareCampaign(stage){
+ if(loadedArtStage>=stage)return true;
  if(campaignLoading)return false;
  campaignLoading=true;
  keys.clear();
- $('loadingText').textContent='Loading campaign artwork…';
+ $('loadingText').textContent=stage===1?'Loading the Western Star and Longacre…':'Loading campaign artwork…';
  $('loading').hidden=false;
  $('load-retry').hidden=true;
  try{
-  await loadCampaignArt();
-  campaignReady=true;
+  if(loadedArtStage<1){
+   await loadVoyageArt();
+   loadedArtStage=1;
+  }
+  if(stage>=2){
+   await loadCampaignArt();
+   loadedArtStage=2;
+  }
   return true;
  }catch(error){
   console.error(error);
