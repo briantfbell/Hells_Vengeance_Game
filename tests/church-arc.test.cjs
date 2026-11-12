@@ -1794,6 +1794,14 @@ test('Menador follows Corrine’s briefing and records only the dated meeting',a
  await step('menadorDepart');
  assert.equal(w.scene,'menador_pass');
  assert.equal(w.Menador.npcs().length,0);
+ assert.equal(w.Menador.target().id,'menadorMeeting');
+ await step('menadorKeep');
+ assert.match(w.transcript.at(-1).text,/Silver Ravens brought down Menador Keep/);
+ const ruins=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('menador-meeting'),quest:w.quest})));
+ assert(ruins.quest.menadorKeepSeen);
+ assert.equal(await w.Menador.interact('menadorKeep'),false);
+ assert(w.Progression.history(ruins.quest,ruins.progression).some(line=>line.includes('Menador Keep')));
+ delete w.quest.menadorKeepSeen;
  await step('menadorMeeting');
  assert.deepEqual(w.transcript.at(-1),{name:'Meeting of the Twins',text:'3 Gozran, 4717. Menador.'});
  const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('menador-meeting'),quest:w.quest})));

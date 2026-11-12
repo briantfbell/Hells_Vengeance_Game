@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 710706486,
+  "assetBytes": 714311790,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -119,7 +119,7 @@
     },
     "barrowood": {
       "files": 8,
-      "bytes": 20013323
+      "bytes": 19716448
     },
     "darkRain": {
       "files": 11,
@@ -148,7 +148,7 @@
   "lateCheckpointArt": {
     "barrowood": {
       "files": 55,
-      "bytes": 104297222
+      "bytes": 104000347
     },
     "darkRain": {
       "files": 52,
@@ -172,5 +172,5 @@
     }
   },
   "campaignAssets": 276,
-  "campaignCompressedBytes": 641469716
+  "campaignCompressedBytes": 641172841
 }

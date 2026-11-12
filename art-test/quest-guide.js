@@ -14,7 +14,7 @@ window.QuestGuide={current(){
  const tathlum=window.TathlumHunt?.goal();
  if(tathlum)return {text:tathlum,target:TathlumHunt.target()};
  const menador=window.Menador?.goal();
- if(menador)return {text:menador,target:Menador.target()};
+ if(menador)return {text:menador,target:Menador.target(),targets:Menador.points()??[]};
  const covenant=window.BarrowCovenant?.goal();
  if(covenant)return {text:covenant,target:BarrowCovenant.target()};
  const trail=window.BarrowTrail?.goal();

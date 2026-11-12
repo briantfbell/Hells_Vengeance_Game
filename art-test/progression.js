@@ -72,6 +72,7 @@ window.Progression=(()=>{
   if(q.tathlumHuntComplete)rows.push('Nidal · Freya defeats the cave giants in single combat and awakens their rune on the dwarven champion’s belt.');
   if(q.tathlumBriefed)rows.push('Egorian · 4 Gozran, 4717. Lieutenant Colonel Freya receives the Queen’s Tathlum assignment.');
   if(q.menadorComplete)rows.push('Menador · 3 Gozran, 4717. Meeting of the Twins.');
+  if(q.menadorKeepSeen)rows.push('Menador Keep · Its destruction by the Silver Ravens cut off the land route for Thrune reinforcements to Kintargo.');
   if(q.menadorBriefed)rows.push('Crown briefing · Corrine reports the fall of Westcrown and Barzillai’s death. The Queen demands that the responsible parties be turned over.');
   if(q.covenantComplete)rows.push('Barrowood · Freya, Jason, J’Mal, Draymus and Reese are elevated to Bound Agents of Thrune.');
   if(q.covenantJasonRaised)rows.push('Barrowood · At the Queen’s request, Gorthoklekk raises Jason.');

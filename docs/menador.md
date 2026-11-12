@@ -4,7 +4,13 @@ P004, “Choices,” records Corrine reporting that the Glorious Reclamation has
 
 Rows S134 and S135 record the Meeting of the Twins at Menador on 3 Gozran, 4717 in the Rebels and Vengeance timelines, respectively. P054 establishes Freya and Boudicca as identical twin sisters. The surviving records leave the meeting’s participants, terms and outcome unresolved. The playable scene covers the briefing and approach, then marks the dated meeting with a chapter card. Corrine’s appearance at the clearing and the pass layout are game staging.
 
+The optional overlook in replay 406 uses P018 and S097 for the destruction of Menador Keep. P018 places the destruction on 14 Neth, 4716, while S097 lists 26 Calistril, 4717. Both place it before the meeting. The chronicle explains the closure of the land route without assigning a date to the siege. The overlook and its position relative to the keep are game staging.
+
 ## Artwork prompt
+
+**Ruins edit** · `art-test/menador-pass-v2.png`
+
+Edit the attached high-detail dark fantasy pixel-art map of Menador pass. Preserve its exact wide 8:5 crop, perspective, color, road, rock walls, light, and all foreground and lower 78% of the image. In the distant narrow opening at TOP CENTER only, add the ruined remains of a thick-walled dwarven fortress that once barred the pass: a short broken crenellated wall, a collapsed arch and small angular stone debris across the far road. Keep the ruins distant and small, dark stone grays with subdued mist, believable scale, no fire or new lighting. Their silhouette should still be visible when the artwork is scaled to a 640×400 game map. The current stone path below the topmost 20% must remain clear and completely unchanged. Match the source pixel clusters exactly in feel. No people, banners, text, UI, grid, modern objects or new routes.
 
 **Mountain pass** · `art-test/menador-pass-v1.png`
 
