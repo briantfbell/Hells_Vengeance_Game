@@ -107,6 +107,41 @@ test('the party inspects the torn notice and meets the servant before reaching F
  assert.deepEqual(w.travels,['scarlet_manor_approach','scarlet_manor']);
  assert.equal(w.NextArc.target().id,'fexAudience');
 });
+test('the Compact stages the oath before revealing Razelago and opens the Last Stand once',async()=>{
+ for(const alreadySworn of [false,true]){
+  const w=world();
+  w.scene='scarlet_manor';
+  w.quest={chapter3:true,compactSworn:alreadySworn,activeRoster:['freya','jamal','jason','draymus']};
+  w.units=w.quest.activeRoster.map(id=>({id,x:328,y:248}));
+  w.epoch=1;
+  w.reduce={matches:false};
+  w.$('character').options=[];
+  let time=0;
+  w.performance.now=()=>time;
+  w.delay=async duration=>{time+=duration;};
+  const devilVisible=()=>w.NextArc.npcs().some(actor=>actor.id==='razelago_revealed');
+  const say=w.say;
+  w.say=async(...args)=>{
+   const [,line,choices]=args;
+   if(line.includes('backs up to the hellstone')){
+    const jason=w.NextArc.compactPose(w.units.find(unit=>unit.id==='jason'));
+    assert.equal(jason.dir,'down');
+    assert.equal(jason.x,328);
+    assert.equal(devilVisible(),false);
+   }
+   if(line.startsWith('The curtain opens'))assert(devilVisible());
+   if(line.startsWith('Riley Kels is singing'))assert(!devilVisible());
+   await say(...args);
+   return choices?1:0;
+  };
+  assert(!devilVisible());
+  await w.NextArc.interact('fexAudience');
+  assert.equal(w.transcript.some(line=>line.text.includes('bare backside')), !alreadySworn);
+  assert(w.quest.compactSworn&&w.quest.chapter3Complete&&w.quest.reeseJoined);
+  assert.equal(w.quest.activeRoster.filter(id=>id==='reese').length,1);
+  assert.equal(await w.NextArc.interact('fexAudience'),false);
+ }
+});
 test('both peaceful approaches expose the payroll once and lead to Ash House',async()=>{
  for(const choice of [0,1]){
   const w=world();
@@ -333,7 +368,7 @@ test('El Guapo returns on 21 Neth and rejoins the active company',async()=>{cons
 test('completed actions and future chapter interactions are hidden',()=>{const w=world(),s=read('chapter-engine.js');vm.runInContext(s.slice(s.indexOf('function storyPointAvailable('),s.indexOf('function visiblePoints(')),w);assert.equal(w.storyPointAvailable({id:'bolgartStocks'}),false);assert.equal(w.storyPointAvailable({id:'manorRoad'}),false);w.quest={payroll:true,decreesIssued:true};assert.equal(w.storyPointAvailable({id:'payroll'}),false);assert.equal(w.storyPointAvailable({id:'gateDecree'}),true);});
 test('a confirmation cannot instantly dismiss a newly opened dialogue',()=>{const w=world(),s=read('chapter-engine.js');w.GameAudio={effect:()=>{}};w.keys={clear:()=>{}};w.canvas={focus:()=>{}};vm.runInContext('let dialogOpen=true,dialogOpenedAt=0,dialogResolve=()=>window.resolved=true;'+s.slice(s.indexOf('function finishDialog('),s.indexOf('function run(')),w);w.performance.now=()=>100;w.finishDialog();assert(!w.resolved);w.performance.now=()=>200;w.finishDialog();assert(w.resolved);});
 
-test('Reese joins the actual party at the compact, never the original voyage',async()=>{const w=world();await w.NextChapter.interact('nextChapter');assert.deepEqual(Array.from(w.quest.activeRoster),w.OPENING_ROSTER);w.quest={chapter3:true,compactSworn:true,guapoAway:true,activeRoster:w.OPENING_ROSTER.filter(id=>id!=='guapo')};await w.NextArc.interact('fexAudience');assert(w.quest.reeseJoined);assert.deepEqual(Array.from(w.quest.activeRoster),['freya','jamal','jason','draymus','reese']);});
+test('Reese joins the actual party at the compact, never the original voyage',async()=>{const w=world();await w.NextChapter.interact('nextChapter');assert.deepEqual(Array.from(w.quest.activeRoster),w.OPENING_ROSTER);w.quest={chapter3:true,compactSworn:true,guapoAway:true,activeRoster:w.OPENING_ROSTER.filter(id=>id!=='guapo')};w.scene='scarlet_manor';w.epoch=1;w.reduce={matches:true};w.delay=async()=>{};await w.NextArc.interact('fexAudience');assert(w.quest.reeseJoined);assert.deepEqual(Array.from(w.quest.activeRoster),['freya','jamal','jason','draymus','reese']);});
 test('Bolgart fights include Reese, preserve the rear-door scout, and restore human appearance',async()=>{const w=world();vm.runInContext(read('last-stand-chapter.js'),w);w.quest={chapter4:true,reeseJoined:true,activeRoster:['freya','jamal','jason','draymus','reese']};w.units=w.quest.activeRoster.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;await w.LastStand.interact('lastDecree');assert.equal(w.encounter.kind,'bolgart');assert.deepEqual(Array.from(w.units,u=>u.id),['freya','jason','draymus','reese']);w.scene='longacre_jail';await w.LastStand.afterBattle('wereboar');assert.equal(w.LastStand.npcs().find(n=>n.id.startsWith('bolgart')).id,'bolgart');assert(w.transcript.some(x=>x.text.includes('returns to human form')));});
 test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.quest={chapter6:true};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});
 

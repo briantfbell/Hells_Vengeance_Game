@@ -7,7 +7,9 @@ window.NextArc=(()=>{
   [servant]:{source:'scarlet-manor-servant-v1.png',frame:{x:0,y:0,w:106,h:272}},
   [sentry]:{source:'scarlet-manor-sentry-v1.png',frame:{x:0,y:0,w:132,h:240}}
  };
- let sermonStage=null,deputyApproach=null;
+ const hellstoneArt='scarlet-manor-hellstone-v1.png',curtainArt='scarlet-manor-curtain-v1.png';
+ const hellstone=[328,221],curtainDuration=620;
+ let sermonStage=null,deputyApproach=null,compactStage=null;
  const deputies=[
   {id:'deputy1',duty:[376,240],flank:[204,296],charge:[274,304]},
   {id:'deputy2',duty:[520,264],flank:[462,304],charge:[386,312]},
@@ -32,7 +34,8 @@ window.NextArc=(()=>{
  function install(){installManor();Object.assign(scenes,maps);scenes.ash_house.points.push({id:'longacreRoad',x:328,y:352,label:'Travel to Longacre square'});for(const [id,s] of Object.entries(maps))window.MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#101817'}};Object.assign(NAMES,{rhona:'Rhona Staelish',allamar:'Sword Knight Tileavia Allamar',twin1:'Loran Allamar',twin2:'Lacall Allamar',razelago_revealed:'Razelago',deputy1:'Former Deputy 1',deputy2:'Former Deputy 2',deputy3:'Former Deputy 3',deputy4:'Former Deputy 4'});for(let i=1;i<=4;i++)STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};}
  async function load(loader){
   const assets=Object.entries(maps).map(([id,s])=>[id,s.image]);
-  assets.push(['authority','longacre-authority-cast.png'],['revelations','longacre-revelations.png'],[helmArt,helmArt],...Object.values(manorActors).map(({source})=>[source,source]));
+  assets.push(['authority','longacre-authority-cast.png'],['revelations','longacre-revelations.png']);
+  for(const source of [helmArt,hellstoneArt,curtainArt,...Object.values(manorActors).map(actor=>actor.source)])assets.push([source,source]);
   await Promise.all(assets.map(async ([id,source])=>{art[id]=await loader(source);}));
  }
  function currentSermon(){return scene==='longacre_square'&&!quest.sermonDispersed&&sermonStage&&sermonStage.epoch===epoch?sermonStage:null;}
@@ -66,6 +69,43 @@ window.NextArc=(()=>{
   }
   g.restore();
  }
+ function currentCompact(){return scene==='scarlet_manor'&&compactStage&&compactStage.epoch===epoch?compactStage:null;}
+ function curtainOpening(stage){
+  if(!stage?.curtain)return 0;
+  const elapsed=performance.now()-stage.curtain.start;
+  const progress=reduce.matches?1:Math.min(1,elapsed/curtainDuration);
+  return stage.curtain.opening?progress:1-progress;
+ }
+ function compactPose(unit){
+  const stage=currentCompact();
+  if(!stage?.gathered)return unit;
+  const index=stage.roster.indexOf(unit.id);
+  if(index<0)return unit;
+  if(stage.member===unit.id)return {...unit,x:unit.id==='jason'?328:302,y:unit.id==='jason'?244:224,dir:unit.id==='jason'?'down':'right',step:null};
+  const [x,y]=[[271,252],[292,277],[369,277],[390,252],[403,271]][index]||[unit.x,unit.y];
+  return {...unit,x,y,dir:'up',step:null};
+ }
+ function drawCompactOffice(g){
+  if(scene!=='scarlet_manor')return;
+  const stage=currentCompact(),open=curtainOpening(stage),side=Math.round(30*(1-open));
+  const curtain=art[curtainArt];
+  if(side&&curtain){
+   const half=curtain.width/2;
+   g.drawImage(curtain,0,0,half,curtain.height,442,64,side,79);
+   g.drawImage(curtain,half,0,half,curtain.height,502-side,64,side,79);
+  }
+  const image=art[hellstoneArt];
+  if(image)g.drawImage(image,hellstone[0]-15,hellstone[1]-32,30,32);
+  if(stage?.embersAt==null||reduce.matches)return;
+  const age=(performance.now()-stage.embersAt)/700;
+  if(age>=1)return;
+  g.save();g.globalAlpha=1-age;
+  for(let i=0;i<5;i++){
+   g.fillStyle=i%2?'#d77a39':'#f5ba66';
+   g.fillRect(Math.round(hellstone[0]+(i-2)*(3+age*3)),Math.round(hellstone[1]-24-age*(10+i*2)),2,2);
+  }
+  g.restore();
+ }
  function objective(){if(!quest.chapter3)return false;let goal=battle?'Subdue the four former deputies.':quest.chapter3Complete?'Chapter Three complete · Trouble at the Last Stand.':!quest.sermonDispersed?'Attend the sermon in Longacre square.':!quest.decreesIssued?'Report back to Razelago.':!quest.rhonaDismissed?'Post all four decrees and dismiss Rhona.':!quest.deputiesDefeated?'Leave the jail courtyard.':!quest.deputiesReported?'Report the deputies’ ambush.':'Attend the audience at Scarlet Manor.';$('objective').textContent=battle?goal:window.QuestGuide.current().text;$('status').textContent=battle?'The former lawmen attack with saps. Defeat them and take them into custody.':'WASD / arrows · E to interact · Click to walk · Export save to carry your progress';return true;}
  function npcs(){
   const cimriAtJail=quest.deputiesDefeated&&!quest.compactSworn;
@@ -79,7 +119,7 @@ window.NextArc=(()=>{
    {id:sentry,x:246,y:210,height:51},{id:sentry,x:394,y:210,height:51},
    {id:sentry,x:132,y:58,height:33},{id:sentry,x:508,y:58,height:33}
   ];
-  if(scene==='scarlet_manor')return [{id:'fex',x:328,y:176},...(quest.compactSworn?[{id:'razelago_revealed',x:472,y:168}]:[])];
+  if(scene==='scarlet_manor')return [{id:'fex',x:328,y:176},...(curtainOpening(currentCompact())>.55?[{id:'razelago_revealed',x:472,y:155,height:53}]:[])];
   const actors=window.NextChapter.npcs();
   return cimriAtJail?actors.filter(actor=>actor.id!=='cimri'):actors;
  }
@@ -168,6 +208,60 @@ window.NextArc=(()=>{
   deputyApproach=null;
   startBattle(0,false,{kind:'deputies',returnPosition:{x,y,dir},opening:'Roll initiative. Subdue the four deputies and take them alive.',enemies:deputies.map(({id},i)=>({id,name:'Deputy '+(i+1),x:248+i*64,y:152,hp:18,max:18}))});
  }
+ async function swearCompact(stage){
+  await say('fex','Welcome, colleagues. You’ve done well for Longacre. Swear the Hellfire Compact to House Thrune, as I have, and I can name you my official agents.');
+  const choice=await say('The Hellfire Compact','A legal oath of service to House Thrune.',['[Swear the Compact]','[Ask what the office requires]']);
+  if(choice===1){
+   await say(lead,'What does the office require of us?');
+   await say('fex','Loyalty, discretion, and results. How you bring Longacre to order is your company’s decision.');
+  }
+  await say('fex','Recite your oath with a hand on the hellstone. House Thrune binds you by law. Your souls are your own.');
+  stage.gathered=true;
+  await say('Chronicle','The party gathers around the hellstone. Each palm that touches the black surface comes away burned.');
+  for(const member of stage.roster){
+   stage.member=member;
+   stage.embersAt=performance.now();
+   if(member==='jason'){
+    await say('Chronicle','Jason lowers his trousers, backs up to the hellstone, and touches it with his bare backside. He keeps his eyes on Fex as he swears.');
+    await say('freya','A very intimate part of his people’s customs, my lord. Few outsiders have ever seen it.');
+    await say('fex','Remarkable. I accept your oath, Jason.');
+   }else{
+    await say(member,'I swear my service to House Thrune.');
+   }
+  }
+  stage.member=null;
+  quest.compactSworn=true;
+  await say('fex','You are agents of House Fex now. Keep wearing the sashes. People should know whose authority you carry.');
+ }
+ async function moveCurtain(stage,opening){
+  stage.curtain={opening,start:performance.now()};
+  await delay(reduce.matches?0:curtainDuration);
+  return stage.epoch===epoch;
+ }
+ async function compactAudience(){
+  const stage={epoch,roster:units.map(unit=>unit.id),member:null,gathered:false,embersAt:null,curtain:null};
+  compactStage=stage;
+  try{
+   if(!quest.compactSworn)await swearCompact(stage);
+   await say('fex','Razelago, there’s no need for theatrics with trusted agents. Show yourself.');
+   if(!await moveCurtain(stage,true))return;
+   await say('Chronicle','The curtain opens. Wings rise behind a bulbous fly body and a fleshy human torso. A familiar voice comes from between the mandibles.');
+   await say('razelago_revealed','An accuser devil, yes. I’ve seen that expression before.');
+   await say('jamal','Would you mind drawing the curtain again?');
+   await say('razelago_revealed','Typical prejudice. Very well.');
+   if(!await moveCurtain(stage,false))return;
+   await say('razelago_revealed','Riley Kels is singing again at the Last Stand. He claims he met the Angel Knight. Bolgart is still allowing forbidden gatherings there. Start with the tavern.');
+   await say('Chronicle','During the Longacre operations, Reese, a strix archer, joins the company.');
+   quest.chapter3Complete=true;
+   quest.reeseJoined=true;
+   quest.activeRoster=[...(quest.activeRoster||OPENING_ROSTER).filter(id=>id!=='reese'),'reese'];
+   seedParty(units[0]?.x||328,units[0]?.y||312);
+   NextChapter.syncRoster();
+  }finally{
+   if(compactStage===stage)compactStage=null;
+  }
+ }
+
  async function afterBattle(position){
   quest.deputiesDefeated=true;
   if(position)seedParty(position.x,position.y,position.dir);
@@ -212,8 +306,8 @@ window.NextArc=(()=>{
   await say(servant,'Archbaron Fex will receive you now.');
   await travel('scarlet_manor',328,312);
  }
- else if(id==='fexAudience'){if(!quest.compactSworn){await say('fex','Longacre needs law and order. Swear the Hellfire Compact to House Thrune, and you will act with my authority.');const c=await say('The Hellfire Compact','An oath binding your service to the ruling house.',['[Swear the compact]','[Ask what the office requires]']);if(c===1){await say(lead,'What does this office require of us?');await say('fex','You will bring this town to order as my agents. Loyalty, discretion, and results. How you suppress the rebellion, and what changes you make to the town’s laws, are your company’s decisions.');}await say('Chronicle','Each companion recites the oath with a hand on a black hellstone. Its heat burns their hands—except Jason, whose infernal ancestry gives him a very different idea.');await say('Chronicle','Maintaining eye contact, Jason lowers his trousers and swears the oath with his bare backside against the stone.');await say('freya','A very intimate tiefling custom, my lord. Outsiders rarely have the privilege of witnessing it.');await say('Chronicle','Freya appeals to Fex’s scholarly curiosity. Charmed by her explanation, he accepts the ritual. The oath is legally binding; it does not bind their souls.');await say(lead,'We swear our service to House Thrune.');quest.compactSworn=true;await say('fex','Razelago. There is no need for theatrics with trusted agents. Show yourself.');await say('razelago_revealed','You have been speaking to an accuser devil. Your expressions are entirely predictable.');await say('Chronicle','Behind the curtain is a bulbous fly body, a fleshy upper torso, insect mandibles, and wings. The familiar raspy voice leaves no doubt.');}await say('razelago_revealed','Riley Kels is singing about the Angel Knight again. Bolgart permits forbidden gatherings at the Last Stand. Begin there.');await say('Chronicle','During the Longacre operations, Reese, a strix archer, joins the company. He was not part of the Kintargo temple mission. The party’s growing company shares responsibility for its decisions here.');quest.chapter3Complete=true;quest.reeseJoined=true;quest.activeRoster=[...(quest.activeRoster||OPENING_ROSTER).filter(id=>id!=='reese'),'reese'];seedParty(units[0]?.x||328,units[0]?.y||312);NextChapter.syncRoster();await say('Chapter Three complete','The sermon is broken up. The decrees stand. Rhona is dismissed, the deputies are jailed, and the party now serves Fex directly. Next: the Last Stand and the Angel Knight’s trail.');}
+ else if(id==='fexAudience'&&scene==='scarlet_manor'&&!quest.chapter3Complete)await compactAudience();
  else if(id==='manorExit')await travel('longacre_square',520,232);
  else return false;save();updateObjective();return true;}
- return {install,load,objective,npcs,drawNPC,target,interact,afterBattle,sermonPose,drawSermonHelm,drawTornDecree};
+ return {install,load,objective,npcs,drawNPC,target,interact,afterBattle,sermonPose,drawSermonHelm,drawTornDecree,compactPose,drawCompactOffice};
 })();
