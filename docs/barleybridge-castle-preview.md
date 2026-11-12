@@ -2,7 +2,9 @@
 
 The throne room and basement use the room functions and architecture of Foundry’s Daimyo’s Castle scenes `Scene.ybzNlXpccdIDQKkQ` and `Scene.N5lRVaQV5Wtjhg1n`. Their routes were condensed to the game’s 16-pixel grid. The Barleybridge Bowman’s portrait and masterwork composite longbow are documented in `Actor.1q0PfKGWLkwix4Rn`. The three sprite poses interpret that portrait. Foundry’s prepared token placements do not establish that the party entered the castle or fought these defenders.
 
-Choose either castle floor under Current quest → Planning maps after replay **464** or in Longacre Art Studio. Use the direction controls to walk the routes and toggle walkable tiles to inspect them. The Art Studio character gallery animates the bowman.
+After replay **464**, open **Current quest → Planning maps** and choose **Barleybridge · Gate and market**. Walk to the castle approach, then use the east stairs in the throne room to preview the basement. Both passages support return trips. Press **A**, **E**, or **Enter** at a marked stop and **X** or **I** to toggle walkable paths. Each floor is also available directly from the menu and in Longacre Art Studio. The Art Studio character gallery animates the bowman.
+
+The passage locations and connections are game staging. The throne-room note describes prepared Foundry defenders, and the preview leaves the campaign save untouched.
 
 ## Artwork prompts
 
@@ -15,3 +17,5 @@ The built-in image generator produced these assets from written descriptions of 
 ## Verification
 
 All 174 automated tests passed. The map test found a route from each castle entrance to every labeled destination and checked the bowman’s three frame rectangles against the PNG bounds. The structural campaign audit checked 168 scenes, 475 replays and 657 campaign sprite frames with no geometry, frame or asset errors. A browser playtest walked the throne and basement previews, opened both through the Tathlum briefing, and verified the 640×480 game canvas with no console errors.
+
+The linked-route audit opened the market from replay 464, walked to the throne room and basement, and returned through both passages at 640×480 without browser errors. All 174 tests passed, and the structural audit checked 476 replays and 659 frames.
