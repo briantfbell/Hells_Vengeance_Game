@@ -34,6 +34,9 @@ window.EnemyTactics=(()=>{
    else if(e.id==='whisper_giant'){move=round%2?'Club swing':'Heavy club swing';extra=round%2?0:2;}
    else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
+   else if(e.id==='luthon_malix'){
+    physical=false;move=round%2?'Arcane bolt':'Infernal blast';extra=round%2?0:3;effect='arcaneBolt';
+   }
    else if(e.id==='barrow_druid'){
     physical=round%2===0;
     move=physical?'Oak staff':'Thorn volley';

@@ -52,6 +52,10 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.covenantComplete)rows.push('Barrowood · Freya, Jason, J’Mal, Draymus and Reese are elevated to Bound Agents of Thrune.');
+  if(q.covenantJasonRaised)rows.push('Barrowood · At the Queen’s request, Gorthoklekk raises Jason.');
+  if(q.covenantClaimed)rows.push('Barrowood · 2 Gozran, 4717. Gorthoklekk claims Sethic’s soul and the Covenant of Hell is reaffirmed.');
+  if(q.covenantBattleWon)rows.push('Barrowood · Malix kills Jason and escapes the final stone.');
   if(q.barrowTrailComplete)rows.push('Barrowood · Thirteen stones are marked with Sethic’s blood. The final stone lies ahead.');
   if(q.barrowGuardiansDefeated)rows.push('Barrowood · 1 Gozran, 4717. The company breaks through the Reclamation’s western flank.');
   if(q.vyreBobHealed)rows.push('Vyre · 26 Pharast, 4717. El Guapo obtains a Wish from Manticce and uses it to heal Bob Applewood.');

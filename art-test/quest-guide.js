@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const covenant=window.BarrowCovenant?.goal();
+ if(covenant)return {text:covenant,target:BarrowCovenant.target()};
  const trail=window.BarrowTrail?.goal();
  if(trail)return {text:trail,target:BarrowTrail.target()};
  const vyre=window.VyreWish?.goal();

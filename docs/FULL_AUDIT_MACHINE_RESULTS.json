@@ -1,20 +1,20 @@
 {
-  "scripts": 91,
-  "scenes": 145,
-  "replays": 399,
-  "framesInspected": 624,
-  "framesChecked": 624,
+  "scripts": 92,
+  "scenes": 146,
+  "replays": 407,
+  "framesInspected": 630,
+  "framesChecked": 630,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 62,
+  "combatStats": 63,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 597665960,
+  "assetBytes": 603877710,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 239,
-  "startupCompressedBytes": 542518169,
-  "startupDecodedRgbaBytes": 1495638176,
+  "startupAssets": 242,
+  "startupCompressedBytes": 548717411,
+  "startupDecodedRgbaBytes": 1514515688,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -84,7 +84,10 @@
     "ballerina-deck-v1.png",
     "ballerina-quartermaster-v1.png",
     "barrow-druid-v1.png",
+    "barrow-final-stone-v1.png",
+    "barrow-gorthoklekk-v1.png",
     "barrow-grove-v1.png",
+    "barrow-malix-v1.png",
     "barrow-road-v1.png",
     "barrow-standing-stone-v1.png",
     "barzillai-model.png",
