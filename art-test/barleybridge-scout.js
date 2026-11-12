@@ -15,7 +15,17 @@ window.BarleybridgeScout=(()=>{
     {id:'barleybridgePlan',x:328,y:344,label:'Review the Tathlum plan'}
    ]
   };
-  MAP_LAYERS[approach]={foreground:image,contain:true,background:{type:'solid',color:'#222c37'}};
+  MAP_LAYERS[approach]={
+   foreground:image,contain:true,background:{type:'solid',color:'#222c37'},
+   waterChannels:[
+    [[169,174],[217,171],[252,167],[276,165],[289,160],[331,162],[334,170],[319,182],[321,194],[293,197],[269,194],[245,185],[209,186],[169,184]],
+    [[329,152],[357,147],[386,146],[420,149],[460,154],[465,171],[438,179],[409,181],[397,171],[375,166],[351,174],[339,176]],
+    [[403,184],[426,182],[457,176],[476,173],[475,181],[449,185],[425,185]],
+    [[9,208],[47,204],[68,198],[79,204],[70,225],[49,235],[37,248],[20,259],[7,257]],
+    [[580,169],[602,165],[629,168],[627,180],[610,182],[596,194],[581,196]]
+   ],
+   waterCurrent:{speed:5,palette:['#668eaf','#8ba8c2']}
+  };
   JOURNEYS[approach]='El Guapo has gone ahead to Barleybridge. The company expects limited paladin presence, and the scout is to find out what the approach looks like.';
  }
  async function load(loader){art[approach]=await loader(image);}
@@ -53,7 +63,7 @@ window.BarleybridgeScout=(()=>{
    case 'barleybridgePlan':
     await journeyCard('Tathlum Plan · Barleybridge','El Guapo has scouted the approach. The plan called for the blood of slain innocents to anoint Parnoneryx’s head. The outcome at Barleybridge remains unknown.',()=>{});
     await journeyCard('Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.',()=>{});
-    await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.',()=>{});
+    await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.\n\nOpen Current quest and choose Planning maps to inspect the routes.',()=>{});
     quest.barleybridgePlanReviewed=true;
     break;
   }

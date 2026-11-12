@@ -32,7 +32,16 @@ function drawWaterChannels(g,map,image,t,options){
  foreground(g,image,layer);
  if(!reduced){
   g.scale(width/640,height/400);
-  for(let i=0;i<42;i++){
+  if(map.waterCurrent){
+   const {speed,palette}=map.waterCurrent;
+   const travel=Math.floor(t*speed);
+   for(let i=0;i<126;i++){
+    const x=(i*109+travel)%640,y=145+i*37%114;
+    g.globalAlpha=(.07+.055*(i%4)/3)*(.65+.35*Math.sin(t*1.3+i));
+    g.fillStyle=palette[i%palette.length];
+    g.fillRect(x,y,3+i%7,1);
+   }
+  }else for(let i=0;i<42;i++){
    const x=45+(i*97)%550,y=90+(i*29+Math.floor(t*12))%260;
    g.globalAlpha=(.07+.1*(i%4)/3)*(.6+.4*Math.sin(t*1.8+i));
    g.fillStyle=i%3?'#8bbca5':'#b6d8ba';

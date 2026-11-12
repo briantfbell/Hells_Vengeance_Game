@@ -46,7 +46,12 @@ window.Handheld=(()=>{
  if(!combat&&quest.barleybridgePlanReviewed)options.push(['Planning maps',()=>{view='planning-maps';paint();}]);
  options.push(['Back',()=>{view='home';paint();}]);entries(options);
  if(combat)details(['D-pad selects a command. A confirms, then selects a target. B cancels targeting.', 'Initiative rolls once; Now / Next shows the fixed turn order.', 'Skill spends a limited use, even on a miss.', 'Guard adds +4 AC and halves damage until your next turn.', 'Select / F1 shows details for the selected command. X / Y inspect gear and party.']);
- else{const goal=QuestGuide.current();details([scenes[scene].name,goal.text,'Follow the diamond marker to the next interaction.','A / Enter / E interacts when you are close enough.']);}
+ else{
+  const goal=QuestGuide.current();
+  const guidance=quest.barleybridgePlanReviewed?['Select Planning maps to inspect the routes.']:
+   ['Follow the diamond marker to the next interaction.','A / Enter / E interacts when you are close enough.'];
+  details([scenes[scene].name,goal.text,...guidance]);
+ }
  message('A / Enter or B: back · Start: resume');
  }
  else if(view==='audio'){const s=GameAudio.settings();$('pause-title').textContent='Audio';entries([['Music · '+s.music+'%',()=>{GameAudio.change('music');paint();$('pause-options').children[0].focus();}],['Effects · '+s.effects+'%',()=>{GameAudio.change('effects');paint();$('pause-options').children[1].focus();}],['Sound · '+(s.muted?'Muted':'On'),()=>{GameAudio.change('muted');paint();$('pause-options').children[2].focus();}],['Back',()=>{view='home';paint();}]]);details(['Select a volume to cycle 0 / 25 / 50 / 75 / 100%.','Music includes original temporary cues and three combat variations.','Your campaign tracks can replace these when ready.']);}
