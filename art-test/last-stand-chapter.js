@@ -1,17 +1,93 @@
 'use strict';
 window.LastStand=(()=>{
  const r=(x,y,w,h)=>({x,y,w,h});
+ const rearDoor=[328,111],bardStage=[467,119],bar=[280,176],tavernFloor=[300,250],tavernEntry=[328,328];
+ const panDuration=420,captureDuration=880;
+ let tavernBeat=null;
  const maps={last_stand:{name:'Chapter Four · The Last Stand',image:'last-stand.png',spawn:[328,328],walk:[r(144,144,336,176),r(272,304,80,80),r(272,80,80,80),r(480,176,64,96)],blocks:[],lights:[[116,116],[248,104],[520,176]],points:[{id:'lastDecree',x:328,y:328,label:'Repost the torn decree'},{id:'lastPatrons',x:424,y:256,label:'Speak to the patrons'},{id:'takePrisoners',x:328,y:352,label:'Escort the prisoners to jail'}]},angel_hill:{name:'Outside Longacre · The Angel Knight’s Hill',image:'angel-knight-hill.png',spawn:[328,344],walk:[r(272,272,96,112),r(144,128,336,176)],blocks:[],lights:[],points:[{id:'hillSearch',x:312,y:176,label:'Inspect Riley’s meeting place'},{id:'hillReturn',x:328,y:352,label:'Return to the jail'}]}};
  function install(){Object.assign(scenes,maps);scenes.longacre_jail.walk.push(r(128,232,48,80));for(const [id,s] of Object.entries(maps))MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#121820'}};NAMES.bolgart='Bolgart Caggan';NAMES.bolgart_wereboar='Bolgart · Wereboar';NAMES.riley='Riley Kels';STATS.bolgart={hp:46,ac:13,atk:4,dmg:[1,6,2]};STATS.bolgart_wereboar={hp:64,ac:14,atk:6,dmg:[1,8,3]};scenes.scarlet_manor.points.push({id:'lastStandRoad',x:328,y:352,label:'Continue to the Last Stand'});scenes.longacre_jail.points.push({id:'rileyQuestion',x:456,y:224,label:'Question Riley Kels'},{id:'hospiceRoad',x:328,y:352,label:'Deliver Gerya’s intercepted letter'},{id:'hillRoad',x:328,y:352,label:'Follow Riley to the hill'},{id:'bolgartStocks',x:152,y:264,label:'Approach Bolgart in the stocks'},{id:'lastReport',x:328,y:352,label:'Report to Razelago'});}
  async function load(loader){for(const [id,s] of Object.entries(maps))art[id]=await loader(s.image);art.later=await loader('longacre-later-cast.png');art.bolgartStocks=await loader('bolgart-stocks-v1.png');}
  function goal(){if(!quest.chapter4)return quest.chapter3Complete?'Continue to the Last Stand.':null;if(quest.chapter4Complete)return 'Chapter complete · The town’s resistance is growing.';return !quest.bolgartSubdued?'Repost the torn decree at the Last Stand.':!quest.prisonersJailed?'Escort Bolgart and Riley to the jail.':!quest.rileyQuestioned?'Question Riley about the Angel Knight.':!quest.churchDoorsRepaired?'Visit Gerya’s hospice, then investigate the church.':!quest.hillSearched?'Investigate the hill Riley describes.':!quest.bolgartSecured?'Return to the jail and approach Bolgart.':'Report the captures to Razelago.';}
  function target(){const id=!quest.chapter4?'lastStandRoad':!quest.bolgartSubdued?'lastDecree':!quest.prisonersJailed?'takePrisoners':!quest.rileyQuestioned?'rileyQuestion':!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?(scene==='angel_hill'?'hillSearch':'hillRoad'):!quest.bolgartSecured?(scene==='angel_hill'?'hillReturn':'bolgartStocks'):'lastReport';return point(id);}
  function points(){if(!quest.chapter4)return null;if(scene==='last_stand')return scenes[scene].points.filter(p=>p.id==='lastPatrons'||p.id===(quest.bolgartSubdued?'takePrisoners':'lastDecree'));if(scene==='angel_hill')return scenes[scene].points.filter(p=>p.id===(quest.hillSearched?'hillReturn':'hillSearch'));if(scene==='longacre_jail')return scenes[scene].points.filter(p=>p.id===(!quest.rileyQuestioned?'rileyQuestion':!quest.churchDoorsRepaired?'hospiceRoad':!quest.hillSearched?'hillRoad':!quest.bolgartSecured?'bolgartStocks':'lastReport'));if(scene==='ash_house'&&quest.chapter4Complete)return [point('razelago')];return null;}
- function npcs(){if(!quest.chapter4)return null;if(scene==='last_stand')return [{id:'bolgart',x:280,y:176},{id:'riley',x:328,y:104}];if(scene==='longacre_jail')return [{id:'riley',x:456,y:216},quest.bolgartSecured?{id:'bolgart',pose:'stocks',x:224,y:248}:{id:'bolgart',pose:'stocks',x:120,y:264}];if(scene==='angel_hill')return [{id:'riley',x:400,y:216}];return null;}
- async function begin(){quest.chapter4=true;quest.chapter4Complete=false;NextChapter.refresh();await say('razelago_revealed','Riley Kels, Longacre’s bard, works at the Last Stand. Last night he was singing again about meeting the Angel Knight herself. Bolgart has also allowed gatherings there in violation of the party’s gathering restrictions.');await say('freya','Then we need to hear what Riley saw. J’Mal, watch the rear exit while we deal with Bolgart.');await say('Chronicle','The party’s notice still stands in the square. At the Last Stand, the posted copy has been torn down and left in pieces.');await say('freya','J’Mal, cover the back door. We will put the order back where it belongs.');await travel('last_stand',328,328);save();}
- async function afterBattle(kind){if(kind==='bolgart'){quest.bolgartSubdued=true;quest.rileyCaptured=true;seedParty(328,328);await say('Chronicle','Bolgart is subdued rather than killed. Riley tries the back door, but J’Mal is waiting and catches him before he escapes.');await say('freya','Everyone else: go home. Put the utensils down and there will be no further trouble.');await say('Chronicle','The patrons leave. The barmaids back away from the confrontation. Bolgart and Riley will answer at the jail.');}else{quest.bolgartSecured=true;await say('Chronicle','With Bolgart staggered, Freya drives a mounted lance charge on Sleipnir to bring him down.');await say('Chronicle','Bolgart is subdued and returns to human form. The party secures his wrists, legs and neck with shackles and locks him in the jail.');await say('Chronicle','A carpenter is paid to restore a working pillory. The broken pieces are left on display while the party spreads word of Bolgart’s hidden curse.');}save();updateObjective();}
+ function currentBeat(){return scene==='last_stand'&&tavernBeat&&tavernBeat.epoch===epoch?tavernBeat:null;}
+ function beatProgress(beat,duration){return reduce.matches?1:Math.min(1,(performance.now()-beat.start)/duration);}
+ function tavernActors(){
+  if(quest.bolgartSubdued)return [{id:'bolgart',x:362,y:276},{id:'riley',x:397,y:277}];
+  const beat=currentBeat();
+  const [bx,by]=beat?tavernFloor:bar;
+  const progress=beat?.phase==='capture'?beatProgress(beat,captureDuration):0;
+  return [{id:'bolgart',x:bx,y:by,pose:['subdued','capture'].includes(beat?.phase)?'prone':null},{id:'riley',x:bardStage[0]+(rearDoor[0]+22-bardStage[0])*progress,y:bardStage[1]+(rearDoor[1]+19-bardStage[1])*progress}];
+ }
+ function npcs(){if(!quest.chapter4)return null;if(scene==='last_stand')return tavernActors();if(scene==='longacre_jail')return [{id:'riley',x:456,y:216},quest.bolgartSecured?{id:'bolgart',pose:'stocks',x:224,y:248}:{id:'bolgart',pose:'stocks',x:120,y:264}];if(scene==='angel_hill')return [{id:'riley',x:400,y:216}];return null;}
+ function tavernPose(unit){
+  if(!currentBeat())return unit;
+  if(unit.id==='jamal')return {...unit,x:rearDoor[0],y:rearDoor[1],dir:'down',step:null};
+  const position={freya:[328,318],jason:[282,299],draymus:[360,300],reese:[395,295]}[unit.id];
+  return position?{...unit,x:position[0],y:position[1],dir:'up',step:null}:unit;
+ }
+ function drawPan(g){
+  const beat=currentBeat();
+  if(beat?.phase!=='pan'||reduce.matches)return;
+  const progress=beatProgress(beat,panDuration);
+  if(progress>=1)return;
+  const x=302+26*progress,y=218+48*progress-24*Math.sin(progress*Math.PI);
+  g.save();g.translate(Math.round(x),Math.round(y));g.rotate(progress*8);
+  g.fillStyle='#1e1818';g.fillRect(-5,-5,10,10);g.fillRect(3,-1,9,3);
+  g.fillStyle='#797479';g.fillRect(-4,-4,8,8);g.fillRect(4,0,7,1);
+  g.fillStyle='#38343a';g.fillRect(-3,-3,6,6);
+  g.restore();
+ }
+ async function begin(){
+  quest.chapter4=true;
+  quest.chapter4Complete=false;
+  NextChapter.refresh();
+  await say('freya','We’ll get Riley’s account ourselves. J’Mal, watch the rear door while we put the order back up.');
+  await travel('last_stand',...tavernEntry);
+  save();
+ }
+ async function confrontBolgart(){
+  tavernBeat={epoch,phase:'confrontation',start:performance.now()};
+  await say('Chronicle','J’Mal takes the rear door. At the front post, the rest of the party fastens up a fresh copy of the decree.');
+  await say('bolgart','Take that down! You have no right to tell my customers when they can gather.');
+  await say('freya','Put the pan down, Bolgart. We can settle this without a fight.');
+  const token=epoch;
+  tavernBeat={epoch:token,phase:'pan',start:performance.now()};
+  await delay(reduce.matches?0:panDuration);
+  if(token!==epoch)return;
+  await say('Chronicle','The frying pan rings against Freya’s helmet. Across the tavern, Riley stops playing and looks toward the rear exit.');
+  tavernBeat=null;
+  units=units.filter(unit=>unit.id!=='jamal');
+  startBattle(0,false,{kind:'bolgart',opening:'Roll initiative. Subdue Bolgart while J’Mal holds the rear door.',enemies:[{id:'bolgart',name:'Bolgart Caggan',hp:46,max:46}]});
+ }
+ async function afterBattle(kind){
+  if(kind==='bolgart'){
+   seedParty(...tavernEntry);
+   tavernBeat={epoch,phase:'subdued'};
+   await say('Chronicle','Bolgart goes down. While the others secure him, Riley slips away from his stage.');
+   const token=epoch;
+   tavernBeat={epoch:token,phase:'capture',start:performance.now()};
+   await delay(reduce.matches?0:captureDuration);
+   if(token!==epoch)return;
+   await say('riley','I was just leaving. Is that against the decree too?');
+   await say('jamal','Come with me. I want to hear the story you were singing.');
+   quest.bolgartSubdued=true;
+   quest.rileyCaptured=true;
+   tavernBeat=null;
+   await say('freya','Everyone else, go home. Put the utensils down and there’ll be no more trouble.');
+   await say('Chronicle','The patrons leave, and the barmaids back away. Bolgart and Riley are in custody.');
+  }else{
+   quest.bolgartSecured=true;
+   await say('Chronicle','With Bolgart staggered, Freya drives a mounted lance charge on Sleipnir to bring him down.');
+   await say('Chronicle','Bolgart is subdued and returns to human form. The party secures his wrists, legs and neck with shackles and locks him in the jail.');
+   await say('Chronicle','A carpenter is paid to restore a working pillory. The broken pieces are left on display while the party spreads word of Bolgart’s hidden curse.');
+  }
+  save();
+  updateObjective();
+ }
+
  async function interact(id){if(id==='lastStandRoad'){await begin();return true;}if(!quest.chapter4)return false;
- if(id==='lastDecree'){await say('Chronicle','With J’Mal watching the rear exit, the party fastens a fresh copy of the gathering decree to the tavern’s front post. An angry voice rises inside.');await say('bolgart','You have no right to tell my customers when they can gather!');await say('freya','Lower the pan, Bolgart. We can speak without anyone getting hurt.');await say('Chronicle','Bolgart answers by throwing his frying pan. It strikes Freya’s helmet. The party moves to subdue him while J’Mal holds the rear door. Inside, the bard Riley Kels looks toward that exit.');units=units.filter(u=>u.id!=='jamal');startBattle(0,false,{kind:'bolgart',enemies:[{id:'bolgart',name:'Bolgart Caggan',hp:46,max:46}]});}
+ if(id==='lastDecree'&&!quest.bolgartSubdued)await confrontBolgart();
  else if(id==='lastPatrons')await say('Tavern patron',quest.bolgartSubdued?'We’re leaving. There’s no need for more trouble.':'Riley sings about a knight he saw outside town. We came to hear the story.');
  else if(id==='takePrisoners'){if(!quest.bolgartSubdued)await say('Chronicle','Bolgart has not surrendered.');else{quest.prisonersJailed=true;await travel('longacre_jail',328,312);await say('Chronicle','Bolgart is put in the pillory outside the jail. Riley is locked in a cell, where the party questions his songs about the Angel Knight.');}}
  else if(id==='rileyQuestion'){await say('freya','Razelago says your songs describe meeting the Angel Knight. Tell us what you actually saw, Riley.');const c=await say('Riley’s account','How will you begin?',['[Ask where he met the Angel Knight]','[Ask what made him think she was an angel]']);await say(lead,c===0?'Where did you meet this Angel Knight?':'What made you think she was an angel?');await say('riley',c===0?'On a hill two miles out of town, early in the morning. She was praying. I thought I was seeing an angel.':'The armor, the helm, the way she stood there praying. I called her an angel before I understood who she was.');await say('Chronicle','His account is a claimed encounter, not proof of divine intervention. The party keeps him under guard and asks him to show them the hill.');quest.rileyQuestioned=true;}
@@ -21,5 +97,5 @@ window.LastStand=(()=>{
  else if(id==='bolgartStocks'){await say('Chronicle','Back at the jail in the early morning, Bolgart looks remarkably recovered. He taunts the party from the stocks.');await say('jamal','You are still in our custody. Keep that in mind.');await say('Chronicle','Bolgart strains against the pillory. His body swells and twists; tusks push from his face. The hidden wereboar breaks free and charges J’Mal.');await say('Chronicle','Freya moves to her mount, Sleipnir, and readies her lance while the others hold Bolgart back.');startBattle(0,false,{kind:'wereboar',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',hp:64,max:64}]});}
  else if(id==='lastReport'){await travel('ash_house',328,296);await say('razelago','The tavern’s gathering is ended, and both prisoners are secured. Keep your sashes visible. Longacre is watching you.');quest.chapter4Complete=true;await say('Chapter Four complete','Riley’s claimed meeting led to an empty hill. Bolgart’s hidden curse has been exposed. The prisoners remain alive in custody; their later fate is still ahead.');}
  else return false;save();updateObjective();return true;}
- return {install,load,goal,target,points,npcs,begin,interact,afterBattle};
+ return {tavernPose,drawPan,install,load,goal,target,points,npcs,begin,interact,afterBattle};
 })();

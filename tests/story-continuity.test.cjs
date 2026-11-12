@@ -369,7 +369,43 @@ test('completed actions and future chapter interactions are hidden',()=>{const w
 test('a confirmation cannot instantly dismiss a newly opened dialogue',()=>{const w=world(),s=read('chapter-engine.js');w.GameAudio={effect:()=>{}};w.keys={clear:()=>{}};w.canvas={focus:()=>{}};vm.runInContext('let dialogOpen=true,dialogOpenedAt=0,dialogResolve=()=>window.resolved=true;'+s.slice(s.indexOf('function finishDialog('),s.indexOf('function run(')),w);w.performance.now=()=>100;w.finishDialog();assert(!w.resolved);w.performance.now=()=>200;w.finishDialog();assert(w.resolved);});
 
 test('Reese joins the actual party at the compact, never the original voyage',async()=>{const w=world();await w.NextChapter.interact('nextChapter');assert.deepEqual(Array.from(w.quest.activeRoster),w.OPENING_ROSTER);w.quest={chapter3:true,compactSworn:true,guapoAway:true,activeRoster:w.OPENING_ROSTER.filter(id=>id!=='guapo')};w.scene='scarlet_manor';w.epoch=1;w.reduce={matches:true};w.delay=async()=>{};await w.NextArc.interact('fexAudience');assert(w.quest.reeseJoined);assert.deepEqual(Array.from(w.quest.activeRoster),['freya','jamal','jason','draymus','reese']);});
-test('Bolgart fights include Reese, preserve the rear-door scout, and restore human appearance',async()=>{const w=world();vm.runInContext(read('last-stand-chapter.js'),w);w.quest={chapter4:true,reeseJoined:true,activeRoster:['freya','jamal','jason','draymus','reese']};w.units=w.quest.activeRoster.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;await w.LastStand.interact('lastDecree');assert.equal(w.encounter.kind,'bolgart');assert.deepEqual(Array.from(w.units,u=>u.id),['freya','jason','draymus','reese']);w.scene='longacre_jail';await w.LastStand.afterBattle('wereboar');assert.equal(w.LastStand.npcs().find(n=>n.id.startsWith('bolgart')).id,'bolgart');assert(w.transcript.some(x=>x.text.includes('returns to human form')));});
+test('Bolgart fights include Reese, stage Riley’s capture, and restore Bolgart’s human appearance',async()=>{
+ const w=world();
+ vm.runInContext(read('last-stand-chapter.js'),w);
+ w.scene='last_stand';
+ w.quest={chapter4:true,reeseJoined:true,activeRoster:['freya','jamal','jason','draymus','reese']};
+ w.epoch=1;
+ w.reduce={matches:false};
+ w.seedParty=()=>{w.units=w.quest.activeRoster.map(id=>({id}));};
+ w.seedParty();
+ w.startBattle=(_a,_b,c)=>w.encounter=c;
+ const say=w.say;
+ const riley=()=>w.LastStand.npcs().find(actor=>actor.id==='riley');
+ const startsAtStage=riley().x;
+ let time=0;
+ w.performance.now=()=>time;
+ w.delay=async duration=>{time+=duration;};
+ w.say=async(...args)=>{
+  const [speaker,line]=args;
+  if(line.includes('takes the rear door'))assert.equal(w.LastStand.tavernPose(w.units.find(unit=>unit.id==='jamal')).y,111);
+  if(speaker==='riley'){
+   assert(riley().x<startsAtStage);
+   assert(!w.quest.rileyCaptured);
+  }
+  return say(...args);
+ };
+ await w.LastStand.interact('lastDecree');
+ assert.equal(w.encounter.kind,'bolgart');
+ assert.deepEqual(Array.from(w.units,u=>u.id),['freya','jason','draymus','reese']);
+ await w.LastStand.afterBattle('bolgart');
+ assert(w.quest.bolgartSubdued&&w.quest.rileyCaptured);
+ assert(w.units.some(unit=>unit.id==='jamal'));
+ assert.equal(w.LastStand.target().id,'takePrisoners');
+ w.scene='longacre_jail';
+ await w.LastStand.afterBattle('wereboar');
+ assert.equal(w.LastStand.npcs().find(n=>n.id.startsWith('bolgart')).id,'bolgart');
+ assert(w.transcript.some(x=>x.text.includes('returns to human form')));
+});
 test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.quest={chapter6:true};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});
 
 test('six-character battles start safely and stay within the fixed combat field',()=>{const w=world(),s=read('chapter-engine.js');w.units=w.CORE.map(id=>({id}));w.showCombatMessage=w.paintBattle=()=>{};vm.runInContext(s.slice(s.indexOf('function startBattle('),s.indexOf('function showCombatMessage(')),w);w.startBattle(0,false,{kind:'ovinnik',enemies:[{id:'ovinnik',name:'Ovinnik',hp:38,max:38}]});assert.equal(w.units.length,6);assert(w.units.some(u=>u.id==='reese'));w.battlefieldHeight=()=>368;w.activeUnit=()=>w.units[0];vm.runInContext(s.slice(s.indexOf('function battlePosition('),s.indexOf('function healthBadge(')),w);const places=w.units.map(u=>w.battlePosition(u));assert.equal(new Set(places.map(p=>p.x)).size,6);assert(places.every(p=>p.x-34>=0&&p.x+34<=640&&p.y+34<368));});
