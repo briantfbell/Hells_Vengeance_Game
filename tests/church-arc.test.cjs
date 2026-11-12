@@ -1898,8 +1898,13 @@ test('Dark Rain gates the skull behind the bargain and Reese’s solo hunt',asyn
  assert(w.Inventory.items(w.quest,2).some(item=>item.id==='polar_bear_winter_clothing'));
  await step('darkrainReadSkull');
  await step('darkrainThroughSkull');
- const saved=capture();
- assert.equal(saved.quest.darkrainComplete,true);
+ assert.equal(w.scene,'darkrain_skull_passage');
+ const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('skadi-road'),quest:w.quest})));
+ assert.equal(saved.quest.darkrainInsideSkull,true);
+ assert.equal(saved.quest.darkrainComplete,undefined);
+ const legacy={...saved,scene:'darkrain_skull_slope',position:{x:328,y:152},quest:{...saved.quest,darkrainComplete:true}};
+ delete legacy.quest.darkrainInsideSkull;
+ assert.equal(w.SaveFiles.validate(legacy).scene,'darkrain_skull_slope');
  saved.quest.darkrainPact=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Dark Rain sequence/);
 });
@@ -1910,6 +1915,7 @@ test('Skadi grants passage only after Freya completes all three arguments',async
  w.scene=start.scene;
  w.quest=structuredClone(start.quest);
  w.scenes.darkrain_skull_slope.points=[];
+ w.scenes.darkrain_skull_passage.points=[];
  w.DIALOGUE_FACE_CROPS={};
  w.units=[{id:'freya',x:328,y:288,dir:'up'}];
  w.say=async(name,text,choices)=>{w.transcript.push({name,text});return choices?answers.shift():undefined;};
@@ -1919,6 +1925,8 @@ test('Skadi grants passage only after Freya completes all three arguments',async
  w.SkadiParley.install();
  const step=async id=>assert.equal(await w.SkadiParley.interact(id),true,id);
  await step('skadiCrossFromSkull');
+ assert.equal(w.scene,'frost_giant_yard');
+ assert.equal(w.quest.darkrainComplete,true);
  assert.equal(await w.SkadiParley.interact('skadiParley'),false);
  await step('skadiScout');
  await step('skadiCover');

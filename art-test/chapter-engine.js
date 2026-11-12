@@ -1072,8 +1072,8 @@ function replaySections(){
  add('darkrain-hide','420 · Make winter clothing','darkrain_skull_slope',[440,240],'darkrainBearWon');
  add('darkrain-skull','421 · Examine the dragon’s skull','darkrain_skull_slope',[440,240],'darkrainClothed');
  add('darkrain-jaws','422 · Through the dragon’s jaws','darkrain_skull_slope',[328,192],'darkrainSkullSeen');
- add('skadi-road','423 · Frost Giant territory','darkrain_skull_slope',[328,152],'darkrainComplete');
- add('skadi-scout','424 · Scout the settlement','frost_giant_yard',[328,344],'skadiYardReached');
+ add('skadi-road','423 · Frost Giant territory','darkrain_skull_passage',[328,344],'darkrainInsideSkull');
+ add('skadi-scout','424 · Scout the settlement','frost_giant_yard',[328,344],'darkrainComplete skadiYardReached');
  add('skadi-cover','425 · Draymus’s diversion','frost_giant_yard',[216,264],'skadiScouted');
  add('skadi-meet','426 · Cross under cover','frost_giant_yard',[328,288],'skadiCovered');
  add('skadi-approach','426A · Ask for a hearing','frost_giant_yard',[456,248],'skadiApproached');

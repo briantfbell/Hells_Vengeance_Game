@@ -1,6 +1,6 @@
 {
   "scripts": 100,
-  "scenes": 167,
+  "scenes": 168,
   "replays": 475,
   "framesInspected": 657,
   "framesChecked": 657,
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 707273795,
+  "assetBytes": 710701058,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -118,11 +118,11 @@
       "bytes": 123635676
     },
     "tathlum": {
-      "files": 33,
-      "bytes": 94158342
+      "files": 34,
+      "bytes": 97583658
     }
   },
   "missingReplayArt": [],
-  "campaignAssets": 275,
-  "campaignCompressedBytes": 638044400
+  "campaignAssets": 276,
+  "campaignCompressedBytes": 641469716
 }

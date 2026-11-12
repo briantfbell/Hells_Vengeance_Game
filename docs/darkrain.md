@@ -4,7 +4,15 @@ GM timeline row S138 places Freya’s visit to the Pass of Dark Rain and Draymus
 
 The Wight Mother’s appearance, layout, exact dialogue, bear statistics and timing of the ascent are game adaptations. The winter clothing and retained carcass are recorded in the inventory. The carcass carries forward for its documented use later in the mountain expedition.
 
+## Through the dragon’s jaws
+
+Replay 422 leads from the slope into the skull. Replay 423 starts inside the passage, where the party can follow the floor to the far side of the ridge. P001 describes the party passing through the skull. The cavern layout and faint ward lights are adaptations. Checkpoints from earlier builds that already completed the crossing still lead directly into Frost Giant territory.
+
 ## Artwork prompts
+
+**Inside the dragon’s jaws** · `art-test/darkrain-jaws-v1.png`
+
+New wide 8:5 landscape environment 1600 by 1000, designed to fill a 640 by 400 pixel RPG world. High-detail dark fantasy pixel art, orthographic overhead three-quarter game camera, clearly walkable ice cavern inside the fossilized jaws of a colossal ancient dragon in the snowy Pass of Dark Rain. Pale old jawbones and fractured ivory teeth on both sides frame the lower entrance x=50%, with large bony palate ridges and frost-covered slate walls along the edges. A broad connected central floor rises gently to a narrow exit opening toward a snowy mountain ridge at upper center. In the playable area keep the central path wide and unobstructed from x=30 to 70%, y=32 to 93%, directly connected to the south edge at x=50% and north exit. Ancient ochre-white bone with faint cold blue ice reflections, dark muted slate, soft snowlight through the north exit, restrained high contrast around rocky edges. Rich crisp hard-edged pixel clusters, calm eerie subterranean atmosphere, readable silhouettes. No humanoids, undead, living dragons, floor inscriptions, symbols, text, grid, border, UI, visual-effect particles, or visible horizon.
 
 **Pass** · `art-test/darkrain-pass-v1.png`
 

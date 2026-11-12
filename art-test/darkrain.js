@@ -1,8 +1,8 @@
 "use strict";
 
 window.DarkRain=(()=>{
- const cave='nidal_giant_lair',pass='darkrain_pass',slope='darkrain_skull_slope';
- const passArt='darkrain-pass-v1.png',slopeArt='darkrain-skull-v1.png';
+ const cave='nidal_giant_lair',pass='darkrain_pass',slope='darkrain_skull_slope',passage='darkrain_skull_passage';
+ const passArt='darkrain-pass-v1.png',slopeArt='darkrain-skull-v1.png',passageArt='darkrain-jaws-v1.png';
  const portrait='darkrain-wight-mother-v1.png',sheet='darkrain-dire-bear-v1.png';
  const mother='wight_mother',bear='darkrain_bear',kind='darkrain_bear_hunt';
  const model={src:sheet,frames:[
@@ -29,13 +29,19 @@ window.DarkRain=(()=>{
     {id:'darkrainHunt',speaker:bear,x:440,y:240,label:'Hunt the dire polar bear as Reese'},
     {id:'darkrainMakeClothing',x:440,y:240,label:'Make winter clothing from the hide'},
     {id:'darkrainReadSkull',x:328,y:192,label:'Examine the frozen undead and the skull'},
-    {id:'darkrainThroughSkull',x:328,y:152,label:'Pass through the dragon’s jaws'}
+    {id:'darkrainThroughSkull',x:328,y:152,label:'Enter the dragon’s jaws'}
    ]
   };
+  scenes[passage]={
+   name:'Dark Rain · Inside the Dragon’s Jaws',image:passageArt,spawn:[328,344],blocks:[],
+   walk:[{x:224,y:304,w:192,h:96},{x:192,y:192,w:256,h:112},{x:256,y:128,w:128,h:64},{x:288,y:80,w:64,h:48}],lights:[],points:[]
+  };
+  MAP_LAYERS[passage]={foreground:passageArt,contain:true,background:{type:'solid',color:'#1d2937'}};
   MAP_LAYERS[pass]={foreground:passArt,contain:true,background:{type:'solid',color:'#20282c'}};
   MAP_LAYERS[slope]={foreground:slopeArt,contain:true,background:{type:'solid',color:'#263744'}};
   JOURNEYS[pass]='10 Gozran, 4717. The company turns south through Cheliax and east into Isger. An undead army stands between it and the Frost Giants.';
   JOURNEYS[slope]='The Wight Mother lets the company pass. The trail climbs into bitter cold, beneath the bones of an immense dragon.';
+  JOURNEYS[passage]='The company enters the jaws. The undead remain frozen outside. Follow the light to the far side of the ridge.';
   NAMES[mother]='The Wight Mother';
   NAMES[bear]='Dire Polar Bear';
   FUTURE_NPCS[mother]={source:portrait,frame:{x:43,y:4,w:874,h:1526}};
@@ -48,13 +54,14 @@ window.DarkRain=(()=>{
   await Promise.all([
    (async()=>{art[pass]=await loader(passArt);})(),
    (async()=>{art[slope]=await loader(slopeArt);})(),
+   (async()=>{art[passage]=await loader(passageArt);})(),
    ...[portrait,sheet].map(async source=>{art[source]=await loader(source);})
   ]);
  }
- function mapImage(){return scene===pass||scene===slope?art[scene]:null;}
+ function mapImage(){return [pass,slope,passage].includes(scene)?art[scene]:null;}
  function roster(){
   if(scene===slope&&quest.darkrainColdSeen&&!quest.darkrainBearWon)return ['reese'];
-  if(scene!==pass&&scene!==slope)return null;
+  if(![pass,slope,passage].includes(scene))return null;
   return (quest.activeRoster||CORE).filter(id=>id!=='guapo');
  }
  function points(){
@@ -70,10 +77,35 @@ window.DarkRain=(()=>{
  function goal(){return target()?.label||(scene===slope&&quest.darkrainComplete?'The company has passed through the dragon’s skull.':null);}
  function npcs(){
   if(scene===pass)return [{id:mother,x:328,y:174,height:67}];
+  if(scene===passage)return [];
   if(scene!==slope)return null;
   return quest.darkrainColdSeen&&!quest.darkrainComplete?[{id:bear,x:440,y:204,height:63,pose:quest.darkrainBearWon?'prone':null}]:[];
  }
+ function drawWard(g,t){
+  const inside=scene===passage;
+  if(!inside&&(scene!==slope||!quest.darkrainSkullSeen))return;
+  const motion=reduce.matches?0:t;
+  const sources=inside?[[206,212],[388,241],[382,152]]:[[249,160],[407,163]];
+  g.save();
+  for(const [index,[x,y]] of sources.entries()){
+   const radius=inside?40:25;
+   const halo=g.createRadialGradient(x,y,1,x,y,radius);
+   halo.addColorStop(0,'#daedff');
+   halo.addColorStop(1,'#96c1ff00');
+   g.fillStyle=halo;
+   g.globalAlpha=.15+.05*Math.sin(motion*2+index);
+   g.fillRect(x-radius,y-radius,radius*2,radius*2);
+   g.fillStyle='#d6eaff';
+   for(let i=0;i<6;i++){
+    const rise=(i*7+motion*12)%39;
+    g.globalAlpha=.4*(1-rise/39);
+    g.fillRect(Math.round(x+(i%3-1)*12+Math.sin(i+rise*.12)*4),Math.round(y-rise),1+i%2,2);
+   }
+  }
+  g.restore();
+ }
  function effects(g,t){
+  drawWard(g,t);
   if((scene!==slope&&scene!==pass)||reduce.matches)return;
   const snow=scene===slope;
   g.save();
@@ -138,8 +170,8 @@ window.DarkRain=(()=>{
     quest.darkrainSkullSeen=true;
     break;
    case 'darkrainThroughSkull':
-    await say('Chronicle','The company passes through the skull. The Frost Giants’ territory lies beyond.');
-    quest.darkrainComplete=true;
+    quest.darkrainInsideSkull=true;
+    await travel(passage,328,344);
     break;
   }
   save();

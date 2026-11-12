@@ -1,7 +1,7 @@
 "use strict";
 
 window.SkadiParley=(()=>{
- const skull='darkrain_skull_slope',yard='frost_giant_yard',hall='frost_giant_hall',skadi='skadi';
+ const skull='darkrain_skull_slope',passage='darkrain_skull_passage',yard='frost_giant_yard',hall='frost_giant_hall',skadi='skadi';
  const yardArt='skadi-settlement-v1.png',hallArt='skadi-feast-hall-v1.png',portrait='skadi-frost-giant-v1.png';
  const guests='skadi-feast-guests-v1.png';
  const rounds=[
@@ -29,6 +29,7 @@ window.SkadiParley=(()=>{
 
  function install(){
   scenes[skull].points.push({id:'skadiCrossFromSkull',x:328,y:152,label:'Cross into Frost Giant territory'});
+  scenes[passage].points.push({id:'skadiCrossFromSkull',x:328,y:104,label:'Cross into Frost Giant territory'});
   scenes[yard]={
    name:'Isger · Frost Giant Settlement',image:yardArt,spawn:[328,344],blocks:[],
    walk:[{x:112,y:144,w:416,h:160},{x:208,y:304,w:224,h:32},{x:288,y:336,w:64,h:64}],lights:[[269,95],[370,94],[270,324],[359,324]],
@@ -73,7 +74,7 @@ window.SkadiParley=(()=>{
   return (quest.activeRoster||CORE).filter(id=>id!=='guapo');
  }
  function points(){
-  if(scene===skull&&quest.darkrainComplete)return [point('skadiCrossFromSkull')];
+  if((scene===skull&&quest.darkrainComplete)||(scene===passage&&quest.darkrainInsideSkull))return [point('skadiCrossFromSkull')];
   if(scene===yard)return [point(!quest.skadiScouted?'skadiScout':!quest.skadiCovered?'skadiCover':
    !quest.skadiApproached?'skadiApproach':'skadiParley')];
   if(scene!==hall)return null;
@@ -130,6 +131,7 @@ window.SkadiParley=(()=>{
   if(id==='skadiArgument'+(tally()+1))await argue();
   else switch(id){
    case 'skadiCrossFromSkull':
+    quest.darkrainComplete=true;
     quest.skadiYardReached=true;
     await travel(yard,328,344);
     break;

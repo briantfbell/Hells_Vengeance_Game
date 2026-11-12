@@ -344,7 +344,7 @@ Continue from Menador or select replay **407**. Take the Queen’s assignment, a
 
 ### The Pass of Dark Rain
 
-Continue from the cave-giant lair or select replay **415**. Bargain for passage, hunt the dire polar bear as Reese, and cross through the dragon’s skull. Replays **415–422** cover the pass and ascent. See [the section notes](docs/darkrain.md) for sources, combat and artwork.
+Continue from the cave-giant lair or select replay **415**. Bargain for passage, hunt the dire polar bear as Reese, and cross through the dragon’s skull. Replays **415–423** cover the pass, ascent, and walk through the dragon’s jaws. See [the section notes](docs/darkrain.md) for sources, combat and artwork.
 
 ### Skadi and the Frost Giants
 
