@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const arego=window.FortArego?.goal();
+ if(arego)return {text:arego,target:FortArego.target()};
  const grave=window.SenaraGraveyard?.goal();
  if(grave)return {text:grave,target:SenaraGraveyard.target()};
  const wagon=window.SenaraWagon?.goal();

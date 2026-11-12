@@ -1,20 +1,20 @@
 {
-  "scripts": 64,
-  "scenes": 108,
-  "replays": 239,
-  "framesInspected": 568,
-  "framesChecked": 568,
+  "scripts": 65,
+  "scenes": 110,
+  "replays": 246,
+  "framesInspected": 571,
+  "framesChecked": 571,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 50,
+  "combatStats": 52,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 423649780,
+  "assetBytes": 434692735,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,12 +58,17 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 165,
-  "startupCompressedBytes": 368727538,
-  "startupDecodedRgbaBytes": 1030037856,
+  "startupAssets": 170,
+  "startupCompressedBytes": 379759500,
+  "startupDecodedRgbaBytes": 1061500028,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
+    "arego-champions-v1.png",
+    "arego-forest-approach-v1.png",
+    "arego-loose-devil-v1.png",
+    "arego-outer-yard-open-v1.png",
+    "arego-outer-yard-v1.png",
     "armory-cast-packed-v1.png",
     "ash-house-foreground.png",
     "attack-freya-v1.png",

@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 239 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,239);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 246 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,246);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -692,4 +692,43 @@ test('the Black Daggers’ lead unlocks the graveyard, and only the fallen angel
  assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(save)).quest.senaraLockdownObserved,true);
  const forged=structuredClone(save);forged.quest.senaraBalisseDefeated=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Senara graveyard sequence/);
+});
+
+test('Fort Arego reveals Fex’s betrayal before the two champions and locks the dungeon threshold until both fall',async()=>{
+ const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='arego-depart');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:216,dir:'up'}],
+  DIALOGUE_FACE_CROPS:{},SouthRoad:{recover:fraction=>w.recovery=fraction}});
+ w.scenes[start.scene].points=[];
+ w.STATS.fastness_paladin={hp:26};
+ vm.runInContext(read('fort-arego.js'),w);
+ w.FortArego.install();
+ const step=async id=>assert.equal(await w.FortArego.interact(id),true,id);
+ const victory=async(kind,id)=>{
+  assert.equal(w.battle.kind,kind);
+  assert.equal(w.battle.enemies[0].id,id);
+  const position=w.battle.returnPosition;
+  w.battle=null;
+  await w.FortArego.afterBattle(kind,position);
+ };
+ await step('aregoDepart');
+ assert.equal(await w.FortArego.interact('aregoCross'),false);
+ await step('aregoDevils');
+ assert(w.transcript.some(line=>line.text.includes('promised him your souls')));
+ await step('aregoDecision');
+ assert.equal(w.recovery,.55);
+ await step('aregoCross');
+ assert.equal(await w.FortArego.interact('aregoSecondLine'),false);
+ await step('aregoFirstLine');
+ await victory('arego_viona_line','arego_viona');
+ assert.equal(await w.FortArego.interact('aregoSecureYard'),false);
+ await step('aregoSecondLine');
+ await victory('arego_prison_door','arego_champion');
+ await step('aregoSecureYard');
+ const arrival=sections.find(s=>s.id==='arego-secure-yard');
+ const saved=checkpoint(w,{...arrival,quest:w.quest});
+ const back=w.SaveFiles.decode(w.SaveFiles.encode(saved));
+ assert.equal(back.quest.aregoExteriorSecured,true);
+ assert.equal(back.quest.senaraAngelHeart,true);
+ const forged=structuredClone(saved);forged.quest.aregoVionaFell=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Fort Arego exterior sequence/);
 });

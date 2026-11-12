@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.aregoExteriorSecured)rows.push('Fort Arego · Viona Kadarius and a second Reclamation champion fall. The way down into the former prison is open.');
+  if(q.aregoFexOpposed)rows.push('Whisperwood · The company learns that Fex intends to sacrifice them to Visperthul and make the Inferno Gate permanent. They turn against Fex.');
   if(q.senaraAngelHeart)rows.push('Senara · The company takes the balisse angel’s heart for Fex. The Reclamation locks down Senara.');
   if(q.senaraGraveTip)rows.push('Senara · The Black Daggers’ scouts confirm an angel at the graveyard.');
   if(q.senaraReturnPatrolsSeen)rows.push('Senara · Reclamation patrols have increased. The company will approach the Black Daggers below ground.');

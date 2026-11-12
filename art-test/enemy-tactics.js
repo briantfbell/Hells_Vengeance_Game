@@ -22,6 +22,8 @@ window.EnemyTactics=(()=>{
    else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='fastness_mage'){move=round%2?'Arcane bolt':'Charged bolt';extra=round%2?0:3;effect='arcaneBolt';physical=false;}
    else if(e.id==='fastness_warpriest'){move=round%2?'Warhammer strike':'Overhead hammer';extra=round%2?0:2;}
+   else if(e.id==='arego_viona'){move=round%2?'Shield-led cut':'Countering slash';extra=round%2?2:0;}
+   else if(e.id==='arego_champion'){move=round%2?'Glaive thrust':'Sweeping glaive';extra=round%2?0:2;}
    else if(e.id==='senara_balisse'){move=round%2?'Longsword sweep':'Radiant flame';extra=round%2?0:3;effect=round%2?null:'balisse_flame';physical=round%2!==0;}
    else if(e.id==='whisper_unicorn'){move=round%2?'Horn thrust':'Hoof strike';}
    else if(e.id==='whisper_spider'){move='Venomous bite';}
