@@ -16,7 +16,7 @@ Foundry scene `Scene.iiniVv5xhDqdz7mp` shows the private quarters, including tat
 
 ## Observatory
 
-Foundry scene `Scene.TgwO6xXhcXfFGlKs` shows an upper observation floor and west balcony. The prepared placements include Lord Oda Nobunaga (`Actor.Dp2eF1CD16Bp3eJc`), a Guardsman, a Bowman and a Samurai. Inspect the marked observation floor for that placement note. Oda’s three sprite poses interpret his Foundry portrait and retain its eyepatch, tall hat and crested shoulder vest. The preview displays his standing sprite, and Longacre Art Studio cycles all three poses. His exact position on the condensed game map is an adaptation. The brass instrument and the route from the lord’s chambers are game adaptations. Players can trace the route and return in Planning maps.
+Foundry scene `Scene.TgwO6xXhcXfFGlKs` shows an upper observation floor and west balcony. The prepared placements include Lord Oda Nobunaga (`Actor.Dp2eF1CD16Bp3eJc`), a Guardsman, a Bowman and a Samurai. Inspect the marked observation floor for that placement note. Oda’s three sprite poses interpret his Foundry portrait and retain its eyepatch, tall hat and crested shoulder vest. The preview displays Oda and the three defenders from the prepared scene. The Samurai sprite interprets the green-and-gold portrait and uses a katana, as listed in Foundry actor `Actor.YbzEyyRJFm5lyrQ7`. Longacre Art Studio cycles the three poses for each character. The exact positions on the condensed game map are adaptations. The brass instrument and the route from the lord’s chambers are game adaptations. Players can trace the route and return in Planning maps.
 
 ## Castle roof
 

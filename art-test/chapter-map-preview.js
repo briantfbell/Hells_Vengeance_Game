@@ -74,7 +74,12 @@ window.ChapterMapPreview=(()=>{
   'barleybridge-observatory-v1':{
    spawn:[440,280],
    walk:[[144,240,352,64],[64,256,96,16],[304,224,96,32]],
-   figures:[{id:'barleybridge_oda',x:448,y:216,height:88}],
+   figures:[
+    {id:'barleybridge_guard',x:256,y:200,height:72},
+    {id:'barleybridge_bowman',x:392,y:208,height:72},
+    {id:'barleybridge_oda',x:448,y:216,height:88},
+    {id:'barleybridge_samurai',x:320,y:280,height:76}
+   ],
    points:[
     {label:'Return stairs',x:488,y:280,destination:'barleybridge-lords-chambers-v1',arrival:[152,264]},
     {label:'Observation floor',x:344,y:232,note:'The prepared map places Lord Oda Nobunaga here with a guardsman, bowman, and samurai.'},
@@ -114,6 +119,11 @@ window.ChapterMapPreview=(()=>{
   }
  };
  const cast={
+  barleybridge_samurai:{name:'Barleybridge Samurai',caption:'Katana · ready, cut, and high guard',src:'barleybridge-samurai-v1.png',frames:[
+   {x:16,y:18,w:543,h:694,anchorX:317},
+   {x:591,y:74,w:813,h:638,anchorX:1123},
+   {x:1600,y:22,w:524,h:690,anchorX:1852}
+  ]},
   barleybridge_oda:{name:'Lord Oda Nobunaga',caption:'Standing, fan raised, and ceremonial bow',src:'barleybridge-oda-v1.png',frames:[
    {x:209,y:5,w:337,h:713,anchorX:369},
    {x:918,y:6,w:336,h:712,anchorX:1067},
