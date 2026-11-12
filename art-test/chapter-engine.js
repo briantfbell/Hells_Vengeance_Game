@@ -38,14 +38,14 @@ async function rollDice(label,sides,count=1,modifier=0,context='',fixed=null){
 async function storyRoll(label,face,modifier,outcome){return rollDice(label,20,1,modifier,outcome+' · Story roll',[face]);}
 async function damage(spec,label){return rollDice(label,spec[1],spec[0],spec[2]);}
 function point(id){return scenes[scene].points.find(p=>p.id===id);}
-function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&(window.FastnessArc?.npcs()||window.SupplyArc?.npcs()||DisruptionArc.npcs()||KantariaArc.npcs()||CourtArc.npcs()||FortArc.npcs()||ArmoryArc.npcs()||ChurchArc.npcs()||PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():window.NextChapter.npcs())).some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
+function actorBlocking(x,y,which=scene){return (which===scene&&quest.chapter2&&(window.FastnessArc?.npcs()?.filter(unit=>unit.hp!==0)||window.SupplyArc?.npcs()||DisruptionArc.npcs()||KantariaArc.npcs()||CourtArc.npcs()||FortArc.npcs()||ArmoryArc.npcs()||ChurchArc.npcs()||PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():window.NextChapter.npcs())).some(p=>Math.hypot(x-p.x,y-p.y)<12))||scenes[which].points.some(p=>['guard','barkeep'].includes(p.id)&&Math.hypot(x-p.x,y-p.y)<12);}
 function passable(gx,gy,which=scene){if(gx<0||gy<0||gx>=COLS||gy>=ROWS)return false;const x=gx*T+8,y=gy*T+8,s=scenes[which];return s.walk.some(r=>inside(x,y,r))&&!s.blocks.some(r=>inside(x,y,r))&&!actorBlocking(x,y,which);}
 function findPath(from,to,which=scene){if(!passable(...to,which))return null; // Allow walking out of a cell occupied by a newly revealed NPC.
 const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++){const a=q[i],key=a.join(',');if(key===to.join(',')){let k=key,result=[];while(prev.get(k)!==null){result.unshift(k.split(',').map(Number));k=prev.get(k);}return result;}for(const [dx,dy] of Object.values(DIR)){const n=[a[0]+dx,a[1]+dy],k=n.join(',');if(passable(...n,which)&&!prev.has(k)){prev.set(k,key);q.push(n);}}}return null;}
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return window.SupplyArc?.roster()||window.CovertArc?.roster()||DisruptionArc.roster()||KantariaArc.roster()||CourtArc.roster()||FortArc.roster()||ArmoryArc.roster()|| (soloParty()?['jamal']:(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)));}
-function finished(){return !!quest.fastnessGateComplete;}
+function finished(){return !!quest.fastnessInteriorComplete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -341,7 +341,7 @@ function startBattle(count,shaken,config=null){
  units.forEach((u,i)=>{u.x=places[i][0];u.y=places[i][1];u.dir='up';u.step=null;u.guard=false;});path=[];
  const enemies=config?.enemies||[{id:'viggo',name:'Viggo',x:312,y:136,hp:34,max:34,shaken:shaken?2:0},...Array.from({length:count},(_,i)=>({id:'cultist',name:'Zealot '+(i+1),x:[248,392,552][i],y:[152,152,280][i],hp:12,max:12}))];
  for(const e of enemies)e.idleOffset=Math.random()*2;
- battle={kind:config?.kind||'temple',round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0,pendingInit:true};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Roll initiative. Guard lasts until your next turn.');planEnemyRound();paintBattle();updateObjective();
+ battle={kind:config?.kind||'temple',returnPosition:config?.returnPosition,round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0,pendingInit:true};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage('Roll initiative. Guard lasts until your next turn.');planEnemyRound();paintBattle();updateObjective();
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
 function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';const lines=text.split('\n');e.textContent=lines.length>1?lines[0].split(/ · | casts /)[0]+' → '+lines[1]:text;e.title=text;panel.append(e);}}
@@ -449,7 +449,7 @@ async function performActionImpl(action){
   if(hit){let value=await damage(skill?.dmg||STATS[actor.id].dmg,NAMES[actor.id]+' · '+(skill?.name||'Damage'));if(skill&&actor.id==='jamal'&&target.hitRound===battle.round)value+=await damage([1,6,0],'J’Mal · Sneak attack bonus');await animateAction(actor,target,action,true,()=>hitTarget(actor,target,value));target.hitRound=battle.round;if(skill?.drain)hp[actor.id]=Math.min(STATS[actor.id].hp,hp[actor.id]+value);log(combatOutcome(actor,target,skill,value,roll,bonus));}else{await animateAction(actor,target,action,false);actor.lunge=.22;flash(target,'MISS','#bfc1d1');log(combatOutcome(actor,target,skill,null,roll,bonus));}
  }
  paintBattle();await delay(280);if(token!==epoch||!battle)return;
- if(!livingEnemy()){const kind=battle.kind;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind==='fastness_gate'){run(()=>FastnessArc.afterBattle(kind));return;}if(kind.startsWith('supply_')){updateObjective();paintParty();run(()=>SupplyArc.afterBattle(kind));return;}if(kind.startsWith('covert_')){updateObjective();paintParty();run(()=>CovertArc.afterBattle(kind));return;}if(kind.startsWith('disruption_')){updateObjective();paintParty();run(()=>DisruptionArc.afterBattle(kind));return;}if(kind.startsWith('kantaria_')){updateObjective();paintParty();run(()=>KantariaArc.afterBattle(kind));return;}if(kind.startsWith('court_')){updateObjective();paintParty();run(()=>CourtArc.afterBattle(kind));return;}if(kind.startsWith('fort_')){updateObjective();paintParty();run(()=>FortArc.afterBattle(kind));return;}if(kind.startsWith('armory_')){updateObjective();paintParty();run(()=>ArmoryArc.afterBattle(kind));return;}if(kind.startsWith('church_')){updateObjective();paintParty();run(()=>ChurchArc.afterBattle(kind));return;}if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
+ if(!livingEnemy()){const {kind,returnPosition}=battle;battle=null;$('battle').hidden=true;$('character').disabled=false;if(kind.startsWith('fastness_')){$('enemy-intents').hidden=true;run(()=>FastnessArc.afterBattle(kind,returnPosition));return;}if(kind.startsWith('supply_')){updateObjective();paintParty();run(()=>SupplyArc.afterBattle(kind));return;}if(kind.startsWith('covert_')){updateObjective();paintParty();run(()=>CovertArc.afterBattle(kind));return;}if(kind.startsWith('disruption_')){updateObjective();paintParty();run(()=>DisruptionArc.afterBattle(kind));return;}if(kind.startsWith('kantaria_')){updateObjective();paintParty();run(()=>KantariaArc.afterBattle(kind));return;}if(kind.startsWith('court_')){updateObjective();paintParty();run(()=>CourtArc.afterBattle(kind));return;}if(kind.startsWith('fort_')){updateObjective();paintParty();run(()=>FortArc.afterBattle(kind));return;}if(kind.startsWith('armory_')){updateObjective();paintParty();run(()=>ArmoryArc.afterBattle(kind));return;}if(kind.startsWith('church_')){updateObjective();paintParty();run(()=>ChurchArc.afterBattle(kind));return;}if(['ovinnik','execution'].includes(kind)){updateObjective();paintParty();run(()=>PoliticalMovement.afterBattle(kind));return;}if(['bolgart','wereboar'].includes(kind)){updateObjective();paintParty();run(()=>LastStand.afterBattle(kind));return;}if(kind==='deputies'){updateObjective();paintParty();run(()=>window.NextArc.afterBattle());return;}quest.victory=true;updateObjective();paintParty();save();run(async()=>{await say(null,'Viggo is dead at his own altar.');await say('freya','Clean. Now the rapier.');});return;}
  await advanceInitiative(true,token);
 }
 function beginInitiative(){
@@ -488,6 +488,8 @@ async function enemyStrike(enemy,token){
  if(!battle||token!==epoch||enemy.actedRound===battle.round)return;
  enemy.actedRound=battle.round;
  if(!enemy.intent)planEnemyRound();
+ if(await window.FastnessArc?.enemySupport(enemy))return;
+ if(token!==epoch||!battle)return;
  const intent=enemy.intent,target=units.find(u=>u.id===intent?.target);
  // Keep the announced target: a fallen target costs the enemy this action.
  if(!target||hp[target.id]<=0){log(enemy.name+' loses the opening; the intended target is down.');return;}
@@ -617,6 +619,11 @@ function replaySections(){
  add('fastness-muster','120 · The dead assemble','fastness_gate',[328,344],'chapter15');
  add('fastness-charge','121 · The outer gate assault','fastness_gate',[328,264],'fastnessMustered');
  add('fastness-threshold','122 · The breach','fastness_gate',[328,216],'fastnessGateCleared');
+ add('fastness-hall-road','123 · Through the breach','fastness_gate',[328,152],'fastnessGateComplete');
+ add('fastness-hall','124 · The mustering hall','fastness_hall',[328,344]);
+ add('fastness-chapel-road','125 · The chapel passage','fastness_hall',[328,216],'fastnessHallCleared');
+ add('fastness-chapel','126 · The inner chapel','fastness_chapel',[328,344]);
+ add('fastness-stairs','127 · The tower stairs','fastness_chapel',[328,216],'fastnessChapelCleared');
  return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}

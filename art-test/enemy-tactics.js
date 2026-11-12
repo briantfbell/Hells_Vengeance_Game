@@ -18,6 +18,8 @@ window.EnemyTactics=(()=>{
    else if(e.id==='lamashtu_sentry'){move='Curved blade';}
    else if(e.id==='lamashtu_adept'){move=round%2?'Staff strike':'Heavy staff';extra=round%2?0:2;}
    else if(e.id==='kantaria_guard'){move='Sword strike';}
+   else if(e.id==='fastness_paladin'){move=round%2?'Sword cut':'Shield-led strike';extra=round%2?0:2;}
+   else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='court_rhona'){move=round%2?'Twin hand axes':'Press the crossing';extra=round%2?1:0;}
    else if(e.id==='lencia'){move=round%2?'Longsword cut':'Shield-led strike';extra=round%2?0:2;}
    else if(e.id==='court_ranger'){move='Hand axe';}
@@ -32,10 +34,10 @@ window.EnemyTactics=(()=>{
    else if(e.id==='celestial_wolf'){move='Celestial bite';}
    // Rank-and-file pairs focus together; intentions remain visible while initiative determines when they act.
    if(['kantaria_guard','court_ranger','church_acolyte','heist_ranger'].includes(e.id))target=live[(round-1+Math.floor(i/2))%live.length];
-   e.intent={target:target.id,move,extra,heavy:extra>0,round};
+   e.intent={target:target.id,move,extra,heavy:extra>0,round,canMend:e.id==='fastness_cleric'&&round%2===0};
   });
  }
  const damage=(value,guard)=>guard?Math.max(1,Math.floor(value/2)):value;
- const preview=(enemy,names)=>enemy.intent?enemy.name+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':enemy.intent.move+' → '+names[enemy.intent.target]):'';
+ const preview=(enemy,names)=>enemy.intent?enemy.name+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.move+' → '+names[enemy.intent.target])):'';
  return {plan,damage,preview};
 })();
