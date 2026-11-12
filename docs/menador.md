@@ -6,7 +6,13 @@ Rows S134 and S135 record the Meeting of the Twins at Menador on 3 Gozran, 4717 
 
 The optional overlook in replay 406 uses P018 and S097 for the destruction of Menador Keep. P018 places the destruction on 14 Neth, 4716, while S097 lists 26 Calistril, 4717. Both place it before the meeting. The chronicle explains the closure of the land route without assigning a date to the siege. The overlook and its position relative to the keep are game staging.
 
-## Artwork prompt
+The illustrated childhood interlude in replay **406** adapts P002, E. Williams’s player-written Kusanagi backstory. Solei leaves with Boudicca to warn her homeland of Noyuda’s coming attack. Her fear that Noyuda would pursue both daughters explains why Freya remains. The card is narrated from outside the scene. The illustration interprets Solei’s last night with both children, then the game returns to the recorded date and place of the meeting. No meeting dialogue or outcome is supplied.
+
+## Artwork prompts
+
+**The Kusanagi twins** · `art-test/menador-twins-v1.png`
+
+Built-in image generator prompt: Wide 4:3 single storybook illustration for a detailed pixel art dark-fantasy handheld RPG, clearly readable at 640x480. A private childhood scene in a late-medieval Chelish manor nursery at night. Two identical half-elf four-year-old twin sisters with short thick black hair and subtly pointed ears are asleep side by side, hands close to one another. Their half-elf mother Solei, an adult woman with long dark hair dressed in a practical soft blue-gray traveling cloak, sits at the side of the bed watching them in silence, a small travel bag in hand. Intimate sadness and protective affection. Blue moonlight through an open window, restrained amber candlelight, warm rosewood furniture, charcoal stone walls. Faces and hands clustered in the upper and middle center, lower quarter dark with simple shadow for a possible overlay. Rich hand-placed pixel clusters, strong silhouette separation, fine details around cloth and hands. No lettering, logos, UI, border, weapons, action, or modern objects.
 
 **Ruins edit** · `art-test/menador-pass-v2.png`
 
@@ -19,3 +25,5 @@ Wide 8:5 high-detail overhead orthographic dark fantasy pixel RPG map of a Menad
 ## Verification
 
 The browser playthrough continued from the covenant, heard Corrine’s report, traveled to Menador and reached the dated chapter card. The completed checkpoint reloaded at 640×480 without console errors. All 160 automated tests passed. The structural audit checked 147 scenes, 410 replays and 630 sprite frames.
+
+The childhood interlude was verified in replay 406 at 640×480. Both cards advanced with Enter, the second card cleared the illustration, and the next objective returned the party to Egorian. No console errors appeared. All 174 automated tests passed, and the structural audit checked 168 scenes, 475 replays and 657 frames.

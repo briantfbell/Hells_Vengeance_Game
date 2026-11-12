@@ -71,3 +71,12 @@ body.is-combat #dialog{z-index:14}
 .die-number{color:#fff6d9;-webkit-text-stroke:.7px #000;paint-order:stroke fill;text-shadow:-1px -1px 0 #000,0 -1px 0 #000,1px -1px 0 #000,-1px 0 0 #000,1px 0 0 #000,-1px 1px 0 #000,0 1px 0 #000,1px 1px 0 #000,0 0 4px #000,0 0 7px #000}
 
 #battle-message{white-space:pre-line}
+
+#journey.illustrated .journey-card{
+ justify-content:flex-end;
+ background-size:cover;
+ background-position:center;
+}
+#journey.illustrated .eyebrow{margin-bottom:1.25cqw}
+#journey.illustrated #journey-title{margin-bottom:1.6cqw}
+#journey.illustrated #journey-summary{margin-bottom:2cqw}

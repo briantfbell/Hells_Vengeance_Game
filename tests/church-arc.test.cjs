@@ -1808,7 +1808,11 @@ test('Menador follows Corrine’s briefing and records only the dated meeting',a
  w.scene=start.scene;
  w.quest=structuredClone(start.quest);
  w.scenes.barrow_covenant.points=[];
- w.journeyCard=async(title,text,commit)=>{w.transcript.push({name:title,text});commit();};
+ w.journeyCard=async(title,text,commit=()=>{},illustration)=>{
+  if(illustration)assert(!w.quest.menadorComplete);
+  w.transcript.push(illustration?{name:title,text,illustration}:{name:title,text});
+  commit();
+ };
  vm.runInContext(read('menador.js'),w);
  w.Menador.install();
  const step=async id=>assert.equal(await w.Menador.interact(id),true,id);
@@ -1827,6 +1831,10 @@ test('Menador follows Corrine’s briefing and records only the dated meeting',a
  assert(w.Progression.history(ruins.quest,ruins.progression).some(line=>line.includes('Menador Keep')));
  delete w.quest.menadorKeepSeen;
  await step('menadorMeeting');
+ const backstory=w.transcript.at(-2);
+ assert.equal(backstory.name,'Freya and Boudicca');
+ assert.equal(backstory.illustration,'menador-twins-v1.png');
+ assert.match(backstory.text,/Solei.*Noyuda.*\nShe took Boudicca and left Freya behind/);
  assert.deepEqual(w.transcript.at(-1),{name:'Meeting of the Twins',text:'3 Gozran, 4717. Menador.'});
  const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('menador-meeting'),quest:w.quest})));
  assert.equal(saved.quest.menadorComplete,true);

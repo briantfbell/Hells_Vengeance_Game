@@ -68,8 +68,12 @@ const JOURNEYS={
  scarlet_manor:'The notice-post decree survives the night; the Last Stand’s copy is torn down. Servants lead the party past armed guards to Fex’s audience.'
 };
 function cancelJourney(){const resolve=journeyResolve;journeyResolve=null;journeyOpen=false;$('journey').hidden=true;$('journey').classList.remove('visible');$('journey-continue').disabled=true;if(resolve)resolve();}
-async function journeyCard(title,summary,commit=()=>{}){
+async function journeyCard(title,summary,commit=()=>{},illustration=null){
  const token=epoch,panel=$('journey'),button=$('journey-continue');journeyOpen=true;keys.clear();path=[];$('prompt').hidden=true;$('dice-panel').hidden=true;
+ panel.classList.toggle('illustrated',!!illustration);
+ panel.querySelector('.journey-card').style.backgroundImage=illustration
+  ? `linear-gradient(transparent 42%, #100d14eb 68%, #100d14), url("art-test/${illustration}")`
+  : '';
  $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
  commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
  button.disabled=true;journeyOpen=false;keys.clear();canvas.focus();save();

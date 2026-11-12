@@ -336,7 +336,7 @@ Continue from the Barrowood trail or select replay **396**. Face the rogue Asmod
 
 ### Menador and the Queen’s demand
 
-Continue after the Covenant of Hell or select replay **404**. Hear Corrine’s report and travel to Menador, where the chapter card marks the Meeting of the Twins. Replays **404–406** cover the approach. See [the section notes](docs/menador.md) for the two campaign records.
+Continue after the Covenant of Hell or select replay **404**. Hear Corrine’s report, travel to Menador, and see how Freya and Boudicca were separated before the dated Meeting of the Twins card. Replays **404–406** cover the approach. See [the section notes](docs/menador.md) for the two campaign records.
 
 ### Tathlum orders and the Nidal cave-giant hunt
 

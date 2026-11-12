@@ -2,6 +2,7 @@
 
 window.Menador=(()=>{
  const glade='barrow_covenant',pass='menador_pass',image='menador-pass-v2.png';
+ const backstoryArt='menador-twins-v1.png';
 
  function install(){
   scenes[glade].points.push(
@@ -18,7 +19,7 @@ window.Menador=(()=>{
   MAP_LAYERS[pass]={foreground:image,contain:true,background:{type:'solid',color:'#22282e'}};
   JOURNEYS[pass]='3 Gozran, 4717. The company travels to Menador after the Queen’s demand concerning the Silver Ravens.';
  }
- async function load(loader){art[pass]=await loader(image);}
+ async function load(loader){[art[pass]]=await Promise.all([loader(image),loader(backstoryArt)]);}
  function mapImage(){return scene===pass?art[scene]:null;}
  function roster(){return scene===pass?(quest.activeRoster||CORE).filter(id=>id!=='guapo'):null;}
  function points(){
@@ -53,6 +54,7 @@ window.Menador=(()=>{
     quest.menadorKeepSeen=true;
     break;
    case 'menadorMeeting':
+    await journeyCard('Freya and Boudicca','The Kusanagi twins were four when their mother, Solei, fled to warn her homeland of Noyuda’s coming attack.\nShe took Boudicca and left Freya behind, fearing Noyuda would hunt them down if both daughters vanished.',undefined,backstoryArt);
     await journeyCard('Meeting of the Twins','3 Gozran, 4717. Menador.',()=>{quest.menadorComplete=true;});
     break;
   }
