@@ -67,7 +67,7 @@ window.DinyarRecon=(()=>{
   NAMES[dragon]='Parnoneryx';
   STATS[dragon]={hp:86,ac:15,atk:7,dmg:[1,8,3]};
   FUTURE_NPCS[dragon]={source:dragonArt,frame:dragonFrames[0]};
-  COMBAT_IDLES[dragon]={src:dragonArt,frames:dragonFrames,cycle:[0,2],maxHeight:Math.max(...dragonFrames.map(frame=>frame.h))};
+  COMBAT_IDLES[dragon]={src:dragonArt,deferred:true,frames:dragonFrames,cycle:[0,2],maxHeight:Math.max(...dragonFrames.map(frame=>frame.h))};
   MAP_LAYERS[nidal]={foreground:nidalArt,contain:true,background:{type:'solid',color:'#1f1929'}};
   MAP_LAYERS[ridge]={foreground:ridgeArt,contain:true,background:{type:'solid',color:'#242b35'}};
   JOURNEYS[nidal]='14 Gozran, 4717. Draymus, Violetta, and Corrine teleport to Nidal. They seek a physician who can remove Draymus’s brain and keep it alive in a jar.';

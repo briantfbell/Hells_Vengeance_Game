@@ -5,7 +5,7 @@ window.BarrowCovenant=(()=>{
  const altar='barrow-final-stone-v1.png',sheet='barrow-malix-v1.png',fiends='barrow-gorthoklekk-v1.png';
  const malix='luthon_malix',human='gorthoklekk',fiend='gorthoklekk_fiend',cleric='fastness_cleric';
  let royalArrival=null;
- const model={src:sheet,frames:[
+ const model={src:sheet,deferred:true,frames:[
   {x:119,y:1,w:359,h:714,anchorX:315,anchorY:713},
   {x:731,y:6,w:618,h:709,anchorX:1087,anchorY:713},
   {x:1514,y:6,w:452,h:709,anchorX:1750,anchorY:713}

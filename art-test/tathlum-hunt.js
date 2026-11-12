@@ -12,7 +12,7 @@ window.TathlumHunt=(()=>{
  const townArt='tathlum-nidal-village-v1.png',caveArt='tathlum-cave-lair-v1.png',sheet='tathlum-cave-giant-v1.png';
  const attackArt='tathlum-nidal-attack-site-v1.png';
  const giant='tathlum_cave_giant',kind='tathlum_giant_duel';
- const model={src:sheet,frames:[
+ const model={src:sheet,deferred:true,frames:[
   {x:4,y:17,w:617,h:670,anchorX:371,anchorY:680},
   {x:633,y:47,w:811,h:640,anchorX:1130,anchorY:680},
   {x:1480,y:24,w:660,h:663,anchorX:1865,anchorY:680}

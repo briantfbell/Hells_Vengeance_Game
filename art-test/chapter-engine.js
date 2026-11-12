@@ -1201,9 +1201,17 @@ function imageLoad(src){
  return imageRequests.get(src);
 }
 let loadedArtStage=0,campaignLoading=false;
-const ART_ENTRY_STAGES={nextChapter:1,chapterThree:2,fortArcRoad:3,egorianApproach:4,aregoEscape:5,barrowDepart:6};
+const ART_ENTRY_STAGES={
+ nextChapter:1,chapterThree:2,fortArcRoad:3,egorianApproach:4,aregoEscape:5,barrowDepart:6,
+ tathlumReturn:7,skadiCrossFromSkull:8,dinyarSplit:9,ilniusCutaway:10,barleybridgeCutaway:11
+};
 function artStage(saved){
  const q=saved?.quest;
+ if(q?.barleybridgeReached)return 11;
+ if(q?.ilniusForestReached)return 10;
+ if(q?.nidalOperationSought)return 9;
+ if(q?.skadiYardReached)return 8;
+ if(q?.tathlumOrdersReached)return 7;
  if(q?.barrowRoadReached)return 6;
  if(q?.aregoEgorianEscaped)return 5;
  if(q?.egorianBridgeMet||saved?.scene==='egorian_bridge')return 4;
@@ -1260,7 +1268,7 @@ async function loadKantariaArt(){
   await FastnessArc.load(imageLoad);
   await KantariaAftermath.load(imageLoad);
   await SouthRoad.load(imageLoad);
-  await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(model=>model.src))].map(async src=>{art[src]=await imageLoad(src);}));
+  await Promise.all([...new Set(Object.values(COMBAT_IDLES).filter(model=>!model.deferred).map(model=>model.src))].map(async src=>{art[src]=await imageLoad(src);}));
 }
 async function loadAregoArt(){
   await EgorianArrival.load(imageLoad);
@@ -1306,38 +1314,40 @@ async function loadCheliaxArt(){
   await VyreWish.load(imageLoad);
   art['bruce-portrait']=await imageLoad('bruce-foundry-portrait.webp');
 }
-async function loadTathlumArt(){
-  await BarrowTrail.load(imageLoad);
-  await BarrowCovenant.load(imageLoad);
-  await Menador.load(imageLoad);
-  await TathlumHunt.load(imageLoad);
-  await DarkRain.load(imageLoad);
-  await SkadiParley.load(imageLoad);
-  await MolthuneCoffin.load(imageLoad);
-  await DinyarRecon.load(imageLoad);
-  await IlniusFountain.load(imageLoad);
-  await BarleybridgeScout.load(imageLoad);
+async function loadBarrowoodArt(){
+ await Promise.all([BarrowTrail,BarrowCovenant,Menador].map(chapter=>chapter.load(imageLoad)));
 }
+async function loadDarkRainArt(){
+ await Promise.all([TathlumHunt,DarkRain].map(chapter=>chapter.load(imageLoad)));
+}
+async function loadMolthuneArt(){
+ await Promise.all([SkadiParley,MolthuneCoffin].map(chapter=>chapter.load(imageLoad)));
+}
+const ART_STAGES=[
+ null,
+ [loadVoyageArt,'Loading the Western Star and Longacre…'],
+ [loadLongacreArt,'Loading the Longacre operations…'],
+ [loadKantariaArt,'Loading Fort Estazano and Kantaria…'],
+ [loadAregoArt,'Loading Egorian, Senara and Fort Arego…'],
+ [loadCheliaxArt,'Loading the operations across Cheliax…'],
+ [loadBarrowoodArt,'Loading the Barrowood and Menador…'],
+ [loadDarkRainArt,'Loading Nidal and the Pass of Dark Rain…'],
+ [loadMolthuneArt,'Loading the Frost Giant settlement and Molthune…'],
+ [()=>DinyarRecon.load(imageLoad),'Loading Citadel Dinyar…'],
+ [()=>IlniusFountain.load(imageLoad),'Loading St. Ilnius…'],
+ [()=>BarleybridgeScout.load(imageLoad),'Loading Barleybridge…']
+];
 async function prepareCampaign(stage){
  if(loadedArtStage>=stage)return true;
  if(campaignLoading)return false;
  campaignLoading=true;
  keys.clear();
- const stages=[
-  null,
-  [loadVoyageArt,'Loading the Western Star and Longacre…'],
-  [loadLongacreArt,'Loading the Longacre operations…'],
-  [loadKantariaArt,'Loading Fort Estazano and Kantaria…'],
-  [loadAregoArt,'Loading Egorian, Senara and Fort Arego…'],
-  [loadCheliaxArt,'Loading the operations across Cheliax…'],
-  [loadTathlumArt,'Loading the Barrowood and Tathlum expedition…']
- ];
- $('loadingText').textContent=stages[stage][1];
+ $('loadingText').textContent=ART_STAGES[stage][1];
  $('loading').hidden=false;
  $('load-retry').hidden=true;
  try{
   while(loadedArtStage<stage){
-   await stages[loadedArtStage+1][0]();
+   await ART_STAGES[loadedArtStage+1][0]();
    loadedArtStage++;
   }
   return true;

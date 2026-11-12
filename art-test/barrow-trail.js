@@ -10,7 +10,7 @@ window.BarrowTrail=(()=>{
  ];
  const stonePoint=index=>({id:'barrowStone'+(index+1),x:stones[index][0],y:stones[index][1],label:'Mark standing stone '+(index+1)});
  const stoneBlocks=(start,end)=>stones.slice(start,end).map(([x,y])=>({x:x-11,y:y-21,w:22,h:15}));
- const model={src:sheet,frames:[
+ const model={src:sheet,deferred:true,frames:[
   {x:106,y:7,w:386,h:704,anchorX:325,anchorY:711},
   {x:701,y:7,w:602,h:704,anchorX:1082,anchorY:711},
   {x:1586,y:7,w:472,h:704,anchorX:1836,anchorY:711}

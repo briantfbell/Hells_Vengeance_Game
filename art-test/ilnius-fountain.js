@@ -54,7 +54,7 @@ window.IlniusFountain=(()=>{
   STATS[paladin]={hp:70,ac:16,atk:7,dmg:[1,8,4]};
   FUTURE_NPCS[paladin]={source:paladinArt,frame:paladinFrames[0]};
   DIALOGUE_FACE_CROPS[paladin]={x:226,y:6,w:225,h:225};
-  COMBAT_IDLES[paladin]={src:paladinArt,frames:paladinFrames,cycle:[0,2],flipX:true,attackFrames:true,maxHeight:Math.max(...paladinFrames.map(frame=>frame.h))};
+  COMBAT_IDLES[paladin]={src:paladinArt,deferred:true,frames:paladinFrames,cycle:[0,2],flipX:true,attackFrames:true,maxHeight:Math.max(...paladinFrames.map(frame=>frame.h))};
   MAP_LAYERS[forest]={foreground:forestArt,contain:true,background:{type:'solid',color:'#182729'}};
   MAP_LAYERS[shrine]={foreground:shrineArt,contain:true,background:{type:'solid',color:'#242833'}};
   JOURNEYS[forest]='16 Gozran, 4717. In Nidal, the company heads to St. Ilnius Fountain, an Iomedaean holy site. The fountain is part of the Tathlum ritual.';
@@ -63,7 +63,7 @@ window.IlniusFountain=(()=>{
   NAMES[statue]='Archon Statue';
   STATS[statue]={hp:21,ac:13,atk:4,dmg:[1,6,1]};
   FUTURE_NPCS[statue]={source:statueArt,frame:frames[0]};
-  COMBAT_IDLES[statue]={src:statueArt,frames,cycle:[0,2],attackFrames:true,maxHeight:Math.max(...frames.map(frame=>frame.h))};
+  COMBAT_IDLES[statue]={src:statueArt,deferred:true,frames,cycle:[0,2],attackFrames:true,maxHeight:Math.max(...frames.map(frame=>frame.h))};
  }
  async function load(loader){
   await Promise.all([[forest,forestArt],[shrine,shrineArt],[statueArt,statueArt],[temple,templeArt],[paladinArt,paladinArt],[headArt,headArt]].map(async ([id,source])=>{art[id]=await loader(source);}));

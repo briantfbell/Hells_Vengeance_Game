@@ -53,9 +53,11 @@ async function auditLoading(){
  out.longacreAssets=loaded.size;
  out.longacreCompressedBytes=compressedBytes(loaded);
  out.laterArtStages={};
- const stages=[['kantaria',w.loadKantariaArt],['arego',w.loadAregoArt],
-  ['cheliax',w.loadCheliaxArt],['tathlum',w.loadTathlumArt]];
- for(const [name,load] of stages){
+ const names=['kantaria','arego','cheliax','barrowood','darkRain','molthune','dinyar','ilnius','barleybridge'];
+ const loaders=vm.runInContext('ART_STAGES.slice(3).map(([load])=>load)',w);
+ if(loaders.length!==names.length)throw Error('Update the named art stages in the audit.');
+ for(const [index,name] of names.entries()){
+  const load=loaders[index];
   const before=artByStage.at(-1);
   await load();
   artByStage.push(new Set(loaded));
@@ -66,6 +68,14 @@ async function auditLoading(){
   const stage=w.artStage(section),file=data.scenes[section.scene].image;
   return file&&!artByStage[stage].has(file)?[{id:section.id,stage,file}]:[];
  });
+ const stageEntries=vm.runInContext('ART_ENTRY_STAGES',w);
+ out.artStageEntryErrors=[
+  ['barrowDepart','barrow-stones'],['tathlumReturn','tathlum-orders'],['skadiCrossFromSkull','skadi-scout'],
+  ['dinyarSplit','dinyar-nidal'],['ilniusCutaway','ilnius-bruce'],['barleybridgeCutaway','barleybridge-crossing']
+ ].filter(([point,id])=>stageEntries[point]!==w.artStage(data.sections.find(section=>section.id===id)));
+ out.deferredCombatArtErrors=Object.values(w.COMBAT_IDLES)
+  .filter(model=>model.deferred&&(artByStage[5].has(model.src)||!loaded.has(model.src)))
+  .map(model=>model.src);
  out.campaignAssets=loaded.size;
  out.campaignCompressedBytes=compressedBytes(loaded);
  fs.writeFileSync(path.join(root,'docs','FULL_AUDIT_MACHINE_RESULTS.json'),JSON.stringify(out,null,2)+'\n');
@@ -73,6 +83,6 @@ async function auditLoading(){
  console.log(JSON.stringify({...summary,prematureImport:{accepted:prematureImport.accepted,section:prematureImport.section}},null,2));
  if(out.frameErrors.length||out.missingLiteralAssets.length||out.invalidGeometry.length||
     out.enemiesWithoutKnownFrames.length||prematureImport.accepted||!out.startupComplete||
-    out.uncheckedFrames.length||out.missingReplayArt.length)process.exitCode=1;
+    out.uncheckedFrames.length||out.missingReplayArt.length||out.artStageEntryErrors.length||out.deferredCombatArtErrors.length)process.exitCode=1;
 }
 auditLoading().catch(error=>{console.error(error);process.exitCode=1;});

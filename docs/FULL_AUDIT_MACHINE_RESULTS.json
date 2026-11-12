@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 710703706,
+  "assetBytes": 710704407,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -106,8 +106,8 @@
   "longacreCompressedBytes": 153910188,
   "laterArtStages": {
     "kantaria": {
-      "files": 53,
-      "bytes": 127502436
+      "files": 46,
+      "bytes": 116221999
     },
     "arego": {
       "files": 64,
@@ -117,12 +117,34 @@
       "files": 50,
       "bytes": 123635676
     },
-    "tathlum": {
-      "files": 34,
-      "bytes": 97583658
+    "barrowood": {
+      "files": 8,
+      "bytes": 20013323
+    },
+    "darkRain": {
+      "files": 11,
+      "bytes": 30513818
+    },
+    "molthune": {
+      "files": 10,
+      "bytes": 26016645
+    },
+    "dinyar": {
+      "files": 5,
+      "bytes": 13618259
+    },
+    "ilnius": {
+      "files": 6,
+      "bytes": 15049630
+    },
+    "barleybridge": {
+      "files": 1,
+      "bytes": 3652420
     }
   },
   "missingReplayArt": [],
+  "artStageEntryErrors": [],
+  "deferredCombatArtErrors": [],
   "campaignAssets": 276,
   "campaignCompressedBytes": 641469716
 }

@@ -5,7 +5,7 @@ window.DarkRain=(()=>{
  const passArt='darkrain-pass-v1.png',slopeArt='darkrain-skull-v1.png',passageArt='darkrain-jaws-v1.png';
  const portrait='darkrain-wight-mother-v1.png',sheet='darkrain-dire-bear-v1.png';
  const mother='wight_mother',bear='darkrain_bear',kind='darkrain_bear_hunt';
- const model={src:sheet,frames:[
+ const model={src:sheet,deferred:true,frames:[
   {x:16,y:73,w:651,h:581,anchorX:367,anchorY:647},
   {x:687,y:71,w:757,h:583,anchorX:1125,anchorY:647},
   {x:1478,y:77,w:694,h:577,anchorX:1848,anchorY:647}
