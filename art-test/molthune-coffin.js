@@ -47,7 +47,7 @@ window.MolthuneCoffin=(()=>{
   await Promise.all([
    (async()=>{art[slope]=await loader(slopeArt);})(),
    (async()=>{art[shelter]=await loader(shelterArt);})(),
-   ...[beastArt,coffinArt,portrait,undeadArt].map(async source=>{art[source]=await loader(source);})
+   ...[beastArt,coffinArt,portrait,undeadArt,'darkrain-dire-bear-v1.png'].map(async source=>{art[source]=await loader(source);})
   ]);
  }
  function mapImage(){return scene===slope||scene===shelter?art[scene]:null;}

@@ -27,7 +27,8 @@ const enemies=Object.keys(data.stats).filter(id=>!data.core.includes(id)),noFram
 w.SaveFiles.install({core:data.core,scenes:data.scenes,names:data.names,stats:data.base,special:data.special,key:'audit'});
 const base=data.sections.find(s=>s.id==='church-breach'),q=structuredClone(base.quest),checkpoint={version:2,scene:'church_sanctuary',lead:'freya',quest:q,progression:w.Progression.migrate(q),position:{x:328,y:312},hp:Object.fromEntries(data.core.map(id=>[id,30])),uses:Object.fromEntries(data.core.map(id=>[id,0])),potions:2,mendUses:2};
 let prematureImport;try{const v=w.SaveFiles.validate(checkpoint);prematureImport={accepted:true,section:base.id,flags:v.quest};}catch(e){prematureImport={accepted:false,error:e.message};}
-const loaded=new Set();w.imageLoad=async name=>{loaded.add(name);if(!fs.existsSync(path.join(root,'art-test',name)))throw Error('Missing loaded asset: '+name);return {width:imageSizes[name]?.[0]||1024,height:imageSizes[name]?.[1]||1024};};w.ROSTER=[...data.core,'bruce'];w.$=()=>({});vm.runInContext('TitleScreen.show=()=>{}',w);vm.runInContext(engine.slice(engine.indexOf('let loadedArtStage=0'),engine.indexOf("$('load-retry').onclick=load;")),w);
+const loaded=new Set();let requested;
+w.imageLoad=async name=>{loaded.add(name);requested?.add(name);if(!fs.existsSync(path.join(root,'art-test',name)))throw Error('Missing loaded asset: '+name);return {width:imageSizes[name]?.[0]||1024,height:imageSizes[name]?.[1]||1024};};w.ROSTER=[...data.core,'bruce'];w.$=()=>({});vm.runInContext('TitleScreen.show=()=>{}',w);vm.runInContext(engine.slice(engine.indexOf('const loadedArtStages='),engine.indexOf("$('load-retry').onclick=load;")),w);
 const assets=fs.readdirSync(path.join(root,'art-test')).map(name=>({name,bytes:fs.statSync(path.join(root,'art-test',name)).size}));
 const out={scripts:scripts.length,scenes:Object.keys(data.scenes).length,replays:checks.length,framesInspected:frames,framesChecked:boundsChecked,uncheckedFrames,frameErrors:errors,missingLiteralAssets:missing,invalidGeometry:checks.filter(c=>!c.spawnValid||c.unreachable.length),combatStats:enemies.length,enemiesWithoutKnownFrames:noFrame,prematureImport,assetBytes:assets.reduce((n,a)=>n+a.bytes,0),largestAssets:assets.sort((a,b)=>b.bytes-a.bytes).slice(0,10)};
 function compressedBytes(files){
@@ -44,6 +45,7 @@ async function auditLoading(){
  },0);
  out.startupAssetFiles=[...loaded].sort();
  const artByStage=[new Set(loaded)];
+ const directStageAssets=[];
  await w.loadVoyageArt();
  artByStage.push(new Set(loaded));
  out.voyageAssets=loaded.size;
@@ -59,14 +61,18 @@ async function auditLoading(){
  for(const [index,name] of names.entries()){
   const load=loaders[index];
   const before=artByStage.at(-1);
+  requested=new Set();
   await load();
+  directStageAssets[index+3]=requested;
+  requested=null;
   artByStage.push(new Set(loaded));
   const files=[...loaded].filter(file=>!before.has(file));
   out.laterArtStages[name]={files:files.length,bytes:compressedBytes(files)};
  }
  out.missingReplayArt=data.sections.flatMap(section=>{
   const stage=w.artStage(section),file=data.scenes[section.scene].image;
-  return file&&!artByStage[stage].has(file)?[{id:section.id,stage,file}]:[];
+  const files=stage<6?artByStage[stage]:new Set([...artByStage[0],...directStageAssets[stage]]);
+  return file&&!files.has(file)?[{id:section.id,stage,file}]:[];
  });
  const stageEntries=vm.runInContext('ART_ENTRY_STAGES',w);
  out.artStageEntryErrors=[
@@ -76,6 +82,11 @@ async function auditLoading(){
  out.deferredCombatArtErrors=Object.values(w.COMBAT_IDLES)
   .filter(model=>model.deferred&&(artByStage[5].has(model.src)||!loaded.has(model.src)))
   .map(model=>model.src);
+ out.lateCheckpointArt=Object.fromEntries(names.slice(3).map((name,index)=>{
+  const stage=index+6,files=new Set(artByStage[0]);
+  for(const required of w.requiredArtStages(stage))for(const file of directStageAssets[required])files.add(file);
+  return [name,{files:files.size,bytes:compressedBytes(files)}];
+ }));
  out.campaignAssets=loaded.size;
  out.campaignCompressedBytes=compressedBytes(loaded);
  fs.writeFileSync(path.join(root,'docs','FULL_AUDIT_MACHINE_RESULTS.json'),JSON.stringify(out,null,2)+'\n');

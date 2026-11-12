@@ -271,7 +271,7 @@ function reset(resume=false,selected=null){
  if(campaignLoading)return;
  const saved=resume?readSave():null;
  const stage=artStage(saved);
- if(stage>loadedArtStage){
+ if(!loadedArtStages.has(stage)){
   void prepareCampaign(stage).then(loaded=>{if(loaded)reset(resume,selected);});
   return;
  }
@@ -1200,7 +1200,8 @@ function imageLoad(src){
  }));
  return imageRequests.get(src);
 }
-let loadedArtStage=0,campaignLoading=false;
+const loadedArtStages=new Set([0]);
+let campaignLoading=false;
 const ART_ENTRY_STAGES={
  nextChapter:1,chapterThree:2,fortArcRoad:3,egorianApproach:4,aregoEscape:5,barrowDepart:6,
  tathlumReturn:7,skadiCrossFromSkull:8,dinyarSplit:9,ilniusCutaway:10,barleybridgeCutaway:11
@@ -1314,14 +1315,42 @@ async function loadCheliaxArt(){
   await VyreWish.load(imageLoad);
   art['bruce-portrait']=await imageLoad('bruce-foundry-portrait.webp');
 }
+async function loadLateSharedArt(cast=[],images={}){
+ const spriteSources=new Set(['reese',...cast].flatMap(id=>[
+  LORE_CAST[id]?.src,FUTURE_NPCS[id]?.source,COMBAT_IDLES[id]?.src
+ ]).filter(Boolean));
+ const files={
+  'reese-portrait':'reese-early-portrait.png',
+  'freya-zara-geitta-walk-v1.png':'freya-zara-geitta-walk-v1.png',
+  'freya-zara-geitta-combat-v1.png':'freya-zara-geitta-combat-v1.png',
+  ...Object.fromEntries([...spriteSources].map(src=>[src,src])),
+  ...images
+ };
+ await Promise.all(Object.entries(files).map(async ([id,src])=>{art[id]=await imageLoad(src);}));
+}
 async function loadBarrowoodArt(){
- await Promise.all([BarrowTrail,BarrowCovenant,Menador].map(chapter=>chapter.load(imageLoad)));
+ await Promise.all([
+  ...[BarrowTrail,BarrowCovenant,Menador].map(chapter=>chapter.load(imageLoad)),
+  loadLateSharedArt(['kantaria_guard','fastness_paladin','fastness_cleric','sethic','bob','abrogail','contessa'])
+ ]);
 }
 async function loadDarkRainArt(){
- await Promise.all([TathlumHunt,DarkRain].map(chapter=>chapter.load(imageLoad)));
+ await Promise.all([
+  TathlumHunt.load(imageLoad),DarkRain.load(imageLoad),
+  loadLateSharedArt([],{egorian_court:scenes.egorian_court.image})
+ ]);
 }
 async function loadMolthuneArt(){
- await Promise.all([SkadiParley,MolthuneCoffin].map(chapter=>chapter.load(imageLoad)));
+ await Promise.all([SkadiParley.load(imageLoad),MolthuneCoffin.load(imageLoad),loadLateSharedArt()]);
+}
+async function loadDinyarArt(){
+ await Promise.all([
+  DinyarRecon.load(imageLoad),
+  loadLateSharedArt(['violetta','fastness_paladin','kantaria_guard'],{egorian_court:scenes.egorian_court.image})
+ ]);
+}
+async function loadIlniusArt(){
+ await Promise.all([IlniusFountain.load(imageLoad),loadLateSharedArt(['bruce'],{'bruce-portrait':'bruce-foundry-portrait.webp'})]);
 }
 const ART_STAGES=[
  null,
@@ -1333,12 +1362,15 @@ const ART_STAGES=[
  [loadBarrowoodArt,'Loading the Barrowood and Menador…'],
  [loadDarkRainArt,'Loading Nidal and the Pass of Dark Rain…'],
  [loadMolthuneArt,'Loading the Frost Giant settlement and Molthune…'],
- [()=>DinyarRecon.load(imageLoad),'Loading Citadel Dinyar…'],
- [()=>IlniusFountain.load(imageLoad),'Loading St. Ilnius…'],
+ [loadDinyarArt,'Loading Citadel Dinyar…'],
+ [loadIlniusArt,'Loading St. Ilnius…'],
  [()=>BarleybridgeScout.load(imageLoad),'Loading Barleybridge…']
 ];
+function requiredArtStages(stage){
+ return stage>=6?[stage]:Array.from({length:stage},(_,index)=>index+1);
+}
 async function prepareCampaign(stage){
- if(loadedArtStage>=stage)return true;
+ if(loadedArtStages.has(stage))return true;
  if(campaignLoading)return false;
  campaignLoading=true;
  keys.clear();
@@ -1346,9 +1378,10 @@ async function prepareCampaign(stage){
  $('loading').hidden=false;
  $('load-retry').hidden=true;
  try{
-  while(loadedArtStage<stage){
-   await ART_STAGES[loadedArtStage+1][0]();
-   loadedArtStage++;
+  for(const required of requiredArtStages(stage)){
+   if(loadedArtStages.has(required))continue;
+   await ART_STAGES[required][0]();
+   loadedArtStages.add(required);
   }
   return true;
  }catch(error){
