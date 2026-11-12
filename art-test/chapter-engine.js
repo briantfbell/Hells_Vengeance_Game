@@ -317,7 +317,7 @@ async function interact(requestedId=null){
  if(Handheld.isOpen()||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;if(p.id==='rileyBanter'){run(()=>PresentationPolish.banter());return;}
  run(async()=>{
   if(p.id.startsWith('citizen-')){await say(p.id,citizenLine(p.id));return;}
-  const nextArtStage=p.id==='nextChapter'?1:p.id==='chapterThree'?2:0;
+  const nextArtStage=ART_ENTRY_STAGES[p.id];
   if(nextArtStage&&!await prepareCampaign(nextArtStage))return;
   if(await window.BarleybridgeScout?.interact(p.id)||await window.IlniusFountain?.interact(p.id)||await window.DinyarRecon?.interact(p.id)||await window.MolthuneCoffin?.interact(p.id)||await window.SkadiParley?.interact(p.id)||await window.DarkRain?.interact(p.id)||await window.TathlumHunt?.interact(p.id)||await window.Menador?.interact(p.id)||await window.BarrowCovenant?.interact(p.id)||await window.BarrowTrail?.interact(p.id)||await window.VyreWish?.interact(p.id)||await window.SethicMansion?.interact(p.id)||await window.BellflowerBarn?.interact(p.id)||await window.BellflowerBarge?.interact(p.id)||await window.Pezzack?.interact(p.id)||await window.Rachikan?.interact(p.id)||await window.Ballerina?.interact(p.id)||await window.HinjiTavern?.interact(p.id)||await window.Belde?.interact(p.id)||await window.PaleBall?.interact(p.id)||await window.NicoloArc?.interact(p.id)||await window.SethicLedgers?.interact(p.id)||await window.SethicFarm?.interact(p.id)||await window.EgorianFeud?.interact(p.id)||await window.EgorianSting?.interact(p.id)||await window.EfisioArc?.interact(p.id)||await window.Hinji?.interact(p.id)||await window.Westcrown?.interact(p.id)||await window.RemesianaMarket?.interact(p.id)||await window.EgorianFountain?.interact(p.id)||await window.EgorianDischarge?.interact(p.id)||await window.AregoExit?.interact(p.id)||await window.AregoReturn?.interact(p.id)||await window.AregoAmbush?.interact(p.id)||await window.InfernoGate?.interact(p.id)||await window.FortArego?.interact(p.id)||await window.SenaraGraveyard?.interact(p.id)||await window.SenaraWagon?.interact(p.id)||await window.WhisperwoodGlade?.interact(p.id)||await window.WhisperwoodCamp?.interact(p.id)||await window.SenaraCitadel?.interact(p.id)||await window.SenaraDaggers?.interact(p.id)||await window.SenaraCover?.interact(p.id)||await window.SenaraArrival?.interact(p.id)||await window.EgorianExecution?.interact(p.id)||await window.EgorianMort?.interact(p.id)||await window.EgorianTrial?.interact(p.id)||await window.EgorianNight?.interact(p.id)||await window.EgorianArrival?.interact(p.id)||await window.SouthRoad?.interact(p.id)||await window.KantariaAftermath?.interact(p.id)||await window.FastnessArc?.interact(p.id)||await window.SupplyArc?.interact(p.id)||await window.CovertArc?.interact(p.id)||await DisruptionArc.interact(p.id)||await KantariaArc.interact(p.id)||await CourtArc.interact(p.id)||await FortArc.interact(p.id)||await ArmoryArc.interact(p.id)||await ChurchArc.interact(p.id)||await PoliticalMovement.interact(p.id)||await DebtsRumors.interact(p.id)||await LastStand.interact(p.id)||await window.NextArc.interact(p.id)||await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){await travel('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','Lutes, horns, and instrument cases fill Shensen’s shop. The famous actress is away; a shopkeeper remains. Somewhere beneath the floorboards, chanting rises through the wood.');save();}}
@@ -1089,17 +1089,23 @@ function imageLoad(src){
  return imageRequests.get(src);
 }
 let loadedArtStage=0,campaignLoading=false;
-const artStage=q=>q?.chapter3?2:q?.chapter2?1:0;
+const ART_ENTRY_STAGES={nextChapter:1,chapterThree:2,fortArcRoad:3};
+const artStage=q=>q?.chapter9?3:q?.chapter3?2:q?.chapter2?1:0;
+
+async function loadCastArt(cast){
+ const sources=new Set(cast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
+ await Promise.all([...sources].map(async src=>{art[src]=await imageLoad(src);}));
+}
 
 async function loadPrologueArt(){
  const maps={briefingRoom:'kintargo-briefing-v1.png',citizens:'townsfolk-sheet-v1.png',
   street:'kintargo-map.png',tavern:'silver-star-music-shop-v2.png',temple:'chapter-temple.png',
   npcs:'chapter-npcs.png',guard:'dottari.png'};
  const openingCast=[...OPENING_ROSTER,'viggo','cultist','nox','corrine','barzillai'];
- const sharedArt=new Set(openingCast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
+
  await Promise.all([
   ...Object.entries(maps).map(async ([id,src])=>{art[id]=await imageLoad(src);}),
-  ...[...sharedArt].map(async src=>{art[src]=await imageLoad(src);}),
+  loadCastArt(openingCast),
   ...ROSTER.map(async id=>{
    const model=PARTY_FRAMES[id];
    [sheets[id],sheets[id+'-opposite']]=await Promise.all([model.src||id+'-sheet.png',model.oppositeStep.src].map(imageLoad));
@@ -1110,19 +1116,21 @@ async function loadPrologueArt(){
 }
 async function loadVoyageArt(){
  const cast=['farmer','cimri','owner','dog','razelago','krenshar','spirit'];
- const sources=new Set(cast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
+ await Promise.all([window.NextChapter.load(imageLoad),loadCastArt(cast)]);
+}
+async function loadLongacreArt(){
+ const cast=['reese','cimri','fex','allamar','rhona','twin1','twin2','deputy1','deputy2','deputy3','deputy4',
+  'razelago_revealed','bolgart','bolgart_wereboar','riley','gerya','ingoe','false_knight','church_acolyte','kuribu',
+  'ghast_riley','mantis_master','celestial_wolf','accuser','armory_bo','armory_dent','heist_ranger'];
+ const chapters=[window.NextArc,LastStand,DebtsRumors,PoliticalMovement,ChurchArc,ArmoryArc];
  await Promise.all([
-  window.NextChapter.load(imageLoad),
-  ...[...sources].map(async src=>{art[src]=await imageLoad(src);})
+  ...chapters.map(chapter=>chapter.load(imageLoad)),
+  loadCastArt(cast),
+  (async()=>{art['reese-portrait']=await imageLoad('reese-early-portrait.png');})()
  ]);
 }
 async function loadCampaignArt(){
   await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
-  await LastStand.load(imageLoad);
-  await DebtsRumors.load(imageLoad);
-  await PoliticalMovement.load(imageLoad);
-  await ChurchArc.load(imageLoad);
-  await ArmoryArc.load(imageLoad);
   await FortArc.load(imageLoad);
   await CourtArc.load(imageLoad);
   await KantariaArc.load(imageLoad);
@@ -1181,26 +1189,22 @@ async function loadCampaignArt(){
   await DinyarRecon.load(imageLoad);
   await IlniusFountain.load(imageLoad);
   await BarleybridgeScout.load(imageLoad);
-  await window.NextArc.load(imageLoad);
   await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
-  await Promise.all(['reese','bruce'].map(async id=>{art[id+'-portrait']=await imageLoad(id==='reese'?'reese-early-portrait.png':'bruce-foundry-portrait.webp');}));
+  art['bruce-portrait']=await imageLoad('bruce-foundry-portrait.webp');
 }
 async function prepareCampaign(stage){
  if(loadedArtStage>=stage)return true;
  if(campaignLoading)return false;
  campaignLoading=true;
  keys.clear();
- $('loadingText').textContent=stage===1?'Loading the Western Star and Longacre…':'Loading campaign artwork…';
+ $('loadingText').textContent=['','Loading the Western Star and Longacre…','Loading the Longacre operations…','Loading campaign artwork…'][stage];
  $('loading').hidden=false;
  $('load-retry').hidden=true;
  try{
-  if(loadedArtStage<1){
-   await loadVoyageArt();
-   loadedArtStage=1;
-  }
-  if(stage>=2){
-   await loadCampaignArt();
-   loadedArtStage=2;
+  const loaders=[null,loadVoyageArt,loadLongacreArt,loadCampaignArt];
+  while(loadedArtStage<stage){
+   await loaders[loadedArtStage+1]();
+   loadedArtStage++;
   }
   return true;
  }catch(error){

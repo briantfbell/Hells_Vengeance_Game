@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 686331935,
+  "assetBytes": 686332289,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -102,6 +102,8 @@
   ],
   "voyageAssets": 44,
   "voyageCompressedBytes": 82767919,
+  "longacreAssets": 75,
+  "longacreCompressedBytes": 153910188,
   "campaignAssets": 272,
   "campaignCompressedBytes": 631086205
 }
