@@ -15,6 +15,7 @@ window.IlniusFountain=(()=>{
  const paladinPosition={x:328,y:216};
  let staging=null;
  const party=['jamal','jason','reese','draymus'];
+ const blink={x:466,safeX:532,impact:.62,duration:1650};
  const sentries=[[168,201],[240,185],[328,174],[416,185],[488,201]];
  const frames=[
   {x:106,y:6,w:464,h:679,anchorX:337,anchorY:685},
@@ -101,12 +102,23 @@ window.IlniusFountain=(()=>{
  async function openingStrike(current){
   if(current.kind!==battleKind)return;
   const token=epoch;
-  await say('Chronicle','The five statues stir. They strike together before Bruce can clear the court.');
-  current.blinkAt=performance.now();
-  await delay(reduce.matches?480:1100);
-  if(token!==epoch||battle!==current)return;
-  delete current.blinkAt;
-  await say('Chronicle','Bruce casts Blink. The blow passes through the space where he stood.');
+  const duration=reduce.matches?620:blink.duration;
+  const impact=Math.round(duration*blink.impact);
+  current.blink={at:null,duration,attacker:current.enemies[3]};
+  try{
+   await say('Chronicle','The five statues stir. An archon raises its hammer as Bruce crosses the court.');
+   if(token!==epoch||battle!==current)return;
+   current.blink.at=performance.now();
+   await delay(impact);
+   if(token!==epoch||battle!==current)return;
+   GameAudio.effect('hit');
+   await delay(duration-impact);
+   if(token!==epoch||battle!==current)return;
+   current.blink.escaped=true;
+   await say('Chronicle','Bruce casts Blink. The hammer crashes into the stone where he stood.');
+  }finally{
+   delete current.blink;
+  }
  }
  function drawWater(g,t){
   if(scene!==shrine||reduce.matches)return;
@@ -201,18 +213,58 @@ window.IlniusFountain=(()=>{
   g.drawImage(im,x+43*(1-lift)-w/2,y+58*(1-lift)-h+sink*14,w,h);
   g.restore();
  }
+ function blinkPhase(){
+  const opening=battle?.blink;
+  if(!opening||opening.at===null)return 0;
+  if(opening.escaped)return 1;
+  return reduce.matches?blink.impact:clamp((performance.now()-opening.at)/opening.duration);
+ }
+ function openingPose(unit){
+  if(unit!==battle?.blink?.attacker)return null;
+  const phase=blinkPhase();
+  if(phase<.22||phase>.88)return null;
+  const swing=clamp((phase-.22)/.40)*(1-clamp((phase-blink.impact)/.26));
+  return {frame:1,dx:reduce.matches?0:-24*swing,dy:reduce.matches?0:46*swing,tilt:0};
+ }
  function drawSupport(g){
-  if(battle?.kind!==battleKind||battle.blinkAt===undefined)return;
-  const p=reduce.matches ? .52 : Math.min(1,(performance.now()-battle.blinkAt)/1100);
-  const x=497,y=battlefieldHeight()-110;
+  if(!battle?.blink)return;
+  const phase=blinkPhase(),y=battlefieldHeight()-101;
+  const moving=phase>=.39&&phase<.55;
+  const escaped=phase>=.55;
+  const x=escaped?blink.safeX:blink.x;
   g.save();
-  g.globalAlpha=p<.3 ? 1 : p>.68 ? .68 : .17;
-  drawActor(g,{id:'bruce',x:x+(p>.68?38:0),y,dir:'up',step:null,anim:0},65);
-  g.globalAlpha=Math.sin(p*Math.PI)*.8;
-  for(let i=0;i<18;i++){
-   const angle=i*Math.PI/9,radius=9+p*36+i%3*6;
-   g.fillStyle=i%3?'#c4d3f5':'#f6dd8a';
-   g.fillRect(Math.round(x+Math.cos(angle)*radius),Math.round(y-36+Math.sin(angle)*radius),3,2);
+  g.globalAlpha=moving?.35:1;
+  drawActor(g,{id:'bruce',x,y,dir:'up',step:null,anim:0},65);
+  g.restore();
+  if(phase<.32||phase>.89)return;
+  g.save();
+  const shimmer=clamp((phase-.32)/.15)*(1-clamp((phase-.58)/.25));
+  g.globalAlpha=shimmer*.8;
+  for(let i=0;i<12;i++){
+   const angle=i*Math.PI/6,radius=14+shimmer*16+i%2*6;
+   g.fillStyle=i%3?'#b9d8ff':'#eee8cd';
+   g.fillRect(Math.round(blink.x+Math.cos(angle)*radius),Math.round(y-31+Math.sin(angle)*radius),3,2);
+  }
+  if(phase>=blink.impact){
+   const strike=clamp((phase-blink.impact)/.27);
+   g.globalAlpha=(1-strike)*.9;
+   g.strokeStyle='#e6bd82';
+   g.lineWidth=2;
+   if(!reduce.matches&&strike<.55){
+    g.beginPath();
+    g.moveTo(blink.x+23,y-65);
+    g.quadraticCurveTo(blink.x-25,y-39,blink.x,y-4);
+    g.stroke();
+   }
+   g.beginPath();
+   g.ellipse(blink.x,y-2,7+22*strike,3+8*strike,0,0,2*Math.PI);
+   g.stroke();
+   g.fillStyle='#d8c7a1';
+   for(let i=0;i<8;i++){
+    const angle=i*Math.PI/4;
+    g.fillRect(Math.round(blink.x+Math.cos(angle)*(8+19*strike)),
+     Math.round(y-5+Math.sin(angle)*(4+9*strike)),3,2);
+   }
   }
   g.restore();
  }
@@ -293,5 +345,5 @@ window.IlniusFountain=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isBattle,openingStrike,drawWater,drawRite,drawStrike,stagePose,drawSupport,afterBattle};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isBattle,openingStrike,drawWater,drawRite,drawStrike,stagePose,openingPose,drawSupport,afterBattle};
 })();

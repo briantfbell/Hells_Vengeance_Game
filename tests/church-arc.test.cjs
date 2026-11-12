@@ -2187,9 +2187,21 @@ test('St. Ilnius stages Bruce’s Blink and gates the inner entrance on all five
  assert.equal(w.battle.enemies.length,5);
  assert(w.battle.enemies.every(enemy=>enemy.id==='ilnius_archon_statue'));
  assert.deepEqual(Array.from(w.battle.enemies,enemy=>enemy.shortName),['Statue 1','Statue 2','Statue 3','Statue 4','Statue 5']);
- await w.IlniusFountain.openingStrike(w.battle);
+ const opening=w.battle,originalHp={...w.hp};
+ const openingSounds=[];
+ w.GameAudio={effect:sound=>openingSounds.push(sound)};
+ let beat=0;
+ w.delay=async()=>{
+  if(beat++===0){
+   assert.equal(w.IlniusFountain.openingPose(opening.enemies[3]).frame,1);
+   assert.equal(w.IlniusFountain.openingPose(opening.enemies[1]),null);
+  }
+ };
+ await w.IlniusFountain.openingStrike(opening);
  assert(w.transcript.some(line=>/Bruce casts Blink/.test(line.text)));
- assert(!w.battle.blinkAt);
+ assert.deepEqual(openingSounds,['hit']);
+ assert.deepEqual(w.hp,originalHp);
+ assert(!opening.blink);
  await w.IlniusFountain.afterBattle(w.battle.kind,w.battle.returnPosition);
  w.quest=capture('ilnius-ward').quest;
  await step('ilniusWard');

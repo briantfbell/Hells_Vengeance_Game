@@ -1,6 +1,6 @@
 # St. Ilnius Fountain
 
-GM timeline row S150 dates the Nidal expedition and fight against five celestial archon statues to 16 Gozran, 4717. Bruce uses Blink to escape a devastating strike. The game makes that escape a scripted opening after initiative, followed by the party’s regular turns. The encounter numbers, rendezvous dialogue, and staging are adaptations. Bruce appears as a story ally, and the combat roster uses the four other party members shown in the exported fountain scene. The forest export includes additional allies, and its token placements do not establish who fought the statues.
+GM timeline row S150 dates the Nidal expedition and fight against five celestial archon statues to 16 Gozran, 4717. Bruce uses Blink to escape a devastating strike. The game makes that escape a scripted opening after initiative. Bruce blinks aside, and the archon beside him swings into the stone where he stood. The party’s regular turns then begin with the initiative order intact. The encounter numbers, rendezvous dialogue, and staging are adaptations. Bruce appears as a story ally, and the combat roster uses the four other party members shown in the exported fountain scene. The forest export includes additional allies, and its token placements do not establish who fought the statues.
 
 The Foundry scenes `Scene.wbjBfju3ecUFliK1` and `Scene.vspObtDiTrjugORl` supply the visual context for the creek and the shrine. Their labels use “St. Ilnea,” while the expedition timeline uses “St. Ilnius.” This section uses the timeline spelling. It ends at the inner entrance. Row S151 records a later temple encounter and use of Parnoneryx’s head, while S146 records an earlier plan with a different date. The temple outcome is outside this section.
 
@@ -23,3 +23,5 @@ Transparent 3:1 sprite sheet of THREE strictly separated full-body video-game sp
 ## Verification
 
 The browser playthrough followed the forest approach from Egorian, met Bruce, crossed the creek, verified the five enemies in initiative and the Blink dialogue, defeated all five statues, and reloaded at the inner entrance. The game ran at 640×480 with no browser console errors. The 167 automated tests passed. The structural audit checked 163 scenes, 459 replays, and 653 sprite frames.
+
+The Blink follow-up audit played replay 454 at 640×480. Bruce appeared in two distinct positions before and after the strike. The first active combat turn matched the initiative reveal and the browser reported no errors. All 174 tests passed, including the scripted pose and party HP checks. The structural audit checked 475 replays.
