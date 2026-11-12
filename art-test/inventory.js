@@ -46,6 +46,7 @@ window.Inventory=(()=>{
  if(q.egorianChairBought)result.push({id:'antique_wheelchair',name:'Antique wheelchair',kind:'quest',description:'Draymus uses the chair for his disguise. Joe Kek pushes it.'});
  if(q.senaraTalismanRecovered)result.push({id:'senara_infernal_talisman',name:'Infernal Talisman',kind:'quest',description:'Fex’s talisman, recovered from the Black Daggers beneath Senara.'});
  if(q.whisperwoodThreeHorns)result.push({id:'whisperwood_unicorn_horns',name:'Unicorn horns ['+(q.whisperwoodFourthHorn?4:3)+'/4]',kind:'quest',description:'Ritual components taken from the Blessing of Unicorns in the Whisperwood.'});
+ if(q.senaraAngelHeart)result.push({id:'senara_angel_heart',name:'Angel heart',kind:'quest',description:'A ritual component taken from the balisse angel at Senara’s graveyard.'});
  if(q.senaraOrders)result.push({id:'senara_ritual_list',name:'Fex’s ritual list',kind:'quest',description:'Known entries include Fex’s Infernal Talisman, four unicorn horns, and angel hearts. Razelago says the ritual will close an uncontrolled portal in the Whisperwood.'});
  return result;
  }

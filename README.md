@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 233 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 239 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -197,3 +197,7 @@ Follow the unicorn trail from the Whisperwood night camp or select replay **222*
 ### The Senara prison wagon
 
 After recovering the four unicorn horns, take the road back to Senara or select replay **227**. Use Jason’s Dismissal, defeat the escort, and free Orn from the prison wagon. Replays **227–233** end at the patrolled quay. See [the section notes](docs/senara-wagon.md) for sources, artwork and verification.
+
+### Senara’s graveyard
+
+Slip past the increased patrols after returning to Senara or select replay **234**. Get the Black Daggers’ lead, fight the balisse angel, and recover its heart as the Reclamation locks down the city. Replays **234–239** cover the section. See [the section notes](docs/senara-graveyard.md) for campaign sources, artwork and verification.
