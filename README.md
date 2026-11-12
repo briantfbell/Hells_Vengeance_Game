@@ -369,3 +369,7 @@ After Freya’s Westcrown deployment, follow the Nidal expedition or select repl
 ### St. Ilnius’s inner temple
 
 Continue from the fountain court or select replay **456**. Break Sylvestra Hanel’s resolve, then bring Parnoneryx’s head to Jason at the basin. Replays **456–459** cover the confrontation, ritual, and ancient-library lead. See [the section notes](docs/ilnius-inner-temple.md) for sources, art and verification.
+
+### El Guapo scouts Barleybridge
+
+Continue from the inner temple or select replay **460**. Follow El Guapo’s solo reconnaissance of the river crossing and town gate. Replays **460–463** cover the cutaway and scouting. See [the section notes](docs/barleybridge-scout.md) for the Foundry references and the remaining gaps in the ritual timeline.

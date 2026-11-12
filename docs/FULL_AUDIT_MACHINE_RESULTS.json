@@ -1,7 +1,7 @@
 {
-  "scripts": 99,
-  "scenes": 164,
-  "replays": 463,
+  "scripts": 100,
+  "scenes": 165,
+  "replays": 467,
   "framesInspected": 657,
   "framesChecked": 657,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 682671245,
+  "assetBytes": 686328115,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -49,18 +49,18 @@
       "bytes": 3654051
     },
     {
-      "name": "south-road-ambush-v1.png",
-      "bytes": 3647774
+      "name": "barleybridge-approach-v1.png",
+      "bytes": 3652420
     },
     {
-      "name": "molthune-waystation-v1.png",
-      "bytes": 3641348
+      "name": "south-road-ambush-v1.png",
+      "bytes": 3647774
     }
   ],
   "startupComplete": true,
-  "startupAssets": 271,
-  "startupCompressedBytes": 627433785,
-  "startupDecodedRgbaBytes": 1696987328,
+  "startupAssets": 272,
+  "startupCompressedBytes": 631086205,
+  "startupDecodedRgbaBytes": 1703280576,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -83,6 +83,7 @@
     "attack-party-v1.png",
     "ballerina-deck-v1.png",
     "ballerina-quartermaster-v1.png",
+    "barleybridge-approach-v1.png",
     "barrow-druid-v1.png",
     "barrow-final-stone-v1.png",
     "barrow-gorthoklekk-v1.png",

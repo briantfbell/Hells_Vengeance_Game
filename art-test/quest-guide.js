@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const barleybridge=window.BarleybridgeScout?.goal();
+ if(barleybridge)return {text:barleybridge,target:BarleybridgeScout.target()};
  const ilnius=window.IlniusFountain?.goal();
  if(ilnius)return {text:ilnius,target:IlniusFountain.target()};
  const dinyar=window.DinyarRecon?.goal();
