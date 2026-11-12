@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const farm=window.SethicFarm?.goal();
+ if(farm)return {text:farm,target:SethicFarm.target()};
  const feud=window.EgorianFeud?.goal();
  if(feud)return {text:feud,target:EgorianFeud.target(),targets:EgorianFeud.points()};
  const sting=window.EgorianSting?.goal();

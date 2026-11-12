@@ -9,6 +9,7 @@ window.EnemyTactics=(()=>{
    if(e.id==='cultist'){target=live.reduce((a,b)=>hp[b.id]/stats[b.id].hp<hp[a.id]/stats[a.id].hp?b:a);move='Press';}
    else if(e.id==='ovinnik'){move=round%2?'Heavy claw':'Claw';extra=round%2?3:0;}
    else if(e.id==='bolgart_wereboar'){if(round===1)target=live.find(u=>u.id==='jamal')||target;move=round%2?'Gore charge':'Tusk strike';extra=round%2?3:0;}
+   else if(e.id==='devil_hog'){move=(round+i)%2?'Tusk charge':'Tusk strike';extra=(round+i)%2?2:0;}
    else if(e.id==='bolgart'){move='Brawling swing';target=live[(round-1)%Math.min(2,live.length)];}
    else if(e.id==='viggo'){move=round%2?'Scimitar cut':'Heavy slash';extra=round%2?0:2;}
    else if(e.id==='false_knight'){move=round%2?'Sword strike':'Heavy strike';extra=round%2?0:2;}

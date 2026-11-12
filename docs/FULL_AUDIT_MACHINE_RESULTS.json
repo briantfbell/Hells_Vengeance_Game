@@ -1,20 +1,20 @@
 {
-  "scripts": 77,
-  "scenes": 125,
-  "replays": 318,
-  "framesInspected": 590,
-  "framesChecked": 590,
+  "scripts": 78,
+  "scenes": 126,
+  "replays": 323,
+  "framesInspected": 594,
+  "framesChecked": 594,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 55,
+  "combatStats": 56,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 503025493,
+  "assetBytes": 510447959,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 198,
-  "startupCompressedBytes": 447987323,
-  "startupDecodedRgbaBytes": 1237675160,
+  "startupAssets": 201,
+  "startupCompressedBytes": 455403158,
+  "startupDecodedRgbaBytes": 1256549624,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -224,6 +224,9 @@
     "senara-revel-cast-v1.png",
     "senara-sewers-v1.png",
     "senara-waterfront-v1.png",
+    "sethic-devil-hog-v1.png",
+    "sethic-farm-ruins-v1.png",
+    "sethic-farm-v1.png",
     "ship-deck-foreground.png",
     "silver-star-music-shop-v2.png",
     "south-road-ambush-v1.png",
