@@ -361,3 +361,7 @@ Continue from the ridge or select replay **442**. Open the concealed entrance, c
 ### Freya’s Westcrown orders
 
 After recovering Parnoneryx’s head, return to Egorian for Freya’s promotion and Westcrown assignment. Replays **448–450** cover the return, promotion, and departure. The GM timeline records the promotion and assignment on 16 Gozran, 4717 (S145) and the Glorious Reclamation’s capture of Westcrown on 2 Gozran (S132). The game reuses the Egorian court map and stages the promotion as a private briefing with Corrine. The orders are recorded in the journal and inventory.
+
+### St. Ilnius Fountain
+
+After Freya’s Westcrown deployment, follow the Nidal expedition or select replay **451**. Meet Bruce, follow the creek, and clear the five archon statues. Replays **451–455** cover the approach and the shrine court. See [the section notes](docs/ilnius-fountain.md) for sources, artwork, and verification.

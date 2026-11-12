@@ -35,6 +35,11 @@ window.EnemyTactics=(()=>{
    else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
    else if(e.id==='darkrain_bear'){move=round%2?'Raking claws':'Bite';extra=round%2?0:2;}
+   else if(e.id==='ilnius_archon_statue'){
+    const hammer=(round+i)%3===0;
+    move=hammer?'Hammer slam':'Stone hammer';
+    extra=hammer?2:0;
+   }
    else if(e.id==='parnoneryx'){
     const breath=round%3===2;
     move=breath?'Fire breath':round%3===0?'Wing slam':'Bite and claws';

@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const ilnius=window.IlniusFountain?.goal();
+ if(ilnius)return {text:ilnius,target:IlniusFountain.target()};
  const dinyar=window.DinyarRecon?.goal();
  if(dinyar)return {text:dinyar,target:DinyarRecon.target()};
  const coffin=window.MolthuneCoffin?.goal();

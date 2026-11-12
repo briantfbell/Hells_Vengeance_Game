@@ -1,20 +1,20 @@
 {
-  "scripts": 98,
-  "scenes": 161,
-  "replays": 454,
-  "framesInspected": 649,
-  "framesChecked": 649,
+  "scripts": 99,
+  "scenes": 163,
+  "replays": 459,
+  "framesInspected": 653,
+  "framesChecked": 653,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 66,
+  "combatStats": 67,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 667607093,
+  "assetBytes": 676525197,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -45,22 +45,22 @@
       "bytes": 3662728
     },
     {
+      "name": "ilnius-shrine-v1.png",
+      "bytes": 3654051
+    },
+    {
       "name": "south-road-ambush-v1.png",
       "bytes": 3647774
     },
     {
       "name": "molthune-waystation-v1.png",
       "bytes": 3641348
-    },
-    {
-      "name": "barrow-road-v1.png",
-      "bytes": 3640632
     }
   ],
   "startupComplete": true,
-  "startupAssets": 265,
-  "startupCompressedBytes": 612384155,
-  "startupDecodedRgbaBytes": 1659237448,
+  "startupAssets": 268,
+  "startupCompressedBytes": 621293471,
+  "startupDecodedRgbaBytes": 1678109816,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -192,6 +192,9 @@
     "idle-jason.png",
     "idle-later.png",
     "idle-temple.png",
+    "ilnius-forest-v1.png",
+    "ilnius-shrine-v1.png",
+    "ilnius-statue-v1.png",
     "jamal-lore-v3.png",
     "jason-opposite-step-v3.png",
     "jason-sheet.png",

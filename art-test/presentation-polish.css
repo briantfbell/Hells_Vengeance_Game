@@ -2,6 +2,7 @@
 .stage{--game-font:FolkenPixel,monospace}
 #dialog,#journey,#battle,#dice-panel,#enemy-intents,#initiative-reveal,#pause-panel,#intro,#level-up,#title-screen{font-family:var(--game-font)}
 #dialog{left:2.5%;right:2.5%;bottom:2.5%;height:27.5cqw;padding:1.5cqw;border-width:2px;border-radius:0;font-size:1.875cqw;overflow:hidden;box-sizing:border-box}
+body.is-combat #dialog{z-index:14}
 #dialog.has-choices{height:35cqw}
 #portrait{width:10cqw;height:10cqw;border-width:2px;margin:0 1.5cqw 1cqw 0}
 .has-portrait .dialog-copy{margin-left:11.5cqw}
