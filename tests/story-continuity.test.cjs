@@ -21,4 +21,31 @@ test('combat lineup spans the bottom evenly and enemy labels stay right of the d
 test('target navigation wraps, skips defeated enemies, and includes downed healing recipients',()=>{const w=world(),s=read('chapter-engine.js');w.battle={target:0,ally:'freya',enemies:[{hp:10},{hp:0},{hp:10}]};w.units=[{id:'freya'},{id:'jamal'},{id:'reese'}];w.hp.jamal=0;vm.runInContext(s.slice(s.indexOf('function cycleCombatTarget('),s.indexOf('function handleCombatKey(')),w);w.cycleCombatTarget('enemy',1);assert.equal(w.battle.target,2);w.cycleCombatTarget('enemy',1);assert.equal(w.battle.target,0);w.cycleCombatTarget('enemy',-1);assert.equal(w.battle.target,2);w.cycleCombatTarget('ally',1);assert.equal(w.battle.ally,'jamal');w.cycleCombatTarget('ally',-1);assert.equal(w.battle.ally,'freya');});
 test('action impact happens once at contact and stale animations cannot change HP',async()=>{const w=world(),s=read('chapter-engine.js');w.epoch=1;w.reduce={matches:false};w.GameAudio={effect:()=>{}};w.CANCEL=Symbol('cancel');w.battle={};const times=[];let elapsed=0,impacts=0;w.delay=async ms=>{elapsed+=ms;times.push(ms);};vm.runInContext(s.slice(s.indexOf('async function animateAction('),s.indexOf('function actionPose(')),w);await w.animateAction({id:'reese'},{id:'enemy'},'attack',true,()=>{impacts++;assert.equal(elapsed,760*.62);});assert.equal(impacts,1);assert.equal(w.battle.animation,null);assert.equal(times.length,2);w.delay=async()=>{w.epoch++;};await assert.rejects(w.animateAction({id:'freya'},{id:'enemy'},'attack',true,()=>impacts++),e=>e===w.CANCEL);assert.equal(impacts,1);});
 
+test('a confirm during the last step acts once on the requested point when the leader arrives',async()=>{
+ const w=world(),s=read('chapter-engine.js'),leader={id:'freya',x:312,y:248,anim:0};
+ const target={id:'rileyBanter',x:360,y:248};
+ let points=[target],interactions=0;
+ Object.assign(w,{ready:true,campaignLoading:false,introOpen:false,journeyOpen:false,levelOpen:false,briefingOpen:false,
+  dialogOpen:false,taskBusy:false,battle:null,finished:()=>false,Handheld:{isOpen:()=>false},INTERACTION_RADIUS:56,
+  units:[leader],path:[[21,15]],trail:[],keys:new Set(),fx:[],cell:(x,y)=>[Math.floor(x/16),Math.floor(y/16)],
+  visiblePoints:()=>points,updateCitizens:()=>{},run:fn=>fn(),PresentationPolish:{banter:()=>interactions++}});
+ vm.runInContext(s.slice(s.indexOf('function nearPoint('),s.indexOf('async function finishTempleEscape(')),w);
+ vm.runInContext(s.slice(s.indexOf('function advance('),s.indexOf('function drawActor(')),w);
+ leader.step={sx:312,sy:248,tx:328,ty:248,p:0};
+ await w.interact();
+ assert.equal(leader.step.interaction,target.id);
+ assert.equal(w.path.length,0);
+ w.update(.1);
+ assert.equal(interactions,0);
+ w.update(.1);
+ w.update(.1);
+ assert.equal(interactions,1);
+ leader.step={sx:328,sy:248,tx:344,ty:248,p:0};
+ await w.interact(target.id);
+ points=[{...target,id:'different'}];
+ w.update(.2);
+ assert.equal(interactions,1);
+ assert.equal(leader.step,null);
+});
+
 test('brief direction taps start a step immediately and respect movement locks',()=>{const w=world(),s=read('chapter-engine.js');Object.assign(w,{ready:true,introOpen:false,journeyOpen:false,levelOpen:false,dialogOpen:false,taskBusy:false,battle:null,finished:()=>false,DIR:{up:[0,-1]},units:[{id:'freya',x:312,y:248,step:null}],path:[1],cell:(x,y)=>[Math.floor(x/16),Math.floor(y/16)],stepUnit:(u,x,y)=>{u.step={x,y};return true;}});vm.runInContext(s.slice(s.indexOf('function beginWalkTap('),s.indexOf('function update(')),w);assert(w.beginWalkTap('up'));assert.equal(w.units[0].step.y,14);assert.equal(w.path.length,0);assert.equal(w.beginWalkTap('up'),false);w.units[0].step=null;w.taskBusy=true;assert.equal(w.beginWalkTap('up'),false);assert.equal(w.units[0].step,null);});
