@@ -89,7 +89,7 @@ window.IlniusFountain=(()=>{
  function isBattle(kind){return kind===battleKind||kind===templeBattle;}
  function beginFight(){
   const {x,y,dir}=units[0],max=STATS[statue].hp;
-  const enemies=sentries.map((_,i)=>({id:statue,name:'Archon Statue '+(i+1),hp:max,max}));
+  const enemies=sentries.map((_,i)=>({id:statue,name:'Archon Statue '+(i+1),shortName:'Statue '+(i+1),hp:max,max}));
   save();
   startBattle(0,false,{kind:battleKind,enemies,returnPosition:[x,y,dir],opening:'The five archon statues come to life. Read their intentions before committing your attacks.'});
  }
@@ -203,7 +203,7 @@ window.IlniusFountain=(()=>{
     await say(paladin,'Lay down what you brought here. The Inheritor’s sanctuary is closed to you.');
     const {x,y,dir}=units[0],max=STATS[paladin].hp;
     save();
-    startBattle(0,false,{kind:templeBattle,enemies:[{id:paladin,name:NAMES[paladin],hp:max,max,resolve:true}],
+    startBattle(0,false,{kind:templeBattle,enemies:[{id:paladin,name:NAMES[paladin],shortName:'Sylvestra',hp:max,max,resolve:true}],
      returnPosition:[x,y,dir],opening:'Break Sylvestra’s resolve. Her bow targets one party member at a time.'});
     return true;
    }

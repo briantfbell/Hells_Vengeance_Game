@@ -2071,6 +2071,7 @@ test('Dinyar’s fights gate the search, crossing, and gold dragon trophy',async
  assert.equal(await w.DinyarRecon.interact('dinyarCells'),false);
  await step('dinyarWatch');
  assert.deepEqual([...w.battle.enemies].map(enemy=>enemy.id),['fastness_paladin','kantaria_guard']);
+ assert.deepEqual([...w.battle.enemies].map(enemy=>enemy.shortName),['Paladin','Guard']);
  assert.equal(capture('dinyar-watch').quest.dinyarWatchCleared,undefined);
  await w.DinyarRecon.afterBattle(w.battle.kind,w.battle.returnPosition);
  await step('dinyarCells');
@@ -2137,6 +2138,7 @@ test('St. Ilnius stages Bruce’s Blink and gates the inner entrance on all five
  await step('ilniusWake');
  assert.equal(w.battle.enemies.length,5);
  assert(w.battle.enemies.every(enemy=>enemy.id==='ilnius_archon_statue'));
+ assert.deepEqual(Array.from(w.battle.enemies,enemy=>enemy.shortName),['Statue 1','Statue 2','Statue 3','Statue 4','Statue 5']);
  await w.IlniusFountain.openingStrike(w.battle);
  assert(w.transcript.some(line=>/Bruce casts Blink/.test(line.text)));
  assert(!w.battle.blinkAt);

@@ -187,7 +187,19 @@ function battlePosition(actor){
 }
 function healthBadge(x,y,w,name,value,max,selected=false,enemy=false,status=''){
  ctx.save();ctx.fillStyle='#131922ed';ctx.strokeStyle=selected?'#e4c581':'#766343';ctx.lineWidth=selected?2:1;ctx.beginPath();ctx.moveTo(x-w/2+5,y);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w/2,y+27);ctx.lineTo(x-w/2,y+27);ctx.lineTo(x-w/2,y+5);ctx.closePath();ctx.fill();ctx.stroke();
- ctx.textAlign='left';ctx.font='10px FolkenPixel';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';const label=name.replace(/^(Sanctuary |Church |Porch )/,'').replace('El Guapo','Guapo').replace('Celestial Wolf','Cel. Wolf').replace(/^(Loran|Lacall) Allamar$/,'$1');let shown=label;while(ctx.measureText(shown).width>w-12&&shown.length>1)shown=shown.slice(0,-1);if(shown!==label)shown=shown.slice(0,-1)+'…';ctx.fillText(shown,x-w/2+6,y+10);
+ ctx.textAlign='left';ctx.font='10px FolkenPixel';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';
+ const label=name.replace(/^(Sanctuary |Church |Porch )/,'').replace('El Guapo','Guapo').replace('Celestial Wolf','Cel. Wolf').replace(/^(Loran|Lacall) Allamar$/,'$1');
+ let shown=label;
+ if(ctx.measureText(label).width>w-12){
+  const suffix=label.endsWith(' (R)')?' (R)':'';
+  if(suffix)ctx.font='9px FolkenPixel';
+  if(ctx.measureText(label).width>w-12){
+   let stem=suffix?label.slice(0,-suffix.length):label;
+   while(stem.length>1&&ctx.measureText(stem+'…'+suffix).width>w-12)stem=stem.slice(0,-1);
+   shown=stem+'…'+suffix;
+  }
+ }
+ ctx.fillText(shown,x-w/2+6,y+10);
  if(status){ctx.font='9px FolkenPixel';ctx.fillStyle='#bcb8ab';ctx.fillText(status,x-w/2+6,y+21);ctx.restore();return;}
  ctx.font='9px FolkenPixel';ctx.fillStyle='#bcb8ab';ctx.fillStyle=value===0?'#dc9a87':'#bcb8ab';ctx.fillText(value===0?'DOWN':value+'/'+max,x-w/2+6,y+21);
  const barX=x-w/2+38,barW=w-44;rect(barX,y+16,barW,5,'#35333a');rect(barX,y+16,barW*Math.max(0,value/max),5,enemy?'#b86454':'#9dab77');if(selected){ctx.fillStyle='#e4c581';ctx.beginPath();ctx.moveTo(x-4,y-5);ctx.lineTo(x+4,y-5);ctx.lineTo(x,y-1);ctx.fill();}ctx.restore();
@@ -237,7 +249,7 @@ function drawTargetBrackets(t=0){
 }
 function renderBattle(t){
  const field=battlefieldHeight();drawCombatBackdrop(t);
- ChurchArc.drawSupport(t);window.IlniusFountain?.drawSupport(ctx);window.AregoReturn?.drawSupport(ctx,t);window.NicoloArc?.drawSupport(ctx);for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?(enemy.opacity??1):.22;if(enemy.id==='celestial_wolf'){ctx.shadowColor='#dce4ff';ctx.shadowBlur=9;}if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,battle.enemies.length>=5?72:88,(enemy.resolve?enemy.name+' (R)':enemy.shortName||enemy.name),enemy.hp,enemy.max,!battle.scripted&&battle.enemies[battle.target]===enemy&&battle.control?.mode!=='ally',true,battle.script?.enemyStatus?.(enemy)||'');}
+ ChurchArc.drawSupport(t);window.IlniusFountain?.drawSupport(ctx);window.AregoReturn?.drawSupport(ctx,t);window.NicoloArc?.drawSupport(ctx);for(const enemy of battle.enemies){const v=battlePosition(enemy),m=window.FUTURE_NPCS?.[enemy.id],f=m?.frame||window.CHAPTER_NPCS[enemy.id],scale=v.height/f.h;ctx.save();ctx.globalAlpha=enemy.hp>0?(enemy.opacity??1):.22;if(enemy.id==='celestial_wolf'){ctx.shadowColor='#dce4ff';ctx.shadowBlur=9;}if(!drawCombatIdle(ctx,enemy,v,t))ctx.drawImage(m?art[m.source]:art.npcs,f.x,f.y,f.w,f.h,v.x-f.w*scale/2,v.y-v.height+(enemy.lunge?-5:0),f.w*scale,v.height);ctx.restore();if(enemy.hp>0)healthBadge(v.x,v.y-v.height-35,battle.enemies.length>=5?72:88,((enemy.shortName||enemy.name)+(enemy.resolve?' (R)':'')),enemy.hp,enemy.max,!battle.scripted&&battle.enemies[battle.target]===enemy&&battle.control?.mode!=='ally',true,battle.script?.enemyStatus?.(enemy)||'');}
 
  const ordered=units.map(u=>({u,v:battlePosition(u)})).sort((a,b)=>a.v.y-b.v.y);
  for(const {u,v} of ordered){if(hp[u.id]===0)drawCombatFallen(ctx,u,v);else if(!drawCombatIdle(ctx,u,v,t))drawActor(ctx,{...u,x:v.x,y:v.y,dir:'up',step:null},v.height);healthBadge(v.x,v.y+7,units.length>5?68:76,NAMES[u.id],hp[u.id],STATS[u.id].hp,activeUnit()===u||battle.control?.mode==='ally'&&battle.ally===u.id,false,battle.script?.partyStatus?.(u)||'');}
@@ -408,7 +420,33 @@ async function encounter(){
  startBattle(count,shaken);await templeStoryStrike();if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
 function planEnemyRound(){if(battle)EnemyTactics.plan(battle.enemies,units,hp,STATS,battle.round);}
-function paintEnemyIntent(){const panel=$('enemy-intents');panel.hidden=!battle||!!battle.scripted;if(panel.hidden)return;panel.replaceChildren();const heading=document.createElement('strong');heading.textContent='R'+battle.round+' · NOW '+(battle.order?.[battle.turn]?.name||activeUnit()?.id&&NAMES[activeUnit().id]||'Initiative');panel.append(heading);if(battle.order){const next=Initiative.next(battle.order,battle.turn,units,battle.enemies,hp,battle.round,battle.paralyzed),line=document.createElement('div');line.className='turn-next';line.textContent='NEXT '+(next?.name||'—');panel.append(line);}for(const e of battle.enemies.filter(e=>e.hp>0)){const row=document.createElement('div');row.textContent=EnemyTactics.preview(e,NAMES);row.title=row.textContent;row.className=e.intent?.heavy?'heavy':'';panel.append(row);}}
+function paintEnemyIntent(){
+ const panel=$('enemy-intents');
+ panel.hidden=!battle||!!battle.scripted;
+ if(panel.hidden)return;
+ panel.replaceChildren();
+ const turnName=entry=>entry?.side==='enemy'?(battle.enemies[entry.index]?.shortName||entry.name):entry?.name;
+ const heading=document.createElement('strong');
+ const current=battle.order?.[battle.turn];
+ heading.textContent='R'+battle.round+' · NOW '+(turnName(current)||NAMES[activeUnit()?.id]||'Initiative');
+ if(current)heading.title=current.name;
+ panel.append(heading);
+ if(battle.order){
+  const next=Initiative.next(battle.order,battle.turn,units,battle.enemies,hp,battle.round,battle.paralyzed);
+  const line=document.createElement('div');
+  line.className='turn-next';
+  line.textContent='NEXT '+(turnName(next)||'—');
+  if(next)line.title=next.name;
+  panel.append(line);
+ }
+ for(const enemy of battle.enemies.filter(enemy=>enemy.hp>0)){
+  const row=document.createElement('div');
+  row.textContent=EnemyTactics.preview(enemy,NAMES,true);
+  row.title=EnemyTactics.preview(enemy,NAMES);
+  row.className=enemy.intent?.heavy?'heavy':'';
+  panel.append(row);
+ }
+}
 function startBattle(count,shaken,config=null){
  const places=[[312,280],[264,296],[360,296],[280,328],[344,328],[392,328]];
  units.forEach((u,i)=>{u.x=places[i][0];u.y=places[i][1];u.dir='up';u.step=null;u.guard=false;u.ethereal=false;});path=[];

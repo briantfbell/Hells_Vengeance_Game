@@ -8,6 +8,7 @@ window.DinyarRecon=(()=>{
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
  const dragon='parnoneryx',watch=['fastness_paladin','kantaria_guard'];
  const guardPositions=[[280,168],[376,168]];
+ const watchLabels={fastness_paladin:'Paladin',kantaria_guard:'Guard'};
  const lowerBattle='dinyar_watch',dragonBattle='dinyar_parnoneryx';
  const dragonFrames=[
   {x:18,y:90,w:670,h:557,anchorX:350,anchorY:647},
@@ -118,7 +119,7 @@ window.DinyarRecon=(()=>{
  }
  function beginFight(kind,ids,opening){
   const {x,y,dir}=units[0];
-  const enemies=ids.map(id=>({id,name:NAMES[id],hp:STATS[id].hp,max:STATS[id].hp}));
+  const enemies=ids.map(id=>({id,name:NAMES[id],shortName:watchLabels[id],hp:STATS[id].hp,max:STATS[id].hp}));
   save();
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],opening});
  }
