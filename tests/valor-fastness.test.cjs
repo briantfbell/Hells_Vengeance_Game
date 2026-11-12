@@ -29,3 +29,24 @@ test('the chapel cleric spends an even turn healing a living ally, and attacks i
  assert.equal(messages.length,1);
  assert.equal(await w.FastnessArc.enemySupport(enemy),false);
 });
+
+test('the warpriest can spend one even turn on a prayer after reaching half health',async()=>{
+ const enemy={id:'fastness_warpriest',name:'Tower Warpriest',hp:22,max:44};
+ const w={animateAction:async(_actor,_target,_action,_hit,impact)=>impact(),flash:()=>{},log:()=>{}};
+ w.window=w;
+ vm.createContext(w);
+ for(const file of ['enemy-tactics.js','valor-fastness.js']){
+  vm.runInContext(fs.readFileSync('art-test/'+file,'utf8'),w);
+ }
+ const plan=round=>w.EnemyTactics.plan([enemy],[{id:'freya'}],{freya:32},{freya:{hp:32}},round);
+ plan(1);
+ assert.equal(await w.FastnessArc.enemySupport(enemy),false);
+ plan(2);
+ assert.match(w.EnemyTactics.preview(enemy,{}),/Battle prayer at half HP/);
+ assert.equal(await w.FastnessArc.enemySupport(enemy),true);
+ assert.equal(enemy.hp,30);
+ enemy.hp=10;
+ plan(4);
+ assert.equal(await w.FastnessArc.enemySupport(enemy),false);
+ assert.equal(enemy.hp,10);
+});

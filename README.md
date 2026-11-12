@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 127 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 134 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -139,3 +139,5 @@ There are now **118 replay checkpoints** and **104 passing automated tests**. Ex
 Continue after Stranglehold or select replay **119**. Muster the reanimated soldiers, send them against the guards, and secure the breach. Replays **119–122** cover the section. The outer gate was played through and reloaded in the browser. See [the section audit and source notes](docs/chapter-fifteen-gate.md).
 
 From the secured gate or replay **123**, fight through the mustering hall and inner chapel to the tower stairs. The two battles carry injuries and resources forward. Replays **123–127** cover the interior. See [the interior audit and artwork notes](docs/chapter-fifteen-interior.md).
+
+From the chapel stairs or replay **128**, fight the tower mage, warpriest and returning Angel Knight. Replays **128–134** cover the ascent to the last stair. See [the ascent audit and artwork notes](docs/chapter-fifteen-ascent.md).

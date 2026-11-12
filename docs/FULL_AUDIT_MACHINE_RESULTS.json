@@ -1,20 +1,20 @@
 {
   "scripts": 49,
-  "scenes": 73,
-  "replays": 127,
-  "framesInspected": 467,
-  "framesChecked": 467,
+  "scenes": 76,
+  "replays": 134,
+  "framesInspected": 475,
+  "framesChecked": 475,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 34,
+  "combatStats": 36,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 278771852,
+  "assetBytes": 291649033,
   "largestAssets": [
     {
       "name": "court-of-spears.png",
@@ -37,6 +37,14 @@
       "bytes": 3505140
     },
     {
+      "name": "valor-fastness-study-v1.png",
+      "bytes": 3499436
+    },
+    {
+      "name": "valor-fastness-landing-v1.png",
+      "bytes": 3463485
+    },
+    {
       "name": "valor-fastness-gate-v1.png",
       "bytes": 3436587
     },
@@ -47,20 +55,12 @@
     {
       "name": "reese-early-portrait.png",
       "bytes": 3211686
-    },
-    {
-      "name": "kantaria-guild-v1.png",
-      "bytes": 3152269
-    },
-    {
-      "name": "kantaria-manor-v1.png",
-      "bytes": 3126753
     }
   ],
   "startupComplete": true,
-  "startupAssets": 101,
-  "startupCompressedBytes": 224020983,
-  "startupDecodedRgbaBytes": 627337904,
+  "startupAssets": 105,
+  "startupCompressedBytes": 236891596,
+  "startupDecodedRgbaBytes": 652509104,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -158,10 +158,14 @@
     "townsfolk-sheet-v1.png",
     "townsfolk-sheet-v2.png",
     "uskwood-inn-v1.png",
+    "valor-fastness-ascent-cast-v1.png",
     "valor-fastness-chapel-v1.png",
     "valor-fastness-defenders-v1.png",
+    "valor-fastness-gallery-v1.png",
     "valor-fastness-gate-v1.png",
     "valor-fastness-hall-v1.png",
+    "valor-fastness-landing-v1.png",
+    "valor-fastness-study-v1.png",
     "whisperwood-trail-v1.png"
   ]
 }

@@ -45,7 +45,7 @@ const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++)
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return window.SupplyArc?.roster()||window.CovertArc?.roster()||DisruptionArc.roster()||KantariaArc.roster()||CourtArc.roster()||FortArc.roster()||ArmoryArc.roster()|| (soloParty()?['jamal']:(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)));}
-function finished(){return !!quest.fastnessInteriorComplete;}
+function finished(){return !!quest.fastnessAscentComplete;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -496,7 +496,7 @@ async function enemyStrike(enemy,token){
  await window.ChurchArc?.enemyPreparation?.(enemy);if(token!==epoch||!battle)return;
  const penalty=(battle.smoke?4:0)+(enemy.shaken?2:0),bonus=STATS[enemy.id].atk-penalty,ac=combatAC(target.id)+(target.guard?4:0),total=await rollDice(enemy.name+' · '+intent.move+' → '+NAMES[target.id],20,1,bonus,'AC '+ac),roll=total-bonus;
  if(token!==epoch||!battle)return;
- if(roll===20||roll!==1&&total>=ac){const rolled=await damage(STATS[enemy.id].dmg,enemy.name+' · Damage'),raw=rolled+intent.extra,value=EnemyTactics.damage(raw,target.guard);await animateAction(enemy,target,'attack',true,()=>{hp[target.id]=Math.max(0,hp[target.id]-value);GameAudio.effect('hit');flash(target,'−'+value,'#ee9a88');});log(enemy.name+' uses '+intent.move+' on '+NAMES[target.id]+': '+value+' damage.'+(target.guard?' Guard absorbs '+(raw-value)+'.':''));}else{await animateAction(enemy,target,'attack',false);flash(target,'MISS','#bfc1d1');log(enemy.name+' misses '+NAMES[target.id]+(target.guard?'’s guard.':'.'));}paintParty();await delay(220);
+ if(roll===20||roll!==1&&total>=ac){const rolled=await damage(STATS[enemy.id].dmg,enemy.name+' · Damage'),raw=rolled+intent.extra,value=EnemyTactics.damage(raw,target.guard);await animateAction(enemy,target,intent.effect||'attack',true,()=>{hp[target.id]=Math.max(0,hp[target.id]-value);GameAudio.effect('hit');flash(target,'−'+value,'#ee9a88');});log(enemy.name+' uses '+intent.move+' on '+NAMES[target.id]+': '+value+' damage.'+(target.guard?' Guard absorbs '+(raw-value)+'.':''));}else{await animateAction(enemy,target,intent.effect||'attack',false);flash(target,'MISS','#bfc1d1');log(enemy.name+' misses '+NAMES[target.id]+(target.guard?'’s guard.':'.'));}paintParty();await delay(220);
 }
 async function fail(text){await say('Defeat',text);const c=await say(null,'Return to the last checkpoint?',['[Retry the encounter]','[Restart the chapter]']);if(c===0)reset(true);else reset();}
 function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=gy*T+8,dx=tx-u.x,dy=ty-u.y;u.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';u.step={sx:u.x,sy:u.y,tx,ty,p:0};return true;}
@@ -624,6 +624,13 @@ function replaySections(){
  add('fastness-chapel-road','125 · The chapel passage','fastness_hall',[328,216],'fastnessHallCleared');
  add('fastness-chapel','126 · The inner chapel','fastness_chapel',[328,344]);
  add('fastness-stairs','127 · The tower stairs','fastness_chapel',[328,216],'fastnessChapelCleared');
+ add('fastness-ascent','128 · Climb the tower stairs','fastness_chapel',[440,168],'fastnessInteriorComplete');
+ add('fastness-study','129 · The tower mage','fastness_study',[328,344]);
+ add('fastness-study-exit','130 · Above the study','fastness_study',[328,216],'fastnessMageCleared');
+ add('fastness-landing','131 · The warpriest','fastness_landing',[328,344]);
+ add('fastness-landing-exit','132 · The gallery passage','fastness_landing',[328,216],'fastnessWarpriestCleared');
+ add('fastness-gallery','133 · Lencia returns','fastness_gallery',[328,344]);
+ add('fastness-last-stair','134 · The last stair','fastness_gallery',[328,216],'fastnessLenciaSlain');
  return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
