@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 281 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 285 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -231,3 +231,8 @@ Continue from Hotel Barato or select replay **268**. Hear what happened to Jason
 ### Reese’s vision and the tailor’s quarter
 
 Continue after dinner at Hotel Barato or select replay **275**. Follow Reese’s vision to the fountain, then take J’Mal and El Guapo through the tailor’s quarter. Replays **275–281** cover the meeting, reconnaissance, and return to Hotel Barato. See [the section notes](docs/egorian-fountain.md) for sources, artwork and verification.
+
+
+### Dapper Street and Remesiana
+
+Continue from the completed reconnaissance or select replay **282**. See the aftermath at Wilfordshire Tailors and return to Remesiana to find Florio Cento. Replays **282–285** cover the section. See [the section notes](docs/dapper-street.md) for sources, artwork and verification.

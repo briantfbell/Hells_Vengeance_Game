@@ -1,7 +1,8 @@
 "use strict";
 
 window.EgorianFountain=(()=>{
- const hotel='egorian_hotel_barato',fountain='egorian_fountain',street='egorian_tailor_street';
+ const hotel='egorian_hotel_barato',fountain='egorian_fountain',street='egorian_tailor_street',harbor='remesiana_return';
+ const aftermath='egorian-tailor-aftermath-v1.png';
  const stranger='fountain_stranger',portrait='egorian-fountain-stranger-v1.png';
  const layouts={
   [fountain]:{
@@ -19,12 +20,22 @@ window.EgorianFountain=(()=>{
     {id:'egorianObserveShop',x:136,y:296,label:'Watch the tailor shop'},
     {id:'egorianObserveHome',x:376,y:296,label:'Find the family’s home'},
     {id:'egorianObserveSchools',x:536,y:248,label:'Follow the route to the schools'},
-    {id:'egorianTailorReport',x:328,y:344,label:'Bring the route back to Hotel Barato'}
+    {id:'egorianTailorReport',x:328,y:344,label:'Bring the route back to Hotel Barato'},
+    {id:'egorianSeeTailorAftermath',x:152,y:328,label:'See what happened on Dapper Street'},
+    {id:'egorianDepartForRemesiana',x:472,y:344,label:'Leave for Remesiana'}
    ]
   }
  };
  function install(){
-  scenes[hotel].points.push({id:'egorianFountainVision',speaker:'reese',x:328,y:216,label:'Hear Reese’s vision'});
+  scenes[hotel].points.push(
+   {id:'egorianFountainVision',speaker:'reese',x:328,y:216,label:'Hear Reese’s vision'},
+   {id:'egorianCarryOutOrders',x:328,y:328,label:'Carry out the stranger’s assignment'}
+  );
+  scenes[harbor]={...scenes.remesiana,name:'Remesiana · Return to the Harbor',points:[
+   {id:'remesianaFindContact',x:424,y:184,label:'Make for the city to find Florio Cento'}
+  ]};
+  MAP_LAYERS[harbor]=MAP_LAYERS.remesiana;
+  JOURNEYS[harbor]='The company leaves Egorian behind. In Remesiana, their orders are to find Florio Cento.';
   for(const [id,layout] of Object.entries(layouts)){
    scenes[id]={...layout,blocks:[],lights:[]};
    MAP_LAYERS[id]={foreground:layout.image,contain:true,background:{type:'solid',color:'#1b2028'}};
@@ -38,20 +49,26 @@ window.EgorianFountain=(()=>{
  async function load(loader){
   await Promise.all([
    ...Object.entries(layouts).map(async([id,{image}])=>{art[id]=await loader(image);}),
-   (async()=>{art[portrait]=await loader(portrait);})()
+   ...[portrait,aftermath].map(async source=>{art[source]=await loader(source);})
   ]);
  }
- function mapImage(){return Object.hasOwn(layouts,scene)?art[scene]:null;}
+ function mapImage(){
+  if(scene===harbor)return art.remesiana;
+  if(scene===street&&quest.egorianTailorOrdersCarriedOut)return art[aftermath];
+  return Object.hasOwn(layouts,scene)?art[scene]:null;
+ }
  function roster(){
   if(scene===fountain)return ['reese','jamal'];
-  if(scene===street)return ['jamal','guapo'];
+  if(scene===street&&!quest.egorianTailorOrdersCarriedOut)return ['jamal','guapo'];
   return null;
  }
  function points(){
   if(!quest.egorianDischargeComplete)return null;
-  if(scene===hotel)return quest.egorianTailorScouted?[]:[point('egorianFountainVision')];
+  if(scene===hotel)return [point(quest.egorianTailorScouted?'egorianCarryOutOrders':'egorianFountainVision')];
+  if(scene===harbor)return quest.remesianaFlorioLead?[]:[point('remesianaFindContact')];
   if(scene===fountain)return [point(quest.egorianFountainOrders?'egorianScoutTailor':'egorianFountainMeeting')];
   if(scene!==street)return null;
+  if(quest.egorianTailorOrdersCarriedOut)return [point(quest.egorianTailorAftermathSeen?'egorianDepartForRemesiana':'egorianSeeTailorAftermath')];
   if(!quest.egorianTailorShopSeen)return [point('egorianObserveShop')];
   if(!quest.egorianTailorHomeSeen)return [point('egorianObserveHome')];
   if(!quest.egorianTailorSchoolsSeen)return [point('egorianObserveSchools')];
@@ -59,10 +76,18 @@ window.EgorianFountain=(()=>{
  }
  function target(){return points()?.[0]||null;}
  function goal(){
-  return target()?.label||(scene===hotel&&quest.egorianTailorScouted?'The company has the tailor’s routine. The stranger’s deadline is Thursday.':null);
+  return target()?.label||(scene===harbor&&quest.remesianaFlorioLead?'Find Florio Cento in Remesiana.':null);
  }
  function npcs(){
   if(scene===fountain)return quest.egorianFountainOrders?[]:[{id:stranger,x:376,y:192,height:54}];
+  if(scene===harbor)return [
+   {id:'citizen-remesiana-return-1',x:440,y:208,dir:'left',variant:1},
+   {id:'citizen-remesiana-return-2',x:344,y:200,dir:'right',variant:5}
+  ];
+  if(scene===street&&quest.egorianTailorOrdersCarriedOut)return [
+   {x:76,y:296},{x:104,y:298},{x:133,y:300},{x:160,y:298},{x:187,y:297},
+   {x:87,y:320},{x:114,y:326},{x:179,y:327},{x:210,y:317}
+  ].map((pos,i)=>({...pos,id:'citizen-dapper-street-'+i,dir:'up',variant:i%8}));
   if(scene===street)return [
    {id:'citizen-tailor-street-1',x:106,y:285,dir:'right',variant:6},
    {id:'citizen-tailor-street-2',x:258,y:321,dir:'left',variant:2},
@@ -111,6 +136,26 @@ window.EgorianFountain=(()=>{
      quest.egorianTailorScouted=true;
      setScene(hotel,328,328);
     });
+    break;
+   case 'egorianCarryOutOrders':
+    await say('jamal','We know where each of them goes in the morning. We have enough to carry out the order.');
+    await journeyCard('Egorian · Dapper Street','15 Calistril, 4717. The company carries out the stranger’s order.\nBy ten, people have stopped outside Wilfordshire Tailors to look at the window.',()=>{
+     quest.egorianTailorOrdersCarriedOut=true;
+     setScene(street,328,344);
+    });
+    break;
+   case 'egorianSeeTailorAftermath':
+    await say('Chronicle','The tailor returns from brunch. The crowd parts for her. Up close, she recognizes her husband and their three children in the display. All four are dead.');
+    await say('Chronicle','Egorian comes to call it the Dapper Street Murders. No suspect is named.');
+    quest.egorianTailorAftermathSeen=true;
+    break;
+   case 'egorianDepartForRemesiana':
+    quest.remesianaReturned=true;
+    await travel(harbor,520,280);
+    break;
+   case 'remesianaFindContact':
+    await say('reese','Florio Cento. That’s who the man at the fountain told us to find.');
+    quest.remesianaFlorioLead=true;
     break;
   }
   save();

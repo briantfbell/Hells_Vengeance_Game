@@ -45,7 +45,7 @@ const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++)
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.SupplyArc?.roster()||window.CovertArc?.roster()||DisruptionArc.roster()||KantariaArc.roster()||CourtArc.roster()||FortArc.roster()||ArmoryArc.roster()|| (soloParty()?['jamal']:(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)));}
-function finished(){return !!quest.egorianTailorScouted;}
+function finished(){return !!quest.remesianaFlorioLead;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -842,6 +842,10 @@ function replaySections(){
  add('egorian-tailor-home','279 · The family’s home','egorian_tailor_street',[136,296],'egorianTailorShopSeen');
  add('egorian-tailor-schools','280 · The schools','egorian_tailor_street',[376,296],'egorianTailorHomeSeen');
  add('egorian-tailor-report','281 · The Thursday deadline','egorian_tailor_street',[536,248],'egorianTailorSchoolsSeen');
+ add('egorian-tailor-orders','282 · The stranger’s assignment','egorian_hotel_barato',[328,328],'egorianTailorScouted');
+ add('egorian-dapper-street','283 · The Dapper Street Murders','egorian_tailor_street',[328,344],'egorianTailorOrdersCarriedOut');
+ add('egorian-tailor-departure','284 · Leave for Remesiana','egorian_tailor_street',[152,328],'egorianTailorAftermathSeen');
+ add('remesiana-return','285 · Return to Remesiana','remesiana_return',[520,280],'remesianaReturned');
  return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}

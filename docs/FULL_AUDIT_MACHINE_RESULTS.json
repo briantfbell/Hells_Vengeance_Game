@@ -1,7 +1,7 @@
 {
   "scripts": 71,
-  "scenes": 117,
-  "replays": 281,
+  "scenes": 118,
+  "replays": 285,
   "framesInspected": 580,
   "framesChecked": 580,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 470573093,
+  "assetBytes": 473535551,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 185,
-  "startupCompressedBytes": 415580082,
-  "startupDecodedRgbaBytes": 1155881176,
+  "startupAssets": 186,
+  "startupCompressedBytes": 418538537,
+  "startupDecodedRgbaBytes": 1162170456,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -127,6 +127,7 @@
     "egorian-mort-spells-v1.png",
     "egorian-noble-bodyguard-v1.png",
     "egorian-svetlana-v1.png",
+    "egorian-tailor-aftermath-v1.png",
     "egorian-tailor-street-v1.png",
     "egorian-thumbtown-forge-v1.png",
     "egorian-thumbtown-smith-v1.png",
