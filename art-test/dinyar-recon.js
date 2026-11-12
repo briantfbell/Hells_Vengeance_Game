@@ -5,6 +5,7 @@ window.DinyarRecon=(()=>{
  const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png',posternArt='dinyar-ridge-postern-v1.png';
  const posternOutline=[[172,214],[199,205],[202,242],[195,248],[173,248]];
  const posternDuration=850,departureDuration=1400;
+ const posternRange=32;
  const nidalTravelers=['draymus','violetta','corrine'];
  let opening=null,departure=null;
  const lower='dinyar_lower_works',bridge='dinyar_bridge_ward',court='egorian_westcrown_orders';
@@ -118,7 +119,8 @@ window.DinyarRecon=(()=>{
   if(scene===ridge){
    const id=!quest.dinyarSurveyed?'dinyarView':!quest.dinyarEntranceFound?'dinyarPostern':
     !quest.dinyarReconComplete?'dinyarPlan':quest.dinyarPosternOpen?'dinyarDescend':'dinyarOpenPostern';
-   return [point(id)];
+   const stop=point(id);
+   return [id==='dinyarPostern'&&quest.dinyarBeltHintSeen?{...stop,label:'Check the seam Freya noticed'}:stop];
   }
   if(scene===lower)return [point(!quest.dinyarWatchCleared?'dinyarWatch':!quest.dinyarCellsChecked?'dinyarCells':'dinyarClimb')];
   if(scene===bridge)return [point(quest.dinyarCleared?'dinyarReturn':quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
@@ -203,8 +205,35 @@ window.DinyarRecon=(()=>{
    if(departure?.epoch===token)departure=null;
   }
  }
+ function canSensePostern(){
+  if(scene!==ridge||!quest.dinyarSurveyed||quest.dinyarEntranceFound||quest.dinyarBeltHintSeen||
+   !quest.tathlumHuntComplete||quest.tathlumDuels!==3)return false;
+  const freya=units.find(unit=>unit.id==='freya');
+  const entrance=point('dinyarPostern');
+  return !!freya&&Math.hypot(freya.x-entrance.x,freya.y-entrance.y)<=posternRange;
+ }
+ async function sensePostern(){
+  if(!canSensePostern())return;
+  const token=epoch;
+  await storyRoll('Freya · Cave Giant rune',12,5,'Hidden masonry detected');
+  if(token!==epoch)return;
+  await say('freya','The belt’s rune picked up something in that stonework. J’Mal, Reese, take a look.');
+  if(token!==epoch)return;
+  quest.dinyarBeltHintSeen=true;
+  save();
+  updateObjective();
+ }
  function drawPostern(g){
   if(scene!==ridge||!art[posternArt])return;
+  if(quest.dinyarBeltHintSeen&&!quest.dinyarEntranceFound){
+   g.save();
+   g.strokeStyle='#e7bd72';
+   g.globalAlpha=.5;
+   g.beginPath();
+   g.moveTo(178,221);g.lineTo(194,216);g.lineTo(195,240);
+   g.stroke();
+   g.restore();
+  }
   const animating=opening?.epoch===epoch;
   const progress=quest.dinyarPosternOpen?1:animating?Math.min(1,(performance.now()-opening.at)/posternDuration):0;
   if(progress<=0)return;
@@ -263,6 +292,7 @@ window.DinyarRecon=(()=>{
     quest.dinyarSurveyed=true;
     break;
    case 'dinyarPostern':
+    await sensePostern();
     await say('reese','This is the shelf Corrine described. Look at the joint where the dressed stone meets the rock.');
     await say('jamal','There’s our seam. The signifier knew his keep.');
     quest.dinyarEntranceFound=true;
@@ -329,5 +359,5 @@ window.DinyarRecon=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,drawPostern,effect};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,canSensePostern,sensePostern,drawPostern,effect};
 })();

@@ -699,6 +699,10 @@ function update(dt){if(campaignLoading||Handheld.isOpen()||$('save-import-dialog
  }
  else{const d=['up','down','left','right'].find(d=>keys.has(d));if(d){path=[];const a=cell(u.x,u.y),v=DIR[d];u.dir=d;stepUnit(u,a[0]+v[0],a[1]+v[1]);}else if(path.length){const to=path.shift();stepUnit(u,...to);}}
  for(let i=1;i<units.length;i++){const f=units[i];if(f.step)advance(f,dt,speed);else{const desired=trail[Math.min(i*2,trail.length-1)],from=cell(f.x,f.y);if(desired&&(from[0]!==desired[0]||from[1]!==desired[1])){const p=findPath(from,desired);if(p?.length)stepUnit(f,...p[0]);}}}
+ if(!u.step&&window.DinyarRecon?.canSensePostern()){
+  run(()=>DinyarRecon.sensePostern());
+  return;
+ }
  const p=nearPoint();$('prompt').hidden=!p;if(p)$('prompt').textContent='E · '+p.label;
 }
 function drawActor(g,u,height=55){

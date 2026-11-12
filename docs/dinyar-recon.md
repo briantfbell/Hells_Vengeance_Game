@@ -8,6 +8,8 @@ Corrine learned about the concealed entrance from a young Hellknight signifier w
 
 The exported Foundry journal `JournalEntry.KCdVUuF4I36HvXIj` contains an image reference for Citadel Dinyar. The referenced artwork returned HTTP 404 in the archive. The game uses the blog’s architectural description for the new map.
 
+In replay **440**, approaching the seam with Freya triggers the Championship Belt’s Cave Giant rune. Foundry item `B8WdcS4xvdExMyJb` grants +5 to detect hidden doors or panels and a passive check within 10 feet. This adaptation uses two 16-pixel tiles and a scripted D20 result. It marks the seam, then J’Mal and Reese still inspect it and find the entrance, as in the blog.
+
 Replays **442–442A** show the concealed postern opening before the party descends. The open doorway stays visible when the ridge checkpoint reloads. The opening motion and doorway placement are game staging. Existing checkpoints below the ridge still load.
 
 ## Artwork prompts
@@ -33,3 +35,5 @@ The browser playthrough started from the Molthune checkpoint, followed the brief
 The postern audit played replay 442 at 640×480, opened the door, reloaded on the ridge, and entered the lower works. The Reclamation watch objective loaded with no browser errors. All 174 tests passed, including all 476 replay checkpoints and a legacy lower-works save. The structural audit reported no geometry, frame or asset errors.
 
 The teleport audit opened replay 437 at 640×480, observed the wayside spell, continued into Nidal with Draymus as the only playable character, and reloaded the arrival checkpoint. No browser errors appeared. All 174 tests passed, and the structural audit checked all 476 replays.
+
+The belt audit opened replay 440 at 640×480, triggered Freya’s check by walking, reloaded with the seam marked, and used the normal J’Mal and Reese inspection to unlock the lower approach. The browser reported no errors. All 174 tests passed, and the structural audit checked 476 replays.
