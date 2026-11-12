@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.barrowTrailComplete)rows.push('Barrowood · Thirteen stones are marked with Sethic’s blood. The final stone lies ahead.');
+  if(q.barrowGuardiansDefeated)rows.push('Barrowood · 1 Gozran, 4717. The company breaks through the Reclamation’s western flank.');
   if(q.vyreBobHealed)rows.push('Vyre · 26 Pharast, 4717. El Guapo obtains a Wish from Manticce and uses it to heal Bob Applewood.');
   if(q.sethicMansionBound)rows.push('Egorian · Sethic is captured alive. Jason stabilizes him and Draymus casts Feeblemind.');
   if(q.sethicMansionBobFreed)rows.push('Egorian · 24 Pharast, 4717. Bob Applewood is freed from Sethic’s cellar. He is alive and unresponsive.');

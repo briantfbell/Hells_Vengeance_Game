@@ -1,20 +1,20 @@
 {
-  "scripts": 90,
-  "scenes": 143,
-  "replays": 390,
-  "framesInspected": 620,
-  "framesChecked": 620,
+  "scripts": 91,
+  "scenes": 145,
+  "replays": 399,
+  "framesInspected": 624,
+  "framesChecked": 624,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 61,
+  "combatStats": 62,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 587742633,
+  "assetBytes": 597665960,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -31,6 +31,10 @@
     {
       "name": "south-road-ambush-v1.png",
       "bytes": 3647774
+    },
+    {
+      "name": "barrow-road-v1.png",
+      "bytes": 3640632
     },
     {
       "name": "egorian-tailor-street-v1.png",
@@ -51,16 +55,12 @@
     {
       "name": "kintargo-map.png",
       "bytes": 3506692
-    },
-    {
-      "name": "valor-fastness-hall-v1.png",
-      "bytes": 3505140
     }
   ],
   "startupComplete": true,
-  "startupAssets": 235,
-  "startupCompressedBytes": 532605621,
-  "startupDecodedRgbaBytes": 1470470112,
+  "startupAssets": 239,
+  "startupCompressedBytes": 542518169,
+  "startupDecodedRgbaBytes": 1495638176,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -83,6 +83,10 @@
     "attack-party-v1.png",
     "ballerina-deck-v1.png",
     "ballerina-quartermaster-v1.png",
+    "barrow-druid-v1.png",
+    "barrow-grove-v1.png",
+    "barrow-road-v1.png",
+    "barrow-standing-stone-v1.png",
     "barzillai-model.png",
     "bathroom-foreground.png",
     "belde-square-liberated-v1.png",

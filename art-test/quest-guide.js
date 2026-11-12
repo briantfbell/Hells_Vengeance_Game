@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const trail=window.BarrowTrail?.goal();
+ if(trail)return {text:trail,target:BarrowTrail.target()};
  const vyre=window.VyreWish?.goal();
  if(vyre)return {text:vyre,target:VyreWish.target()};
  const mansion=window.SethicMansion?.goal();
