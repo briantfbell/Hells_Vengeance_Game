@@ -115,6 +115,27 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
+test('story section headers follow replay progress from Kintargo to Barleybridge',()=>{
+ const w=world(),source=read('chapter-engine.js');
+ vm.runInContext(source.slice(source.indexOf('function storySectionLabel('),source.indexOf('function updateObjective(')),w);
+ const sections=w.replaySections();
+ const label=id=>{
+  const section=sections.find(entry=>entry.id===id);
+  return w.storySectionLabel(section.quest,section.scene);
+ };
+ assert.equal(label('mission'),'Prologue · Kintargo');
+ assert.equal(label('fort-start'),'Chapter Eight · Rumors and the Armory');
+ assert.equal(label('egorian-approach'),'The South Road');
+ assert.equal(w.storySectionLabel({},'egorian_bridge'),'The Egorian proceedings');
+ assert.equal(label('arego-barato'),'Return to Egorian');
+ assert.equal(label('barrow-road-rest'),'The Barrowood pilgrimage');
+ assert.equal(label('ilnius-statues'),'The Tathlum · St. Ilnius');
+ assert.equal(label('barleybridge-plan'),'The Tathlum · Barleybridge');
+ for(const section of sections.filter(entry=>entry.quest.chapter2)){
+  assert.notEqual(w.storySectionLabel(section.quest,section.scene),'Prologue · Kintargo',section.id);
+ }
+});
+
 test('replay search matches section numbers, punctuated names and location names',()=>{
  const w=world(),sections=w.replaySections(),find=query=>Array.from(w.matchingReplaySections(sections,query),s=>s.id);
  w.scenes.ilnius_inner_temple.points=[];

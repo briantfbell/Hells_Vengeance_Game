@@ -89,7 +89,41 @@ async function travel(next,x,y,dir='up'){
  if(next==='longacre_square')summary=!quest.sermonDispersed?'The church square is gathering for Allamar’s sermon. Listen to her claims and counter the talk of rebellion.':quest.deputiesReported?'Cross Longacre on the way to the audience at Scarlet Manor.':'Return to the square. '+QuestGuide.current().text;
  await journeyCard(scenes[next].name,summary,()=>setScene(next,x,y,dir));
 }
+function storySectionLabel(q,location){
+ if(q.barleybridgeReached)return 'The Tathlum · Barleybridge';
+ if(q.ilniusForestReached)return 'The Tathlum · St. Ilnius';
+ if(q.westcrownOrdersReached)return 'Freya’s Westcrown orders';
+ if(q.dinyarReached)return 'The Tathlum · Citadel Dinyar';
+ if(q.nidalOperationSought)return 'The Tathlum · The company divides';
+ if(q.molthuneReached)return 'The Tathlum · Molthune';
+ if(q.tathlumOrdersReached)return 'The Tathlum expedition';
+ if(q.menadorReached)return 'The Menador meeting';
+ if(q.covenantReached)return 'The Covenant of Hell';
+ if(q.barrowRoadReached)return 'The Barrowood pilgrimage';
+ if(q.egorianFountainOrders)return 'Operations across Cheliax';
+ if(q.aregoEgorianEscaped)return 'Return to Egorian';
+ if(q.aregoApproachReached)return 'Fort Arego and the Inferno Gate';
+ if(q.senaraGarrisonSeen||location==='senara_waterfront')return 'Senara and the Whisperwood';
+ if(q.egorianBridgeMet||location==='egorian_bridge')return 'The Egorian proceedings';
+ if(location.startsWith('south_road'))return 'The South Road';
+ if(q.chapter15)return 'Chapter Fifteen · Valor’s Fastness';
+ if(q.chapter14)return 'Chapter Fourteen · Stranglehold';
+ if(q.chapter13)return 'Chapter Thirteen · Quiet Knives';
+ if(q.chapter12)return 'Chapter Twelve · Kantaria’s defenses';
+ if(q.chapter11)return 'Chapter Eleven · Hardship’s Hearth';
+ if(q.chapter10)return 'Chapter Ten · Court of Spears';
+ if(q.chapter9)return 'Chapter Nine · Fort Estazano';
+ if(q.chapter8)return 'Chapter Eight · Rumors and the Armory';
+ if(q.chapter7)return 'Chapter Seven · The Missing Dead';
+ if(q.chapter6)return 'Chapter Six · Political Movement';
+ if(q.chapter5)return 'Chapter Five · Debts and Rumors';
+ if(q.chapter4)return 'Chapter Four · The Last Stand';
+ if(q.chapter3)return 'Chapter Three · Longacre';
+ if(q.chapter2)return 'Chapter Two · Voyage to Longacre';
+ return 'Prologue · Kintargo';
+}
 function updateObjective(){
+ $('story-section').textContent=storySectionLabel(quest,scene);
  const cover=window.BarleybridgeScout?.goal()||window.IlniusFountain?.goal()||window.DinyarRecon?.goal()||window.MolthuneCoffin?.goal()||window.SkadiParley?.goal()||window.DarkRain?.goal()||window.TathlumHunt?.goal()||window.Menador?.goal()||window.BarrowCovenant?.goal()||window.BarrowTrail?.goal()||window.VyreWish?.goal()||window.SethicMansion?.goal()||window.BellflowerBarn?.goal()||window.BellflowerBarge?.goal()||window.Pezzack?.goal()||window.Rachikan?.goal()||window.Ballerina?.goal()||window.HinjiTavern?.goal()||window.Belde?.goal()||window.PaleBall?.goal()||window.NicoloArc?.goal()||window.SethicLedgers?.goal()||window.SethicFarm?.goal()||window.EgorianFeud?.goal()||window.EgorianSting?.goal()||window.EfisioArc?.goal()||window.Hinji?.goal()||window.Westcrown?.goal()||window.RemesianaMarket?.goal()||window.EgorianFountain?.goal()||window.EgorianDischarge?.goal()||window.AregoExit?.goal()||window.AregoReturn?.goal()||window.AregoAmbush?.goal()||window.InfernoGate?.goal()||window.FortArego?.goal()||window.SenaraGraveyard?.goal()||window.SenaraWagon?.goal()||window.WhisperwoodGlade?.goal()||window.WhisperwoodCamp?.goal()||window.SenaraCitadel?.goal()||window.SenaraDaggers?.goal()||window.SenaraCover?.goal();
  if(cover){$('objective').textContent=cover;$('status').textContent='Arrows / WASD · E confirm · B pause / back';return;}
  const senara=window.SenaraArrival?.goal();
