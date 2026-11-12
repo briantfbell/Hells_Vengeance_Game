@@ -4,7 +4,7 @@ window.QuestGuide={current(){
  const ilnius=window.IlniusFountain?.goal();
  if(ilnius)return {text:ilnius,target:IlniusFountain.target()};
  const dinyar=window.DinyarRecon?.goal();
- if(dinyar)return {text:dinyar,target:DinyarRecon.target()};
+ if(dinyar)return {text:dinyar,target:DinyarRecon.target(),targets:DinyarRecon.points()??[]};
  const coffin=window.MolthuneCoffin?.goal();
  if(coffin)return {text:coffin,target:MolthuneCoffin.target()};
  const skadi=window.SkadiParley?.goal();

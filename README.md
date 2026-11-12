@@ -51,7 +51,7 @@ The admin toolbar’s **Find replay** field filters checkpoints by number, scene
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 472 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 473 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -360,7 +360,7 @@ Continue from the Molthune wayside or select replay **437**. Follow Draymus to N
 
 ### The assault on Citadel Dinyar
 
-Continue from the ridge or select replay **442**. Open the concealed entrance, clear the lower works, and defeat Parnoneryx at the bridge ward. Replays **442–447** cover the assault and recovery of the gold dragon’s head. See [the section notes](docs/dinyar-assault.md) for sources, artwork and verification.
+Continue from the ridge or select replay **442**. Open the concealed entrance, clear the lower works, and defeat Parnoneryx at the bridge ward. Replays **442–447** cover the assault and recovery of the gold dragon’s head. The optional dispatch in replay **449A** records the party’s plans for Hellknight Scipio. See [the section notes](docs/dinyar-assault.md) for sources, artwork and verification.
 
 ### Freya’s Westcrown orders
 

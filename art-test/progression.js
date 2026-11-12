@@ -56,6 +56,7 @@ window.Progression=(()=>{
   if(q.barleybridgeReached)rows.push('Barleybridge · El Guapo is sent ahead to scout. The company expects a limited paladin presence.');
   if(q.ilniusDefiled)rows.push('St. Ilnius · 20 Gozran, 4717. J’Mal kills Sylvestra Hanel, and Jason defiles the temple with Parnoneryx’s head. An ancient library is still needed.');
   if(q.ilniusStatuesCleared)rows.push('St. Ilnius Fountain · Bruce escapes the guardians’ opening strike with Blink. The company defeats the five archon statues.');
+  if(q.dinyarDispatchRead)rows.push('Dinyar dispatch · The company hopes to bring Hellknight Scipio back to life. His resurrection remains unresolved.');
   if(q.freyaFieldMarshal)rows.push('Egorian · 16 Gozran, 4717. Freya is promoted to Field Marshal and assigned to Westcrown.');
   if(q.dinyarCleared)rows.push('Isger · 15 Gozran, 4717. Citadel Dinyar is cleared. The company takes the gold dragon Parnoneryx’s head.');
   if(q.dinyarReconComplete)rows.push('Isger · J’Mal and Reese find the concealed entrance at Citadel Dinyar. Freya plans to search for surviving Godclaw Hellknights.');

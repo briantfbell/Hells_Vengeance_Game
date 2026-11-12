@@ -6,6 +6,10 @@ The blog P001 establishes the concealed entrance, the party of Freya, J’Mal, R
 
 Foundry actor `Actor.nV7jJKWRctqtUVtW` lists Bite & Claws, Wing Slam, and dragon breath among Parnoneryx’s attacks. The game adapts them into a three-round rotation. HP, attack bonuses, targeting, and the timing of the breath are game balance decisions. The actor’s portrait and journal image were unavailable in the archive, but the prototype token was recovered and informed the sprite’s palette and profile.
 
+## The Dinyar dispatch
+
+Foundry Player Notes page `ch0MchgiPuWLvgku` records the party’s intention to resurrect Hellknight Scipio alongside the result at Dinyar. Foundry actor `Actor.s5BDCmBTYIdV3vOj` supplies his name. The notes do not establish where he died, whether the party found his body at Dinyar, or whether a resurrection happened. Replay 449A presents the note as an optional dispatch after Freya’s promotion in Egorian. The timing and placement of the dispatch are adaptations. Reading it records the intention in the journal and leaves the main departure available.
+
 ## Artwork prompts
 
 Created with the built-in image generator.

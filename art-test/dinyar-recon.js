@@ -54,6 +54,7 @@ window.DinyarRecon=(()=>{
    ...scenes.egorian_court,name:'Egorian · Westcrown Orders',
    points:[
     {id:'westcrownCommission',speaker:'corrine',x:328,y:264,label:'Receive Freya’s promotion'},
+    {id:'dinyarDispatch',x:216,y:264,label:'Read the Dinyar dispatch'},
     {id:'westcrownDeployment',x:328,y:344,label:'Depart for Westcrown'}
    ]
   };
@@ -101,11 +102,20 @@ window.DinyarRecon=(()=>{
   if(scene===ridge)return [point(!quest.dinyarSurveyed?'dinyarView':!quest.dinyarEntranceFound?'dinyarPostern':!quest.dinyarReconComplete?'dinyarPlan':'dinyarDescend')];
   if(scene===lower)return [point(!quest.dinyarWatchCleared?'dinyarWatch':!quest.dinyarCellsChecked?'dinyarCells':'dinyarClimb')];
   if(scene===bridge)return [point(quest.dinyarCleared?'dinyarReturn':quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
-  if(scene===court)return quest.westcrownDeployed?[]:[point(quest.freyaFieldMarshal?'westcrownDeployment':'westcrownCommission')];
+  if(scene===court){
+   if(quest.westcrownDeployed)return [];
+   if(!quest.freyaFieldMarshal)return [point('westcrownCommission')];
+   const orders=[point('westcrownDeployment')];
+   if(!quest.dinyarDispatchRead)orders.push(point('dinyarDispatch'));
+   return orders;
+  }
   return null;
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===court&&quest.westcrownDeployed?'Field Marshal Freya is bound for Westcrown.':null);}
+ function goal(){
+  if(scene===court&&quest.freyaFieldMarshal&&!quest.westcrownDeployed&&!quest.dinyarDispatchRead)return 'Read the Dinyar dispatch or depart for Westcrown.';
+  return target()?.label||(scene===court&&quest.westcrownDeployed?'Field Marshal Freya is bound for Westcrown.':null);
+ }
  function beginFight(kind,ids,opening){
   const {x,y,dir}=units[0];
   const enemies=ids.map(id=>({id,name:NAMES[id],hp:STATS[id].hp,max:STATS[id].hp}));
@@ -144,7 +154,7 @@ window.DinyarRecon=(()=>{
   return true;
  }
  async function interact(id){
-  if(target()?.id!==id)return false;
+  if(!points()?.some(p=>p?.id===id))return false;
   switch(id){
    case 'dinyarSplit':
     await say('corrine','A young signifier survived the fall of Dinyar. His officers sent him to warn the capital. He told me how to reach a door hidden in the rock below the keep.');
@@ -206,6 +216,10 @@ window.DinyarRecon=(()=>{
     await say('freya','The Reclamation still has the city?');
     await say('corrine','They’ve held it since the second of Gozran. That’s where the Crown is sending you.');
     quest.freyaFieldMarshal=true;
+    break;
+   case 'dinyarDispatch':
+    await journeyCard('Dinyar dispatch · Hellknight Scipio','Citadel Dinyar has been cleared and Parnoneryx’s head recovered. The company’s notes call for Hellknight Scipio to be brought back to life. His resurrection remains unresolved.',()=>{});
+    quest.dinyarDispatchRead=true;
     break;
    case 'westcrownDeployment':
     await journeyCard('Orders for Westcrown','16 Gozran, 4717. Field Marshal Freya sets out for Westcrown, still held by the Glorious Reclamation.',()=>{quest.westcrownDeployed=true;});

@@ -1094,7 +1094,8 @@ function replaySections(){
  add('dinyar-trophy','447 · The gold dragon’s head','dinyar_bridge_ward',[328,256],'dinyarDragonSlain');
  add('westcrown-egorian','448 · Return to Egorian','dinyar_bridge_ward',[328,232],'dinyarCleared');
  add('westcrown-commission','449 · Field Marshal Freya','egorian_westcrown_orders',[328,344],'westcrownOrdersReached');
- add('westcrown-deployment','450 · Orders for Westcrown','egorian_westcrown_orders',[328,264],'freyaFieldMarshal');
+ add('dinyar-dispatch','449A · The Dinyar dispatch','egorian_westcrown_orders',[216,264],'freyaFieldMarshal');
+ add('westcrown-deployment','450 · Orders for Westcrown','egorian_westcrown_orders',[328,264]);
  add('ilnius-cutaway','451 · Expedition to St. Ilnius','egorian_westcrown_orders',[328,344],'westcrownDeployed');
  add('ilnius-bruce','452 · Rendezvous with Bruce','ilnius_forest',[328,344],'ilniusForestReached');
  add('ilnius-cross','453 · Follow the creek','ilnius_forest',[456,272],'ilniusBruceMet');
