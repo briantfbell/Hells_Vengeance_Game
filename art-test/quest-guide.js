@@ -123,6 +123,8 @@ window.QuestGuide={current(){
   if(!quest.rhonaDismissed)return result('Deliver Rhona’s dismissal.',scene==='longacre_jail'?'jailDecree':scene==='longacre_square'?'jailRoad':scene==='ash_house'?'longacreRoad':'manorExit');
   if(!quest.deputiesDefeated)return result('Leave the jail courtyard.',scene==='longacre_jail'?'jailReport':scene==='longacre_square'?'jailRoad':scene==='ash_house'?'longacreRoad':'manorExit');
   if(!quest.deputiesReported)return result('Report the deputies’ ambush.',scene==='ash_house'?'razelago':scene==='longacre_square'?'ashReturn':scene==='longacre_jail'?'jailReport':'manorExit');
+  if(scene==='scarlet_manor_approach')return quest.manorWelcomed?result('Follow the servant to Fex’s office.','manorOffice'):result('Speak to the household servant.','manorGreeting');
+  if(scene==='longacre_square'&&!quest.tavernNoticeTorn&&!quest.compactSworn)return result('Inspect the Last Stand’s copy of the decree.','tornDecree');
   return result('Meet Archbaron Fex.',scene==='scarlet_manor'?'fexAudience':scene==='longacre_square'?'manorRoad':scene==='ash_house'?'longacreRoad':'jailReport');
  }
  if(quest.chapter2Complete)return result('Continue to the Longacre sermon.','chapterThree');

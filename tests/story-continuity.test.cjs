@@ -83,6 +83,30 @@ test('the jail ambush uses all four sap deputies, restores the exit and leaves C
  assert(w.quest.deputiesReported);
  assert.match(w.transcript.at(-1).text,/Scarlet Manor first thing in the morning/);
 });
+test('the party inspects the torn notice and meets the servant before reaching Fex',async()=>{
+ const w=world();
+ w.scene='longacre_square';
+ w.quest={chapter3:true,sermonDispersed:true,decreesIssued:true,deputiesDefeated:true,deputiesReported:true};
+ assert.equal(w.NextArc.target().id,'tornDecree');
+ assert.equal(await w.NextArc.interact('manorRoad'),false);
+ await w.NextArc.interact('tornDecree');
+ assert.match(w.transcript[0].text,/event board still stands.*torn to shreds/);
+ assert.equal(w.NextArc.target().id,'manorRoad');
+ await w.NextArc.interact('manorRoad');
+ assert.equal(w.scene,'scarlet_manor_approach');
+ assert.equal(w.NextArc.target().id,'manorGreeting');
+ assert.equal(await w.NextArc.interact('manorOffice'),false);
+ const servant=()=>w.NextArc.npcs().find(actor=>actor.id==='scarlet_servant');
+ assert.equal(w.NextArc.npcs().filter(actor=>actor.id==='scarlet_sentry').length,4);
+ assert.equal(servant().y,330);
+ await w.NextArc.interact('manorGreeting');
+ assert(w.quest.manorWelcomed);
+ assert.equal(servant().y,142);
+ assert.equal(w.NextArc.target().id,'manorOffice');
+ await w.NextArc.interact('manorOffice');
+ assert.deepEqual(w.travels,['scarlet_manor_approach','scarlet_manor']);
+ assert.equal(w.NextArc.target().id,'fexAudience');
+});
 test('both peaceful approaches expose the payroll once and lead to Ash House',async()=>{
  for(const choice of [0,1]){
   const w=world();

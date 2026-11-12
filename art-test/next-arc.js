@@ -2,6 +2,11 @@
 window.NextArc=(()=>{
  const r=(x,y,w,h)=>({x,y,w,h});
  const helmArt='longacre-angel-knight-helm-v1.png',dispersalDuration=1100;
+ const manorApproach='scarlet_manor_approach',servant='scarlet_servant',sentry='scarlet_sentry';
+ const manorActors={
+  [servant]:{source:'scarlet-manor-servant-v1.png',frame:{x:0,y:0,w:106,h:272}},
+  [sentry]:{source:'scarlet-manor-sentry-v1.png',frame:{x:0,y:0,w:132,h:240}}
+ };
  let sermonStage=null,deputyApproach=null;
  const deputies=[
   {id:'deputy1',duty:[376,240],flank:[204,296],charge:[274,304]},
@@ -11,10 +16,23 @@ window.NextArc=(()=>{
  ];
  const chargeDuration=680;
  const maps={longacre_square:{name:'Chapter Three · Longacre Square',image:'longacre-square.png',spawn:[328,296],walk:[r(80,176,480,160),r(272,320,96,48)],blocks:[],lights:[],points:[{id:'sermon',x:328,y:176,label:'Listen to the sermon'},{id:'noticeDecree',x:128,y:224,label:'Post the decree'},{id:'tavernDecree',x:520,y:280,label:'Post at the Last Stand'},{id:'jailRoad',x:104,y:304,label:'Go to the western gate and jail'},{id:'manorRoad',x:552,y:208,label:'Go to Scarlet Manor'},{id:'ashReturn',x:328,y:352,label:'Return to Ash House'}]},longacre_jail:{name:'Longacre · Western Gate and Jail',image:'longacre-jail.png',spawn:[328,312],walk:[r(160,192,400,144),r(272,320,96,48)],blocks:[],lights:[],points:[{id:'gateDecree',x:200,y:208,label:'Post at the western gate'},{id:'jailDecree',x:456,y:224,label:'Deliver the sheriff’s dismissal'},{id:'jailReport',x:328,y:352,label:'Return to the square'}]},scarlet_manor:{name:'Scarlet Manor · The Hellfire Compact',image:'scarlet-manor.png',spawn:[328,312],walk:[r(176,208,320,128),r(272,320,96,48)],blocks:[],lights:[],points:[{id:'fexAudience',x:328,y:208,label:'Meet Archbaron Fex'},{id:'manorExit',x:328,y:352,label:'Return to Longacre'}]}};
- function install(){Object.assign(scenes,maps);scenes.ash_house.points.push({id:'longacreRoad',x:328,y:352,label:'Travel to Longacre square'});for(const [id,s] of Object.entries(maps))window.MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#101817'}};Object.assign(NAMES,{rhona:'Rhona Staelish',allamar:'Sword Knight Tileavia Allamar',twin1:'Loran Allamar',twin2:'Lacall Allamar',razelago_revealed:'Razelago',deputy1:'Former Deputy 1',deputy2:'Former Deputy 2',deputy3:'Former Deputy 3',deputy4:'Former Deputy 4'});for(let i=1;i<=4;i++)STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};}
+ maps[manorApproach]={
+  name:'Scarlet Manor · The Grounds',image:'scarlet-manor-approach-v1.png',spawn:[328,360],
+  walk:[r(256,160,128,224),r(288,112,64,64),r(144,160,352,48)],blocks:[],
+  lights:[[268,99],[370,100],[80,175],[560,175],[212,221],[426,222]],
+  points:[{id:'manorGreeting',x:352,y:328,label:'Speak to the household servant'},{id:'manorOffice',x:328,y:128,label:'Enter Fex’s office'}]
+ };
+ maps.longacre_square.points.push({id:'tornDecree',x:520,y:264,label:'Inspect the torn decree'});
+ function installManor(){
+  JOURNEYS[manorApproach]='The party reaches Scarlet Manor. Its gates stand open for the Archbaron’s expected guests.';
+  NAMES[servant]='Household Servant';
+  NAMES[sentry]='House Fex Sentry';
+  Object.assign(window.FUTURE_NPCS,manorActors);
+ }
+ function install(){installManor();Object.assign(scenes,maps);scenes.ash_house.points.push({id:'longacreRoad',x:328,y:352,label:'Travel to Longacre square'});for(const [id,s] of Object.entries(maps))window.MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#101817'}};Object.assign(NAMES,{rhona:'Rhona Staelish',allamar:'Sword Knight Tileavia Allamar',twin1:'Loran Allamar',twin2:'Lacall Allamar',razelago_revealed:'Razelago',deputy1:'Former Deputy 1',deputy2:'Former Deputy 2',deputy3:'Former Deputy 3',deputy4:'Former Deputy 4'});for(let i=1;i<=4;i++)STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};}
  async function load(loader){
   const assets=Object.entries(maps).map(([id,s])=>[id,s.image]);
-  assets.push(['authority','longacre-authority-cast.png'],['revelations','longacre-revelations.png'],[helmArt,helmArt]);
+  assets.push(['authority','longacre-authority-cast.png'],['revelations','longacre-revelations.png'],[helmArt,helmArt],...Object.values(manorActors).map(({source})=>[source,source]));
   await Promise.all(assets.map(async ([id,source])=>{art[id]=await loader(source);}));
  }
  function currentSermon(){return scene==='longacre_square'&&!quest.sermonDispersed&&sermonStage&&sermonStage.epoch===epoch?sermonStage:null;}
@@ -37,6 +55,17 @@ window.NextArc=(()=>{
   g.drawImage(art[helmArt],343,142,18,25);
   g.restore();
  }
+ function drawTornDecree(g){
+  if(scene!=='longacre_square'||!quest.deputiesReported||quest.chapter4)return;
+  g.save();g.translate(528,265);
+  for(const [x,y,angle] of [[-6,1,.3],[3,-5,-.5],[8,4,.6],[-1,7,-.35]]){
+   g.save();g.translate(x,y);g.rotate(angle);
+   g.fillStyle='#503625';g.fillRect(0,1,6,3);
+   g.fillStyle='#dfc799';g.fillRect(0,0,5,3);
+   g.restore();
+  }
+  g.restore();
+ }
  function objective(){if(!quest.chapter3)return false;let goal=battle?'Subdue the four former deputies.':quest.chapter3Complete?'Chapter Three complete · Trouble at the Last Stand.':!quest.sermonDispersed?'Attend the sermon in Longacre square.':!quest.decreesIssued?'Report back to Razelago.':!quest.rhonaDismissed?'Post all four decrees and dismiss Rhona.':!quest.deputiesDefeated?'Leave the jail courtyard.':!quest.deputiesReported?'Report the deputies’ ambush.':'Attend the audience at Scarlet Manor.';$('objective').textContent=battle?goal:window.QuestGuide.current().text;$('status').textContent=battle?'The former lawmen attack with saps. Defeat them and take them into custody.':'WASD / arrows · E to interact · Click to walk · Export save to carry your progress';return true;}
  function npcs(){
   const cimriAtJail=quest.deputiesDefeated&&!quest.compactSworn;
@@ -45,6 +74,11 @@ window.NextArc=(()=>{
    return [{id:'allamar',x:328,y:152},{id:'twin1',x:280,y:168},{id:'twin2',x:376,y:168},{id:'rhona',x:424,y:248},{id:'cimri',x:456,y:264}];
   }
   if(scene==='longacre_jail')return jailActors();
+  if(scene===manorApproach)return [
+   {id:servant,x:quest.manorWelcomed?352:360,y:quest.manorWelcomed?142:330,height:43},
+   {id:sentry,x:246,y:210,height:51},{id:sentry,x:394,y:210,height:51},
+   {id:sentry,x:132,y:58,height:33},{id:sentry,x:508,y:58,height:33}
+  ];
   if(scene==='scarlet_manor')return [{id:'fex',x:328,y:176},...(quest.compactSworn?[{id:'razelago_revealed',x:472,y:168}]:[])];
   const actors=window.NextChapter.npcs();
   return cimriAtJail?actors.filter(actor=>actor.id!=='cimri'):actors;
@@ -57,7 +91,14 @@ window.NextArc=(()=>{
   return deputies.map(({id,flank,charge})=>({id,x:flank[0]+(charge[0]-flank[0])*progress,y:flank[1]+(charge[1]-flank[1])*progress}));
  }
  function drawNPC(u){if(u.id==='fex'){drawQuestgiver('fex',u.x,u.y,62);return true;}const m=window.FUTURE_NPCS?.[u.id];if(!m)return false;const im=art[m.source];if(!im)return false;const f=m.frame,h=u.height||(u.id==='razelago_revealed'?45:55),scale=h/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,im,f,u.x-f.w*scale/2,u.y-h,f.w*scale,h);return true;}
- function target(){if(scene==='ash_house')return point('razelago');if(scene==='scarlet_manor')return point('fexAudience');if(scene==='longacre_jail')return point(!quest.gatePosted?'gateDecree':!quest.rhonaDismissed?'jailDecree':'jailReport');return point(!quest.sermonDispersed?'sermon':!quest.noticePosted?'noticeDecree':!quest.tavernPosted?'tavernDecree':quest.deputiesReported?'manorRoad':quest.decreesIssued?'jailRoad':'ashReturn');}
+ function target(){
+  if(scene==='ash_house')return point('razelago');
+  if(scene===manorApproach)return point(quest.manorWelcomed?'manorOffice':'manorGreeting');
+  if(scene==='scarlet_manor')return point('fexAudience');
+  if(scene==='longacre_jail')return point(!quest.gatePosted?'gateDecree':!quest.rhonaDismissed?'jailDecree':'jailReport');
+  if(quest.deputiesReported)return point(quest.tavernNoticeTorn||quest.compactSworn?'manorRoad':'tornDecree');
+  return point(!quest.sermonDispersed?'sermon':!quest.noticePosted?'noticeDecree':!quest.tavernPosted?'tavernDecree':quest.decreesIssued?'jailRoad':'ashReturn');
+ }
  async function begin(){quest.chapter3=true;quest.chapter3Complete=false;await say('razelago','Archbaron Darellus Fex rules Longacre. You have authority to deal with the rebellion here. These red sashes bear his crest and the cross of Cheliax; let the town see whose authority backs your work.');await say('cimri','The church square will be crowded. My aunt will be there too. Sheriff Rhona Staelish. Keep your answers short.');await travel('longacre_square',328,296);save();}
  async function sermon(){
   sermonStage={epoch,helm:false,speaker:null,dispersingAt:null};
@@ -156,9 +197,23 @@ window.NextArc=(()=>{
  else if(id==='jailDecree'){if(!quest.decreesIssued)await say('rhona','If you have official business, bring official orders.');else if(!quest.noticePosted||!quest.tavernPosted||!quest.gatePosted)await say('Chronicle','Post the other copies first. The sheriff’s dismissal will end the day’s easy work.');else if(!quest.rhonaDismissed){await say('Chronicle','A fourth copy of the party’s gathering and gate notices is posted at the jail. A separate order removes Rhona from office.');quest.jailPosted=true;await say('rhona','Removed. By a separate decree. I see.');await say('Chronicle','Rhona sets down her sheriff’s longsword and vest. She takes her personal crossbow and leaves without a word to Cimri. Four deputies throw down their own vests and storm out. Other deputies remain; replacement guards will help staff the jail.');quest.jailPosted=true;quest.rhonaDismissed=true;save();}else await say('Chronicle','Rhona’s badge and vest lie on the desk. The dismissal is delivered.');}
  else if(id==='jailReport'){if(quest.rhonaDismissed&&!quest.deputiesDefeated)await deputyAmbush();else await travel('longacre_square',136,296);}
  else if(id==='longacreRoad')await travel('longacre_square',328,296);else if(id==='ashReturn')await travel('ash_house',328,296);
- else if(id==='manorRoad'){if(!quest.deputiesReported)await say('Chronicle','Fex has not summoned you yet. Report your work at Ash House.');else{await travel('scarlet_manor',328,312);}}
+ else if(id==='tornDecree'&&scene==='longacre_square'&&quest.deputiesReported&&!quest.tavernNoticeTorn){
+  await say('Chronicle','The decree at the event board still stands. Outside the Last Stand, the party finds the other copy torn to shreds beneath the tavern beams.');
+  await say('freya','Leave the scraps where they fell. We have an appointment at Scarlet Manor. We’ll answer this afterward.');
+  quest.tavernNoticeTorn=true;
+ }
+ else if(id==='manorRoad'&&scene==='longacre_square'&&quest.deputiesReported&&(quest.tavernNoticeTorn||quest.compactSworn))await travel(manorApproach,328,360);
+ else if(id==='manorGreeting'&&scene===manorApproach&&!quest.manorWelcomed){
+  await say(servant,'Captain Freya. His Lordship is expecting you. Follow the main walk to the blackwood stairs. I’ll meet you at the door.');
+  await say('Chronicle','The halfling servant passes between two armed guards. More crossbows watch the courtyard from the roof.');
+  quest.manorWelcomed=true;
+ }
+ else if(id==='manorOffice'&&scene===manorApproach&&quest.manorWelcomed){
+  await say(servant,'Archbaron Fex will receive you now.');
+  await travel('scarlet_manor',328,312);
+ }
  else if(id==='fexAudience'){if(!quest.compactSworn){await say('fex','Longacre needs law and order. Swear the Hellfire Compact to House Thrune, and you will act with my authority.');const c=await say('The Hellfire Compact','An oath binding your service to the ruling house.',['[Swear the compact]','[Ask what the office requires]']);if(c===1){await say(lead,'What does this office require of us?');await say('fex','You will bring this town to order as my agents. Loyalty, discretion, and results. How you suppress the rebellion, and what changes you make to the town’s laws, are your company’s decisions.');}await say('Chronicle','Each companion recites the oath with a hand on a black hellstone. Its heat burns their hands—except Jason, whose infernal ancestry gives him a very different idea.');await say('Chronicle','Maintaining eye contact, Jason lowers his trousers and swears the oath with his bare backside against the stone.');await say('freya','A very intimate tiefling custom, my lord. Outsiders rarely have the privilege of witnessing it.');await say('Chronicle','Freya appeals to Fex’s scholarly curiosity. Charmed by her explanation, he accepts the ritual. The oath is legally binding; it does not bind their souls.');await say(lead,'We swear our service to House Thrune.');quest.compactSworn=true;await say('fex','Razelago. There is no need for theatrics with trusted agents. Show yourself.');await say('razelago_revealed','You have been speaking to an accuser devil. Your expressions are entirely predictable.');await say('Chronicle','Behind the curtain is a bulbous fly body, a fleshy upper torso, insect mandibles, and wings. The familiar raspy voice leaves no doubt.');}await say('razelago_revealed','Riley Kels is singing about the Angel Knight again. Bolgart permits forbidden gatherings at the Last Stand. Begin there.');await say('Chronicle','During the Longacre operations, Reese, a strix archer, joins the company. He was not part of the Kintargo temple mission. The party’s growing company shares responsibility for its decisions here.');quest.chapter3Complete=true;quest.reeseJoined=true;quest.activeRoster=[...(quest.activeRoster||OPENING_ROSTER).filter(id=>id!=='reese'),'reese'];seedParty(units[0]?.x||328,units[0]?.y||312);NextChapter.syncRoster();await say('Chapter Three complete','The sermon is broken up. The decrees stand. Rhona is dismissed, the deputies are jailed, and the party now serves Fex directly. Next: the Last Stand and the Angel Knight’s trail.');}
  else if(id==='manorExit')await travel('longacre_square',520,232);
  else return false;save();updateObjective();return true;}
- return {install,load,objective,npcs,drawNPC,target,interact,afterBattle,sermonPose,drawSermonHelm};
+ return {install,load,objective,npcs,drawNPC,target,interact,afterBattle,sermonPose,drawSermonHelm,drawTornDecree};
 })();
