@@ -387,3 +387,5 @@ Open Longacre Art Studio and select either Warlock Island map to try the walking
 ### Barleybridge town preview
 
 Longacre Art Studio includes a walkable gate and market layout and a three-pose glaive guardsman. See [the preview notes](docs/barleybridge-town-preview.md) for the Foundry references and artwork prompts.
+
+The castle throne room and basement are available in both the Art Studio and the in-game Planning maps after replay **464**. The Art Studio also previews the Barleybridge Bowman. See [the castle notes](docs/barleybridge-castle-preview.md) for the source scenes and artwork.

@@ -4,6 +4,8 @@ window.Handheld=(()=>{
  let planId=null,planImage=null,planPaths=false;
  const planningMaps={
   'barleybridge-town-v1':'Barleybridge · Gate and market',
+  'barleybridge-throne-v1':'Barleybridge · Castle throne room',
+  'barleybridge-basement-v1':'Barleybridge · Castle basement',
   'warlock-library-v1':'Warlock Island · Circular library',
   'warlock-archive-v1':'Warlock Island · Museum archive'
  };

@@ -22,6 +22,16 @@ window.ChapterMapPreview=(()=>{
    ],
    points:[{label:'Document stacks',x:72,y:248},{label:'Display gallery',x:472,y:184}]
   },
+  'barleybridge-throne-v1':{
+   spawn:[328,376],
+   walk:[[304,288,48,112],[144,144,352,160],[256,112,128,48],[480,160,128,32],[560,112,48,64]],
+   points:[{label:'Audience dais',x:328,y:120},{label:'East stairs',x:584,y:120}]
+  },
+  'barleybridge-basement-v1':{
+   spawn:[328,376],
+   walk:[[288,368,64,32],[272,224,96,160],[96,96,448,144],[288,32,64,80]],
+   points:[{label:'Cask storage',x:168,y:104},{label:'Service bench',x:472,y:104},{label:'North stairs',x:328,y:56}]
+  },
   'barleybridge-town-v1':{
    spawn:[328,376],
    walk:[[288,224,64,176],[80,192,496,48],[112,160,416,32],[240,112,224,48],[448,144,80,48]],
@@ -30,6 +40,11 @@ window.ChapterMapPreview=(()=>{
   }
  };
  const cast={
+  barleybridge_bowman:{name:'Barleybridge Bowman',caption:'Composite longbow · ready, draw and recover',src:'barleybridge-bowman-v1.png',frames:[
+   {x:72,y:10,w:472,h:705,anchorX:362},
+   {x:794,y:0,w:528,h:715,anchorX:1124},
+   {x:1520,y:11,w:473,h:704,anchorX:1811}
+  ]},
   barleybridge_guard:{name:'Barleybridge Guardsman',caption:'Glaive · watch, thrust and ready',src:'barleybridge-guard-v1.png',frames:[
    {x:149,y:2,w:303,h:719,anchorX:315},
    {x:556,y:108,w:854,h:613,anchorX:1085},
