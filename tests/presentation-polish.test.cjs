@@ -3,7 +3,26 @@ const read=n=>fs.readFileSync('art-test/'+n,'utf8');
 function world(){const w={window:null,CORE:['freya','jamal','jason','draymus','guapo','reese'],battle:{enemies:[]},reduce:{matches:false},hp:{},quest:{},scene:'longacre_jail',lead:'freya',COMBAT_IDLES:{},MOVEMENT_FRAMES:{'political-cast-v1.png':[{},{},{},{src:'guards',maxHeight:80,frames:[{pose:0},{pose:1},{pose:2}]}]},townsfolk:()=>[],CITIZEN_FRAMES:Array.from({length:4},(_,i)=>({frames:[{variant:i}]})),EXTRA_CITIZEN_FRAMES:Array.from({length:4},(_,i)=>({frames:[{variant:i+4}]}))};w.window=w;vm.createContext(w);vm.runInContext(read('presentation-polish.js'),w);return w;}
 test('porch guard idle cycle never indexes a missing pose across repeated combat frames',()=>{const w=world();w.PresentationPolish.install();const m=w.COMBAT_IDLES.porch_guard,u={id:'porch_guard',hp:12};w.battle.enemies=[u];for(let t=0;t<200;t+=.031){const phase=w.PresentationPolish.phase(u,t,m);assert(m.frames[phase],`missing pose at ${t}`);}assert.equal(m.frames.length,2);});
 test('duplicate defenders retain independent idle timing and dead defenders stay still',()=>{const w=world(),m={cycle:[0,1,2,1]},a={id:'acolyte',hp:10,idleOffset:0},b={id:'acolyte',hp:10,idleOffset:.54};w.battle.enemies=[a,b];assert.notEqual(w.PresentationPolish.phase(a,.01,m),w.PresentationPolish.phase(b,.01,m));b.hp=0;assert.equal(w.PresentationPolish.phase(b,12,m),0);});
-test('Riley chatter is available while captive and disappears after the jailbreak',async()=>{const w=world();w.quest.prisonersJailed=true;const lines=[];w.say=async(n,t,choices)=>{lines.push({n,t,choices});return 2;};assert(w.PresentationPolish.captive());assert.equal(w.PresentationPolish.captivePoints()[0].id,'rileyBanter');await w.PresentationPolish.banter();assert.equal(lines[0].choices.length,5);assert.equal(lines[1].n,'freya');assert.equal(lines[2].n,'riley');w.quest.jailbreakHeard=true;assert(!w.PresentationPolish.captive());assert.equal(w.PresentationPolish.captivePoints().length,0);});
+test('Riley chatter follows his custody and disappears after the jailbreak',async()=>{
+ const w=world(),lines=[];
+ w.quest={rileyCaptured:true,prisonersJailed:true};
+ w.say=async(n,t,choices)=>{lines.push({n,t,choices});return 2;};
+ assert.equal(w.PresentationPolish.captivePoints().length,0);
+ w.scene='longacre_cells';
+ assert.equal(w.PresentationPolish.captivePoints().length,0);
+ w.quest.rileyQuestioned=true;
+ for(const scene of ['longacre_cells','longacre_jail','rohalendi_hospice','longacre_church','angel_hill','last_stand']){
+  w.scene=scene;
+  assert.equal(w.PresentationPolish.captivePoints()[0].id,'rileyBanter');
+ }
+ await w.PresentationPolish.banter();
+ assert.equal(lines[0].choices.length,5);
+ assert.equal(lines[1].n,'freya');
+ assert.equal(lines[2].n,'riley');
+ w.quest.jailbreakHeard=true;
+ assert(!w.PresentationPolish.captive());
+ assert.equal(w.PresentationPolish.captivePoints().length,0);
+});
 test('all eight townsfolk choose their own front portrait metadata',()=>{const w=world();for(let i=0;i<8;i++)assert.equal(w.PresentationPolish.citizenMeta(i).frames[0].variant,i);});
 test('the full decree fits three parchment pages and releases the overlay on cancellation',async()=>{
  const w=world(),classes=new Set(),pages=[];
@@ -16,6 +35,10 @@ test('the full decree fits three parchment pages and releases the overlay on can
  assert.match(pages[1].text,/curfew.*hour after dusk to the hour before dawn/);
  assert.match(pages[2].text,/seditious agents/);
  assert.match(pages[2].text,/Darellus Fex,\nArchbaron of Longacre/);
+ assert(!classes.has('decree-page'));
+ await w.PresentationPolish.hospiceLetter();
+ assert.match(pages.at(-1).text,/cousin in Remesiana/);
+ assert.match(pages.at(-1).text,/nearly three hundred gold pieces/);
  assert(!classes.has('decree-page'));
  w.journeyCard=async()=>{assert(classes.has('decree-page'));throw new Error('cancelled');};
  await assert.rejects(w.PresentationPolish.decree(),/cancelled/);
