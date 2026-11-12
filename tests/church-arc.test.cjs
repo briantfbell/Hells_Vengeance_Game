@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 226 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,226);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 233 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,233);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -611,4 +611,47 @@ test('the Unicorn Glade preserves the first three horns and awards the fourth on
  assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(save)).quest.whisperwoodGladeComplete,true);
  const forged=structuredClone(save);forged.quest.whisperwoodThreeHorns=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid unicorn glade sequence/);
+});
+
+test('the Senara prison wagon sends the archon away before initiative and saves Orn’s recruitment',async()=>{
+ const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='senara-wagon-depart');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:224,dir:'up'}],
+  DIALOGUE_FACE_CROPS:{},animateAction:async(actor,target,type)=>w.events.push([actor.id,target.id,type]),
+  storyRoll:async(label,face,_mod,outcome)=>w.events.push([label,face,outcome]),
+  planEnemyRound:()=>w.events.push('plan'),
+  beginInitiative:()=>w.events.push(['initiative',w.battle.enemies.length]),events:[]});
+ w.scenes[start.scene].points=[];
+ w.scenes.senara_waterfront={points:[],walk:[{x:0,y:0,w:640,h:400}],blocks:[]};
+ w.STATS.fastness_paladin={hp:26};
+ vm.runInContext(read('senara-wagon.js'),w);
+ w.SenaraWagon.install();
+ const step=async id=>assert.equal(await w.SenaraWagon.interact(id),true,id);
+ await step('senaraWagonRoad');
+ assert.equal(await w.SenaraWagon.interact('senaraWagonFree'),false);
+ await step('senaraWagonStop');
+ await step('senaraWagonFight');
+ assert.equal(w.battle.scriptActor,'jason');
+ assert.equal(w.battle.script.command().name,'Dismissal');
+ await w.battle.script.act('special',{id:'jason'});
+ assert.deepEqual(w.events,[['jason','senara_hound_archon','dismissal'],['Dismissal · Destination',5,'Spell misfires · Abaddon'],'plan',['initiative',3]]);
+ assert(w.battle.enemies.every(e=>e.id==='fastness_paladin'));
+ assert.equal(w.battle.scripted,false);
+ assert.equal(w.quest.senaraEscortDefeated,undefined);
+ const position=w.battle.returnPosition;
+ w.battle=null;
+ await w.SenaraWagon.afterBattle(position);
+ await step('senaraWagonFree');
+ assert.equal(w.SenaraWagon.npcs()[0].id,'orn');
+ assert.equal(await w.SenaraWagon.interact('senaraWagonQuay'),false);
+ await step('senaraOrnRecruit');
+ await step('senaraWagonQuay');
+ await step('senaraMorePatrols');
+ const arrival=sections.find(s=>s.id==='senara-return-patrols');
+ const saved=checkpoint(w,{...arrival,quest:w.quest});
+ const restored=w.SaveFiles.decode(w.SaveFiles.encode(saved));
+ assert.equal(restored.quest.senaraOrnRecruited,true);
+ assert.equal(restored.quest.senaraReturnPatrolsSeen,true);
+ assert.equal(restored.quest.whisperwoodFourthHorn,true);
+ const forged=structuredClone(saved);forged.quest.senaraPrisonerFreed=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Senara prison wagon sequence/);
 });

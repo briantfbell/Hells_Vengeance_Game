@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 226 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 233 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -193,3 +193,7 @@ Continue from the carriage stop or select replay **215**. Set the watch, fight t
 ### The Blessing of Unicorns
 
 Follow the unicorn trail from the Whisperwood night camp or select replay **222**. Recover three horns from the first assault, then recover the fourth under pressure as J’Mal. Replays **222–226** cover the glade. See [the section notes](docs/whisperwood-glade.md) for sources, artwork and verification.
+
+### The Senara prison wagon
+
+After recovering the four unicorn horns, take the road back to Senara or select replay **227**. Use Jason’s Dismissal, defeat the escort, and free Orn from the prison wagon. Replays **227–233** end at the patrolled quay. See [the section notes](docs/senara-wagon.md) for sources, artwork and verification.

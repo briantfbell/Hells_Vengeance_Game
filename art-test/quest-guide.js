@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const wagon=window.SenaraWagon?.goal();
+ if(wagon)return {text:wagon,target:SenaraWagon.target()};
  const glade=window.WhisperwoodGlade?.goal();
  if(glade)return {text:glade,target:WhisperwoodGlade.target()};
  const camp=window.WhisperwoodCamp?.goal();
