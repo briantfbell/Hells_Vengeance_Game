@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.egorianVasvionChosen)rows.push('Egorian · After accepting bribes from both sides, the company backs Levisvia Vasvion against Paracount Sethic.');
+  if(q.egorianFeudReached)rows.push('Egorian · The company is invited to the Night of the Pale and begins meeting the nobles.');
   if(q.egorianStingDebriefed)rows.push('Egorian · The Queen asks the company to settle a feud between two nobles. Corrine conveys the assignment.');
   if(q.egorianStandingRestored)rows.push('Egorian · Freya’s military rank and Hellknight standing are restored. The Church of Asmodeus recognizes Jason’s service.');
   if(q.egorianStingComplete)rows.push('Cheliax · 24 Calistril, 4717. Corrine’s sting brings down Visperthul’s criminal network. Four leading agents are captured or killed.');

@@ -1,9 +1,9 @@
 {
-  "scripts": 76,
-  "scenes": 124,
-  "replays": 313,
-  "framesInspected": 588,
-  "framesChecked": 588,
+  "scripts": 77,
+  "scenes": 125,
+  "replays": 318,
+  "framesInspected": 590,
+  "framesChecked": 590,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 498030723,
+  "assetBytes": 503025493,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 196,
-  "startupCompressedBytes": 442999423,
-  "startupDecodedRgbaBytes": 1225090456,
+  "startupAssets": 198,
+  "startupCompressedBytes": 447987323,
+  "startupDecodedRgbaBytes": 1237675160,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -117,6 +117,8 @@
     "egorian-excruciation-effects-v1.png",
     "egorian-excruciation-square-v1.png",
     "egorian-falco-manor-v1.png",
+    "egorian-feud-nobles-v1.png",
+    "egorian-feud-salon-v1.png",
     "egorian-fountain-stranger-v1.png",
     "egorian-fountain-v1.png",
     "egorian-guard-lane-v1.png",

@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const feud=window.EgorianFeud?.goal();
+ if(feud)return {text:feud,target:EgorianFeud.target(),targets:EgorianFeud.points()};
  const sting=window.EgorianSting?.goal();
  if(sting)return {text:sting,target:EgorianSting.target()};
  const efisio=window.EfisioArc?.goal();
