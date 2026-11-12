@@ -1,9 +1,9 @@
 {
-  "scripts": 89,
-  "scenes": 142,
-  "replays": 386,
-  "framesInspected": 619,
-  "framesChecked": 619,
+  "scripts": 90,
+  "scenes": 143,
+  "replays": 390,
+  "framesInspected": 620,
+  "framesChecked": 620,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 583654250,
+  "assetBytes": 587742633,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 233,
-  "startupCompressedBytes": 528523028,
-  "startupDecodedRgbaBytes": 1457885408,
+  "startupAssets": 235,
+  "startupCompressedBytes": 532605621,
+  "startupDecodedRgbaBytes": 1470470112,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -282,6 +282,8 @@
     "valor-fastness-summit-cast-v1.png",
     "valor-fastness-summit-v1.png",
     "valor-fastness-tower-base-v1.png",
+    "vyre-manticce-v1.png",
+    "vyre-wish-room-v1.png",
     "westcrown-brado-v1.png",
     "westcrown-quay-v1.png",
     "whisperwood-carriage-road-v1.png",

@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const vyre=window.VyreWish?.goal();
+ if(vyre)return {text:vyre,target:VyreWish.target()};
  const mansion=window.SethicMansion?.goal();
  if(mansion)return {text:mansion,target:SethicMansion.target()};
  const barn=window.BellflowerBarn?.goal();

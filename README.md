@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 386 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 390 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -317,3 +317,7 @@ Continue from Migos Street or select replay **371**. Follow the Bellflower lead,
 ### The assault on Sethic’s mansion
 
 Continue from the Bellflower barn or select replay **375**. Choose Sethic for the Crown’s pilgrimage, rescue Bob, and subdue Sethic alive. Replays **375–382** cover the mansion. See [the section notes](docs/sethic-mansion.md) for sources, adaptations and artwork.
+
+### Bob’s recovery in Vyre
+
+Continue after capturing Sethic or select replay **383**. Play as El Guapo, obtain Manticce’s Wish, and use it to heal Bob. Replays **383–386** cover the visit. See [the section notes](docs/vyre-wish.md) for sources and artwork.
