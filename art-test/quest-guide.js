@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const pezzack=window.Pezzack?.goal();
+ if(pezzack)return {text:pezzack,target:Pezzack.target()};
  const rachikan=window.Rachikan?.goal();
  if(rachikan)return {text:rachikan,target:Rachikan.target()};
  const ballerina=window.Ballerina?.goal();

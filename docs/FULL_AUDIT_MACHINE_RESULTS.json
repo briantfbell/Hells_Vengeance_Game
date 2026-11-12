@@ -1,7 +1,7 @@
 {
-  "scripts": 85,
-  "scenes": 135,
-  "replays": 364,
+  "scripts": 86,
+  "scenes": 137,
+  "replays": 369,
   "framesInspected": 612,
   "framesChecked": 612,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 553358624,
+  "assetBytes": 562322937,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 220,
-  "startupCompressedBytes": 498262022,
-  "startupDecodedRgbaBytes": 1376092992,
+  "startupAssets": 224,
+  "startupCompressedBytes": 507218060,
+  "startupDecodedRgbaBytes": 1401261128,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -212,6 +212,10 @@
     "pale-graveyard-v1.png",
     "pale-royals-v1.png",
     "pale-vokadus-v1.png",
+    "pezzack-blue-dragon-v1.png",
+    "pezzack-manse-ruined-v1.png",
+    "pezzack-manse-v1.png",
+    "pezzack-strix-flight-v1.png",
     "political-cast-v1.png",
     "rachikan-pirates-v1.png",
     "rachikan-ruins-v1.png",

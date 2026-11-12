@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 364 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 369 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -301,3 +301,7 @@ Continue from the Hinji arrest or select replay **353**. Sign on at Corentyn, ch
 ### Rachikan Ruins
 
 Continue after taking the coastal watch or select replay **357**. Land at Rachikan, scout the pirate storehouse, and break the operation. Replays **357–360** cover the raid and Draymus’s aftermath. See [the section notes](docs/rachikan.md) for sources and artwork.
+
+### The burning of the Pezzack manse
+
+Continue from Rachikan or select replay **361**. Witness Bruce’s attack, open the prisoners’ way out, and return to Egorian during the Strix raid. Replays **361–365** cover the visit. See [the section notes](docs/pezzack.md) for sources and artwork.

@@ -52,6 +52,9 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.pezzackComplete)rows.push('Pezzack · The company teleports to Egorian during the Strix assault.');
+  if(q.pezzackPrisonersFreed)rows.push('Pezzack · All prisoners escape the holding wing.');
+  if(q.pezzackManseBurned)rows.push('Pezzack · 18 Pharast, 4717. Bruce attacks in blue dragon form and the governor’s manse burns.');
   if(q.rachikanComplete)rows.push('Rachikan · Draymus stays behind with forty corpses.');
   if(q.rachikanRaidWon)rows.push('Rachikan · 15 Pharast, 4717. The pirate operation at the ruins is dismantled.');
   if(q.ballerinaBoarded)rows.push('Corentyn · 13 Pharast, 4717. The company signs on as guards aboard the Ballerina, bound for Pezzack.');
