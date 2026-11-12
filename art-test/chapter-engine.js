@@ -25,14 +25,14 @@ let introOpen=false,introIndex=0,briefingOpen=false,journeyOpen=false,journeyRes
 let ready=false,scene='street',lead='freya',units=[],trail=[],path=[],epoch=0,dialogResolve=null,dialogOpen=false,taskBusy=false,battle=null,last=0,showPaths=false,fx=[],flicker=[],lastPartyPaint=-1,quest={},hp={},uses={},potions=2,mendUses=2;
 const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h);},cell=(x,y)=>[Math.floor(x/T),Math.floor(y/T)],inside=(x,y,r)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;
 const delay=ms=>new Promise(r=>setTimeout(r,ms)),dice=n=>1+Math.floor(Math.random()*n);
-function dieMarkup(sides,value){const i=[4,6,8,10,20].indexOf(sides);return '<div class="die" aria-label="D'+sides+' rolled '+value+'"><div class="die-art"><canvas width="64" height="64" data-die="'+(i<0?4:i)+'" aria-hidden="true"></canvas><span class="die-number">'+value+'</span></div><small>D'+sides+' · '+value+'</small></div>';}
+function dieMarkup(sides,value){const i=[4,6,8,10,20].indexOf(sides);return '<div class="die" aria-label="D'+sides+' rolled '+value+'"><div class="die-art"><canvas width="64" height="64" data-die="'+(i<0?4:i)+'" aria-hidden="true"></canvas><span class="die-number">'+value+'</span></div><small aria-hidden="true">D'+sides+'</small></div>';}
 async function rollDice(label,sides,count=1,modifier=0,context='',fixed=null){
  const token=epoch,values=fixed||Array.from({length:count},()=>dice(sides)),total=values.reduce((a,b)=>a+b,modifier),panel=$('dice-panel');
- panel.hidden=false;panel.classList.add('rolling');$('dice-label').textContent=label;$('dice-result').textContent='Rolling…';
+ panel.hidden=false;panel.classList.add('rolling');panel.dataset.rollSize=values.length===1?'single':values.length===2?'pair':'pool';$('dice-label').textContent=label;$('dice-result').textContent='Rolling…';
  const paint=vals=>{$('dice-tray').innerHTML=vals.map(v=>dieMarkup(sides,v)).join('');window.PresentationPolish?.paintDice();};paint(values);
  let tick=0;const timer=reduce.matches?null:setInterval(()=>{if(token!==epoch){clearInterval(timer);return;}paint(values.map((v,i)=>(v+ ++tick+i)%sides+1));},70);
  await delay(reduce.matches?80:420);if(timer)clearInterval(timer);if(token!==epoch)throw CANCEL;
- paint(values);panel.classList.remove('rolling');$('dice-result').textContent=values.join(' + ')+(modifier?' '+(modifier>0?'+ ':'− ')+Math.abs(modifier):'')+' = '+total+(context?' · '+context:'');
+ paint(values);panel.classList.remove('rolling');$('dice-result').textContent=values.join(' + ')+(modifier?' '+(modifier>0?'+ ':'− ')+Math.abs(modifier):'')+' = '+total+(context?'\n'+context:'');
  await delay(reduce.matches?120:330);if(token!==epoch)throw CANCEL;return total;
 }
 async function storyRoll(label,face,modifier,outcome){return rollDice(label,20,1,modifier,outcome+' · Story roll',[face]);}
@@ -435,7 +435,7 @@ function commandCardSummary(action,id){
  const weapon=({freya:'Katana',jamal:'Daggers',jason:'Mace',draymus:'Dagger',guapo:'Rapier',reese:'Bow',naginata:'Naginata',lucerne:'Lucerne',kukri:'Kukri',mantis_blades:'Paired blades',scimitar:'Scimitar'})[inventory.equipped[id]]||WEAPONS[id];
  if(action==='attack'&&window.SouthRoad?.lance(id,battle?.kind))return 'Lance charge\n'+hit+' '+roll(SouthRoad.damageDice(id,battle.kind,stat.dmg));
  if(action==='attack')return stat.frostDice?'Sentry +1D6\n'+hit+' '+roll(stat.dmg):weapon+'\n'+hit+' '+roll(stat.dmg);
- if(action==='special'&&window.SouthRoad?.lance(id,battle?.kind))return 'Lance Challenge\n'+roll(SouthRoad.damageDice(id,battle.kind,skill.dmg))+' ['+left+'/'+skill.uses+']';
+ if(action==='special'&&window.SouthRoad?.lance(id,battle?.kind))return 'Challenge\n'+roll(SouthRoad.damageDice(id,battle.kind,skill.dmg))+' ['+left+'/'+skill.uses+']';
  if(action==='special'&&stat.frostDice)return 'Aim +1D6\n'+roll(skill.dmg)+' ['+left+'/'+skill.uses+']';
  if(action==='phase')return 'Tunic ['+Inventory.giftCharges(quest,id)+'/5]\nEvade attacks';
  if(action==='maximize')return 'Dragon ['+Inventory.giftCharges(quest,id)+'/3]\nFull damage';
@@ -494,7 +494,7 @@ function paintBattle(){
  if(!script&&quest.kantariaGiftsReceived&&actor.id==='jamal')commands.push(['phase','Phase']);
  if(!script&&quest.kantariaGiftsReceived&&actor.id==='jason'&&!quest.egorianJasonBack)commands.push(['maximize','Maximize']);
  $('actions').classList.toggle('has-aux',commands.length>4);
- commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=script?script.name+' · '+script.description:commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=script?.label||({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE',phase:'PHASE',maximize:'MAXIMIZE'})[action];subtitle.textContent=script?script.name:commandCardSummary(action,actor.id);b.append(title,subtitle);b.dataset.action=action;b.onfocus=()=>{if(battle.control.mode==='commands'){battle.control.index=i;paintCombatSelection();}};b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(!script&&action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed)||(action==='phase'&&!Inventory.giftCharges(quest,actor.id))||(action==='maximize'&&(!Inventory.giftCharges(quest,actor.id)||!remaining));b.onclick=()=>{if(battle.control.mode!=='commands'&&battle.control.action===action)performAction(action);else{battle.control.index=i;beginCombatChoice(action);}};$('actions').append(b);});
+ commands.forEach(([action,label],i)=>{const b=document.createElement('button');const remaining=Math.max(0,SPECIAL[actor.id].uses-uses[actor.id]);const detail=script?script.name+' · '+script.description:commandSummary(action,actor.id);const title=document.createElement('span'),subtitle=document.createElement('span');title.className='command-title';subtitle.className='command-subtitle';title.textContent=script?.label||({attack:'ATTACK',special:'SKILL',guard:'GUARD',potion:'POTION',mend:'MEND',smoke:'SMOKE',phase:'PHASE',maximize:'MAXIMIZE'})[action];subtitle.textContent=script?script.name:commandCardSummary(action,actor.id);if(script)subtitle.classList.add('scripted-command');b.append(title,subtitle);b.dataset.action=action;b.onfocus=()=>{if(battle.control.mode==='commands'){battle.control.index=i;paintCombatSelection();}};b.title=detail;b.setAttribute('aria-label',detail);b.disabled=battle.busy||(!script&&action==='special'&&uses[actor.id]>=SPECIAL[actor.id].uses)||(action==='potion'&&potions<=0)||(action==='mend'&&mendUses<=0)||(action==='smoke'&&quest.smokeUsed)||(action==='phase'&&!Inventory.giftCharges(quest,actor.id))||(action==='maximize'&&(!Inventory.giftCharges(quest,actor.id)||!remaining));b.onclick=()=>{if(battle.control.mode!=='commands'&&battle.control.action===action)performAction(action);else{battle.control.index=i;beginCombatChoice(action);}};$('actions').append(b);});
  paintParty();const buttons=combatButtons();if(buttons[battle.control.index]?.disabled)battle.control.index=Math.max(0,buttons.findIndex(b=>!b.disabled));paintCombatSelection();
 }
 async function performAction(action){try{await performActionImpl(action);}catch(e){if(e!==CANCEL){console.error(e);if(battle){battle.busy=false;paintBattle();}}}}
@@ -602,9 +602,10 @@ async function enemyStrike(enemy,token){
    GameAudio.effect('hit');
    flash(target,'−'+value,'#ee9a88');
   });
-  const armorLog=absorbed?' Zara Geitta absorbs '+absorbed+'.':'';
-  const guardLog=target.guard?' Guard absorbs '+(raw-absorbed-value)+'.':'';
-  log(enemy.name+' uses '+intent.move+' on '+NAMES[target.id]+': '+value+' damage.'+armorLog+guardLog);
+  const protection=[];
+  if(absorbed)protection.push('Zara Geitta −'+absorbed);
+  if(target.guard)protection.push('Guard −'+(raw-absorbed-value));
+  log([enemy.name+' · '+intent.move,NAMES[target.id]+': −'+value+' HP',protection.join(' · ')].filter(Boolean).join('\n'));
  }else{
   await animateAction(enemy,target,intent.effect||'attack',false);
   flash(target,'MISS','#bfc1d1');

@@ -2,4 +2,15 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const {create,cases}=require('../scripts/combat-balance.cjs'),source=fs.readFileSync('art-test/chapter-engine.js','utf8');
 function fixture(){const w=create(cases[0],1001);vm.runInContext(source.slice(source.indexOf('const signed='),source.indexOf('function combatButtons()')),w);return w;}
 test('every command subtitle fits two explicit lines in a narrow card with the real monospace advance',()=>{const w=fixture();for(const id of w.CORE){for(const ally of w.CORE){w.battle.ally=ally;for(const action of ['attack','special','guard','potion','mend','smoke']){const lines=w.commandCardSummary(action,id).split('\n');assert.equal(lines.length,2);for(const line of lines)assert(line.length*7.5<=104,`${id} ${action}: ${line}`);}}}for(const [id,weapon]of [['freya','naginata'],['freya','scimitar'],['jason','lucerne'],['jamal','mantis_blades']]){w.inventory.equipped[id]=weapon;for(const line of w.commandCardSummary('attack',id).split('\n'))assert(line.length*7.5<=104,line);}});
+test('die captions show the die type once and preserve the spoken result',()=>{
+ const w=fixture();
+ vm.runInContext(source.slice(source.indexOf('function dieMarkup('),source.indexOf('async function rollDice(')),w);
+ for(const [sides,result] of [[20,19],[10,8],[6,6]]){
+  const html=w.dieMarkup(sides,result);
+  assert(html.includes('aria-label="D'+sides+' rolled '+result+'"'));
+  assert(html.includes('<small aria-hidden="true">D'+sides+'</small>'));
+  assert(html.includes('class="die-number">'+result+'</span>'));
+ }
+});
+
 test('spell outcomes retain caster, target, damage, remaining uses and Spectral Hand in compact rows',()=>{const w=fixture();w.battle.kind='armory_heist';const skill={name:'Shocking Grasp',uses:4};w.uses.draymus=1;const text=w.combatOutcome({id:'draymus'},{name:'Dent Gramel'},skill,6,14,4);assert(text.includes('Draymus casts Shocking Grasp'));assert(text.includes('Dent Gramel: −6 HP'));assert(text.includes('Spectral Hand · [3/4] uses'));assert.equal(text.split('\n').length,3);for(const line of text.split('\n'))assert(line.length*8.25<=264);const miss=w.combatOutcome({id:'draymus'},{name:'Dent Gramel'},skill,null,1,4);assert(miss.includes('miss'));assert(miss.includes('D20 1 +4'));});

@@ -6,18 +6,17 @@ test('guardian and wereboar telegraph alternating heavy strikes before the party
 test('intent remains fixed during a round, defeated enemies have no intent',()=>{const e={id:'viggo',hp:34},hp={freya:44,jason:37,jamal:35};T.plan([e],units,hp,stats,1);const target=e.intent.target;hp[target]=0;assert.equal(e.intent.target,target);T.plan([e],units,hp,stats,2);assert.notEqual(e.intent.target,target);e.hp=0;T.plan([e],units,hp,stats,3);assert.equal(e.intent,null);});
 test('Guard halves landed damage, rounds down, and retains at least one damage',()=>{assert.equal(T.damage(11,true),5);assert.equal(T.damage(1,true),1);assert.equal(T.damage(11,false),11);});
 test('enemy execution honors the announced target and applies Guard after heavy damage',async()=>{
- const source=fs.readFileSync(path.join(__dirname,'../art-test/chapter-engine.js'),'utf8');const h={window:null,EnemyTactics:T,epoch:1,battle:{smoke:0,round:1},units:[{id:'freya',guard:true},{id:'jason',guard:false}],hp:{freya:44,jason:37},STATS:{freya:{},jason:{},ovinnik:{atk:4,dmg:[1,6,1]}},NAMES:{freya:'Freya',jason:'Jason'},combatAC:()=>17,rollDice:async()=>24,damage:async()=>8,animateAction:async(_a,_t,_k,_hit,impact)=>impact?.(),flash:()=>{},GameAudio:{effect:()=>{}},paintParty:()=>{},delay:async()=>{},log:text=>h.last=text};h.window=h;vm.createContext(h);vm.runInContext(source.slice(source.indexOf('async function enemyStrike('),source.indexOf('async function fail(')),h);const enemy={id:'ovinnik',name:'Guardian',intent:{target:'freya',move:'Heavy claw',extra:3}};await h.enemyStrike(enemy,1);assert.equal(h.hp.freya,39);assert.equal(h.hp.jason,37);assert(h.last.includes('Guard absorbs 6'));
+ const source=fs.readFileSync(path.join(__dirname,'../art-test/chapter-engine.js'),'utf8');const h={window:null,EnemyTactics:T,epoch:1,battle:{smoke:0,round:1},units:[{id:'freya',guard:true},{id:'jason',guard:false}],hp:{freya:44,jason:37},STATS:{freya:{},jason:{},ovinnik:{atk:4,dmg:[1,6,1]}},NAMES:{freya:'Freya',jason:'Jason'},combatAC:()=>17,rollDice:async()=>24,damage:async()=>8,animateAction:async(_a,_t,_k,_hit,impact)=>impact?.(),flash:()=>{},GameAudio:{effect:()=>{}},paintParty:()=>{},delay:async()=>{},log:text=>h.last=text};h.window=h;vm.createContext(h);vm.runInContext(source.slice(source.indexOf('async function enemyStrike('),source.indexOf('async function fail(')),h);const enemy={id:'ovinnik',name:'Guardian',intent:{target:'freya',move:'Heavy claw',extra:3}};await h.enemyStrike(enemy,1);assert.equal(h.hp.freya,39);assert.equal(h.hp.jason,37);assert(h.last.includes('Guard −6'));
  h.battle.round++;
  h.STATS.freya.physicalDR=3;
  await h.enemyStrike(enemy,1);
  assert.equal(h.hp.freya,35);
- assert(h.last.includes('Zara Geitta absorbs 3'));
- assert(h.last.includes('Guard absorbs 4'));
+ assert.equal(h.last,'Guardian · Heavy claw\nFreya: −4 HP\nZara Geitta −3 · Guard −4');
  h.battle.round++;
  enemy.intent.physical=false;
  await h.enemyStrike(enemy,1);
  assert.equal(h.hp.freya,30);
- assert(!h.last.includes('Zara Geitta absorbs'));
+ assert(!h.last.includes('Zara Geitta'));
  h.battle.round++;h.hp.freya=0;h.rollDice=async()=>{throw Error('Do not retarget a fallen intended target');};await h.enemyStrike(enemy,1);assert(h.last.includes('intended target is down'));});
 
 test('guard pairs announce the same target, and completed responses are visibly marked',()=>{

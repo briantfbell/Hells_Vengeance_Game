@@ -29,7 +29,16 @@ body.is-combat #dialog{z-index:14}
 .command-title{font-size:1.72cqw;line-height:1.1}
 .command-subtitle{font-size:1.4cqw;line-height:1.25}
 #actions button{padding:.3cqw .6cqw;border-radius:0;gap:.2cqw}
-#dice-panel,body.is-combat #dice-panel{width:30.9375cqw;height:16.25cqw;left:1.5%;right:auto;top:2%;font:1.4cqw/1.35 var(--game-font);box-sizing:border-box;overflow:hidden}
+#dice-panel,body.is-combat #dice-panel{width:30.9375cqw;height:16.25cqw;left:1.5%;right:auto;top:2%;font:1.4cqw/1.35 var(--game-font);box-sizing:border-box;overflow:hidden;padding:.8cqw;display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:auto 1fr;gap:.45cqw}
+#dice-panel[hidden]{display:none}
+#dice-label,#dice-result{grid-column:1;font-size:inherit;margin:0;white-space:pre-line;overflow-wrap:break-word}
+#dice-tray,body.is-combat #dice-tray{--roll-size:6.875cqw;--roll-columns:2;grid-column:2;grid-row:1/3;display:grid;grid-template-columns:repeat(var(--roll-columns),var(--roll-size));align-self:center;gap:.4cqw;max-width:none}
+#dice-panel[data-roll-size=single] #dice-tray{--roll-columns:1}
+#dice-panel[data-roll-size=pool] #dice-tray{--roll-size:5.25cqw}
+#dice-tray .die{width:var(--roll-size)}
+#dice-tray .die-art{width:var(--roll-size);height:var(--roll-size)}
+#dice-tray .die small{white-space:nowrap;margin-top:.2cqw}
+#dice-panel[data-roll-size=pool] .die-number{font-size:1.95cqw}
 .die{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .die-art{width:6.5cqw;height:6.5cqw;position:relative;background-image:url('dice-atlas-v1.png');background-size:500% 100%;image-rendering:pixelated}
 .die-number{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff0c5;font:2.3cqw var(--game-font);text-shadow:1px 1px #180e13,-1px -1px #180e13;transform:translateY(.3cqw)}
@@ -54,6 +63,7 @@ body.is-combat #dialog{z-index:14}
 #actions button{align-items:stretch;gap:0;padding:.3125cqw .625cqw}
 .command-title{font-size:1.71875cqw;line-height:1.875cqw;flex:none}
 .command-subtitle{font-size:1.5625cqw;line-height:1.5625cqw;white-space:pre;word-break:normal;overflow-wrap:normal;flex:none}
+.command-subtitle.scripted-command{white-space:normal}
 #battle-message{display:block;font-size:1.71875cqw;line-height:2.03125cqw;white-space:normal;word-break:normal;overflow-wrap:normal;hyphens:none;-webkit-line-clamp:unset}
 .battle-dispatch{padding:.625cqw .9375cqw;grid-template-rows:62% 38%}
 #combat-log{font-size:1.40625cqw;line-height:1.5625cqw}
