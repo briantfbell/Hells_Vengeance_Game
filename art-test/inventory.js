@@ -44,6 +44,7 @@ window.Inventory=(()=>{
  if(q.zaraGeitta)result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
  else if(q.kantariaGiftsReceived)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});
  if(q.egorianChairBought)result.push({id:'antique_wheelchair',name:'Antique wheelchair',kind:'quest',description:'Draymus uses the chair for his disguise. Joe Kek pushes it.'});
+ if(q.senaraTalismanRecovered)result.push({id:'senara_infernal_talisman',name:'Infernal Talisman',kind:'quest',description:'Fex’s talisman, recovered from the Black Daggers beneath Senara.'});
  if(q.senaraOrders)result.push({id:'senara_ritual_list',name:'Fex’s ritual list',kind:'quest',description:'Known entries include Fex’s Infernal Talisman, four unicorn horns, and angel hearts. Razelago says the ritual will close an uncontrolled portal in the Whisperwood.'});
  return result;
  }

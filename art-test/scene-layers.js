@@ -17,7 +17,38 @@ function foreground(g,image,{width=640,height=400,contain=false}={}){
  g.drawImage(image,Math.round((width-w)/2),Math.round((height-h)/2),w,h);
  g.restore();
 }
-function draw(g,map,image,t,options={}){background(g,map,t,options);if(map.openGatePatch&&art.longacre_jail){
+function channelPath(g,channels,width,height){
+ for(const channel of channels){
+  channel.forEach(([x,y],i)=>g[i?'lineTo':'moveTo'](x*width/640,y*height/400));
+  g.closePath();
+ }
+}
+function drawWaterChannels(g,map,image,t,options){
+ const {width=640,height=400,reduced=false}=options,layer={...options,contain:map.contain};
+ g.save();
+ g.beginPath();
+ channelPath(g,map.waterChannels,width,height);
+ g.clip();
+ foreground(g,image,layer);
+ if(!reduced){
+  g.scale(width/640,height/400);
+  for(let i=0;i<42;i++){
+   const x=45+(i*97)%550,y=90+(i*29+Math.floor(t*12))%260;
+   g.globalAlpha=(.07+.1*(i%4)/3)*(.6+.4*Math.sin(t*1.8+i));
+   g.fillStyle=i%3?'#8bbca5':'#b6d8ba';
+   g.fillRect(x,y,4+i%8,1);
+  }
+ }
+ g.restore();
+ g.save();
+ g.beginPath();
+ g.rect(0,0,width,height);
+ channelPath(g,map.waterChannels,width,height);
+ g.clip('evenodd');
+ foreground(g,image,layer);
+ g.restore();
+}
+function draw(g,map,image,t,options={}){background(g,map,t,options);if(map.waterChannels){drawWaterChannels(g,map,image,t,options);return;}if(map.openGatePatch&&art.longacre_jail){
  foreground(g,art.longacre_jail,options);g.save();const sx=(options.width||640)/1586,sy=(options.height||400)/992;
  const door=[[415,235],[430,211],[456,190],[488,176],[519,182],[544,197],[567,221],[584,245],[584,365],[415,393]];
  g.beginPath();door.forEach(([x,y],i)=>i?g.lineTo(x*sx,y*sy):g.moveTo(x*sx,y*sy));g.closePath();g.clip();foreground(g,image,options);g.restore();

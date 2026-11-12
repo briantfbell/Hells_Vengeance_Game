@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 202 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 208 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -177,3 +177,7 @@ Continue after Oppian’s excruciation or select replay **189**. Hear the Asmode
 ## The reception and orphanage
 
 Continue from the empty coffer at Fex’s residence or select replay **196**. Welcome the garrison guests as El Guapo, then investigate the orphanage as Draymus and Jason. Replays **196–202** cover the reconnaissance. See [the section audit and artwork notes](docs/senara-cover.md).
+
+### The Black Daggers
+
+Continue from Fex’s residence after the orphanage reconnaissance or select replay **203**. Follow the sewers, scout the Black Daggers with J’Mal, and use Draymus’s two spells to force a surrender. Replays **203–208** cover the approach, ambush and terms. See [the section notes](docs/senara-daggers.md) for the campaign sources, artwork and verification.

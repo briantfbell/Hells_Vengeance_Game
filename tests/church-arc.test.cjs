@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 202 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,202);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 208 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,208);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -430,4 +430,49 @@ test('Senara reconnaissance allows both entrances and preserves the sewer lead',
  assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(finished)).quest.senaraOrphanageComplete,true);
  finished.quest.senaraWitnessesSeen=false;
  assert.throws(()=>w.SaveFiles.validate(finished),/Invalid Senara reconnaissance sequence/);
+});
+
+test('Black Daggers route preserves the recorded spell order, surrender and talisman through portable saves',async()=>{
+ const w=world();
+ const section=w.replaySections().find(s=>s.id==='senara-sewer-lead');
+ Object.assign(w,{scene:section.scene,quest:structuredClone(section.quest),DIALOGUE_FACE_CROPS:{},
+  reduce:{matches:true},canvas:{focus(){}},$:()=>({}),delay:async()=>{},
+  setScene:(id)=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
+  run:async fn=>fn(),livingEnemy:()=>w.battle.enemies[0]});
+ w.scenes[section.scene].points=[];
+ vm.runInContext(read('senara-daggers.js'),w);
+ w.SenaraDaggers.install();
+ const step=async id=>assert.equal(await w.SenaraDaggers.interact(id),true,id);
+ await step('senaraSewers');
+ assert.deepEqual(Array.from(w.SenaraDaggers.roster()),['draymus']);
+ assert.equal(await w.SenaraDaggers.interact('sewerGuild'),false);
+ await step('sewerRendezvous');
+ assert.deepEqual(Array.from(w.SenaraDaggers.roster()),['draymus','jamal']);
+ await step('sewerGuild');
+ assert.equal(await w.SenaraDaggers.interact('daggersStrike'),false);
+ await step('daggersScout');
+ await step('daggersStrike');
+ assert.equal(w.battle.scripted,true);
+ const events=[];
+ w.animateAction=async()=>events.push(w.SenaraDaggers.command().name);
+ w.storyRoll=async(label,face)=>events.push(label+' '+face);
+ w.log=msg=>events.push(msg.split('\n')[1]);
+ await w.SenaraDaggers.castSpell('attack',{id:'draymus'});
+ assert.deepEqual(events,[]);
+ await w.SenaraDaggers.castSpell('special',{id:'draymus'});
+ assert.equal(w.quest.senaraGuildSurrendered,undefined);
+ assert.equal(w.SenaraDaggers.command().name,'Black Tentacles');
+ await w.SenaraDaggers.castSpell('special',{id:'draymus'});
+ assert.deepEqual(events,['Glitterdust','Golden dust blinds the guild.','Draymus · Initiative 17','Black Tentacles','The guild drops its weapons.']);
+ assert.equal(w.battle,null);
+ assert.equal(w.quest.senaraGuildSurrendered,true);
+ assert.equal(w.SenaraDaggers.target().id,'daggersTerms');
+ await step('daggersTerms');
+ assert.equal(w.scene,section.scene);
+ assert.equal(w.SenaraDaggers.points().length,0);
+ const finished=checkpoint(w,{...section,quest:w.quest});
+ const restored=w.SaveFiles.decode(w.SaveFiles.encode(finished));
+ assert.equal(restored.quest.senaraTalismanRecovered,true);
+ const forged=structuredClone(finished);forged.quest.senaraGuildSurrendered=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Black Daggers sequence/);
 });

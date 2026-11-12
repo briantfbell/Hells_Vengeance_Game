@@ -1,0 +1,17 @@
+# The Black Daggers beneath Senara
+
+The campaign blog’s “Charges Dropped” (P028) establishes the sewer approach, J’Mal scouting with Draymus, Glitterdust in the surprise round, Draymus winning initiative, Black Tentacles, surrender, return of Fex’s talisman, and regular intelligence reports on the rebels for Thrune. The timeline calls the guild the Blood Daggers. The game uses Black Daggers, the name in the blog accounts.
+
+The surviving account does not identify or count the guild members in the cave. The spokesperson and two sentries are game roles. Dialogue, the exact initiative die face, and Freya hearing the terms are adaptation choices. The encounter ends in surrender and carries over the party’s existing HP, items and spell resources. Replays 203–208 cover the section, including a checkpoint before the ambush.
+
+## Artwork
+
+Built-in ImageGen generated the following production assets. The sewer’s artwork is rendered in two layers, with moving glints clipped to the water beneath the static stone. Both maps use the existing lantern flicker.
+
+- `art-test/senara-sewers-v1.png` — Wide landscape 8:5 orthographic overhead dark-fantasy 32-bit pixel-art RPG environment, crisp hard pixels. Senara medieval sewer under a besieged river town. Playable continuous broad dry gray-green stone walkway starts in bottom center, runs all the way north through center into black arch at top center. Visible animated-water-ready green channels flank the central dry path to left and right. Empty center for sprites, barrels and amber caged lamps at edges, grime and brick wall, subdued moody dark palette, readable clear route, no text or characters.
+- `art-test/senara-daggers-hideout-v1.png` — Wide landscape 8:5 orthographic overhead 32-bit detailed pixel art for a dark fantasy GBA RPG map. Black Daggers hideout in a cave below a medieval city, old masonry opening into a broad mostly empty continuous slate floor from centered passage at bottom through all middle of map to top. On edges of cave weapon racks, crate stacks, warm torch sconces, stolen ledgers. Open stone floor for characters, modest muted warm amber lighting with deep charcoal and russet palette. Sharp pixels, readable floor, no text, no people.
+- `art-test/senara-daggers-cast-v1.png` — Create a real transparent RGBA PNG game sprite atlas, alpha 0 outside subjects, no ground or shadows, no background of any color. Dark fantasy pixel art sprites with actual crisp small squared pixels. Three independent full-body characters with generous transparent space between them, one horizontal row, full feet visible. At left a practical middle-aged thief spokesperson in charcoal leather vest and oxblood scarf, open hand. In center a young thief scout with weathered brown hood and dagger, at right a heavy shaved-head lookout in dark blue leather and cudgel. Each standing front 3/4 looking left. Natural human proportions. All from same era and facing. No backdrop or light bloom, no white, no paper, no antialiasing, no text. Export as actual transparent cutouts.
+
+## Verification
+
+125 tests passed. The structural audit checked 59 scripts, 99 scenes, 208 replay checkpoints, 554 sprite frames and the existence of referenced assets. The browser playthrough resumed the orphanage save, walked both maps, used Arrow Right, Enter and E in combat, negotiated the surrender and reloaded the final residence checkpoint. The game canvas stayed 640 × 480 in combat. The saved state included the talisman and J’Mal’s existing 14 HP. The browser reported no errors.

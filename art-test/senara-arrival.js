@@ -44,7 +44,7 @@ window.SenaraArrival=(()=>{
   art[court]=art.egorian_court;
  }
  function mapImage(){return scene===court||Object.hasOwn(layouts,scene)?art[scene]:null;}
- function roster(){return scene===court?['freya']:Object.hasOwn(layouts,scene)?visitors:null;}
+ function roster(){return scene===court?['freya']:Object.hasOwn(layouts,scene)&&!quest.senaraTalismanRecovered?visitors:null;}
  function npcs(){
   if(scene===court){
    if(!quest.egorianChargesDropped)return [{id:'egorian_magistrate',x:320,y:98,height:30}];
