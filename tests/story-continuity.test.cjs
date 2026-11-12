@@ -3,6 +3,35 @@ const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'
 function world(){const nodes={},w={quest:{},scene:'ash_house',lead:'freya',OPENING_ROSTER:['freya','jamal','jason','draymus','guapo'],CORE:['freya','jamal','jason','draymus','guapo','reese'],NAMES:{},STATS:{},hp:{},uses:{},units:[],potions:2,mendUses:2,inventory:{equipped:{}},transcript:[],journeys:[],travels:[],saved:0,performance:{now:()=>0},structuredClone};w.window=w;w.$=id=>nodes[id]??={textContent:'',replaceChildren:()=>{}};for(const id of w.CORE)w.STATS[id]={hp:20};w.say=async(name,text,choices)=>{w.transcript.push({name,text,choices});return 0;};w.journeyCard=async(title,text,commit)=>{w.journeys.push({title,text});commit?.();};w.travel=async(scene)=>{w.scene=scene;w.travels.push(scene);};w.save=()=>w.saved++;for(const name of ['paintParty','updateObjective','seedParty','applyProgression','awardSermonMilestone'])w[name]=()=>{};w.point=id=>({id,x:0,y:0});w.visiblePoints=()=>[];w.partyRoster=()=>w.quest.activeRoster||w.CORE;w.soloParty=()=>false;w.document={querySelector:()=>null};w.battle=null;w.planEnemyRound=()=>{};vm.createContext(w);vm.runInContext(read('enemy-tactics.js'),w);for(const name of ['next-chapter.js','next-arc.js','political-movement.js'])vm.runInContext(read(name),w);w.NextChapter.syncRoster=()=>{};return w;}
 test('party authors the restrictions, and all four notices are counted',async()=>{const w=world();w.quest={chapter3:true,sermonDispersed:true};await w.NextArc.interact('razelago');assert(w.transcript.some(x=>x.text.includes('carte blanche')));assert(w.transcript.some(x=>x.text.includes('six people privately or twelve publicly')));assert(w.transcript.some(x=>x.text.includes('party’s choices')));w.PoliticalMovement.goal=()=>null;w.DebtsRumors={goal:()=>null};w.LastStand={goal:()=>null};vm.runInContext(read('quest-guide.js'),w);w.quest.noticePosted=w.quest.tavernPosted=w.quest.gatePosted=true;w.scene='longacre_jail';assert.equal(w.QuestGuide.current().text,'Post the public notices [3/4].');assert.equal(w.QuestGuide.current().target.id,'jailDecree');await w.NextArc.interact('jailDecree');assert(w.quest.jailPosted);assert(w.quest.rhonaDismissed);assert(w.transcript.some(x=>x.text.includes('fourth copy')));assert(w.transcript.some(x=>x.text.includes('Other deputies remain')));assert.equal(w.QuestGuide.current().text,'Leave the jail courtyard.');});
 test('completed payroll cannot be obtained twice',async()=>{const w=world();w.scene='tannery';w.quest={ownerDeal:true};await w.NextChapter.interact('payroll');await w.NextChapter.interact('payroll');assert.equal(w.transcript.filter(x=>x.text.includes('Obtained:')).length,1);});
+test('tannery scout stages the delivery, misses and return through the gate',async()=>{
+ const w=world();
+ w.scene='tannery';
+ w.epoch=1;
+ w.reduce={matches:false};
+ w.$('character').options=[];
+ const rolls=[],phases=[],spawns=[];
+ let time=0;
+ w.performance.now=()=>time;
+ w.storyRoll=async(label,face)=>rolls.push([label,face]);
+ w.seedParty=(x,y)=>spawns.push([x,y]);
+ w.delay=async duration=>{
+  time+=duration*.75;
+  const actors=w.NextChapter.npcs();
+  phases.push({farmer:actors.find(actor=>actor.delivering)?.y,owner:actors.some(actor=>actor.id==='owner'),dog:actors.find(actor=>actor.id==='dog').x});
+  time+=duration*.25;
+ };
+ assert.deepEqual(Array.from(w.NextChapter.npcs(),actor=>actor.id),['dog']);
+ await w.NextChapter.interact('scout');
+ assert.deepEqual(rolls,[['J’Mal · Stealth',14],['J’Mal · Sap ambush',1],['Tannery owner · Crossbow',1]]);
+ const [delivery,dump,escape,sap,bolt]=phases;
+ assert(delivery.farmer>dump.farmer&&escape.farmer>delivery.farmer);
+ assert([delivery,dump,escape].every(phase=>!phase.owner));
+ assert(sap.owner&&bolt.owner&&sap.dog>bolt.dog);
+ assert(w.quest.scouted);
+ assert.deepEqual(spawns,[[328,280]]);
+ assert.deepEqual(Array.from(w.NextChapter.npcs(),actor=>actor.id),['owner','dog']);
+ assert.equal(w.NextChapter.target().id,'owner');
+});
 test('Remesiana purchases and Cimri’s assignment gate the road to the tannery',async()=>{
  const w=world();
  vm.runInContext(read('inventory.js'),w);

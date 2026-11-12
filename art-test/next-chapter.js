@@ -5,7 +5,10 @@ window.NextChapter=(()=>{
  const mildred='western_star_mildred',mildredArt='western-star-mildred-v1.png';
  const pursuingShip='western-star-pursuing-sloop-v1.png',approachDuration=1450;
  const shipFrame={x:105,y:48,w:1347,h:914};
- let approach=null;
+ let approach=null,tanneryBeat=null;
+ const barrowArt='tannery-wheelbarrow-v1.png';
+ const scoutTiming={delivery:1150,dump:650,escape:950,sap:520,bolt:460};
+ const vat=[235,198],farmerGate=[328,344],farmerVat=[302,224],dogYard=[440,248],scoutYard=[388,248];
  const bareHands={name:'Unarmed',move:'Unarmed strike',dmg:[1,3,2]};
  const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
  const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
@@ -68,7 +71,8 @@ window.NextChapter=(()=>{
    ...Object.entries(stage).map(async([id,s])=>{art[id]=await loader(s.image);}),
    (async()=>{art.nextNPCs=await loader('longacre-cast.png');})(),
    (async()=>{art[mildredArt]=await loader(mildredArt);})(),
-   (async()=>{art[pursuingShip]=await loader(pursuingShip);})()
+   (async()=>{art[pursuingShip]=await loader(pursuingShip);})(),
+   (async()=>{art[barrowArt]=await loader(barrowArt);})()
   ]);
  }
  function drawPursuit(g,t,{reduced=false}={}){
@@ -102,11 +106,85 @@ window.NextChapter=(()=>{
   ...(!quest.voyagePrizeTurnedIn?[{id:captain,x:472,y:208,height:58,pose:'prone'}]:[])
  ];
  if(scene==='remesiana')return [{id:'farmer',x:200,y:176},{id:'cimri',x:424,y:184}];
- if(scene==='tannery')return [{id:'owner',x:488,y:176},{id:'dog',x:440,y:248},...(quest.scouted?[]:[{id:'farmer',x:288,y:288}])];
+ if(scene==='tannery'){
+  const beat=activeTanneryBeat(),progress=beat?tanneryProgress(beat):0;
+  const dog={id:'dog',x:dogYard[0]+(beat?.phase==='sap'?Math.round(Math.sin(progress*Math.PI)*11):0),y:dogYard[1]};
+  const owner={id:'owner',x:488,y:176};
+  if(quest.scouted)return [owner,dog];
+  if(!beat)return [dog];
+  if(beat.phase==='sap'||beat.phase==='bolt')return [owner,dog];
+  const farmerPosition=beat.phase==='delivery'?between(farmerGate,farmerVat,progress):
+   beat.phase==='escape'?between(farmerVat,farmerGate,progress):farmerVat;
+  return [dog,{id:'farmer',x:farmerPosition[0],y:farmerPosition[1],delivering:true}];
+ }
  if(scene==='ash_house')return [{id:'razelago',x:328,y:104},{id:'krenshar',x:240,y:280},{id:'cimri',x:440,y:248}];
  return quest.spiritCalmed?[{id:'spirit',x:328,y:184}]:[];}
- function drawNPC(u){if(window.LORE_CAST?.[u.id]){const m=LORE_CAST[u.id],f=m.frame,height=u.id==='krenshar'?35:55,scale=height/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,art[m.source],f,u.x-f.w*scale/2,u.y-height,f.w*scale,height);return true;}if(u.id==='razelago'){ctx.save();ctx.globalAlpha=.4;ctx.fillStyle='#171a22';ctx.beginPath();ctx.ellipse(u.x,u.y-35,9,12,0,0,Math.PI*2);ctx.fill();ctx.fillRect(u.x-14,u.y-25,28,24);ctx.restore();return true;}
+ function drawNPC(u){if(u.delivering)drawBarrow(ctx,u);if(window.LORE_CAST?.[u.id]){const m=LORE_CAST[u.id],f=m.frame,height=u.id==='krenshar'?35:55,scale=height/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,art[m.source],f,u.x-f.w*scale/2,u.y-height,f.w*scale,height);return true;}if(u.id==='razelago'){ctx.save();ctx.globalAlpha=.4;ctx.fillStyle='#171a22';ctx.beginPath();ctx.ellipse(u.x,u.y-35,9,12,0,0,Math.PI*2);ctx.fill();ctx.fillRect(u.x-14,u.y-25,28,24);ctx.restore();return true;}
  const f=window.NEXT_NPCS?.[u.id];if(!f)return false;const height=['dog','krenshar'].includes(u.id)?35:55,scale=height/f.h;ctx.drawImage(art.nextNPCs,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),u.y-height,Math.round(f.w*scale),height);return true;}
+ function activeTanneryBeat(){return scene==='tannery'&&tanneryBeat&&tanneryBeat.epoch===epoch?tanneryBeat:null;}
+ function tanneryProgress(beat){return reduce.matches?1:Math.min(1,(performance.now()-beat.at)/scoutTiming[beat.phase]);}
+ function between(from,to,amount){return from.map((value,index)=>Math.round(value+(to[index]-value)*amount));}
+ async function playTanneryBeat(phase){
+  const token=epoch;
+  tanneryBeat={phase,at:performance.now(),epoch:token};
+  await delay(reduce.matches?160:scoutTiming[phase]);
+  return token===epoch;
+ }
+ function drawBarrow(g,farmer){
+  const image=art[barrowArt],beat=activeTanneryBeat();
+  if(!image||!beat)return;
+  const tilt=beat.phase==='dump'?(reduce.matches?.72:Math.sin(tanneryProgress(beat)*Math.PI)*.72):0;
+  g.save();
+  g.translate(farmer.x-19,farmer.y+3);
+  g.rotate(tilt);
+  g.drawImage(image,-21,-17,42,20);
+  g.restore();
+ }
+ function drawTanneryScout(g,unit){
+  const beat=activeTanneryBeat();
+  if(unit.id!=='jamal'||!beat||quest.scouted)return false;
+  const progress=tanneryProgress(beat),submerged=[vat[0],vat[1]+46];
+  let pose=scoutYard,dir='right',hidden=false,moving=false;
+  if(beat.phase==='delivery'){
+   pose=between([unit.x,unit.y],submerged,Math.min(1,progress*1.65));
+   hidden=progress>=.6;
+   moving=!hidden;
+   dir='up';
+  }else if(beat.phase==='dump'){
+   pose=submerged;
+   hidden=true;
+  }else if(beat.phase==='escape'){
+   pose=between(submerged,scoutYard,progress);
+   moving=progress<1;
+  }else if(beat.phase==='sap'){
+   pose=[scoutYard[0]+Math.round(Math.sin(progress*Math.PI)*24),scoutYard[1]];
+  }
+  g.save();
+  if(hidden){g.beginPath();g.rect(vat[0]-16,vat[1]-12,32,23);g.clip();}
+  drawActor(g,{...unit,x:pose[0],y:pose[1],dir,step:moving,anim:progress*.9});
+  g.restore();
+  return true;
+ }
+ function drawTanneryEffects(g){
+  const beat=activeTanneryBeat();
+  if(!beat||reduce.matches)return;
+  const progress=tanneryProgress(beat);
+  if(progress>=1)return;
+  g.save();
+  if(beat.phase==='dump'){
+   for(let i=0;i<9;i++){
+    const p=Math.max(0,Math.min(1,(progress-.14-i*.023)/.58));
+    if(p===0||p===1)continue;
+    const x=281-(38+i*2)*p,y=211-15*Math.sin(p*Math.PI)+8*p+(i%3)*2;
+    g.fillStyle=i%3?'#876141':'#c1a275';
+    g.fillRect(Math.round(x),Math.round(y),3+i%2,2);
+   }
+  }else if(beat.phase==='bolt'){
+   const [x,y]=between([488,143],[405,282],progress);
+   g.translate(x,y);g.rotate(-1.03);g.fillStyle='#d8c3a0';g.fillRect(-6,0,12,2);
+  }
+  g.restore();
+ }
  function rosterOverride(){
   return scene===pezzack&&quest.voyagePezzackDawn?['guapo','jamal']:null;
  }
@@ -241,7 +319,27 @@ window.NextChapter=(()=>{
  }
  if(id==='guapoDeparture'){if(quest.guapoAway)await say('The Dock','El Guapo’s ship is already beyond the harbor. His place in the party will remain open for his later return.');else{await say('guapo','I’m taking another ship from here. You go on to Longacre. We’ll meet again.');let next=lead;if(lead==='guapo'){const choices=OPENING_ROSTER.filter(x=>x!=='guapo');const pick=await say('A change of viewpoint','El Guapo leaves the group here. Choose who you will follow through Longacre until his return.',choices.map(x=>'[Follow '+NAMES[x]+']'));next=choices[pick];}quest.originalLead=quest.originalLead||lead;quest.guapoAway=true;quest.activeRoster=OPENING_ROSTER.filter(x=>x!=='guapo');lead=next;seedParty(520,280);syncRoster();await say('Chronicle','10 Neth, 4716. El Guapo takes another ship from Remesiana. Freya, Jason, Draymus, and J’Mal continue toward Longacre with Cimri.');}}
  if(id==='road'){if(!quest.metCimri||!quest.supplied||!quest.guapoAway){await say('cimri','Finish your business at the market and dock first. We ride together.');}else{await travel('tannery',136,280);await say('cimri','Razelago has a test for us: steal the Louslik Tannery payroll. Bring him the box and he’ll know you can handle his work.');await say('cimri','J’Mal, scout over the palisade first. The rest of us will wait by the gate.');}}
- if(id==='scout'){if(quest.scouted)await say('jamal','I have seen enough of the vats. Talk to the owner. Please.');else{await say('jamal','Over the wall, past the lye pools, into the office. Simple.');await storyRoll('J’Mal · Stealth',14,7,'Unnoticed');await say('Chronicle','J’Mal clears the palisade unnoticed. Then a farmer arrives with a wheelbarrow of horse dung. With no better hiding place, J’Mal sinks into a foul lye pool—exactly where the delivery is dumped.');await say('jamal','Nobody says a word about this.');await say('Chronicle','As the farmer leaves, J’Mal climbs out of the foul pool. The owner’s dog is between him and the office. He draws a sap, hoping to knock the dog out before it can bark.');await storyRoll('J’Mal · Sap ambush',1,7,'Miss');await say('Chronicle','The sap misses the dog. Its barking brings the tannery owner out of his office, crossbow in hand.');await storyRoll('Tannery owner · Crossbow',1,0,'Miss');await say('Chronicle','The owner fires at the dung-covered scout attacking his dog. The bolt misses. Hearing the commotion, Cimri and the rest of the party enter through the gate before anyone is hurt.');quest.scouted=true;seedParty(328,280);syncRoster();}}
+ if(id==='scout'&&!quest.scouted){
+  await say('jamal','Over the wall, past the lye pools, into the office. Simple.');
+  await storyRoll('J’Mal · Stealth',14,7,'Unnoticed');
+  if(!await playTanneryBeat('delivery'))return true;
+  await say('Chronicle','A farmer wheels in a load of horse dung. J’Mal slips into a lye vat to stay out of sight.');
+  if(!await playTanneryBeat('dump'))return true;
+  await say('Chronicle','The farmer tips the load into the vat above him.');
+  await say('jamal','Nobody says a word about this.');
+  if(!await playTanneryBeat('escape'))return true;
+  await say('Chronicle','J’Mal climbs out and draws a sap. The owner’s dog is between him and the office. He tries to knock it out before it can bark.');
+  await storyRoll('J’Mal · Sap ambush',1,7,'Miss');
+  if(!await playTanneryBeat('sap'))return true;
+  await say('Chronicle','The dog dodges and barks. The tannery owner steps out with a crossbow.');
+  await storyRoll('Tannery owner · Crossbow',1,0,'Miss');
+  if(!await playTanneryBeat('bolt'))return true;
+  await say('Chronicle','The bolt misses. Hearing the commotion, Cimri and the rest of the company enter through the gate.');
+  quest.scouted=true;
+  tanneryBeat=null;
+  seedParty(328,280);
+  syncRoster();
+ }
  if(id==='owner'){if(!quest.scouted)await say('Chronicle','Send J’Mal ahead to scout before approaching the office.');else if(quest.ownerDeal)await say('owner','Take the box and leave my dog alone.');else{const c=await say('owner','Get away from my dog! What do you want?',['[Let Jason explain the crown’s demands]','[Ask Cimri to help negotiate]']);await say(c===0?'jason':'cimri',c===0?'No blood needs to be spilled here. Hand over the payroll box, and everyone walks away.':'Lower the crossbow. Give us the payroll box and we leave. Your workers and your dog keep breathing.');await say('owner','Fine. The box is in the office. Take it. Then get out.');quest.ownerDeal=true;}}
  if(id==='payroll'){if(!quest.ownerDeal)await say('Chronicle','The owner still has his crossbow. Resolve the confrontation first.');else if(quest.payroll)await say('Chronicle','The payroll box is already in your possession.');else{quest.payroll=true;await say('Chronicle','Obtained: the tannery payroll box. The job ends without bloodshed.');}}
  if(id==='ashRoad'){if(!quest.payroll)await say('cimri','Razelago expects the payroll box. We’re not finished.');else{await travel('ash_house',328,328);await say('cimri','That’s our guardian. A krenshar. Stay close to me and keep your hands where it can see them.');}}
@@ -258,5 +356,5 @@ window.NextChapter=(()=>{
  await say('draymus','She is trapped in this house. We need to calm her, not cut her down.');
  let controlled=false;for(let attempt=0;attempt<3&&!controlled;attempt++){const c=await say('The Woman in the Bath','Her form shakes above the tub.',['[Draymus: control and calm her]','[Keep the others clear of the tub]']);if(c===1){await say('Chronicle','The group steps back. Draymus continues his work from a safe distance.');}const total=await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');controlled=total>=10;if(!controlled)await say('draymus','Again. She is afraid. Give me a moment.');}
  await say('Chronicle','Draymus steadies the spirit. The burned house returns in fragments: a mother hiding in the bathtub, her child, her war medals, and flames outside the door.');await say('draymus','You don’t have to hold him. He isn’t the one you lost.');await say('Chronicle','The grasping water settles. J’Mal is safe; the spirit is quiet.');quest.spiritCalmed=true;save();}
- return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush,drawPursuit};
+ return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush,drawPursuit,drawTanneryScout,drawTanneryEffects};
 })();
