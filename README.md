@@ -377,3 +377,7 @@ Continue from the fountain court or select replay **456**. Break Sylvestra Hanel
 Continue from the inner temple or select replay **460**. Follow El Guapo’s solo reconnaissance of the river crossing and town gate. Replays **460–463** cover the cutaway and scouting. See [the section notes](docs/barleybridge-scout.md) for the Foundry references and the remaining gaps in the ritual timeline.
 
 Replay **464** reviews the documented Tathlum plan for Barleybridge, Warlock Island, and Egorian.
+
+### Warlock Island layout previews
+
+Open Longacre Art Studio and select either Warlock Island map to try the walking routes. These are environment previews for the planned archive expedition. See [the map notes](docs/warlock-island-preview.md) for sources, artwork prompts and route checks.
