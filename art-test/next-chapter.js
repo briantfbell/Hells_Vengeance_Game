@@ -5,7 +5,7 @@ window.NextChapter=(()=>{
  const mildred='western_star_mildred',mildredArt='western-star-mildred-v1.png';
  const pursuingShip='western-star-pursuing-sloop-v1.png',approachDuration=1450;
  const shipFrame={x:105,y:48,w:1347,h:914};
- let approach=null,tanneryBeat=null;
+ let approach=null,tanneryBeat=null,bathAmbush=null;
  const barrowArt='tannery-wheelbarrow-v1.png';
  const scoutTiming={delivery:1150,dump:650,escape:950,sap:520,bolt:460};
  const vat=[235,198],farmerGate=[328,344],farmerVat=[302,224],dogYard=[440,248],scoutYard=[388,248];
@@ -119,7 +119,17 @@ window.NextChapter=(()=>{
   return [dog,{id:'farmer',x:farmerPosition[0],y:farmerPosition[1],delivering:true}];
  }
  if(scene==='ash_house')return [{id:'razelago',x:328,y:104},{id:'krenshar',x:240,y:280},{id:'cimri',x:440,y:248}];
- return quest.spiritCalmed?[{id:'spirit',x:328,y:184}]:[];}
+ if(scene==='bathroom'&&bathSpiritVisible())return [{id:'spirit',x:328,y:143}];
+ return [];}
+ function bathSpiritVisible(){return !quest.spiritCalmed&&(quest.bathStarted||(bathAmbush&&bathAmbush.epoch===epoch));}
+ function drawBathScout(g,unit){
+  if(scene!=='bathroom'||unit.id!=='jamal'||quest.jamalRescued||!bathSpiritVisible())return false;
+  g.save();
+  g.beginPath();g.rect(306,99,44,36);g.clip();
+  drawActor(g,{...unit,x:328,y:171,dir:'down',step:null});
+  g.restore();
+  return true;
+ }
  function drawNPC(u){if(u.delivering)drawBarrow(ctx,u);if(window.LORE_CAST?.[u.id]){const m=LORE_CAST[u.id],f=m.frame,height=u.id==='krenshar'?35:55,scale=height/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,art[m.source],f,u.x-f.w*scale/2,u.y-height,f.w*scale,height);return true;}if(u.id==='razelago'){ctx.save();ctx.globalAlpha=.4;ctx.fillStyle='#171a22';ctx.beginPath();ctx.ellipse(u.x,u.y-35,9,12,0,0,Math.PI*2);ctx.fill();ctx.fillRect(u.x-14,u.y-25,28,24);ctx.restore();return true;}
  const f=window.NEXT_NPCS?.[u.id];if(!f)return false;const height=['dog','krenshar'].includes(u.id)?35:55,scale=height/f.h;ctx.drawImage(art.nextNPCs,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),u.y-height,Math.round(f.w*scale),height);return true;}
  function activeTanneryBeat(){return scene==='tannery'&&tanneryBeat&&tanneryBeat.epoch===epoch?tanneryBeat:null;}
@@ -209,7 +219,7 @@ window.NextChapter=(()=>{
   if(!quest.voyagePezzackDawn)return 'voyageRest';
   return quest.voyagePezzackWon?'voyageLeavePezzack':'voyagePezzackAmbush';
  }
- function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':quest.voyageBoardingWon?'voyageCorentyn':'land']:scene===pezzack?[pezzackTarget()]:scene===corentyn?[!quest.scimitarDisposed?'voyagePlantBlade':!quest.voyagePrizeTurnedIn?'voyageHandOverPrize':!quest.voyageCorentynSupplied?'voyageReequip':'voyageLand']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:['bath'];return point(ids[0]);}
+ function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':quest.voyageBoardingWon?'voyageCorentyn':'land']:scene===pezzack?[pezzackTarget()]:scene===corentyn?[!quest.scimitarDisposed?'voyagePlantBlade':!quest.voyagePrizeTurnedIn?'voyageHandOverPrize':!quest.voyageCorentynSupplied?'voyageReequip':'voyageLand']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:[quest.spiritCalmed?'bathExit':'bath'];return point(ids[0]);}
  function refresh(){for(const id of CORE){hp[id]=STATS[id].hp;uses[id]=0;}potions=2;mendUses=2;quest.smokeUsed=false;paintParty();}
  async function begin(){quest.chapter2=true;quest.chapter2Complete=false;quest.activeRoster=[...OPENING_ROSTER];refresh();await travel('western_star',360,248);await say('guapo','A proper meal. A proper bunk. I could get used to this.');save();}
  function surrenderReady(fight){
@@ -380,16 +390,50 @@ window.NextChapter=(()=>{
  if(id==='ashRoad'){if(!quest.payroll)await say('cimri','Razelago expects the payroll box. We’re not finished.');else{await travel('ash_house',328,328);await say('cimri','That’s our guardian. A krenshar. Stay close to me and keep your hands where it can see them.');}}
  if(id==='krenshar'){await say('cimri','It guards the house. We’re expected; give it room.');await say('Chronicle','The great feline watches through its hideous, skull-like face. It lets Cimri’s guests pass.');}
  if(id==='razelago'){if(!quest.reward){await say('razelago','Cimri tells me the task is complete. Well done.');await say('Chronicle','Only a silhouette moves behind the thin paper screens. The voice is dry and raspy; the employer’s identity remains hidden.');await say('razelago','One hundred gold pieces for each of you. Food and wine are laid out. You may stay here tonight.');quest.reward=true;quest.goldReward=100;}
- else if(quest.spiritCalmed){await say('razelago','This afternoon, the local priestess of Iomedae will give a public sermon. Watch it. Disrupt it if she stirs rebellion.');await say('cimri','Get some rest. Longacre will have plenty to say once the sermon starts.');quest.chapter2Complete=true;await say('Chapter Two complete','The tannery is robbed. The secret employer has paid. A spirit in the burned house is finally quiet. Next: the sermon and the town’s first public decrees.');}else await say('razelago','Rest. We will speak again in the morning.');}
+ else if(quest.spiritCalmed){await say('Chronicle','By morning, the upstairs tub has gone quiet. Razelago calls the party back to the screens.');await say('razelago','The local priestess of Iomedae is preaching in the square this afternoon. Listen first. If she uses the sermon to stir rebellion, put a stop to it.');await say('cimri','I’ll take you to the square when you’re ready.');quest.chapter2Complete=true;}else await say('razelago','Rest. We will speak again in the morning.');}
  if(id==='rest'){if(!quest.reward)await say('cimri','The employer is waiting behind the screens.');else{quest.rested=true;refresh();await journeyCard('Ash House · After nightfall','Food and wine make the ruined house bearable. The party beds down, but splashing from upstairs breaks the quiet. Investigate the bath.');}}
  if(id==='bathStairs'){if(!quest.rested)await say('Chronicle','No splashing yet. Meet the employer and settle in for the night.');else {await say('Chronicle','The splashing comes from an unexplored upstairs room. J’Mal goes ahead to inspect it while the others wait nearby on the landing.');await travel('bathroom',328,328);}}
- if(id==='bath'){if(quest.spiritCalmed)await say('spirit','The water lies still. The house remembers, but it no longer pulls at the living.');else await rescue();}
+ if(id==='bath'){if(quest.spiritCalmed)await say('Chronicle','The water lies still in the porcelain tub.');else await rescue();}
  if(id==='bathExit')await travel('ash_house',472,264);
  save();updateObjective();return true;}
- async function rescue(){if(!quest.bathStarted){await say('Chronicle','A large porcelain tub stands in the burned bathroom. Dirty water laps against its sides, although no living bather is visible. J’Mal leans closer to investigate.');await say('jamal','Porcelain tub. Dirty water. Nothing worth—');await say('Chronicle','The water rises around J’Mal. An ectoplasmic woman pulls him inside her ghostly form. He cannot breathe.');await say('jamal','Kendrick Lamar!');const scout=units.find(u=>u.id==='jamal');const position={x:scout.x,y:scout.y};quest.bathStarted=true;seedParty(328,280);Object.assign(units.find(u=>u.id==='jamal'),position);syncRoster();updateObjective();save();await say('Chronicle','It is the party’s agreed safe word, not a spell. Hearing it from the bathroom, the companions rush in from the landing to pull him free.');}
- if(!quest.jamalRescued){const c=await say('Rescue J’Mal','The spirit holds him beneath the surface.',['[Pull J’Mal free together]','[Let Draymus loosen the spirit’s grip]']);if(c===0){await say('freya','Now. Together.');await say('Chronicle','Freya and Jason pull while J’Mal fights toward them. He tumbles onto the floor, coughing.');}else{await storyRoll('Draymus · Necromancy',12,6,'Grip loosened');await say('draymus','Let him go. You are holding the wrong person.');await say('Chronicle','As Draymus distracts the spirit, the others haul J’Mal out of the bath.');}quest.jamalRescued=true;save();}
- await say('draymus','She is trapped in this house. We need to calm her, not cut her down.');
- let controlled=false;for(let attempt=0;attempt<3&&!controlled;attempt++){const c=await say('The Woman in the Bath','Her form shakes above the tub.',['[Draymus: control and calm her]','[Keep the others clear of the tub]']);if(c===1){await say('Chronicle','The group steps back. Draymus continues his work from a safe distance.');}const total=await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');controlled=total>=10;if(!controlled)await say('draymus','Again. She is afraid. Give me a moment.');}
- await say('Chronicle','Draymus steadies the spirit. The burned house returns in fragments: a mother hiding in the bathtub, her child, her war medals, and flames outside the door.');await say('draymus','You don’t have to hold him. He isn’t the one you lost.');await say('Chronicle','The grasping water settles. J’Mal is safe; the spirit is quiet.');quest.spiritCalmed=true;save();}
- return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush,drawPursuit,drawTanneryScout,drawTanneryEffects};
+ async function rescue(){
+  if(!quest.bathStarted){
+   await say('Chronicle','The splashing comes from a porcelain tub at the far wall. Dirty water slops over the rim, though the room appears empty.');
+   await say('jamal','Nothing in here but a bathtub. I’ll be right—');
+   bathAmbush={epoch};
+   await say('Chronicle','The water rises into the shape of a woman. She drags J’Mal over the rim. He gets his head above water just long enough to shout.');
+   await say('jamal','Kendrick Lamar!');
+   quest.bathStarted=true;
+   bathAmbush=null;
+   seedParty(328,248);
+   Object.assign(units.find(unit=>unit.id==='jamal'),{x:328,y:216,dir:'up'});
+   syncRoster();
+   updateObjective();
+   save();
+   await say('Chronicle','At the safe word, the party rushes in from the landing. J’Mal is still in the tub, pinned beneath the water.');
+  }
+  if(!quest.jamalRescued){
+   const choice=await say('Rescue J’Mal','The spirit tightens her grip every time he breaks the surface.',['[Pull J’Mal free together]','[Have Draymus loosen her grip]']);
+   if(choice===0){
+    await say('freya','Jason, take his other arm. Pull with me.');
+   }else{
+    await storyRoll('Draymus · Necromancy',12,6,'Grip loosened');
+    await say('draymus','I’ll break her hold. The instant she lets go, pull him out.');
+   }
+   quest.jamalRescued=true;
+   save();
+   await say('Chronicle','They haul J’Mal over the rim. He hits the floor on his hands and knees, coughing up water.');
+  }
+  await say('draymus','Keep back from the tub. She’s bound to this house. I can quiet her.');
+  const choice=await say('The Woman in the Bath','Water still clings to the shape above the tub.',['[Let Draymus work at the tub]','[Clear the floor so Draymus can work from a distance]']);
+  if(choice===1)await say('Chronicle','The others draw back with J’Mal, leaving Draymus a clear line to the bath.');
+  await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');
+  await say('Chronicle','Draymus casts a spell to still the undead woman. As her grip loosens, the fire returns in fragments: a mother sheltering in this tub with her child and her war medals.');
+  await say('draymus','You can let go. The fire’s out.');
+  quest.spiritCalmed=true;
+  save();
+  await say('Chronicle','The woman’s outline dissolves. The water settles back into the tub.');
+ }
+
+ return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush,drawPursuit,drawTanneryScout,drawBathScout,drawTanneryEffects};
 })();

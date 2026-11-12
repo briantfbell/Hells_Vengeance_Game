@@ -63,6 +63,43 @@ test('tannery scout stages the delivery, misses and return through the gate',asy
  assert.deepEqual(Array.from(w.NextChapter.npcs(),actor=>actor.id),['owner','dog','cimri']);
  assert.equal(w.NextChapter.target().id,'owner');
 });
+test('Ash House stages J’Mal alone until the shout and resumes either rescue checkpoint',async()=>{
+ for(const checkpoint of [{},{bathStarted:true},{bathStarted:true,jamalRescued:true}]){
+  const w=world();
+  w.scene='bathroom';
+  w.epoch=1;
+  w.quest={chapter2:true,reward:true,rested:true,...checkpoint};
+  w.units=[{id:'jamal',x:328,y:216}];
+  w.$('character').options=[];
+  const rolls=[];
+  w.storyRoll=async label=>rolls.push(label);
+  w.seedParty=()=>{w.units=w.CORE.map(id=>({id}));};
+  const say=w.say;
+  w.say=async(...args)=>{
+   const [,line,choices]=args;
+   if(line.includes('drags J’Mal')||line==='Kendrick Lamar!'){
+    assert.equal(w.units.length,1);
+    assert.equal(w.NextChapter.npcs()[0].id,'spirit');
+   }
+   if(line.includes('party rushes in'))assert(w.units.length>1);
+   if(line.includes('hands and knees'))assert(w.quest.jamalRescued);
+   await say(...args);
+   return choices?1:0;
+  };
+  assert.equal(w.NextChapter.npcs().length,checkpoint.bathStarted?1:0);
+  await w.NextChapter.interact('bath');
+  assert.equal(w.transcript.some(line=>line.text==='Kendrick Lamar!'),!checkpoint.bathStarted);
+  assert.deepEqual(rolls,checkpoint.jamalRescued?['Draymus · Control undead']:['Draymus · Necromancy','Draymus · Control undead']);
+  assert(w.quest.spiritCalmed);
+  assert.equal(w.NextChapter.npcs().length,0);
+  assert.equal(w.NextChapter.target().id,'bathExit');
+  await w.NextChapter.interact('bathExit');
+  assert.equal(w.scene,'ash_house');
+  await w.NextChapter.interact('razelago');
+  assert(w.quest.chapter2Complete);
+  assert(w.transcript.some(line=>line.name==='razelago'&&line.text.includes('preaching in the square')));
+ }
+});
 test('Remesiana purchases and Cimri’s assignment gate the road to the tannery',async()=>{
  const w=world();
  vm.runInContext(read('inventory.js'),w);

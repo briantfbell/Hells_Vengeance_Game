@@ -773,7 +773,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
    if(pose.tilt){ctx.translate(u.x,u.y);ctx.rotate(pose.tilt);ctx.translate(-u.x,-u.y);}
   }
   if(CORE.includes(u.id)&&u.pose!=='prone'){
-   if(!window.NextChapter?.drawTanneryScout(ctx,u))drawActor(ctx,u);
+   if(!window.NextChapter?.drawTanneryScout(ctx,u)&&!window.NextChapter?.drawBathScout(ctx,u))drawActor(ctx,u);
   }else drawNPC(u);
   if(pose)ctx.restore();
  }
