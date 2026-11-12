@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.whisperwoodBobRescued)rows.push('Whisperwood · A bear mauls Bob at camp. J’Mal and El Guapo pull him clear in time. He survives with lasting injuries.');
+  if(q.whisperwoodNightComplete)rows.push('Whisperwood · The company survived the attacks at camp and will follow the unicorns’ trail at dawn.');
   if(q.senaraCarriageDeparted)rows.push('Whisperwood · Bob drives the black carriage southwest of Senara with a team of four warhorses. Freya’s next objective is four unicorn horns.');
   if(q.senaraForestIntel)rows.push('Senara · The local Hellknight patrol reports place the unicorns southwest of town. The chapter has pulled back to its citadel.');
   if(q.senaraDraymusTrained)rows.push('Senara · Draymus learns a new spell at the Hellknight citadel.');

@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 214 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,214);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 221 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,221);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -525,4 +525,44 @@ test('citadel spell study and patrol reports precede the carriage trip and survi
  }
  const stale=structuredClone(saved);stale.scene='senara_hellknight_citadel';
  assert.throws(()=>w.SaveFiles.validate(stale),/Progress does not match the Hellknight citadel/);
+});
+
+test('Whisperwood watch, battles, and Bob’s rescue keep their checkpoints in story order',async()=>{
+ const w=world(),list=w.replaySections(),start=list.find(s=>s.id==='whisperwood-camp-road');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:280,dir:'up'}],
+  SouthRoad:{recover:fraction=>w.rest=fraction},storyRoll:async(label,face)=>w.rolls.push([label,face]),rolls:[]});
+ w.scenes[start.scene].points=[];
+ vm.runInContext(read('whisperwood-camp.js'),w);
+ w.WhisperwoodCamp.install();
+ const step=async id=>assert.equal(await w.WhisperwoodCamp.interact(id),true,id);
+ const victory=async(kind,ids)=>{
+  assert.equal(w.battle.kind,kind);
+  assert.deepEqual(Array.from(w.battle.enemies,e=>e.id),ids);
+  const position=w.battle.returnPosition;
+  w.battle=null;
+  await w.WhisperwoodCamp.afterBattle(kind,position);
+ };
+ await step('whisperwoodMakeCamp');
+ await step('whisperwoodWatch');
+ assert.equal(w.rest,.5);
+ assert.equal(await w.WhisperwoodCamp.interact('whisperwoodBear'),false);
+ await step('whisperwoodWebs');
+ await victory('whisperwood_webs',['whisper_spider','whisper_spider','whisper_ettercap']);
+ await step('whisperwoodGiant');
+ await victory('whisperwood_giant',['whisper_giant']);
+ await step('whisperwoodBear');
+ assert.equal(w.WhisperwoodCamp.npcs().find(u=>u.id==='bob').pose,'prone');
+ const retry=checkpoint(w,{scene:w.scene,position:[328,280],quest:w.quest});
+ assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(retry)).quest.whisperwoodBobMauled,true);
+ await step('whisperwoodBear');
+ assert.deepEqual(w.rolls,[['Bob · Evade the bear',3]]);
+ await victory('whisperwood_bear',['whisper_bear']);
+ assert.equal(await w.WhisperwoodCamp.interact('whisperwoodDawn'),false);
+ await step('whisperwoodRescue');
+ await step('whisperwoodDawn');
+ assert.deepEqual(w.rolls,[['Bob · Evade the bear',3],['J’Mal and El Guapo · Pull Bob clear',18]]);
+ const complete=checkpoint(w,{scene:w.scene,position:[328,280],quest:w.quest});
+ assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(complete)).quest.whisperwoodNightComplete,true);
+ const forged=structuredClone(complete);forged.quest.whisperwoodBobRescued=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Whisperwood camp sequence/);
 });

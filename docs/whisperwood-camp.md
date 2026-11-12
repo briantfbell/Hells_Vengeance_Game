@@ -1,0 +1,17 @@
+# The Whisperwood night camp
+
+The campaign blog’s “Charges Dropped” (P028) names spiders, ettercaps, giants and bears on the way to the unicorns. It says a great bear nearly killed Bob and that J’Mal and El Guapo saved him at the last possible second. His injuries had lasting effects. The blog gives neither exact dice values nor the disposition of the bear.
+
+The game groups these encounters into one night at camp. Enemy counts, order, tactics, the pre-watch recovery and the story-roll faces are adaptation choices. All three battles use ordinary initiative and controls. Bob’s mauling and rescue preserve the recorded outcome. Retrying the bear from its checkpoint retains Bob’s injury. The game leaves the nature of his lasting injuries open. Replays 215–221 span the road, watch, battles, rescue and dawn.
+
+## Artwork
+
+The built-in ImageGen tool generated the camp and creature artwork. The camp uses the existing light flicker, with a separate ember pass. Creatures have independently timed idle motion.
+
+- `art-test/whisperwood-night-camp-v1.png` — 8:5 landscape detailed crisp pixel art environment for a dark fantasy handheld RPG, overhead orthographic game map, Whisperwood camp by night. One large continuous open dirt clearing between dark pine trees, open ground occupies the central two thirds and from centered bottom path to upper center trail. Low campfire with orange coals on the LEFT edge of the clear area around one third across and halfway up, bedrolls and supply boxes at lower left, no tents or obstacles in the center, shadowy woods round the edges with soft blue moonlight, no characters, no monsters, no text. Color controlled charcoal pine green and ember gold, crisp square pixel clusters.
+- `art-test/whisperwood-web-creatures-v1.png` — Transparent RGBA pixel-art sprites for a dark fantasy handheld RPG. Two separate full-body monsters side by side with wide transparent space. Left: giant charcoal woodland spider, exactly eight articulated legs with jagged bristles and faint purple edge highlights, low stance, three-quarter front facing lower left, no web or floor. Right: taller two-legged ettercap, spiderlike humanoid in faded mottled purple chitin with long claws and many bright eyes, stooped three-quarter front facing lower left. Grounded non-cartoon proportions, crisp small pixel clusters, alpha zero outside the subjects, no shadows, no background, no text.
+- `art-test/whisperwood-heavy-creatures-v1.png` — Transparent RGBA pixel-art sprites for a dark fantasy handheld RPG. Two separate full-body monsters side by side with wide transparent space. Left: menacing rugged giant, bare headed and powerfully built, in coarse leather and furs, carrying a rough wooden club, three-quarter front facing lower left. Right: huge realistic wild brown bear with dark russet fur, crouched on all fours baring teeth, three-quarter front facing lower left, all paws visible. No gore. Crisp small pixel clusters, no ground, text, shadows or backdrop. Alpha zero everywhere outside the creatures.
+
+## Verification
+
+127 automated tests passed, including the camp sequence, the bear retry, and portable-save validation. The structural audit checked 61 scripts, 102 scenes, 221 replay checkpoints and 560 sprite frames. The browser playthrough resumed the carriage checkpoint, fought all three encounters, rescued Bob, advanced to dawn and reloaded the checkpoint. The game canvas stayed 640 × 480. The browser reported no errors.

@@ -22,6 +22,10 @@ window.EnemyTactics=(()=>{
    else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='fastness_mage'){move=round%2?'Arcane bolt':'Charged bolt';extra=round%2?0:3;effect='arcaneBolt';physical=false;}
    else if(e.id==='fastness_warpriest'){move=round%2?'Warhammer strike':'Overhead hammer';extra=round%2?0:2;}
+   else if(e.id==='whisper_spider'){move='Venomous bite';}
+   else if(e.id==='whisper_ettercap'){move=round%2?'Hooked claws':'Spider bite';}
+   else if(e.id==='whisper_giant'){move=round%2?'Club swing':'Heavy club swing';extra=round%2?0:2;}
+   else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
    else if(e.id==='egorian_bodyguard'){move='Longsword cut';}
    else if(e.id==='oppian'){move=round%2?'Sword cut':'Heavy sword cut';extra=round%2?0:2;}

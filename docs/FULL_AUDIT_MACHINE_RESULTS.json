@@ -1,20 +1,20 @@
 {
-  "scripts": 60,
-  "scenes": 101,
-  "replays": 214,
-  "framesInspected": 556,
-  "framesChecked": 556,
+  "scripts": 61,
+  "scenes": 102,
+  "replays": 221,
+  "framesInspected": 560,
+  "framesChecked": 560,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 40,
+  "combatStats": 44,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 392858017,
+  "assetBytes": 399024994,
   "largestAssets": [
     {
       "name": "south-road-ambush-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 151,
-  "startupCompressedBytes": 337979742,
-  "startupDecodedRgbaBytes": 941948408,
+  "startupAssets": 154,
+  "startupCompressedBytes": 344135694,
+  "startupDecodedRgbaBytes": 960829960,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -211,7 +211,10 @@
     "valor-fastness-tower-base-v1.png",
     "whisperwood-carriage-road-v1.png",
     "whisperwood-coachman-v1.png",
+    "whisperwood-heavy-creatures-v1.png",
+    "whisperwood-night-camp-v1.png",
     "whisperwood-trail-v1.png",
+    "whisperwood-web-creatures-v1.png",
     "zara-geitta-display-v1.png"
   ]
 }
