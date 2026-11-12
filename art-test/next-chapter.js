@@ -2,6 +2,7 @@
 window.NextChapter=(()=>{
  const rect=(x,y,w,h)=>({x,y,w,h});
  const corentyn='western_star_corentyn',pezzack='western_star_pezzack',ambushKind='western_star_pezzack_ambush';
+ const mildred='western_star_mildred',mildredArt='western-star-mildred-v1.png';
  const bareHands={name:'Unarmed',move:'Unarmed strike',dmg:[1,3,2]};
  const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
  const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
@@ -12,9 +13,9 @@ window.NextChapter=(()=>{
  const stage={
  western_star:{name:'Chapter Two · The Western Star',image:'ship-deck-foreground.png',spawn:[360,248],walk:[rect(144,132,352,132),rect(48,116,112,148),rect(496,156,40,84)],blocks:[rect(192,168,48,64),rect(288,180,48,44),rect(400,168,48,64)],points:[
   {id:'voyage',x:360,y:144,label:'Make the stop at Pezzack'},
-  {id:'voyageLookout',x:104,y:144,label:'Check the sail at the lookout'},
-  {id:'land',x:520,y:232,label:'Wait for the pirates to board'},
-  {id:'voyageCorentyn',x:520,y:232,label:'Take both ships to Corentyn'},
+  {id:'voyageLookout',x:104,y:144,speaker:mildred,label:'Check the sail at the lookout'},
+  {id:'land',x:520,y:232,speaker:mildred,label:'Wait for the pirates to board'},
+  {id:'voyageCorentyn',x:520,y:232,speaker:mildred,label:'Take both ships to Corentyn'},
   {id:'voyageLand',x:520,y:232,label:'Continue to Remesiana'}
  ],lights:[]},
  [pezzack]:{
@@ -51,16 +52,30 @@ window.NextChapter=(()=>{
    const model=COMBAT_IDLES[id];
    FUTURE_NPCS[id]={source:model.src,frame:model.frames[0]};
   }
+  NAMES[mildred]='Captain Mildred';
+  FUTURE_NPCS[mildred]={source:mildredArt,frame:{x:204,y:11,w:599,h:1521}};
+  DIALOGUE_FACE_CROPS[mildred]={x:366,y:12,w:268,h:268};
   Object.assign(scenes,stage);
   JOURNEYS[pezzack]='The Western Star puts in at Pezzack. The party plans to sell the instruments taken from the Silver Star and have Viggo’s blade disguised.';
   JOURNEYS[corentyn]='Borrowed and pressed crew limp both vessels into Corentyn near the Arch of Aroden. Before the authorities take the bodies, plant the disguised scimitar on the dead pirate captain.';
   Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;if([pezzack,corentyn].includes(id)){window.MAP_LAYERS[id]={foreground:s.image,contain:true,background:{type:'solid',color:'#21333c'}};continue;}window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
- async function loadImages(loader){await Promise.all(Object.entries(stage).map(async([id,s])=>art[id]=await loader(s.image)));art.nextNPCs=await loader('longacre-cast.png');}
+ async function loadImages(loader){
+  await Promise.all([
+   ...Object.entries(stage).map(async([id,s])=>{art[id]=await loader(s.image);}),
+   (async()=>{art.nextNPCs=await loader('longacre-cast.png');})(),
+   (async()=>{art[mildredArt]=await loader(mildredArt);})()
+  ]);
+ }
  function syncRoster(){const roster=partyRoster(),fixed=rosterOverride()||window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.DisruptionArc?.roster()||window.KantariaArc?.roster()||window.CourtArc?.roster()||window.FortArc?.roster()||window.ArmoryArc?.roster();for(const opt of $('character').options)opt.disabled=!roster.includes(opt.value);$('character').value=soloParty()?'jamal':fixed?units[0]?.id:lead;$('character').disabled=soloParty()||!!fixed||!!window.CovertArc?.roster()||!!battle;paintParty();}
  function objective(){if(!quest.done&&!quest.chapter2)return false;
  let goal=quest.chapter2Complete?'Chapter Two complete · The sermon awaits.':!quest.chapter2?'Continue aboard The Western Star.':[pezzack,corentyn,'western_star'].includes(scene)?target().label:scene==='remesiana'?(!quest.supplied?'Visit the outfitter.':!quest.metCimri?'Find Cimri Staelish.':!quest.guapoAway?'See El Guapo off at the dock.':'Ride with Cimri to Longacre.'):scene==='tannery'?(!quest.scouted?'Scout the tannery.':!quest.ownerDeal?'Talk the owner down.':!quest.payroll?'Collect the payroll box.':'Return to Cimri at the gate.'):scene==='ash_house'?(!quest.reward?'Meet the employer behind the screens.':!quest.rested?'Eat and rest at Ash House.':!quest.spiritCalmed?'Investigate the upstairs splashing.':'Report to Razelago in the morning.'):quest.spiritCalmed?'Return downstairs. Report to Razelago.':!quest.bathStarted?'Investigate the tub with J’Mal.':'Rescue J’Mal. Let Draymus calm the spirit.';
  $('objective').textContent=goal;$('status').textContent=quest.chapter2Complete?'Next: a public sermon, and a town learning to fear its rulers.':'WASD / arrows · E talk or interact · Click to walk · Checkpoints save your progress';return true;}
- function npcs(){if(scene==='western_star'||scene===pezzack)return [];
+ function npcs(){
+ if(scene==='western_star'){
+  const [x,y]=quest.voyageBoardingReady?[504,216]:[80,144];
+  return [{id:mildred,x,y,height:57}];
+ }
+ if(scene===pezzack)return [];
  if(scene===corentyn)return [
   {id:'guard',x:280,y:144},
   ...(!quest.voyagePrizeTurnedIn?[{id:captain,x:472,y:208,height:58,pose:'prone'}]:[])
@@ -95,7 +110,7 @@ window.NextChapter=(()=>{
   save();
   updateObjective();
   await say('Chronicle','The captain falls. The surviving pirates lower their weapons and surrender.');
-  await say('Captain Mildred','I can spare a few hands for the prize. We’ll take both ships into Corentyn.');
+  await say(mildred,'I can spare a few hands for the prize. We’ll take both ships into Corentyn.');
  }
  async function afterPezzackAmbush(position){
   quest.voyagePezzackWon=true;
@@ -140,19 +155,19 @@ window.NextChapter=(()=>{
   return true;
  }
  if(id==='voyageLeavePezzack'){
-  await say('Captain Mildred','You stay aboard until the voyage is over. I’m not giving the next port a chance at that bounty.');
   quest.voyagePezzack=true;
   await travel('western_star',520,232,'left');
+  await say(mildred,'You stay aboard until the voyage is over. I’m not giving the next port a chance at that bounty.');
  }
  if(id==='voyageLookout'){
   await say('Lookout','Sail behind us! Still there when we change heading.');
-  await say('Captain Mildred','El Guapo, take my spyglass. What do you make of them?');
+  await say(mildred,'El Guapo, take my spyglass. What do you make of them?');
   await say('guapo','Pirates. Poor, desperate, and green enough to think we’re helpless.');
   await say('freya','Then let them think it. Show surrender and wait until they’re aboard.');
   quest.voyageBoardingReady=true;
  }
  if(id==='land'){
-  await say('Captain Mildred','Keep your weapons low. Let them come over the rail.');
+  await say(mildred,'Keep your weapons low. Let them come over the rail.');
   await say('guapo','That one is their captain. Take him down and the rest may yield.');
   const {x,y,dir}=units[0];
   const enemy=(id,name,shortName)=>({id,name,shortName,hp:STATS[id].hp,max:STATS[id].hp});

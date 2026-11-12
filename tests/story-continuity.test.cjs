@@ -36,7 +36,7 @@ test('Pezzack and the lookout gate the Western Star boarding',async()=>{
  await w.NextChapter.interact('voyageLookout');
  assert(w.quest.voyageBoardingReady);
  assert.equal(w.NextChapter.target().id,'land');
- assert.deepEqual(w.transcript.slice(-4).map(line=>line.name),['Lookout','Captain Mildred','guapo','freya']);
+ assert.deepEqual(w.transcript.slice(-4).map(line=>line.name),['Lookout','western_star_mildred','guapo','freya']);
  assert.match(w.transcript.at(-3).text,/spyglass/);
  assert.equal(w.scene,'western_star');
  w.units=[{x:520,y:232,dir:'right'}];

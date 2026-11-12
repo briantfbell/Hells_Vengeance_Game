@@ -82,6 +82,7 @@ async function journeyCard(title,summary,commit=()=>{},illustration=null){
 $('journey-continue').onclick=()=>{if(!journeyOpen||$('journey-continue').disabled||!journeyResolve)return;const resolve=journeyResolve;journeyResolve=null;$('journey-continue').disabled=true;resolve();};
 async function travel(next,x,y,dir='up'){
  let summary=JOURNEYS[next];
+ if(next==='western_star'&&quest.voyagePezzack)summary='The Western Star casts off from Pezzack. The crew keeps watch along the coast.';
  if(next==='church_watch'&&quest.watchStarted)summary='After resting at Ash House, J’Mal watches the church alone into the evening. Meet any movement with care.';
  if(next==='street'&&quest.burned)summary='The Silver Star burns. Slip away under Freya’s cover.';
  if(next==='tavern'&&quest.burned)summary='Smoke rises from the cellar. The party carries J’Mal out under cover of the fire.';
