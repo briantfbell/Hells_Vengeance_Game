@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 323 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,323);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 331 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,331);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1237,4 +1237,37 @@ test('Sethic’s farm requires the hog encounter before the ruined map and retur
  assert.equal(done.quest.sethicFarmComplete,true);
  done.quest.sethicHogsDriven=false;
  assert.throws(()=>w.SaveFiles.validate(done),/Invalid Sethic farm sequence/);
+});
+
+
+test('Sethic’s indictments need both records and the failed loan attempt cannot award gold',async()=>{
+ const w=world(),sections=w.replaySections(),replay=id=>sections.find(s=>s.id===id);
+ const start=replay('sethic-records-road'),rolls=[];
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
+  storyRoll:async(...args)=>{rolls.push(args);return args[1];}});
+ w.scenes[start.scene].points=[];
+ vm.runInContext(read('sethic-ledgers.js'),w);
+ w.SethicLedgers.install();
+ const step=async id=>assert.equal(await w.SethicLedgers.interact(id),true,id);
+ await step('ledgersLeaveSalon');
+ assert.equal(w.SethicLedgers.points().length,2);
+ await step('ledgersMatchRegister');
+ assert.equal(await w.SethicLedgers.interact('ledgersFileEvidence'),false);
+ await step('ledgersFindPayments');
+ await step('ledgersFileEvidence');
+ await step('ledgersFollowLoan');
+ assert.equal(await w.SethicLedgers.interact('ledgersTryVault'),false);
+ await step('ledgersReadDispatch');
+ await step('ledgersTryVault');
+ assert.equal(rolls[0][1],3);
+ assert.equal(rolls[0][3],'The attempt fails');
+ assert.equal(w.quest.goldReward,start.quest.goldReward);
+ const mid=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('sethic-loan-withdraw'),quest:w.quest})));
+ assert.equal(mid.quest.sethicLoanFailed,true);
+ await step('ledgersWithdraw');
+ const done=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...start,quest:w.quest})));
+ assert.equal(done.quest.sethicFinanceComplete,true);
+ done.quest.sethicRegisterMatched=false;
+ assert.throws(()=>w.SaveFiles.validate(done),/Invalid Sethic finance sequence/);
 });

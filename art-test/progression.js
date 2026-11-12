@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.sethicLoanFailed)rows.push('Egorian · The company tries to steal Sethic’s foreign loan and leaves empty-handed.');
+  if(q.sethicJudgesIndicted)rows.push('Egorian · The company exposes judges on Sethic’s payroll. Several are indicted.');
   if(q.sethicFarmDestroyed)rows.push('Egorian · The company destroys Paracount Sethic’s devil-hog farm.');
   if(q.egorianVasvionChosen)rows.push('Egorian · After accepting bribes from both sides, the company backs Levisvia Vasvion against Paracount Sethic.');
   if(q.egorianFeudReached)rows.push('Egorian · The company is invited to the Night of the Pale and begins meeting the nobles.');

@@ -1,7 +1,7 @@
 {
-  "scripts": 78,
-  "scenes": 126,
-  "replays": 323,
+  "scripts": 79,
+  "scenes": 128,
+  "replays": 331,
   "framesInspected": 594,
   "framesChecked": 594,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 510447959,
+  "assetBytes": 516099620,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 201,
-  "startupCompressedBytes": 455403158,
-  "startupDecodedRgbaBytes": 1256549624,
+  "startupAssets": 203,
+  "startupCompressedBytes": 461046998,
+  "startupDecodedRgbaBytes": 1269136120,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -227,6 +227,8 @@
     "sethic-devil-hog-v1.png",
     "sethic-farm-ruins-v1.png",
     "sethic-farm-v1.png",
+    "sethic-judicial-records-v1.png",
+    "sethic-loan-strongroom-v1.png",
     "ship-deck-foreground.png",
     "silver-star-music-shop-v2.png",
     "south-road-ambush-v1.png",

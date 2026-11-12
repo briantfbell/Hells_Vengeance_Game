@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 323 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 331 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -270,3 +270,8 @@ Continue from Corrine’s debrief or select replay **310**. Attend the reception
 ### Sethic’s devil-hog farm
 
 Continue after backing Vasvion or select replay **315**. Drive the hogs out of the yard, destroy the farm, and return to Egorian. Replays **315–319** cover the operation. See [the section notes](docs/sethic-farm.md) for sources, artwork and verification.
+
+
+### Sethic’s judges and foreign loan
+
+Continue after the devil-hog farm or select replay **320**. Gather both records, submit the evidence, and follow Sethic’s loan to the strongroom. Replays **320–327** cover the indictments and attempted theft. See [the section notes](docs/sethic-ledgers.md) for sources, artwork and verification.

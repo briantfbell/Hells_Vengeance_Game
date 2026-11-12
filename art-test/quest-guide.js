@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const ledgers=window.SethicLedgers?.goal();
+ if(ledgers)return {text:ledgers,target:SethicLedgers.target(),targets:SethicLedgers.points()};
  const farm=window.SethicFarm?.goal();
  if(farm)return {text:farm,target:SethicFarm.target()};
  const feud=window.EgorianFeud?.goal();
