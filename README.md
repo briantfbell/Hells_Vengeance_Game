@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 165 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 173 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -157,3 +157,7 @@ Continue from the South Road camp or select replay **153**. Cross the West Bridg
 ## Egorian after dark
 
 Continue after Freya sets the night watch, or select replay **160**. Play as J’Mal and El Guapo while they follow Svetlana’s lead and learn what Jaquen wants in exchange for the captive guard. Replays **160–165** cover the night. See [the night audit and artwork notes](docs/egorian-night.md).
+
+## Oppian’s trial and Zara Geitta
+
+Continue from dawn at Falco Manor or select replay **166**. Give testimony as Freya and Jason, hear Oppian’s verdict, then travel with Zara to the forge where Freya receives her fitted Hellknight plate. Replays **166–173** cover the trial and fitting. See [the section audit and artwork notes](docs/egorian-trial.md).

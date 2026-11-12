@@ -21,7 +21,8 @@ window.Inventory=(()=>{
  function equip(state,q,id,item){const candidate=structuredClone(state);candidate.equipped[id]=item;return validate(candidate,q);}
  function stats(base,state,id,q={}){
   const equipped=weapon(state,id);
-  return {...base,ac:base.ac+(id==='jamal'&&q.kantariaGiftsReceived?3:0),
+  const plate=id==='freya'&&q.zaraGeitta;
+  return {...base,ac:base.ac+(plate?2:id==='jamal'&&q.kantariaGiftsReceived?3:0),...(plate?{physicalDR:3}:{}),
    atk:base.atk+(equipped.attackBonus||0),frostDice:equipped.frostDice||0,
    dmg:[base.dmg[0],equipped.die,base.dmg[2]]};
  }
@@ -38,9 +39,10 @@ window.Inventory=(()=>{
   {id:'wizardry_ring',name:'Ring of Wizardry I',kind:'gear',owner:'draymus',description:'Adds four uses to Draymus’s spell allowance. His existing spent uses still count.'},
   {id:'mosswater_tunic',name:'Mosswater Tunic',kind:'gear',owner:'jamal',description:'+3 AC. Phase avoids enemy attacks until J’Mal’s next turn. '+giftCharges(q,'jamal')+'/5 charges remain.'},
   {id:'dragon_helm',name:'Dragon Helm',kind:'gear',owner:'jason',description:'Maximize rolls full Burning Hands damage and spends a spell use. '+giftCharges(q,'jason')+'/3 charges remain.'},
-  {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'},
-  {id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'}
+  {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'}
  );
+ if(q.zaraGeitta)result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
+ else if(q.kantariaGiftsReceived)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});
  return result;
  }
  return {fresh,validate,weapon,equip,stats,skill,giftCharges,items};

@@ -9,11 +9,18 @@ function background(g,map,t,{width=640,height=400,top=0,bottom=height,reduced=fa
  g.fillStyle=dusk;
  g.fillRect(0,top,width,bottom-top);
 }else{g.fillStyle=b.color||'#0b1018';g.fillRect(0,top,width,bottom-top);if(b.surface){const s=b.surface;g.fillStyle=s.color;g.fillRect(s.x*width/640,s.y*height/400,s.w*width/640,s.h*height/400);}}g.restore();}
-function foreground(g,image,{width=640,height=400}={}){if(!image)return;g.save();g.imageSmoothingEnabled=false;g.drawImage(image,0,0,width,height);g.restore();}
+function foreground(g,image,{width=640,height=400,contain=false}={}){
+ if(!image)return;
+ const scale=contain?Math.min(width/image.width,height/image.height):null;
+ const w=contain?Math.round(image.width*scale):width,h=contain?Math.round(image.height*scale):height;
+ g.save();g.imageSmoothingEnabled=false;
+ g.drawImage(image,Math.round((width-w)/2),Math.round((height-h)/2),w,h);
+ g.restore();
+}
 function draw(g,map,image,t,options={}){background(g,map,t,options);if(map.openGatePatch&&art.longacre_jail){
  foreground(g,art.longacre_jail,options);g.save();const sx=(options.width||640)/1586,sy=(options.height||400)/992;
  const door=[[415,235],[430,211],[456,190],[488,176],[519,182],[544,197],[567,221],[584,245],[584,365],[415,393]];
  g.beginPath();door.forEach(([x,y],i)=>i?g.lineTo(x*sx,y*sy):g.moveTo(x*sx,y*sy));g.closePath();g.clip();foreground(g,image,options);g.restore();
- }else foreground(g,image,options);}
+ }else foreground(g,image,map.contain?{...options,contain:true}:options);}
 function occluders(g,image,options={}){foreground(g,image,options);}
 return {background,foreground,draw,occluders};})();

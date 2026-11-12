@@ -1,9 +1,9 @@
 {
-  "scripts": 53,
-  "scenes": 87,
-  "replays": 165,
-  "framesInspected": 498,
-  "framesChecked": 498,
+  "scripts": 54,
+  "scenes": 89,
+  "replays": 173,
+  "framesInspected": 510,
+  "framesChecked": 510,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 335412344,
+  "assetBytes": 347368548,
   "largestAssets": [
     {
       "name": "south-road-ambush-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 122,
-  "startupCompressedBytes": 280607674,
-  "startupDecodedRgbaBytes": 759480880,
+  "startupAssets": 128,
+  "startupCompressedBytes": 292553633,
+  "startupDecodedRgbaBytes": 797233472,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -93,12 +93,16 @@
     "draymus-opposite-step-v3.png",
     "draymus-sheet.png",
     "egorian-central-square-v1.png",
+    "egorian-court-v1.png",
     "egorian-falco-manor-v1.png",
     "egorian-guard-lane-v1.png",
     "egorian-jaquen-v1.png",
     "egorian-lantern-lane-v1.png",
+    "egorian-magistrate-v1.png",
     "egorian-midnight-temple-v1.png",
     "egorian-svetlana-v1.png",
+    "egorian-thumbtown-forge-v1.png",
+    "egorian-thumbtown-smith-v1.png",
     "egorian-tria-falco-v1.png",
     "egorian-west-bridge-v1.png",
     "execution-square-v1.png",
@@ -106,6 +110,7 @@
     "fort-estazano-v1.png",
     "freya-opposite-step-v2.png",
     "freya-sheet.png",
+    "freya-zara-geitta-walk-v1.png",
     "guapo-opposite-step-v2.png",
     "guapo-sheet.png",
     "hardship-hall-v1.png",
@@ -183,6 +188,7 @@
     "valor-fastness-summit-cast-v1.png",
     "valor-fastness-summit-v1.png",
     "valor-fastness-tower-base-v1.png",
-    "whisperwood-trail-v1.png"
+    "whisperwood-trail-v1.png",
+    "zara-geitta-display-v1.png"
   ]
 }
