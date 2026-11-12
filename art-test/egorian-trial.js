@@ -57,7 +57,7 @@ window.EgorianTrial=(()=>{
  function mapImage(){return Object.hasOwn(layouts,scene)?art[scene]:null;}
  function roster(){return scene===court?witnesses:scene===forge?smithVisit:null;}
  function movement(){
-  return quest.zaraGeitta&&art[armored.src]?{meta:armored,image:art[armored.src]}:null;
+  return quest.zaraGeitta&&!quest.egorianFreyaDischarged&&art[armored.src]?{meta:armored,image:art[armored.src]}:null;
  }
  function npcs(){
   if(scene===court)return [

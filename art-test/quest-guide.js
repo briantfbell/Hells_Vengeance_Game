@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const discharge=window.EgorianDischarge?.goal();
+ if(discharge)return {text:discharge,target:EgorianDischarge.target()};
  const escape=window.AregoExit?.goal();
  if(escape)return {text:escape,target:AregoExit.target()};
  const rematch=window.AregoReturn?.goal();

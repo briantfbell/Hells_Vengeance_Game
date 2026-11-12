@@ -21,16 +21,16 @@ window.Inventory=(()=>{
  function equip(state,q,id,item){const candidate=structuredClone(state);candidate.equipped[id]=item;return validate(candidate,q);}
  function stats(base,state,id,q={}){
   const equipped=weapon(state,id);
-  const plate=id==='freya'&&q.zaraGeitta;
+  const plate=id==='freya'&&q.zaraGeitta&&!q.egorianFreyaDischarged;
   return {...base,ac:base.ac+(plate?2:id==='jamal'&&q.kantariaGiftsReceived?3:0),...(plate?{physicalDR:3}:{}),
    atk:base.atk+(equipped.attackBonus||0),frostDice:equipped.frostDice||0,
    dmg:[base.dmg[0],equipped.die,base.dmg[2]]};
  }
- function skill(base,id,q){return id==='draymus'&&q.kantariaGiftsReceived?{...base,uses:base.uses+4}:base;}
+ function skill(base,id,q){if(id==='jason'&&q.egorianJasonBack)return {...base,uses:0};return id==='draymus'&&q.kantariaGiftsReceived?{...base,uses:base.uses+4}:base;}
  function giftCharges(q,id){
   if(!q.kantariaGiftsReceived)return 0;
   if(id==='jamal')return 5-(q.mosswaterSpent||0);
-  if(id==='jason')return 3-(q.dragonHelmSpent||0);
+  if(id==='jason'&&!q.egorianJasonBack)return 3-(q.dragonHelmSpent||0);
   return 0;
  }
  function items(q,potions){const result=ids.filter(id=>id!=='reese'||q.reeseJoined).map(id=>({id,name:weapons[id].name+' · '+({freya:'Freya',jamal:'J’Mal',jason:'Jason',draymus:'Draymus',guapo:'El Guapo',reese:'Reese'})[id],kind:'weapon',owner:id,description:'Personal starting weapon. Uses the character’s current attack bonus and damage modifier.'}));if(q.scimitar&&!q.scimitarDisposed)result.push({id:'scimitar',name:weapons.scimitar.name,kind:'weapon',owner:'freya',description:'Recovered from Viggo’s altar. Freya can equip this martial blade. A curved blade for close combat.'});if(q.churchLoadout)for(const [owner,id]of [['freya','naginata'],['jason','lucerne'],['jamal','kukri'],...(q.mantisTraining?[['jamal','mantis_blades']]:[])])result.push({id,name:weapons[id].name,owner,kind:'weapon',description:id==='mantis_blades'?'Gifted after twenty-four-hour training. Enchantments and exact weapon properties remain unconfirmed; game damage is adaptation tuning.':'Used in the documented church assault. Damage values are game tuning, not a reconstructed early sheet.'});result.push({id:'potion',name:'Healing potion ['+potions+'/2]',kind:'consumable',description:'Shared supply. Restore 2D4+2 HP to one present companion, up to their maximum. Uses the same stock as combat.'});if(q.briefed&&!q.planted)result.push({id:'missionRapier',name:'False-trail rapier',kind:'quest',description:'The mission’s false evidence to plant at Viggo’s altar. Reserved for the mission; cannot be equipped or consumed.'});if(q.payroll&&!q.reward)result.push({id:'payroll',name:'Tannery payroll box',kind:'quest',description:'Carry to Razelago at Ash House. Delivery removes it from the inventory.'});if(q.manorArtifactsTaken)result.push({id:"manorArtifacts",name:"Narikopolus artifacts",kind:"quest",description:"Priceless objects stolen from the manor. Their names and properties are not recorded; retained as story cargo, with no equipment bonus."});if(q.uskwoodDeedSigned)result.push({id:'uskwood_deed',name:'Uskwood deed',kind:'quest',description:'Freya, J’Mal, Jason and Draymus co-own the ruined Uskwood property. Loredana has left for Nidal.'});
@@ -41,8 +41,8 @@ window.Inventory=(()=>{
   {id:'dragon_helm',name:'Dragon Helm',kind:'gear',owner:'jason',description:'Maximize rolls full Burning Hands damage and spends a spell use. '+giftCharges(q,'jason')+'/3 charges remain.'},
   {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'}
  );
- if(q.zaraGeitta)result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
- else if(q.kantariaGiftsReceived)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});
+ if(q.zaraGeitta&&!q.egorianFreyaDischarged)result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
+ else if(q.kantariaGiftsReceived&&!q.zaraGeitta)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});
  if(q.egorianChairBought)result.push({id:'antique_wheelchair',name:'Antique wheelchair',kind:'quest',description:'Draymus uses the chair for his disguise. Joe Kek pushes it.'});
  if(q.senaraTalismanRecovered&&!q.aregoReeseContract)result.push({id:'senara_infernal_talisman',name:q.aregoTalismanExposed?'Phlegmatic Talisman':'Infernal Talisman',kind:'quest',description:q.aregoTalismanExposed?'Fex built the talisman to bind Visperthul and control the Inferno Gate.':'Fex’s talisman, recovered from the Black Daggers beneath Senara.'});
  if(q.whisperwoodThreeHorns)result.push({id:'whisperwood_unicorn_horns',name:'Unicorn horns ['+(q.whisperwoodFourthHorn?4:3)+'/4]',kind:'quest',description:'Ritual components taken from the Blessing of Unicorns in the Whisperwood.'});

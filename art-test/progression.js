@@ -52,6 +52,10 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.egorianDischargeComplete)rows.push('Hotel Barato · The company regroups, sells some treasure and makes purchases. Draymus begins his work toward lichdom.');
+  if(q.egorianDischargeHome)rows.push('Egorian · Zara Orcelani stops the crowd and escorts Freya from the square.');
+  if(q.egorianFreyaDischarged)rows.push('Egorian · Freya is stripped of her military rank and her standing as a Hellknight.');
+  if(q.egorianJasonBack)rows.push('Egorian · Jason loses his rank, plate, and clerical powers after reporting to the Temple of Asmodeus.');
   if(q.aregoReportsSent)rows.push('Egorian · Jason reports to the Temple of Asmodeus and Freya reports to Army Command. The others wait at Hotel Barato.');
   if(q.aregoEgorianEscaped)rows.push('Fort Arego · Corrine and Contessa negotiate the gate’s closure and teleport the company to Egorian. Reese’s contract still stands.');
   if(q.aregoFexSlain)rows.push('Inferno Gate · The company and Visperthul’s bone devils defeat Fex. Reese’s contract still binds them.');

@@ -1,9 +1,9 @@
 {
-  "scripts": 69,
-  "scenes": 114,
-  "replays": 267,
-  "framesInspected": 577,
-  "framesChecked": 577,
+  "scripts": 70,
+  "scenes": 115,
+  "replays": 274,
+  "framesInspected": 579,
+  "framesChecked": 579,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 455895401,
+  "assetBytes": 461957238,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 179,
-  "startupCompressedBytes": 400923475,
-  "startupDecodedRgbaBytes": 1118126672,
+  "startupAssets": 182,
+  "startupCompressedBytes": 406973153,
+  "startupDecodedRgbaBytes": 1137003224,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -109,6 +109,8 @@
     "egorian-antique-chair-v1.png",
     "egorian-central-square-v1.png",
     "egorian-court-v1.png",
+    "egorian-discharge-civilians-v1.png",
+    "egorian-discharge-square-v1.png",
     "egorian-excruciation-effects-v1.png",
     "egorian-excruciation-square-v1.png",
     "egorian-falco-manor-v1.png",
@@ -128,6 +130,7 @@
     "egorian-tria-falco-v1.png",
     "egorian-west-bridge-v1.png",
     "egorian-young-noble-v1.png",
+    "egorian-zara-helmet-v1.png",
     "execution-square-v1.png",
     "fort-cast-packed-v2.png",
     "fort-estazano-v1.png",

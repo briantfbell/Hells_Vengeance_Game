@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 267 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 274 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -221,3 +221,8 @@ Continue from the basalt ledge or select replay **257**. Hand over the talisman,
 ### The closing of the Inferno Gate
 
 Continue after Fex’s defeat or select replay **263**. Meet Corrine and Contessa, close the Inferno Gate, and escape to Hotel Barato. Replays **263–267** end with Jason and Freya reporting to their respective superiors. See [the section notes](docs/arego-exit.md) for sources, artwork and verification.
+
+
+### Egorian’s public discharge
+
+Continue from Hotel Barato or select replay **268**. Hear what happened to Jason, walk out of the keep square as Freya, and regroup with the company. Replays **268–274** cover the section. See [the section notes](docs/egorian-discharge.md) for sources, artwork and verification.
