@@ -2161,8 +2161,15 @@ test('the Nidal cutaway and Dinyar scouting keep the two rosters separate across
  assert.deepEqual([...w.DinyarRecon.roster()],['draymus']);
  assert.deepEqual(w.DinyarRecon.npcs().map(n=>n.id).join(','),'violetta,corrine');
  w.quest=capture('dinyar-nidal').quest;
+ const history=()=>w.Progression.history(w.quest,w.Progression.migrate(w.quest));
+ assert.match(w.DinyarRecon.parallelObjective(),/Freya.*Dinyar/);
+ assert(history().some(row=>row.includes('Draymus’s brain')));
+ assert(!history().some(row=>row.includes('operation remains pending')));
  await step('nidalConsult');
+ w.quest=capture('dinyar-view').quest;
  assert.deepEqual([...w.DinyarRecon.roster()],['freya','jamal','reese','jason']);
+ assert.match(w.DinyarRecon.parallelObjective(),/Nidal.*find a physician/);
+ assert(history().some(row=>row.includes('operation remains pending')));
  assert.equal(await w.DinyarRecon.interact('dinyarPostern'),false);
  await step('dinyarView');
  const rolls=[];

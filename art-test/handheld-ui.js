@@ -48,7 +48,9 @@ window.Handheld=(()=>{
  if(combat)details(['D-pad selects a command. A confirms, then selects a target. B cancels targeting.', 'Initiative rolls once; Now / Next shows the fixed turn order.', 'Skill spends a limited use, even on a miss.', 'Guard adds +4 AC and halves damage until your next turn.', 'Select / F1 shows details for the selected command. X / Y inspect gear and party.']);
  else{
   const goal=QuestGuide.current();
+  const parallel=window.DinyarRecon?.parallelObjective();
   const guidance=quest.barleybridgePlanReviewed?['Select Planning maps to inspect the routes.']:
+   parallel?[parallel]:
    ['Follow the diamond marker to the next interaction.','A / Enter / E interacts when you are close enough.'];
   details([scenes[scene].name,goal.text,...guidance]);
  }

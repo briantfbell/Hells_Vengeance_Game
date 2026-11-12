@@ -2,7 +2,7 @@
 
 GM timeline rows S141 and S142 date the split to 14 Gozran, 4717. Draymus, Violetta Pavel and Corrine travel to Nidal to seek an operation to remove Draymus’s brain. The campaign blog P001, “Fuck-It List,” records that the group teleports there while Freya, J’Mal, Reese and Jason scout Dinyar. The Nidal scene depicts their arrival and plans to seek a physician. The campaign record leaves the outcome of the operation open at this point.
 
-Replay **437** shows Draymus, Violetta, and Corrine depart from the wayside while Freya’s company remains behind. The spell animation is staging for the teleport recorded in P001. Replay **438** resumes as Draymus in Nidal.
+Replay **437** shows Draymus, Violetta, and Corrine depart from the wayside while Freya’s company remains behind. The spell animation is staging for the teleport recorded in P001. Replay **438** resumes as Draymus in Nidal. The arrival and Dinyar cards identify who the player controls, and Current quest shows what the other group is doing. After Draymus asks Violetta to look for a physician, Progression records the request as pending.
 
 Corrine learned about the concealed entrance from a young Hellknight signifier who escaped to warn the capital. The fortress consists of two keeps connected by a bridge over a deep chasm. The Glorious Reclamation has held it for nearly a year. J’Mal and Reese locate the entrance, and the group hopes to find surviving Godclaw Hellknights below. The exact briefing dialogue, arrival courtyard, observation route, and position of the hidden entrance are adaptations.
 

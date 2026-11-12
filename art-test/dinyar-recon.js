@@ -30,7 +30,7 @@ window.DinyarRecon=(()=>{
   scenes[nidal]={
    name:'Nidal · Arrival Court',image:nidalArt,spawn:[328,344],blocks:[],
    walk:[{x:144,y:160,w:352,h:160},{x:240,y:320,w:160,h:80}],lights:[],
-   points:[{id:'nidalConsult',speaker:'violetta',x:328,y:224,label:'Speak with Violetta about the operation'}]
+   points:[{id:'nidalConsult',speaker:'violetta',x:328,y:224,label:'Ask Violetta to find a physician'}]
   };
   scenes[ridge]={
    name:'Isger · Citadel Dinyar',image:ridgeArt,spawn:[328,344],blocks:[],
@@ -84,8 +84,8 @@ window.DinyarRecon=(()=>{
   COMBAT_IDLES[dragon]={src:dragonArt,deferred:true,frames:dragonFrames,cycle:[0,2],maxHeight:Math.max(...dragonFrames.map(frame=>frame.h))};
   MAP_LAYERS[nidal]={foreground:nidalArt,contain:true,background:{type:'solid',color:'#1f1929'}};
   MAP_LAYERS[ridge]={foreground:ridgeArt,contain:true,background:{type:'solid',color:'#242b35'}};
-  JOURNEYS[nidal]='14 Gozran, 4717. Draymus, Violetta, and Corrine teleport to Nidal. They seek a physician who can remove Draymus’s brain and keep it alive in a jar.';
-  JOURNEYS[ridge]='Meanwhile, Freya, J’Mal, Reese, and Jason reach Citadel Dinyar in Isger. Use Corrine’s directions to find the hidden entrance.';
+  JOURNEYS[nidal]='14 Gozran, 4717. Draymus, Violetta, and Corrine arrive in Nidal. As Draymus, speak with Violetta about finding a physician for his operation.';
+  JOURNEYS[ridge]='While Violetta seeks a physician in Nidal, Freya leads J’Mal, Reese, and Jason to Citadel Dinyar in Isger. Take over as Freya’s scouting party and use Corrine’s directions to find the hidden entrance.';
  }
  async function load(loader){
   const assets=[[nidal,nidalArt],[ridge,ridgeArt],[lower,lowerArt],[bridge,bridgeArt],
@@ -113,6 +113,11 @@ window.DinyarRecon=(()=>{
    if(!quest.dinyarDragonSlain)return [{id:dragon,x:328,y:214,height:94}];
    return [{id:quest.dinyarCleared?recoveredDragon:fallenDragon,x:344,y:264,height:72}];
   }
+  return null;
+ }
+ function parallelObjective(){
+  if(scene===nidal)return 'Isger · Freya, J’Mal, Reese, and Jason are scouting Citadel Dinyar.';
+  if(scene===ridge)return 'Nidal · Violetta and Corrine are helping Draymus find a physician.';
   return null;
  }
  function points(){
@@ -315,8 +320,8 @@ window.DinyarRecon=(()=>{
     if(!await departForNidal())return false;
     break;
    case 'nidalConsult':
-    await say('draymus','Find me someone who can keep a brain alive outside its skull. The rest of me can wait.');
-    await say('violetta','I’ll ask who can undertake it. I can make inquiries while I report to my superiors.');
+    await say('draymus','I want a physician who can remove my brain and keep it alive in a jar. Can you find someone in Nidal who knows how?');
+    await say('violetta','I’ll ask when I report to my superiors. Freya’s party can scout Dinyar while we look.');
     quest.dinyarReached=true;
     await travel(ridge,328,344);
     break;
@@ -397,5 +402,5 @@ window.DinyarRecon=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,canSensePostern,sensePostern,drawPostern,visibleCellDoors,drawCellVision,effect};
+ return {install,load,mapImage,roster,npcs,parallelObjective,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,canSensePostern,sensePostern,drawPostern,visibleCellDoors,drawCellVision,effect};
 })();
