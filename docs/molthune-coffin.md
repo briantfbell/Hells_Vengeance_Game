@@ -10,6 +10,10 @@ The natural 2 during Reese’s scouting, the exact map and enemy positions, and 
 
 Replays 434 and 434A stage the encounter by the hut and the takeoff at the southern mouth of the pass. The route and Freya’s direction are adaptations of the recorded escape. A checkpoint after Violetta’s warning restores the takeoff objective. Earlier saves inside the new hut’s footprint resume on the adjacent snow.
 
+## Scouting and ambush staging
+
+Replay **430** stages the remorhaz’s lunge after Reese’s fixed Stealth roll and brings him back to the company at the lower pass. Replay **433** opens the portals, brings the warriors onto the slope, and shows Violetta moving from the dropped coffin to the hut. Reduced motion skips the movement while keeping the story result and checkpoint. The routes and timing are staging based on blog P001.
+
 ## Artwork prompts
 
 **Slope shelter edit** · `art-test/molthune-slope-v2.png`

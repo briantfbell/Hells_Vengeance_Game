@@ -7,7 +7,9 @@ window.MolthuneCoffin=(()=>{
  const portrait='molthune-violetta-v1.png',undeadArt='molthune-wight-warrior-v1.png';
  const violet='violetta',unknown='pavel_unknown',wight='molthune_wight';
  const coffin=[430,185];
- const flightDuration=950;
+ const flightDuration=950,breachDuration=2200;
+ const droppedCoffin=[347,305],hutCover=[456,200];
+ const portals=[{x:172,y:144,foot:192,height:83},{x:544,y:157,foot:208,height:91}];
  const scoutCover=[328,312],scoutDuration=1050;
  let scout=null,chase=null,breach=null,flight=null;
 
@@ -71,13 +73,27 @@ window.MolthuneCoffin=(()=>{
  }
  function target(){return points()?.[0]||null;}
  function goal(){return target()?.label||(scene===shelter&&quest.molthuneComplete?'Violetta is safe. She offers to help the company.':null);}
+ function ambushProgress(){
+  if(quest.molthuneBreach)return 1;
+  if(breach?.epoch!==epoch)return 0;
+  return reduce.matches?1:Math.min(1,(performance.now()-breach.at)/breachDuration);
+ }
+ function phase(progress,start,end){
+  return Math.max(0,Math.min(1,(progress-start)/(end-start)));
+ }
  function npcs(){
   if(scene===shelter)return [{id:quest.molthuneIntroduced?violet:unknown,x:456,y:193,height:57}];
   if(scene!==slope)return null;
-  if(!quest.molthuneBreach)return [];
-  const woman=quest.molthuneFlightReady?[352,355]:[456,200];
-  return [{id:wight,x:172,y:192,height:83},{id:wight,x:544,y:208,height:91},
-   {id:unknown,x:woman[0],y:woman[1],height:56}];
+  const progress=ambushProgress();
+  const arrivals=portals.flatMap(({x,y,foot,height},i)=>{
+   const arrival=phase(progress,.16+i*.12,.56+i*.12);
+   return arrival>0?[{id:wight,x,y:y+(foot-y)*arrival,height:height*(.28+.72*arrival)}]:[];
+  });
+  if(progress<=.44)return arrivals;
+  const slip=phase(progress,.44,.94);
+  const [x,y]=quest.molthuneFlightReady?[352,355]:hutCover;
+  return [...arrivals,{id:unknown,x:droppedCoffin[0]+(x-droppedCoffin[0])*slip,
+   y:droppedCoffin[1]+(y-droppedCoffin[1])*slip,height:56}];
  }
  function scoutProgress(){
   return scout?.epoch===epoch?Math.min(1,(performance.now()-scout.at)/scoutDuration):0;
@@ -117,12 +133,20 @@ window.MolthuneCoffin=(()=>{
     g.drawImage(bear,16,73,651,581,Math.round(272-progress*375),foot-40,45,40);
    }
   }
+  const progress=ambushProgress(),drop=phase(progress,.23,.41);
   if(!quest.molthuneCoffinLifted)drawProp(g,coffinArt,...coffin,37);
-  else if(quest.molthuneBreach)drawProp(g,coffinArt,347,305,37);
-  else if(units[0])drawProp(g,coffinArt,units[0].x+19,units[0].y-9,34);
-  if(!quest.molthuneBreach&&breach?.epoch!==epoch)return;
-  for(const [x,y] of [[172,144],[544,157]]){
+  else if(drop===1)drawProp(g,coffinArt,...droppedCoffin,37);
+  else if(units[0]){
+   const x=units[0].x+19,y=units[0].y-9;
+   drawProp(g,coffinArt,x+(droppedCoffin[0]-x)*drop,y+(droppedCoffin[1]-y)*drop,34+3*drop);
+  }
+  const aperture=phase(progress,0,.19);
+  if(aperture===0)return;
+  for(const {x,y} of portals){
    g.save();
+   g.translate(x,y);
+   g.scale(aperture,1);
+   g.translate(-x,-y);
    g.globalAlpha=reduced?.56:.5+Math.sin(t*3+x)*.1;
    const glow=g.createRadialGradient(x,y,4,x,y,37);
    glow.addColorStop(0,'#d4b8f2');
@@ -181,12 +205,12 @@ window.MolthuneCoffin=(()=>{
    case 'molthuneBreach': {
     await say('draymus','We’re out from under the dragon’s ward. She can see us now.');
     const token=epoch;
-    breach={epoch:token};
-    await delay(reduce.matches?450:800);
+    breach={epoch:token,at:performance.now()};
+    await delay(reduce.matches?350:breachDuration);
     if(token!==epoch)return false;
     quest.molthuneBreach=true;
     save();
-    await say('Chronicle','Portals open and powerful undead step through. The company drops the coffin. Its lid opens just long enough for a young woman to slip out and take cover.');
+    await say('Chronicle','The Wight Mother’s undead spill onto the slope. A young woman slips out of the dropped coffin and takes cover beside the hut.');
     break;
    }
    case 'molthuneEscape':
