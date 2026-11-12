@@ -35,6 +35,7 @@ window.SkadiParley=(()=>{
    points:[
     {id:'skadiScout',x:216,y:264,label:'Scout the settlement’s defenses'},
     {id:'skadiCover',x:328,y:288,label:'Have Draymus hide the approach'},
+    {id:'skadiApproach',x:456,y:248,label:'Take the far side of the yard'},
     {id:'skadiParley',speaker:skadi,x:328,y:208,label:'Ask Skadi for a formal meeting'}
    ]
   };
@@ -73,7 +74,8 @@ window.SkadiParley=(()=>{
  }
  function points(){
   if(scene===skull&&quest.darkrainComplete)return [point('skadiCrossFromSkull')];
-  if(scene===yard)return [point(!quest.skadiScouted?'skadiScout':!quest.skadiCovered?'skadiCover':'skadiParley')];
+  if(scene===yard)return [point(!quest.skadiScouted?'skadiScout':!quest.skadiCovered?'skadiCover':
+   !quest.skadiApproached?'skadiApproach':'skadiParley')];
   if(scene!==hall)return null;
   if(quest.skadiComplete)return [];
   return [point(tally()<3?'skadiArgument'+(tally()+1):'skadiTerms')];
@@ -81,12 +83,32 @@ window.SkadiParley=(()=>{
  function target(){return points()?.[0]||null;}
  function goal(){return target()?.label||(scene===hall&&quest.skadiComplete?'Skadi grants passage. Find the box below the ridge.':null);}
  function npcs(){
-  if(scene===yard)return quest.skadiCovered?[{id:skadi,x:328,y:173,height:85}]:[];
+  if(scene===yard)return quest.skadiCovered?[{id:skadi,x:328,y:173,height:85},
+   {id:'draymus',x:272,y:296,dir:'left'}]:[];
   return scene===hall?[
    {id:skadi,x:328,y:188,height:88},
    {id:'skadi_guest_one',x:200,y:190,height:83},
    {id:'skadi_guest_two',x:456,y:191,height:83}
   ]:null;
+ }
+ function drawDiversion(g,t){
+  if(scene!==yard||!quest.skadiCovered||quest.skadiApproached)return;
+  const motion=reduce.matches?0:t;
+  const figures=[{id:'freya',x:145,y:187},{id:'jamal',x:178,y:203}];
+  g.save();
+  g.globalAlpha=.28+(reduce.matches?0:.09*Math.sin(motion*5));
+  for(const [index,figure] of figures.entries()){
+   const drift=reduce.matches?0:Math.round(18*Math.sin(motion*1.5-index*.5));
+   drawActor(g,{...figure,x:figure.x+drift,dir:'left',step:!reduce.matches,anim:motion+index*.1},50);
+  }
+  g.globalAlpha=.48;
+  g.fillStyle='#c59cea';
+  for(let i=0;i<10;i++){
+   const progress=(motion*.46+i*.1)%1;
+   const x=260-progress*104, y=262-progress*95+Math.sin(i*3+progress*7)*9;
+   g.fillRect(Math.round(x),Math.round(y),2+i%2,2);
+  }
+  g.restore();
  }
  async function argue(){
   const index=tally(),round=rounds[index],answer=await say(skadi,round.claim,round.choices);
@@ -118,12 +140,16 @@ window.SkadiParley=(()=>{
     break;
    case 'skadiCover': {
     await say('draymus','If the Wight Mother is watching, I’ll give her something else to watch. Go while the illusion holds.');
-    await say('Chronicle','Draymus spins an illusion as Freya, J’Mal and Reese approach the chief.');
+    await say('draymus','Let the figures take the left. Freya, take J’Mal and Reese around the other side.');
     const {x,y,dir}=units[0];
     quest.skadiCovered=true;
     seedParty(x,y,dir);
     break;
    }
+   case 'skadiApproach':
+    await say('reese','We’re clear. The illusion bought us enough time to reach the chief.');
+    quest.skadiApproached=true;
+    break;
    case 'skadiParley':
     await say(skadi,'You’ve reached my home. Turn around and leave.');
     await say('freya','We ask for passage, and for a formal hearing to set the terms.');
@@ -143,5 +169,5 @@ window.SkadiParley=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,drawDiversion,interact};
 })();

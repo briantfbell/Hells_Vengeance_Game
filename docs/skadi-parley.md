@@ -4,6 +4,10 @@ GM timeline row S139 dates the encounter to 12 Gozran, 4717 and records Freya wi
 
 Skadi’s height, build and chain follow the blog. The settlement, feast, exact dialogue, three prompts and scripted final roll are game adaptations. A weak answer leaves the player at the same argument with a hint. Each successful argument saves progress. The exact cultural items remain unspecified and carry no assigned powers.
 
+## Crossing the yard under cover
+
+Replays 426–426A stage the documented approach. Draymus remains behind, and Freya, J’Mal and Reese cross the far side before asking Skadi for a hearing. The false figures and the route through the yard are staging. The blog does not name the spell. Saves after the diversion retain the three-person approach, and earlier saves at the feast remain valid.
+
 ## Artwork prompts
 
 **Settlement** · `art-test/skadi-settlement-v1.png`
