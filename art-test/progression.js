@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.sethicMansionBound)rows.push('Egorian · Sethic is captured alive. Jason stabilizes him and Draymus casts Feeblemind.');
+  if(q.sethicMansionBobFreed)rows.push('Egorian · 24 Pharast, 4717. Bob Applewood is freed from Sethic’s cellar. He is alive and unresponsive.');
   if(q.bellflowerBarnComplete)rows.push('Egorian · 22 Pharast, 4717. Earth elementals level the Bellflower barn. Most agents escape.');
   if(q.bellflowerBargeComplete)rows.push('Egorian · 20 Pharast, 4717. Bellflower rescuers free many captives. Jason recalls the company to its Migos Street hideaway.');
   if(q.pezzackComplete)rows.push('Pezzack · The company teleports to Egorian during the Strix assault.');

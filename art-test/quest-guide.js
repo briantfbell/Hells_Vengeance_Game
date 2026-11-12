@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const mansion=window.SethicMansion?.goal();
+ if(mansion)return {text:mansion,target:SethicMansion.target()};
  const barn=window.BellflowerBarn?.goal();
  if(barn)return {text:barn,target:BellflowerBarn.target()};
  const bellflower=window.BellflowerBarge?.goal();

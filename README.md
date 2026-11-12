@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 378 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 386 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -313,3 +313,7 @@ Continue after returning from Pezzack or select replay **366**. Help prepare Cor
 ### The Bellflower barn
 
 Continue from Migos Street or select replay **371**. Follow the Bellflower lead, scout the safehouse and summon the elementals. Replays **371–374** cover the operation. See [the section notes](docs/bellflower-barn.md) for sources and artwork.
+
+### The assault on Sethic’s mansion
+
+Continue from the Bellflower barn or select replay **375**. Choose Sethic for the Crown’s pilgrimage, rescue Bob, and subdue Sethic alive. Replays **375–382** cover the mansion. See [the section notes](docs/sethic-mansion.md) for sources, adaptations and artwork.

@@ -34,6 +34,12 @@ window.EnemyTactics=(()=>{
    else if(e.id==='whisper_giant'){move=round%2?'Club swing':'Heavy club swing';extra=round%2?0:2;}
    else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
+   else if(e.id==='sethic'){
+    physical=round%2===0;
+    move=physical?'Hidden dagger':'Arcane bolt';
+    extra=physical?0:3;
+    effect=physical?null:'arcaneBolt';
+   }
    else if(e.id==='vokadus'){move=round%2?'Heavy mace':'Overhead mace';extra=round%2?0:2;}
    else if(e.id==='gray_man'){move=(round+i)%2?'Dagger thrust':'Low slash';}
    else if(e.id==='egorian_bodyguard'){move='Longsword cut';}
