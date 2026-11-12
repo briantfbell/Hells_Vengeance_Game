@@ -1,7 +1,8 @@
 'use strict';
 window.NextChapter=(()=>{
  const rect=(x,y,w,h)=>({x,y,w,h});
- const corentyn='western_star_corentyn';
+ const corentyn='western_star_corentyn',pezzack='western_star_pezzack',ambushKind='western_star_pezzack_ambush';
+ const bareHands={name:'Unarmed',move:'Unarmed strike',dmg:[1,3,2]};
  const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
  const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
   {x:7,y:17,w:524,h:699,anchorX:323,anchorY:716},
@@ -16,6 +17,17 @@ window.NextChapter=(()=>{
   {id:'voyageCorentyn',x:520,y:232,label:'Take both ships to Corentyn'},
   {id:'voyageLand',x:520,y:232,label:'Continue to Remesiana'}
  ],lights:[]},
+ [pezzack]:{
+  name:'Pezzack · Port Quarter',image:'western-star-pezzack-v1.png',spawn:[552,168],
+  walk:[rect(80,160,448,176),rect(320,144,64,16),rect(512,160,96,32)],blocks:[],lights:[],
+  points:[
+   {id:'voyageSellInstruments',x:104,y:200,label:'Sell the Silver Star instruments'},
+   {id:'voyageDisguiseBlade',x:360,y:168,label:'Take Viggo’s scimitar to the smith'},
+   {id:'voyageRest',x:552,y:168,label:'Return to The Western Star for the night'},
+   {id:'voyagePezzackAmbush',x:472,y:248,label:'Cross the quay with El Guapo'},
+   {id:'voyageLeavePezzack',x:552,y:168,label:'Return to the ship with J’Mal'}
+  ]
+ },
  [corentyn]:{
   name:'Corentyn · Prize Quay',image:'corentyn-quay-v1.png',spawn:[552,200],
   walk:[rect(80,144,448,192),rect(512,192,80,32)],blocks:[],lights:[[82,86],[82,224],[445,94]],
@@ -40,14 +52,15 @@ window.NextChapter=(()=>{
    FUTURE_NPCS[id]={source:model.src,frame:model.frames[0]};
   }
   Object.assign(scenes,stage);
+  JOURNEYS[pezzack]='The Western Star puts in at Pezzack. The party plans to sell the instruments taken from the Silver Star and have Viggo’s blade disguised.';
   JOURNEYS[corentyn]='Borrowed and pressed crew limp both vessels into Corentyn near the Arch of Aroden. Before the authorities take the bodies, plant the disguised scimitar on the dead pirate captain.';
-  Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;if(id===corentyn){window.MAP_LAYERS[id]={foreground:s.image,contain:true,background:{type:'solid',color:'#21333c'}};continue;}window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
+  Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;if([pezzack,corentyn].includes(id)){window.MAP_LAYERS[id]={foreground:s.image,contain:true,background:{type:'solid',color:'#21333c'}};continue;}window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
  async function loadImages(loader){await Promise.all(Object.entries(stage).map(async([id,s])=>art[id]=await loader(s.image)));art.nextNPCs=await loader('longacre-cast.png');}
- function syncRoster(){const roster=partyRoster(),fixed=window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.DisruptionArc?.roster()||window.KantariaArc?.roster()||window.CourtArc?.roster()||window.FortArc?.roster()||window.ArmoryArc?.roster();for(const opt of $('character').options)opt.disabled=!roster.includes(opt.value);$('character').value=soloParty()?'jamal':fixed?units[0]?.id:lead;$('character').disabled=soloParty()||!!fixed||!!window.CovertArc?.roster()||!!battle;paintParty();}
+ function syncRoster(){const roster=partyRoster(),fixed=rosterOverride()||window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.DisruptionArc?.roster()||window.KantariaArc?.roster()||window.CourtArc?.roster()||window.FortArc?.roster()||window.ArmoryArc?.roster();for(const opt of $('character').options)opt.disabled=!roster.includes(opt.value);$('character').value=soloParty()?'jamal':fixed?units[0]?.id:lead;$('character').disabled=soloParty()||!!fixed||!!window.CovertArc?.roster()||!!battle;paintParty();}
  function objective(){if(!quest.done&&!quest.chapter2)return false;
- let goal=quest.chapter2Complete?'Chapter Two complete · The sermon awaits.':!quest.chapter2?'Continue aboard The Western Star.':[corentyn,'western_star'].includes(scene)?target().label:scene==='remesiana'?(!quest.supplied?'Visit the outfitter.':!quest.metCimri?'Find Cimri Staelish.':!quest.guapoAway?'See El Guapo off at the dock.':'Ride with Cimri to Longacre.'):scene==='tannery'?(!quest.scouted?'Scout the tannery.':!quest.ownerDeal?'Talk the owner down.':!quest.payroll?'Collect the payroll box.':'Return to Cimri at the gate.'):scene==='ash_house'?(!quest.reward?'Meet the employer behind the screens.':!quest.rested?'Eat and rest at Ash House.':!quest.spiritCalmed?'Investigate the upstairs splashing.':'Report to Razelago in the morning.'):quest.spiritCalmed?'Return downstairs. Report to Razelago.':!quest.bathStarted?'Investigate the tub with J’Mal.':'Rescue J’Mal. Let Draymus calm the spirit.';
+ let goal=quest.chapter2Complete?'Chapter Two complete · The sermon awaits.':!quest.chapter2?'Continue aboard The Western Star.':[pezzack,corentyn,'western_star'].includes(scene)?target().label:scene==='remesiana'?(!quest.supplied?'Visit the outfitter.':!quest.metCimri?'Find Cimri Staelish.':!quest.guapoAway?'See El Guapo off at the dock.':'Ride with Cimri to Longacre.'):scene==='tannery'?(!quest.scouted?'Scout the tannery.':!quest.ownerDeal?'Talk the owner down.':!quest.payroll?'Collect the payroll box.':'Return to Cimri at the gate.'):scene==='ash_house'?(!quest.reward?'Meet the employer behind the screens.':!quest.rested?'Eat and rest at Ash House.':!quest.spiritCalmed?'Investigate the upstairs splashing.':'Report to Razelago in the morning.'):quest.spiritCalmed?'Return downstairs. Report to Razelago.':!quest.bathStarted?'Investigate the tub with J’Mal.':'Rescue J’Mal. Let Draymus calm the spirit.';
  $('objective').textContent=goal;$('status').textContent=quest.chapter2Complete?'Next: a public sermon, and a town learning to fear its rulers.':'WASD / arrows · E talk or interact · Click to walk · Checkpoints save your progress';return true;}
- function npcs(){if(scene==='western_star')return [];
+ function npcs(){if(scene==='western_star'||scene===pezzack)return [];
  if(scene===corentyn)return [
   {id:'guard',x:280,y:144},
   ...(!quest.voyagePrizeTurnedIn?[{id:captain,x:472,y:208,height:58,pose:'prone'}]:[])
@@ -58,7 +71,18 @@ window.NextChapter=(()=>{
  return quest.spiritCalmed?[{id:'spirit',x:328,y:184}]:[];}
  function drawNPC(u){if(window.LORE_CAST?.[u.id]){const m=LORE_CAST[u.id],f=m.frame,height=u.id==='krenshar'?35:55,scale=height/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,art[m.source],f,u.x-f.w*scale/2,u.y-height,f.w*scale,height);return true;}if(u.id==='razelago'){ctx.save();ctx.globalAlpha=.4;ctx.fillStyle='#171a22';ctx.beginPath();ctx.ellipse(u.x,u.y-35,9,12,0,0,Math.PI*2);ctx.fill();ctx.fillRect(u.x-14,u.y-25,28,24);ctx.restore();return true;}
  const f=window.NEXT_NPCS?.[u.id];if(!f)return false;const height=['dog','krenshar'].includes(u.id)?35:55,scale=height/f.h;ctx.drawImage(art.nextNPCs,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),u.y-height,Math.round(f.w*scale),height);return true;}
- function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':quest.voyageBoardingWon?'voyageCorentyn':'land']:scene===corentyn?[!quest.scimitarDisposed?'voyagePlantBlade':!quest.voyagePrizeTurnedIn?'voyageHandOverPrize':!quest.voyageCorentynSupplied?'voyageReequip':'voyageLand']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:['bath'];return point(ids[0]);}
+ function rosterOverride(){
+  return scene===pezzack&&quest.voyagePezzackDawn?['guapo','jamal']:null;
+ }
+ function unarmed(id,kind){return id==='guapo'&&kind===ambushKind?bareHands:null;}
+ function isAmbush(kind){return kind===ambushKind;}
+ function pezzackTarget(){
+  if(!quest.voyageGoodsSold)return 'voyageSellInstruments';
+  if(!quest.voyageBladeDisguised)return 'voyageDisguiseBlade';
+  if(!quest.voyagePezzackDawn)return 'voyageRest';
+  return quest.voyagePezzackWon?'voyageLeavePezzack':'voyagePezzackAmbush';
+ }
+ function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':quest.voyageBoardingWon?'voyageCorentyn':'land']:scene===pezzack?[pezzackTarget()]:scene===corentyn?[!quest.scimitarDisposed?'voyagePlantBlade':!quest.voyagePrizeTurnedIn?'voyageHandOverPrize':!quest.voyageCorentynSupplied?'voyageReequip':'voyageLand']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:['bath'];return point(ids[0]);}
  function refresh(){for(const id of CORE){hp[id]=STATS[id].hp;uses[id]=0;}potions=2;mendUses=2;quest.smokeUsed=false;paintParty();}
  async function begin(){quest.chapter2=true;quest.chapter2Complete=false;quest.activeRoster=[...OPENING_ROSTER];refresh();await travel('western_star',360,248);await say('guapo','A proper meal. A proper bunk. I could get used to this.');save();}
  function surrenderReady(fight){
@@ -73,12 +97,52 @@ window.NextChapter=(()=>{
   await say('Chronicle','The captain falls. The surviving pirates lower their weapons and surrender.');
   await say('Captain Mildred','I can spare a few hands for the prize. We’ll take both ships into Corentyn.');
  }
+ async function afterPezzackAmbush(position){
+  quest.voyagePezzackWon=true;
+  seedParty(...position);
+  paintParty();
+  save();
+  updateObjective();
+  await say('jamal','Three of them, and you came ashore without a blade?');
+  await say('guapo','I was trying to look respectable. I won’t make that mistake twice.');
+ }
  async function interact(id){const all=new Set(['nextChapter',...Object.values(stage).flatMap(s=>s.points.map(p=>p.id))]);if(!all.has(id))return false;
  if(id==='nextChapter'){await begin();return true;}
- if((id.startsWith('voyage')||id==='land')&&(![corentyn,'western_star'].includes(scene)||target()?.id!==id))return false;
+ if((id.startsWith('voyage')||id==='land')&&(![pezzack,corentyn,'western_star'].includes(scene)||target()?.id!==id))return false;
  if(id==='voyage'){
-  await journeyCard('Pezzack · Unwanted recognition','The team sells stolen musical instruments from the Silver Star. El Guapo takes Viggo’s scimitar to a blacksmith to disguise it, but bounty posters betray his identity. Next morning, three brigands ambush the unarmed pirate; J’Mal, who has followed him, helps defeat them. El Guapo is confined aboard for the rest of the voyage.');
+  quest.voyagePezzackReached=true;
+  await travel(pezzack,552,168,'left');
+ }
+ if(id==='voyageSellInstruments'){
+  await say('Instrument Buyer','I’ll take the lot. That’s my offer for instruments with no bill of sale.');
+  await say('Chronicle','The company sells the Silver Star instruments for less than they hoped.');
+  quest.voyageGoodsSold=true;
+ }
+ if(id==='voyageDisguiseBlade'){
+  await say('guapo','I need this scimitar to look like another sword. Leave the edge alone.');
+  await say('Blacksmith','I can change its appearance. Give me the blade.');
+  await say('Chronicle','On the way back to the ship, a passerby recognizes El Guapo from the bounty posters.');
+  quest.voyageBladeDisguised=true;
+ }
+ if(id==='voyageRest'){
+  await journeyCard('Pezzack · The next morning','The company spends the night aboard The Western Star. At dawn they return to finish their business. El Guapo steps ashore without a weapon, and J’Mal follows him.',()=>{
+   quest.voyagePezzackDawn=true;
+   setScene(pezzack,552,168,'left');
+  });
+ }
+ if(id==='voyagePezzackAmbush'){
+  await say('Brigand','There’s the man on the posters. He hasn’t even brought a blade.');
+  await say('jamal','I followed you to see where you were going. Looks like I found out.');
+  const {x,y,dir}=units[0],max=STATS[boarder].hp;
+  save();
+  startBattle(0,false,{kind:ambushKind,returnPosition:[x,y,dir],opening:'Three brigands close in. El Guapo fights unarmed while J’Mal backs him up.',
+   enemies:[1,2,3].map(number=>({id:boarder,name:'Brigand '+number,hp:max,max}))});
+  return true;
+ }
+ if(id==='voyageLeavePezzack'){
+  await say('Captain Mildred','You stay aboard until the voyage is over. I’m not giving the next port a chance at that bounty.');
   quest.voyagePezzack=true;
+  await travel('western_star',520,232,'left');
  }
  if(id==='voyageLookout'){
   await say('Lookout','Sail behind us! Still there when we change heading.');
@@ -142,5 +206,5 @@ window.NextChapter=(()=>{
  await say('draymus','She is trapped in this house. We need to calm her, not cut her down.');
  let controlled=false;for(let attempt=0;attempt<3&&!controlled;attempt++){const c=await say('The Woman in the Bath','Her form shakes above the tub.',['[Draymus: control and calm her]','[Keep the others clear of the tub]']);if(c===1){await say('Chronicle','The group steps back. Draymus continues his work from a safe distance.');}const total=await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');controlled=total>=10;if(!controlled)await say('draymus','Again. She is afraid. Give me a moment.');}
  await say('Chronicle','Draymus steadies the spirit. The burned house returns in fragments: a mother hiding in the bathtub, her child, her war medals, and flames outside the door.');await say('draymus','You don’t have to hold him. He isn’t the one you lost.');await say('Chronicle','The grasping water settles. J’Mal is safe; the spirit is quiet.');quest.spiritCalmed=true;save();}
- return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding};
+ return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush};
 })();
