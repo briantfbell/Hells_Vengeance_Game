@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const nicolo=window.NicoloArc?.goal();
+ if(nicolo)return {text:nicolo,target:NicoloArc.target()};
  const ledgers=window.SethicLedgers?.goal();
  if(ledgers)return {text:ledgers,target:SethicLedgers.target(),targets:SethicLedgers.points()};
  const farm=window.SethicFarm?.goal();

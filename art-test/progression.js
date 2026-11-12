@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.nicoloRescueComplete)rows.push('Egorian · 1 Pharast, 4717. The company foils the Gray Men’s attempt on Nicolo Alazario. Nicolo helps fight off the assassins.');
   if(q.sethicLoanFailed)rows.push('Egorian · The company tries to steal Sethic’s foreign loan and leaves empty-handed.');
   if(q.sethicJudgesIndicted)rows.push('Egorian · The company exposes judges on Sethic’s payroll. Several are indicted.');
   if(q.sethicFarmDestroyed)rows.push('Egorian · The company destroys Paracount Sethic’s devil-hog farm.');

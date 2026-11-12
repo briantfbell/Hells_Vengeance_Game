@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 331 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 336 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -275,3 +275,8 @@ Continue after backing Vasvion or select replay **315**. Drive the hogs out of t
 ### Sethic’s judges and foreign loan
 
 Continue after the devil-hog farm or select replay **320**. Gather both records, submit the evidence, and follow Sethic’s loan to the strongroom. Replays **320–327** cover the indictments and attempted theft. See [the section notes](docs/sethic-ledgers.md) for sources, artwork and verification.
+
+
+### The Gray Men’s attempt on Nicolo
+
+Continue after the failed loan theft or select replay **328**. Meet Nicolo, foil the ambush, and get him clear of the lane. Replays **328–332** cover the rescue. See [the section notes](docs/nicolo-arc.md) for sources, artwork and verification.

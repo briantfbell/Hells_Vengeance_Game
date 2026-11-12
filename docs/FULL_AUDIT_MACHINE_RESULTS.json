@@ -1,20 +1,20 @@
 {
-  "scripts": 79,
-  "scenes": 128,
-  "replays": 331,
-  "framesInspected": 594,
-  "framesChecked": 594,
+  "scripts": 80,
+  "scenes": 129,
+  "replays": 336,
+  "framesInspected": 599,
+  "framesChecked": 599,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 56,
+  "combatStats": 57,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 516099620,
+  "assetBytes": 521064195,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 203,
-  "startupCompressedBytes": 461046998,
-  "startupDecodedRgbaBytes": 1269136120,
+  "startupAssets": 206,
+  "startupCompressedBytes": 466003986,
+  "startupDecodedRgbaBytes": 1288009556,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -121,6 +121,7 @@
     "egorian-feud-salon-v1.png",
     "egorian-fountain-stranger-v1.png",
     "egorian-fountain-v1.png",
+    "egorian-gray-man-v1.png",
     "egorian-guard-lane-v1.png",
     "egorian-hotel-barato-v1.png",
     "egorian-jaquen-v1.png",
@@ -130,6 +131,8 @@
     "egorian-magistrate-v1.png",
     "egorian-midnight-temple-v1.png",
     "egorian-mort-spells-v1.png",
+    "egorian-nicolo-lane-v1.png",
+    "egorian-nicolo-v1.png",
     "egorian-noble-bodyguard-v1.png",
     "egorian-svetlana-v1.png",
     "egorian-tailor-aftermath-v1.png",
