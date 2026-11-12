@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const hinjiTavern=window.HinjiTavern?.goal();
+ if(hinjiTavern)return {text:hinjiTavern,target:HinjiTavern.target()};
  const belde=window.Belde?.goal();
  if(belde)return {text:belde,target:Belde.target()};
  const pale=window.PaleBall?.goal();

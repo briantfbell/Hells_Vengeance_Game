@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 353 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 356 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -289,3 +289,7 @@ Continue from Nicolo’s rescue or select replay **333**. Watch Mysterio perform
 ### Belde and Yunero
 
 Continue after the Night of the Pale or select replay **342**. Drive the Reclamation out of Belde and play Freya’s trivia contest. Replays **342–349** cover the visit. See [the section notes](docs/belde.md) for sources, adaptations and artwork.
+
+### El Guapo’s night in Hinji
+
+Continue from Yunero’s concession or select replay **350**. Join El Guapo at the tavern and see what happens to Titus Vel. Replays **350–352** cover the stop. See [the section notes](docs/hinji-tavern.md) for the location discrepancy and artwork.
