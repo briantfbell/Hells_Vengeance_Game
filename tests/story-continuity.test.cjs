@@ -44,6 +44,45 @@ test('both sermon approaches reveal the helm and disperse the crowd before the r
   assert.deepEqual(w.travels,['ash_house']);
  }
 });
+test('the jail ambush uses all four sap deputies, restores the exit and leaves Cimri on watch',async()=>{
+ const w=world();
+ w.scene='longacre_jail';
+ w.quest={chapter3:true,sermonDispersed:true,decreesIssued:true};
+ w.epoch=1;
+ w.reduce={matches:false};
+ w.$('character').options=[];
+ w.units=[{id:'freya',x:328,y:344,dir:'down'}];
+ const spawns=[];
+ w.seedParty=(...position)=>spawns.push(position);
+ w.startBattle=(_count,_shaken,config)=>w.battle=config;
+ assert.deepEqual(Array.from(w.NextArc.npcs(),actor=>actor.id),['rhona','deputy1','deputy2','deputy3','deputy4']);
+ w.quest.rhonaDismissed=true;
+ assert.equal(w.NextArc.npcs().length,0);
+ w.delay=async duration=>{
+  const left=w.NextArc.npcs()[0].x,right=w.NextArc.npcs()[1].x;
+  w.performance.now=()=>duration;
+  assert(w.NextArc.npcs()[0].x>left&&w.NextArc.npcs()[1].x<right);
+ };
+ await w.NextArc.interact('jailReport');
+ assert.equal(w.battle.kind,'deputies');
+ assert.equal(w.battle.enemies.length,4);
+ assert.equal(w.battle.returnPosition.y,344);
+ w.hp.freya=20;
+ w.EnemyTactics.plan(w.battle.enemies,w.units,w.hp,w.STATS,1);
+ assert(w.battle.enemies.every(enemy=>enemy.intent.move==='Sap strike'));
+ await w.NextArc.afterBattle(w.battle.returnPosition);
+ assert.deepEqual(spawns,[[328,344,'down']]);
+ assert(w.quest.deputiesDefeated);
+ assert.deepEqual(Array.from(w.NextArc.npcs(),actor=>actor.id),['cimri']);
+ await w.NextArc.interact('jailReport');
+ assert.equal(w.scene,'longacre_square');
+ assert(!w.NextArc.npcs().some(actor=>actor.id==='cimri'));
+ await w.NextArc.interact('ashReturn');
+ assert(!w.NextArc.npcs().some(actor=>actor.id==='cimri'));
+ await w.NextArc.interact('razelago');
+ assert(w.quest.deputiesReported);
+ assert.match(w.transcript.at(-1).text,/Scarlet Manor first thing in the morning/);
+});
 test('both peaceful approaches expose the payroll once and lead to Ash House',async()=>{
  for(const choice of [0,1]){
   const w=world();
