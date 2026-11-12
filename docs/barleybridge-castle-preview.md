@@ -10,6 +10,10 @@ The passage locations and connections are game staging. The throne-room note des
 
 Foundry scene `Scene.xLyKPIa4rbdZ1OEW` supplies the reference for the councillor’s meeting rooms, library and broad landing. Its prepared tokens include three Barleybridge Guardsmen, one Bowman and one Samurai. In the planning map, the throne room’s west gallery leads to the councillor’s floor. The floor’s return stairs take the marker back to the gallery. Inspect the meeting room and library along the way. The map condenses the Foundry layout, and the gallery connection is a game adaptation.
 
+## Lord’s chambers
+
+Foundry scene `Scene.iiniVv5xhDqdz7mp` shows the private quarters, including tatami rooms, a study and an eastern stair. Its prepared tokens include one Guardsman, one Bowman and one Samurai. The planning map condenses the floor around the private suite, study and open landing. Use **Trace route upstairs** at the east end of the councillor’s landing. The stair connection is an adaptation for the preview.
+
 ## Artwork prompts
 
 The built-in image generator produced these assets from written descriptions of the Foundry references. For the councillor’s floor, the in-game throne room supplied the style reference. The new map places the west staircase beside an open landing, with the council room and library above it.

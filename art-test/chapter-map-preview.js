@@ -57,7 +57,17 @@ window.ChapterMapPreview=(()=>{
    points:[
     {label:'Return stairs',x:56,y:248,destination:'barleybridge-throne-v1',arrival:[104,184]},
     {label:'Council room',x:216,y:152,note:'A low council table overlooks the west end of the landing.'},
-    {label:'Library study',x:472,y:152,note:'The library opens onto the east end of the landing, with a writing table by the shelves.'}
+    {label:'Library study',x:472,y:152,note:'The library opens onto the east end of the landing, with a writing table by the shelves.'},
+    {label:'Trace route upstairs',x:584,y:264,destination:'barleybridge-lords-chambers-v1',arrival:[488,264]}
+   ]
+  },
+  'barleybridge-lords-chambers-v1':{
+   spawn:[488,264],
+   walk:[[96,224,432,80],[128,208,48,32],[128,160,64,64],[304,208,160,32],[256,160,256,64]],
+   points:[
+    {label:'Return stairs',x:520,y:248,destination:'barleybridge-councillor-v1',arrival:[536,264]},
+    {label:'Private suite',x:392,y:168,note:'The landing opens into the lord’s tatami suite. Folding screens stand behind the bed.'},
+    {label:'Writing study',x:152,y:184,note:'Scroll shelves and a low writing desk line the study walls.'}
    ]
   },
   'barleybridge-basement-v1':{
