@@ -1,9 +1,9 @@
 {
-  "scripts": 51,
-  "scenes": 81,
-  "replays": 152,
-  "framesInspected": 493,
-  "framesChecked": 493,
+  "scripts": 52,
+  "scenes": 85,
+  "replays": 159,
+  "framesInspected": 496,
+  "framesChecked": 496,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 313254883,
+  "assetBytes": 325747352,
   "largestAssets": [
     {
       "name": "south-road-ambush-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 113,
-  "startupCompressedBytes": 258466898,
-  "startupDecodedRgbaBytes": 702848368,
+  "startupAssets": 118,
+  "startupCompressedBytes": 270950510,
+  "startupDecodedRgbaBytes": 734311472,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -92,6 +92,11 @@
     "dottari.png",
     "draymus-opposite-step-v3.png",
     "draymus-sheet.png",
+    "egorian-central-square-v1.png",
+    "egorian-falco-manor-v1.png",
+    "egorian-midnight-temple-v1.png",
+    "egorian-tria-falco-v1.png",
+    "egorian-west-bridge-v1.png",
     "execution-square-v1.png",
     "fort-cast-packed-v2.png",
     "fort-estazano-v1.png",

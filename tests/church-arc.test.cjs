@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 152 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,152);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 159 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,159);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -138,3 +138,32 @@ test('entry, hallway and sanctuary are distinct and renovation retains ruins unt
 test('imports cannot jump into later rooms while earlier chapter encounters are unfinished',()=>{const w=world(),list=w.replaySections();for(const[from,to]of [['church-breach','church_sanctuary'],['accuser','burning_jail'],['fort-scout','fort_assault'],['court-approach','court_upper'],['uskwood-briefing','hardship_hall']]){const c=checkpoint(w,list.find(s=>s.id===from));c.scene=to;c.position={x:328,y:312};assert.throws(()=>w.SaveFiles.validate(c),/Premature campaign location/);}});
 
 test('Stranglehold saves reject skipped operations and premature locations without changing older saves',()=>{const w=world(),list=w.replaySections(),end=checkpoint(w,list.find(s=>s.id==='supply-end'));end.quest.chapter14Complete=true;assert(w.SaveFiles.decode(w.SaveFiles.encode(end)).quest.chapter14Complete);for(const flag of ['chapter13Complete','chapter14','supplyBriefed','mineObserved','mineDefendersCleared','minesSecured','cultLocated','cultDefeated','cultDestroyed','tradeObserved','merchantStruck','captainStruck','fortObserved','fortIsolated','perimeterCleared','supplyReported']){const c=structuredClone(end);c.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(c),/Stranglehold sequence/);}const early=checkpoint(w,list.find(s=>s.id==='supply-plan'));early.scene='supply_report';assert.throws(()=>w.SaveFiles.validate(early),/Premature Chapter Fourteen/);const old=checkpoint(w,list.find(s=>s.id==='covert-end'));assert.equal(w.SaveFiles.validate(old).quest.chapter14,undefined);const before=checkpoint(w,list.find(s=>s.id==='cult-battle'));before.hp.jamal=7;before.potions=0;assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(before)).hp.jamal,7);});
+
+test('Egorian arrival hands over Oppian before supplies and keeps the refill one-time', async()=>{
+ const w=world(),start=w.replaySections().find(s=>s.id==='egorian-approach');
+ w.scenes.south_road_camp.points=[];
+ w.QUESTGIVER_MODELS={};
+ vm.runInContext(read('egorian-arrival.js'),w);
+ w.EgorianArrival.install();
+ w.scene=start.scene;
+ w.quest=structuredClone(start.quest);
+ w.potions=0;
+ assert.equal(await w.EgorianArrival.interact('egorianSupply'),false);
+ for(const id of ['egorianApproach','egorianSalute','egorianCross','egorianHandover','egorianEnterTemple','egorianSupply']){
+  assert.equal(await w.EgorianArrival.interact(id),true,id);
+ }
+ assert.equal(w.potions,2);
+ w.potions=1;
+ assert.equal(await w.EgorianArrival.interact('egorianSupply'),false);
+ for(const id of ['egorianLeaveTemple','egorianThorntown','egorianWelcome','egorianRooms']){
+  assert.equal(await w.EgorianArrival.interact(id),true,id);
+ }
+ assert.equal(w.potions,1);
+ assert.equal(w.scene,'egorian_manor');
+ assert.equal(w.quest.egorianArrivalComplete,true);
+ assert.equal(w.EgorianArrival.target(),null);
+ const finished={...checkpoint(w,{scene:w.scene,quest:w.quest,position:[552,144]}),potions:w.potions};
+ assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(finished)).quest.oppianDelivered,true);
+ finished.quest.oppianDelivered=false;
+ assert.throws(()=>w.SaveFiles.validate(finished),/Egorian arrival sequence/);
+});

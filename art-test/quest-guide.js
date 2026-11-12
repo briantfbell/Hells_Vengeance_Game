@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const egorian=window.EgorianArrival?.goal();
+ if(egorian)return {text:egorian,target:EgorianArrival.target()};
  const road=window.SouthRoad?.goal();
  if(road)return {text:road,target:SouthRoad.target()};
  const aftermath=window.KantariaAftermath?.goal();
