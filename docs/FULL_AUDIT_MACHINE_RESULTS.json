@@ -1,9 +1,9 @@
 {
-  "scripts": 66,
-  "scenes": 112,
-  "replays": 253,
-  "framesInspected": 574,
-  "framesChecked": 574,
+  "scripts": 67,
+  "scenes": 113,
+  "replays": 256,
+  "framesInspected": 575,
+  "framesChecked": 575,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 444739940,
+  "assetBytes": 447710433,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 174,
-  "startupCompressedBytes": 389795223,
-  "startupDecodedRgbaBytes": 1086668440,
+  "startupAssets": 175,
+  "startupCompressedBytes": 392755614,
+  "startupDecodedRgbaBytes": 1092961688,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -69,6 +69,7 @@
     "arego-forest-approach-v1.png",
     "arego-inferno-gate-v1.png",
     "arego-loose-devil-v1.png",
+    "arego-malebolge-ledge-v1.png",
     "arego-outer-yard-open-v1.png",
     "arego-outer-yard-v1.png",
     "arego-prison-cells-v1.png",

@@ -5,7 +5,7 @@ window.CombatArt=(()=>{
  function phase(a){return reduce.matches?.55:Math.min(1,(performance.now()-a.start)/a.duration);}
  // Three restrained ready poses reuse the approved weapon silhouette; attacks keep their own frames.
  function readyPose(u){if(reduce.matches||hp[u.id]===0)return {dx:0,dy:0,tilt:0};const t=Handheld.time(performance.now()/1000),offset=Math.max(0,CORE.indexOf(u.id))*.17,weight=[0,1,0,-1][Math.floor((t+offset)/.52)%4];return {dx:weight,dy:weight? -1:0,tilt:weight*.012};}
- function actor(g,u,v){const a=battle?.animation,acting=a?.actor===u&&['attack','special','mend','dismissal'].includes(a.type),casting=acting&&(['mend','dismissal'].includes(a.type)||a.type==='special'&&['jason','draymus'].includes(u.id));let src,row,index;
+ function actor(g,u,v){const a=battle?.animation,acting=a?.actor===u&&['attack','special','mend','dismissal','purge'].includes(a.type),casting=acting&&(['mend','dismissal','purge'].includes(a.type)||a.type==='special'&&['jason','draymus'].includes(u.id));let src,row,index;
   const chapterWeapon=({freya:'naginata',jason:'lucerne',jamal:'kukri'})[u.id]===inventory.equipped[u.id];
   const plate=u.id==='freya'?window.EgorianExecution?.freyaCombat():null;
   const model=plate||(chapterWeapon?CHURCH_WEAPON_FRAMES[u.id]:null);

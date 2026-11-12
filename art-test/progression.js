@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.aregoReeseCrossed)rows.push('Inferno Gate · Fex and Razelago overpower the company. Wounded, Reese carries the Phlegmatic Talisman through the gate to Malebolge.');
   if(q.aregoFirstPact)rows.push('Inferno Gate · Visperthul will help close the gate and leave Cheliax alone this century if the company defeats Fex and gives him the talisman. The company accepts.');
   if(q.aregoTalismanExposed)rows.push('Inferno Gate · Fex built the Phlegmatic Talisman to control Visperthul and the portal. The company warns the devil.');
   if(q.aregoStairParley)rows.push('Fort Arego · The company fights devils in the cellblock and bargains for passage to the lowest level.');

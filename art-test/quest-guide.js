@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const ambush=window.AregoAmbush?.goal();
+ if(ambush)return {text:ambush,target:AregoAmbush.target()};
  const gate=window.InfernoGate?.goal();
  if(gate)return {text:gate,target:InfernoGate.target()};
  const arego=window.FortArego?.goal();

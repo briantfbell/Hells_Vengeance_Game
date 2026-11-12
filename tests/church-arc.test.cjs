@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 253 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,253);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 256 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,256);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -768,4 +768,49 @@ test('Fort Arego’s cellblock and parley lead to Visperthul’s first pact with
  assert.equal(back.quest.senaraTalismanRecovered,true);
  const forged=structuredClone(save);forged.quest.aregoStairParley=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Inferno Gate sequence/);
+});
+
+test('Fex’s scripted ambush exposes both casters, downs Jason and Draymus, and saves wounded Reese in Hell',async()=>{
+ const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='arego-fex-arrival');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),LORE_CAST:{fex:{},razelago_revealed:{}},
+  units:w.CORE.map(id=>({id})),canvas:{focus(){}},$:()=>({}),flash:()=>{},
+  animateAction:async(actor,target,type,_hit,impact)=>{assert(actor&&target);w.moves.push(type);impact?.();},
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),run:fn=>fn(),moves:[]});
+ w.scenes[start.scene].points=[];
+ vm.runInContext(read('arego-ambush.js'),w);
+ w.AregoAmbush.install();
+ const step=async id=>assert.equal(await w.AregoAmbush.interact(id),true,id);
+ await step('aregoFexAmbush');
+ const battle=w.battle,script=battle.script;
+ assert.equal(battle.scriptActor,'jason');
+ assert.equal(script.enemyStatus(battle.enemies[0]),'HIDDEN');
+ assert.equal(script.enemyStatus(battle.enemies[1]),'HIDDEN');
+ await script.act('special',{id:'jason'});
+ assert.equal(script.enemyStatus(battle.enemies[0]),'');
+ assert.equal(script.enemyStatus(battle.enemies[1]),'');
+ assert.equal(battle.scriptActor,'reese');
+ await script.act('special',{id:'reese'});
+ assert.equal(script.partyStatus({id:'freya'}),'IN THE CLOUD');
+ await script.act('special',{id:'draymus'});
+ assert.equal(script.partyStatus({id:'guapo'}),'DOMINATED');
+ assert.equal(script.partyStatus({id:'jamal'}),'CONFUSED');
+ assert.equal(w.hp.jason,0);
+ assert.equal(w.hp.draymus,0);
+ assert.equal(w.hp.reese,18);
+ await script.act('special',{id:'reese'});
+ assert.equal(w.quest.aregoReeseCrossed,undefined);
+ await script.act('special',{id:'reese'});
+ assert.deepEqual(Array.from(w.AregoAmbush.roster()),['reese']);
+ assert.deepEqual(w.moves,['purge','attack','arego_cloud','arego_domination','arego_confusion','arego_chain','attack','arego_crossing']);
+ await step('aregoReeseShelter');
+ const arrival=sections.find(s=>s.id==='arego-malebolge-landing');
+ const save={...checkpoint(w,{...arrival,quest:w.quest}),hp:w.hp};
+ const back=w.SaveFiles.decode(w.SaveFiles.encode(save));
+ assert.equal(back.quest.aregoReeseSheltered,true);
+ assert.equal(back.quest.senaraTalismanRecovered,true);
+ assert.equal(back.hp.jason,0);
+ assert.equal(back.hp.draymus,0);
+ assert.equal(back.hp.reese,18);
+ const forged=structuredClone(save);forged.quest.aregoFexArrived=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Fort Arego ambush sequence/);
 });

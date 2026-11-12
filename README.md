@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 253 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 256 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -209,3 +209,7 @@ Leave Senara after the lockdown or select replay **240**. Hear what Fex promised
 ### The Inferno Gate
 
 Descend from Fort Arego’s yard or select replay **247**. Fight through the cellblock, bargain for passage, and warn Visperthul about Fex’s talisman. Replays **247–253** lead to the first pact. See [the section notes](docs/inferno-gate.md) for sources, artwork and verification.
+
+### Fex’s ambush at the Inferno Gate
+
+Continue after Visperthul’s first pact or select replay **254**. Reveal Fex and Razelago, survive the ambush, and carry the talisman into Malebolge as Reese. Replays **254–256** cover the fight and escape. See [the section notes](docs/arego-ambush.md) for sources, artwork and verification.
