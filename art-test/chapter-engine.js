@@ -740,11 +740,12 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
   const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya'));
   const drawables=[...partyDrawables.map(u=>window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].sort((a,b)=>a.y-b.y);
  for(const u of drawables){
-  const flight=window.MolthuneCoffin?.flightPose(u);
+  const flight=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u);
   if(flight){ctx.save();ctx.translate(flight.x,flight.y);ctx.globalAlpha=flight.opacity;}
   if(CORE.includes(u.id)&&u.pose!=='prone')drawActor(ctx,u);else drawNPC(u);
   if(flight)ctx.restore();
  }
+ window.DinyarRecon?.drawDeparture(ctx);
  window.IlniusFountain?.drawStrike(ctx);
  window.EgorianExecution?.effects(ctx);
  window.EgorianMort?.effects(ctx);

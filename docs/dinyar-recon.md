@@ -2,6 +2,8 @@
 
 GM timeline rows S141 and S142 date the split to 14 Gozran, 4717. Draymus, Violetta Pavel and Corrine travel to Nidal to seek an operation to remove Draymus’s brain. The campaign blog P001, “Fuck-It List,” records that the group teleports there while Freya, J’Mal, Reese and Jason scout Dinyar. The Nidal scene depicts their arrival and plans to seek a physician. The campaign record leaves the outcome of the operation open at this point.
 
+Replay **437** shows Draymus, Violetta, and Corrine depart from the wayside while Freya’s company remains behind. The spell animation is staging for the teleport recorded in P001. Replay **438** resumes as Draymus in Nidal.
+
 Corrine learned about the concealed entrance from a young Hellknight signifier who escaped to warn the capital. The fortress consists of two keeps connected by a bridge over a deep chasm. The Glorious Reclamation has held it for nearly a year. J’Mal and Reese locate the entrance, and the group hopes to find surviving Godclaw Hellknights below. The exact briefing dialogue, arrival courtyard, observation route, and position of the hidden entrance are adaptations.
 
 The exported Foundry journal `JournalEntry.KCdVUuF4I36HvXIj` contains an image reference for Citadel Dinyar. The referenced artwork returned HTTP 404 in the archive. The game uses the blog’s architectural description for the new map.
@@ -29,3 +31,5 @@ Built-in image generator edit prompt: Make a precise localized edit to this exac
 The browser playthrough started from the Molthune checkpoint, followed the briefing, reloaded in Nidal, verified both playable rosters, and completed the ridge scouting and lower-approach plan. The final checkpoint loaded at 640×480 with no browser console errors. All 165 automated tests passed. The structural audit checked 158 scenes, 445 replays and 645 sprite frames.
 
 The postern audit played replay 442 at 640×480, opened the door, reloaded on the ridge, and entered the lower works. The Reclamation watch objective loaded with no browser errors. All 174 tests passed, including all 476 replay checkpoints and a legacy lower-works save. The structural audit reported no geometry, frame or asset errors.
+
+The teleport audit opened replay 437 at 640×480, observed the wayside spell, continued into Nidal with Draymus as the only playable character, and reloaded the arrival checkpoint. No browser errors appeared. All 174 tests passed, and the structural audit checked all 476 replays.

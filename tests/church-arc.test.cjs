@@ -2073,7 +2073,24 @@ test('the Nidal cutaway and Dinyar scouting keep the two rosters separate across
  const step=async id=>assert.equal(await w.DinyarRecon.interact(id),true,id);
  const capture=id=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay(id),quest:w.quest})));
  assert.equal(w.DinyarRecon.target().id,'dinyarSplit');
+ w.reduce={matches:false};
+ w.epoch=1;
+ let clock=0;
+ w.performance.now=()=>clock;
+ const effects=[];
+ w.GameAudio={effect:sound=>effects.push(sound)};
+ w.delay=async duration=>{
+  clock+=duration*.65;
+  assert.equal(w.scene,'molthune_waystation');
+  assert(!w.quest.nidalOperationSought);
+  assert(w.DinyarRecon.departurePose({id:'draymus'}).opacity<1);
+  assert(w.DinyarRecon.departurePose({id:'violetta'}).opacity<1);
+  assert(w.DinyarRecon.departurePose({id:'corrine'}).opacity<1);
+  assert.equal(w.DinyarRecon.departurePose({id:'freya'}),null);
+ };
  await step('dinyarSplit');
+ assert.deepEqual(effects,['spell']);
+ assert.equal(w.DinyarRecon.departurePose({id:'draymus'}),null);
  assert.deepEqual([...w.DinyarRecon.roster()],['draymus']);
  assert.deepEqual(w.DinyarRecon.npcs().map(n=>n.id).join(','),'violetta,corrine');
  w.quest=capture('dinyar-nidal').quest;

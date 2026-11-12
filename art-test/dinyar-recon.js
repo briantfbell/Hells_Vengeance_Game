@@ -4,8 +4,9 @@ window.DinyarRecon=(()=>{
  const wayside='molthune_waystation',nidal='nidal_arrival_court',ridge='dinyar_ridge';
  const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png',posternArt='dinyar-ridge-postern-v1.png';
  const posternOutline=[[172,214],[199,205],[202,242],[195,248],[173,248]];
- const posternDuration=850;
- let opening=null;
+ const posternDuration=850,departureDuration=1400;
+ const nidalTravelers=['draymus','violetta','corrine'];
+ let opening=null,departure=null;
  const lower='dinyar_lower_works',bridge='dinyar_bridge_ward',court='egorian_westcrown_orders';
  const lowerArt='dinyar-lower-works-v1.png',bridgeArt='dinyar-bridge-ward-v1.png',dragonArt='parnoneryx-v1.png';
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
@@ -151,6 +152,57 @@ window.DinyarRecon=(()=>{
   updateObjective();
   if(kind===dragonBattle)await say('Chronicle','Parnoneryx falls. The company holds the crossing.');
  }
+ function departureProgress(){
+  if(scene!==wayside||departure?.epoch!==epoch)return null;
+  return Math.min(1,(performance.now()-departure.at)/departureDuration);
+ }
+ function departurePose(unit){
+  if(!nidalTravelers.includes(unit.id))return null;
+  const progress=departureProgress();
+  if(progress===null)return null;
+  const fade=Math.max(0,Math.min(1,(progress-.38)/.42));
+  return {x:0,y:-Math.round(fade*9),opacity:1-fade};
+ }
+ function drawDeparture(g){
+  const progress=departureProgress();
+  if(progress===null)return;
+  const travelers=[...units,...npcs()].filter(unit=>nidalTravelers.includes(unit.id));
+  const glow=Math.sin(Math.PI*progress);
+  g.save();
+  g.globalCompositeOperation='lighter';
+  for(const [index,{x,y}] of travelers.entries()){
+   const radius=14+12*progress;
+   const light=g.createRadialGradient(x,y,1,x,y,radius);
+   light.addColorStop(0,'#b993eb');
+   light.addColorStop(1,'#614c8d00');
+   g.globalAlpha=.68*glow;
+   g.fillStyle=light;
+   g.fillRect(x-radius,y-radius,radius*2,radius*2);
+   for(let i=0;i<12;i++){
+    const angle=i*1.8+progress*6+index,spread=8+i%4*4;
+    const px=x+Math.cos(angle)*spread,py=y+Math.sin(angle)*6-progress*(22+i*3);
+    g.fillStyle=i%3?'#cfb5fc':'#f4ddad';
+    g.fillRect(Math.round(px),Math.round(py),2,2+i%3);
+   }
+  }
+  g.restore();
+ }
+ async function departForNidal(){
+  const token=epoch;
+  GameAudio.effect('spell');
+  if(!reduce.matches){
+   departure={epoch:token,at:performance.now()};
+   await delay(departureDuration);
+   if(token!==epoch)return false;
+  }
+  try{
+   quest.nidalOperationSought=true;
+   await travel(nidal,328,344);
+   return true;
+  }finally{
+   if(departure?.epoch===token)departure=null;
+  }
+ }
  function drawPostern(g){
   if(scene!==ridge||!art[posternArt])return;
   const animating=opening?.epoch===epoch;
@@ -197,8 +249,7 @@ window.DinyarRecon=(()=>{
     await say('corrine','A young signifier survived the fall of Dinyar. His officers sent him to warn the capital. He told me how to reach a door hidden in the rock below the keep.');
     await say('violetta','I’ll go with Draymus to Nidal. We need someone who understands what he’s asking of them.');
     await say('freya','Then we split here. Jason, J’Mal, Reese, you’re with me. We’ll see if the signifier’s door still opens.');
-    quest.nidalOperationSought=true;
-    await travel(nidal,328,344);
+    if(!await departForNidal())return false;
     break;
    case 'nidalConsult':
     await say('draymus','Find me someone who can keep a brain alive outside its skull. The rest of me can wait.');
@@ -278,5 +329,5 @@ window.DinyarRecon=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawPostern,effect};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,drawPostern,effect};
 })();
