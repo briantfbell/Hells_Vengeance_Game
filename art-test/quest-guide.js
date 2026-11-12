@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const barn=window.BellflowerBarn?.goal();
+ if(barn)return {text:barn,target:BellflowerBarn.target()};
  const bellflower=window.BellflowerBarge?.goal();
  if(bellflower)return {text:bellflower,target:BellflowerBarge.target()};
  const pezzack=window.Pezzack?.goal();

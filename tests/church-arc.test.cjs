@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 374 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,374);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 378 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,378);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1545,4 +1545,33 @@ test('the Bellflower barge starts with Draymus wounded and ends with Jason’s r
  assert.equal(saved.scene,'egorian_migos_hideaway');
  saved.quest.bellflowerHeld=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Bellflower barge sequence/);
+});
+
+test('the Bellflower barn can only be leveled after scouting and reloads as ruins',async()=>{
+ const w=world(),replay=id=>w.replaySections().find(s=>s.id===id);
+ const start=replay('bellflower-barn-lead');
+ w.scene=start.scene;
+ w.quest=structuredClone(start.quest);
+ w.scenes.egorian_migos_hideaway.points=[];
+ w.epoch=1;
+ w.reduce={matches:true};
+ w.delay=async()=>{};
+ vm.runInContext(read('bellflower-barn.js'),w);
+ w.BellflowerBarn.install();
+ await w.BellflowerBarn.load(async source=>source);
+ const step=async id=>assert.equal(await w.BellflowerBarn.interact(id),true,id);
+ await step('bellflowerBarnLead');
+ assert.equal(w.BellflowerBarn.mapImage(),'bellflower-barn-v1.png');
+ assert.equal(await w.BellflowerBarn.interact('bellflowerBarnSummon'),false);
+ await step('bellflowerBarnScout');
+ await step('bellflowerBarnSummon');
+ const capture=()=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('bellflower-barn-ruins'),quest:w.quest})));
+ w.quest=capture().quest;
+ assert.equal(w.BellflowerBarn.mapImage(),'bellflower-barn-ruined-v1.png');
+ assert.equal(w.BellflowerBarn.npcs().length,0);
+ await step('bellflowerBarnAftermath');
+ assert.match(w.BellflowerBarn.goal(),/Most Bellflower agents escaped/);
+ const saved=capture();
+ saved.quest.bellflowerBarnLeveled=false;
+ assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Bellflower barn sequence/);
 });

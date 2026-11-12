@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 374 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 378 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -309,3 +309,7 @@ Continue from Rachikan or select replay **361**. Witness Bruce’s attack, open 
 ### The Bellflower barge
 
 Continue after returning from Pezzack or select replay **366**. Help prepare Corrine’s trap, hold off the rescuers, and escape with Jason’s word of recall. Replays **366–370** cover the barge. See [the section notes](docs/bellflower-barge.md) for the sources, combat and artwork.
+
+### The Bellflower barn
+
+Continue from Migos Street or select replay **371**. Follow the Bellflower lead, scout the safehouse and summon the elementals. Replays **371–374** cover the operation. See [the section notes](docs/bellflower-barn.md) for sources and artwork.
