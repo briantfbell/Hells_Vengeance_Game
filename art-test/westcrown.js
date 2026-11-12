@@ -1,7 +1,7 @@
 "use strict";
 
 window.Westcrown=(()=>{
- const harbor='remesiana_return',quay='westcrown_quay';
+ const harbor='hinji_shipyard',quay='westcrown_quay';
  const image='westcrown-quay-v1.png',portrait='westcrown-brado-v1.png';
  const favors=[
   ['westcrownCheckManifest','westcrownManifestChecked'],
@@ -11,7 +11,7 @@ window.Westcrown=(()=>{
  const unfinished=()=>favors.filter(([,flag])=>!quest[flag]);
 
  function install(){
-  scenes[harbor].points.push({id:'westcrownDepart',x:104,y:232,label:'Leave for Westcrown'});
+  scenes[harbor].points.push({id:'westcrownDepart',x:328,y:344,label:'Leave for Westcrown'});
   scenes[quay]={
    name:'Westcrown · Canal Quay',image,spawn:[328,264],
    walk:[{x:48,y:160,w:560,h:128},{x:544,y:288,w:64,h:96}],blocks:[],lights:[[111,121],[394,91]],
@@ -40,7 +40,7 @@ window.Westcrown=(()=>{
  function mapImage(){return scene===quay?art[quay]:null;}
  function points(){
   if(!quest.remesianaFlorioReported)return null;
-  if(scene===harbor)return [point('westcrownDepart')];
+  if(scene===harbor)return quest.hinjiComplete?[point('westcrownDepart')]:null;
   if(scene!==quay)return null;
   if(quest.westcrownComplete)return [];
   if(!quest.westcrownHired)return [point('westcrownMeetBrado')];

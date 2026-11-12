@@ -56,6 +56,7 @@ window.Progression=(()=>{
   if(q.efisioReeseRestrained)rows.push('Egorian · Visperthul turns Reese against the company through the soul-contract. His companions restrain him.');
   if(q.westcrownComplete)rows.push('Westcrown · The company completes Brado Pachia’s small favors.');
   if(q.westcrownHired)rows.push('Westcrown · 20 Calistril, 4717. Brado Pachia hires Freya’s company for a series of small favors.');
+  if(q.hinjiComplete)rows.push('Hinji · 18 Calistril, 4717. Nathin Barksdale declines the admiralty. Rear Admiral LeBeau gets the appointment.');
   if(q.remesianaMarketDestroyed)rows.push('Remesiana · 16 Calistril, 4717. Freya’s company destroys Florio Cento’s rival slave market.');
   if(q.remesianaReturned)rows.push('Remesiana · The company returns to find Florio Cento and repay more favors.');
   if(q.egorianTailorAftermathSeen)rows.push('Egorian · 15 Calistril, 4717. Four members of the tailor’s family are found dead in the tailor shop window. The city names no suspect.');

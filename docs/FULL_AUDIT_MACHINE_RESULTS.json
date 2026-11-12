@@ -1,9 +1,9 @@
 {
-  "scripts": 74,
-  "scenes": 122,
-  "replays": 304,
-  "framesInspected": 586,
-  "framesChecked": 586,
+  "scripts": 75,
+  "scenes": 123,
+  "replays": 308,
+  "framesInspected": 588,
+  "framesChecked": 588,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 493131080,
+  "assetBytes": 498024950,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 194,
-  "startupCompressedBytes": 438110789,
-  "startupDecodedRgbaBytes": 1212505752,
+  "startupAssets": 196,
+  "startupCompressedBytes": 442999423,
+  "startupDecodedRgbaBytes": 1225090456,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -149,6 +149,8 @@
     "guapo-sheet.png",
     "hardship-hall-v1.png",
     "hardship-yard-v1.png",
+    "hinji-officers-v1.png",
+    "hinji-shipyard-v1.png",
     "idle-deputies-a.png",
     "idle-deputies-b.png",
     "idle-draymus.png",

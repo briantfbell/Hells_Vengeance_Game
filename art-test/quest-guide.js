@@ -1,6 +1,8 @@
 window.QuestGuide={current(){
  const efisio=window.EfisioArc?.goal();
  if(efisio)return {text:efisio,target:EfisioArc.target()};
+ const hinji=window.Hinji?.goal();
+ if(hinji)return {text:hinji,target:Hinji.target()};
  const westcrown=window.Westcrown?.goal();
  if(westcrown)return {text:westcrown,target:Westcrown.target(),targets:Westcrown.points()};
  const market=window.RemesianaMarket?.goal();

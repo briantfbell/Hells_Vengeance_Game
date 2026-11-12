@@ -4,7 +4,7 @@ The GM timeline (S095) dates the fight to 4717.02.23 and records that Freya foll
 
 Replays 299–304 cover the trip, arrest attempt, restraint, upstairs fight, pursuit, and solo street duel. The apartment and street layouts, costumes, dialogue, guard count, combat stats, restraint staging, and the 18 HP minimum before the solo duel are adaptations. Defeating Efisio does not assign him a fate beyond the recorded defeat. The company reunites after the duel.
 
-P015 also places a Hinji shipyard assignment between Remesiana and Westcrown. That earlier campaign section still needs to be built.
+P015 also places a Hinji shipyard assignment between Remesiana and Westcrown. That section is covered in [Hinji’s shipyard](hinji.md).
 
 ## Artwork and built-in ImageGen prompts
 
