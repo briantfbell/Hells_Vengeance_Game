@@ -64,7 +64,7 @@ window.EgorianExecution=(()=>{
   return spectators;
  }
  function freyaCombat(){
-  return quest.zaraGeitta&&!quest.egorianFreyaDischarged?armorModels[inventory.equipped.freya==='naginata'?'naginata':'katana']:null;
+  return Inventory.hasFreyaPlate(quest)?armorModels[inventory.equipped.freya==='naginata'?'naginata':'katana']:null;
  }
 
  function npcs(){

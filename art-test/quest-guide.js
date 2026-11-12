@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const pale=window.PaleBall?.goal();
+ if(pale)return {text:pale,target:PaleBall.target()};
  const nicolo=window.NicoloArc?.goal();
  if(nicolo)return {text:nicolo,target:NicoloArc.target()};
  const ledgers=window.SethicLedgers?.goal();

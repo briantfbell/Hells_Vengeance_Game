@@ -19,9 +19,10 @@ window.Inventory=(()=>{
  function validate(value,q){if(value==null)return fresh(q);if(typeof value!=='object'||Array.isArray(value)||value.version!==1||Object.keys(value).some(k=>!['version','equipped'].includes(k))||!value.equipped||![5,6].includes(Object.keys(value.equipped).length)||Object.keys(value.equipped).some(id=>!ids.includes(id)))throw Error('Invalid inventory.');const out=fresh();for(const id of ids){const item=value.equipped[id]??(id==='reese'?'reese':undefined);if(item!==id&&!(id==='freya'&&item==='scimitar'&&q.scimitar)&&!(q.churchLoadout&&({freya:'naginata',jason:'lucerne',jamal:'kukri'})[id]===item)&&!(id==='jamal'&&item==='mantis_blades'&&q.mantisTraining)&&!(id==='reese'&&item==='silent_sentry'&&q.kantariaGiftsReceived&&q.reeseJoined))throw Error('Invalid equipped weapon for '+id+'.');out.equipped[id]=item==='scimitar'&&q.scimitarDisposed?'freya':item;}return out;}
  function weapon(state,id){return weapons[state.equipped[id]];}
  function equip(state,q,id,item){const candidate=structuredClone(state);candidate.equipped[id]=item;return validate(candidate,q);}
+ function hasFreyaPlate(q){return !!(q.zaraGeitta&&(!q.egorianFreyaDischarged||q.paleArmorSummoned));}
  function stats(base,state,id,q={}){
   const equipped=weapon(state,id);
-  const plate=id==='freya'&&q.zaraGeitta&&!q.egorianFreyaDischarged;
+  const plate=id==='freya'&&hasFreyaPlate(q);
   return {...base,ac:base.ac+(plate?2:id==='jamal'&&q.kantariaGiftsReceived?3:0),...(plate?{physicalDR:3}:{}),
    atk:base.atk+(equipped.attackBonus||0),frostDice:equipped.frostDice||0,
    dmg:[base.dmg[0],equipped.die,base.dmg[2]]};
@@ -41,7 +42,7 @@ window.Inventory=(()=>{
   {id:'dragon_helm',name:'Dragon Helm',kind:'gear',owner:'jason',description:'Maximize rolls full Burning Hands damage and spends a spell use. '+giftCharges(q,'jason')+'/3 charges remain.'},
   {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'}
  );
- if(q.zaraGeitta&&!q.egorianFreyaDischarged)result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
+ if(hasFreyaPlate(q))result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
  else if(q.kantariaGiftsReceived&&!q.zaraGeitta)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});
  if(q.egorianChairBought)result.push({id:'antique_wheelchair',name:'Antique wheelchair',kind:'quest',description:'Draymus uses the chair for his disguise. Joe Kek pushes it.'});
  if(q.senaraTalismanRecovered&&!q.aregoReeseContract)result.push({id:'senara_infernal_talisman',name:q.aregoTalismanExposed?'Phlegmatic Talisman':'Infernal Talisman',kind:'quest',description:q.aregoTalismanExposed?'Fex built the talisman to bind Visperthul and control the Inferno Gate.':'Fex’s talisman, recovered from the Black Daggers beneath Senara.'});
@@ -50,5 +51,5 @@ window.Inventory=(()=>{
  if(q.senaraOrders)result.push({id:'senara_ritual_list',name:'Fex’s ritual list',kind:'quest',description:'Known entries include Fex’s Infernal Talisman, four unicorn horns, and angel hearts. Razelago says the ritual will close an uncontrolled portal in the Whisperwood.'});
  return result;
  }
- return {fresh,validate,weapon,equip,stats,skill,giftCharges,items};
+ return {fresh,validate,weapon,equip,hasFreyaPlate,stats,skill,giftCharges,items};
 })();

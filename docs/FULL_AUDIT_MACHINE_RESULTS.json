@@ -1,24 +1,28 @@
 {
-  "scripts": 80,
-  "scenes": 129,
-  "replays": 336,
-  "framesInspected": 599,
-  "framesChecked": 599,
+  "scripts": 81,
+  "scenes": 130,
+  "replays": 345,
+  "framesInspected": 605,
+  "framesChecked": 605,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 57,
+  "combatStats": 58,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 521064195,
+  "assetBytes": 529195830,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
       "bytes": 3863874
+    },
+    {
+      "name": "pale-graveyard-v1.png",
+      "bytes": 3763759
     },
     {
       "name": "south-road-ambush-v1.png",
@@ -51,16 +55,12 @@
     {
       "name": "valor-fastness-tower-base-v1.png",
       "bytes": 3501201
-    },
-    {
-      "name": "valor-fastness-study-v1.png",
-      "bytes": 3499436
     }
   ],
   "startupComplete": true,
-  "startupAssets": 206,
-  "startupCompressedBytes": 466003986,
-  "startupDecodedRgbaBytes": 1288009556,
+  "startupAssets": 210,
+  "startupCompressedBytes": 474124322,
+  "startupDecodedRgbaBytes": 1313179612,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -200,6 +200,10 @@
     "lore-longacre-v2.png",
     "mounted-freya-v1.png",
     "ovinnik-idle-v1.png",
+    "pale-cabin-v1.png",
+    "pale-graveyard-v1.png",
+    "pale-royals-v1.png",
+    "pale-vokadus-v1.png",
     "political-cast-v1.png",
     "reese-early-portrait.png",
     "reese-early-sheet-v1.png",

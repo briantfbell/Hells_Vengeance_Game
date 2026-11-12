@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 336 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,336);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 345 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,345);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1304,4 +1304,41 @@ test('Nicolo opens the ambush, supports the party in combat, and survives the sa
  assert.equal(saved.quest.nicoloRescueComplete,true);
  saved.quest.nicoloGrayMenDriven=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Nicolo rescue sequence/);
+});
+
+
+test('the Pale Ball summons Freya’s plate only after the challenge and leaves Bruce as a guest',async()=>{
+ const w=world(),sections=w.replaySections(),replay=id=>sections.find(s=>s.id===id);
+ const start=replay('pale-road');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:272,dir:'up'}],
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
+  COMBAT_IDLES:{},DIALOGUE_FACE_CROPS:{},GameAudio:{effect:()=>{}},
+  SouthRoad:{recover:()=>{}},epoch:0,mendUses:0});
+ w.scenes[start.scene].points=[];
+ vm.runInContext(read('pale-ball.js'),w);
+ w.PaleBall.install();
+ const step=async id=>assert.equal(await w.PaleBall.interact(id),true,id);
+ await step('paleLeaveSalon');
+ assert(w.PaleBall.npcs().some(u=>u.id==='bruce'));
+ assert.deepEqual(Array.from(w.PaleBall.roster()),['freya']);
+ assert.equal(w.Inventory.hasFreyaPlate(w.quest),false);
+ assert.equal(await w.PaleBall.interact('paleSummonArmor'),false);
+ await step('paleMeetGuests');
+ await step('paleMysterio');
+ await step('paleMeetQueen');
+ await step('paleChallenge');
+ await step('paleSummonArmor');
+ assert(w.Inventory.hasFreyaPlate(w.quest));
+ assert.equal(w.Inventory.stats({ac:17,atk:4,dmg:[1,6,0]},w.inventory,'freya',w.quest).physicalDR,3);
+ await step('paleDuel');
+ assert.equal(w.battle.enemies[0].id,'vokadus');
+ await w.PaleBall.afterBattle([328,272,'up']);
+ await step('paleAftermath');
+ assert(w.transcript.some(l=>l.name==='abrogail'&&l.text==='Goblins Be Lootin!'));
+ await step('paleClose');
+ const saved=w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...start,quest:w.quest})));
+ assert.equal(saved.quest.paleBallComplete,true);
+ assert(w.Inventory.items(saved.quest,2).some(item=>item.id==='zara_geitta'));
+ saved.quest.paleArmorSummoned=false;
+ assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Night of the Pale sequence/);
 });

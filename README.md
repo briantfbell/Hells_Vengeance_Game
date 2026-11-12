@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 336 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 345 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -280,3 +280,8 @@ Continue after the devil-hog farm or select replay **320**. Gather both records,
 ### The Gray Men’s attempt on Nicolo
 
 Continue after the failed loan theft or select replay **328**. Meet Nicolo, foil the ambush, and get him clear of the lane. Replays **328–332** cover the rescue. See [the section notes](docs/nicolo-arc.md) for sources, artwork and verification.
+
+
+### The Night of the Pale
+
+Continue from Nicolo’s rescue or select replay **333**. Watch Mysterio perform, meet the Queen, and face Vokadus Fex as Freya. Replays **333–341** cover the ball. See [the section notes](docs/pale-ball.md) for sources, artwork and verification.
