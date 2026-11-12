@@ -52,6 +52,9 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.egorianTailorScouted)rows.push('Egorian · J’Mal and El Guapo bring back the family’s morning routes. The company makes its plan.');
+  if(q.egorianFountainOrders)rows.push('Egorian · The stranger sets a Thursday deadline. Afterward, the company is to report to Florio Cento in Remesiana.');
+  if(q.egorianVisionSeen)rows.push('Egorian · Reese sees a fountain in a vision. J’Mal accompanies him there.');
   if(q.egorianDischargeComplete)rows.push('Hotel Barato · The company regroups, sells some treasure and makes purchases. Draymus begins his work toward lichdom.');
   if(q.egorianDischargeHome)rows.push('Egorian · Zara Orcelani stops the crowd and escorts Freya from the square.');
   if(q.egorianFreyaDischarged)rows.push('Egorian · Freya is stripped of her military rank and her standing as a Hellknight.');

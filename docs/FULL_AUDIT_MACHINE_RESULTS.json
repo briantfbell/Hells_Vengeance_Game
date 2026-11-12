@@ -1,9 +1,9 @@
 {
-  "scripts": 70,
-  "scenes": 115,
-  "replays": 274,
-  "framesInspected": 579,
-  "framesChecked": 579,
+  "scripts": 71,
+  "scenes": 117,
+  "replays": 281,
+  "framesInspected": 580,
+  "framesChecked": 580,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 461957238,
+  "assetBytes": 470573093,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -23,6 +23,10 @@
     {
       "name": "south-road-ambush-v1.png",
       "bytes": 3647774
+    },
+    {
+      "name": "egorian-tailor-street-v1.png",
+      "bytes": 3639028
     },
     {
       "name": "court-of-spears.png",
@@ -51,16 +55,12 @@
     {
       "name": "valor-fastness-study-v1.png",
       "bytes": 3499436
-    },
-    {
-      "name": "valor-fastness-landing-v1.png",
-      "bytes": 3463485
     }
   ],
   "startupComplete": true,
-  "startupAssets": 182,
-  "startupCompressedBytes": 406973153,
-  "startupDecodedRgbaBytes": 1137003224,
+  "startupAssets": 185,
+  "startupCompressedBytes": 415580082,
+  "startupDecodedRgbaBytes": 1155881176,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -114,6 +114,8 @@
     "egorian-excruciation-effects-v1.png",
     "egorian-excruciation-square-v1.png",
     "egorian-falco-manor-v1.png",
+    "egorian-fountain-stranger-v1.png",
+    "egorian-fountain-v1.png",
     "egorian-guard-lane-v1.png",
     "egorian-hotel-barato-v1.png",
     "egorian-jaquen-v1.png",
@@ -125,6 +127,7 @@
     "egorian-mort-spells-v1.png",
     "egorian-noble-bodyguard-v1.png",
     "egorian-svetlana-v1.png",
+    "egorian-tailor-street-v1.png",
     "egorian-thumbtown-forge-v1.png",
     "egorian-thumbtown-smith-v1.png",
     "egorian-tria-falco-v1.png",

@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const fountain=window.EgorianFountain?.goal();
+ if(fountain)return {text:fountain,target:EgorianFountain.target()};
  const discharge=window.EgorianDischarge?.goal();
  if(discharge)return {text:discharge,target:EgorianDischarge.target()};
  const escape=window.AregoExit?.goal();
