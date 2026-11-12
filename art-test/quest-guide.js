@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const gate=window.InfernoGate?.goal();
+ if(gate)return {text:gate,target:InfernoGate.target()};
  const arego=window.FortArego?.goal();
  if(arego)return {text:arego,target:FortArego.target()};
  const grave=window.SenaraGraveyard?.goal();

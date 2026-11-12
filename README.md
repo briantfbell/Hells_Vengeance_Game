@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 246 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 253 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -205,3 +205,7 @@ Slip past the increased patrols after returning to Senara or select replay **234
 ### Fort Arego’s exterior
 
 Leave Senara after the lockdown or select replay **240**. Hear what Fex promised Visperthul, then defeat both Reclamation champions and open the old prison. Replays **240–246** cover the approach and yard. See [the section notes](docs/fort-arego-exterior.md) for sources, artwork and verification.
+
+### The Inferno Gate
+
+Descend from Fort Arego’s yard or select replay **247**. Fight through the cellblock, bargain for passage, and warn Visperthul about Fex’s talisman. Replays **247–253** lead to the first pact. See [the section notes](docs/inferno-gate.md) for sources, artwork and verification.
