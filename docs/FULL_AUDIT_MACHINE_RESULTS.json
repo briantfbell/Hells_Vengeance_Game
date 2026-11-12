@@ -1,9 +1,9 @@
 {
-  "scripts": 49,
-  "scenes": 78,
-  "replays": 139,
-  "framesInspected": 484,
-  "framesChecked": 484,
+  "scripts": 50,
+  "scenes": 79,
+  "replays": 144,
+  "framesInspected": 486,
+  "framesChecked": 486,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 299848534,
+  "assetBytes": 305080615,
   "largestAssets": [
     {
       "name": "court-of-spears.png",
@@ -53,14 +53,14 @@
       "bytes": 3436587
     },
     {
-      "name": "longacre-jail.png",
-      "bytes": 3228027
+      "name": "kantaria-council-v1.png",
+      "bytes": 3243024
     }
   ],
   "startupComplete": true,
-  "startupAssets": 108,
-  "startupCompressedBytes": 245085375,
-  "startupDecodedRgbaBytes": 671387056,
+  "startupAssets": 110,
+  "startupCompressedBytes": 250305995,
+  "startupDecodedRgbaBytes": 683971760,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -115,6 +115,7 @@
     "kantaria-cast-packed-v1.png",
     "kantaria-caves-v1.png",
     "kantaria-civilians-v1.png",
+    "kantaria-council-v1.png",
     "kantaria-docks-v1.png",
     "kantaria-guild-v1.png",
     "kantaria-manor-v1.png",
@@ -127,6 +128,7 @@
     "lamashtu-defenders-v1.png",
     "lamashtu-grotto-v1.png",
     "last-stand.png",
+    "linton-demeer-v1.png",
     "longacre-armory-v1.png",
     "longacre-authority-cast.png",
     "longacre-cast.png",

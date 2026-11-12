@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const aftermath=window.KantariaAftermath?.goal();
+ if(aftermath)return {text:aftermath,target:KantariaAftermath.target()};
  const fastness=window.FastnessArc?.goal();
  if(fastness)return {text:fastness,target:FastnessArc.target()};
  if(window.SupplyArc?.goal())return {text:SupplyArc.goal(),target:SupplyArc.target()};

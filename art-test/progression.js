@@ -39,6 +39,10 @@ window.Progression=(()=>{
   if(q.cultDestroyed)rows.push('The Lamashtu cult is destroyed.');
   if(q.captainStruck)rows.push('Merchant and shipping suppliers struck.');
   if(q.perimeterCleared)rows.push('Perimeter forts isolated and attacked.');
+  if(q.fastnessOppianCaptured)rows.push('Valor’s Fastness · Oppian was rescued and taken into custody.');
+  if(q.kantariaMayorMet)rows.push('The council appoints Linton Demeer as Kantaria’s mayor.');
+  if(q.uskwoodDeedSigned)rows.push('Loredana leaves for Nidal and signs over the Uskwood property.');
+  if(q.kantariaGiftsReceived)rows.push('Fex pays 10,600 gp in back pay, awards four gifts and commissions Freya’s plate.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;
