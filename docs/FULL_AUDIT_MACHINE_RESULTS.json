@@ -1,9 +1,9 @@
 {
-  "scripts": 81,
-  "scenes": 130,
-  "replays": 345,
-  "framesInspected": 605,
-  "framesChecked": 605,
+  "scripts": 82,
+  "scenes": 131,
+  "replays": 353,
+  "framesInspected": 606,
+  "framesChecked": 606,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 529195830,
+  "assetBytes": 537432117,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 210,
-  "startupCompressedBytes": 474124322,
-  "startupDecodedRgbaBytes": 1313179612,
+  "startupAssets": 213,
+  "startupCompressedBytes": 482352728,
+  "startupDecodedRgbaBytes": 1332053596,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -83,6 +83,9 @@
     "attack-party-v1.png",
     "barzillai-model.png",
     "bathroom-foreground.png",
+    "belde-square-liberated-v1.png",
+    "belde-square-v1.png",
+    "belde-yunero-v1.png",
     "bolgart-stocks-v1.png",
     "bruce-foundry-portrait.webp",
     "bruce-portrait-packed-v1.png",

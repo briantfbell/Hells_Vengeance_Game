@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const belde=window.Belde?.goal();
+ if(belde)return {text:belde,target:Belde.target()};
  const pale=window.PaleBall?.goal();
  if(pale)return {text:pale,target:PaleBall.target()};
  const nicolo=window.NicoloArc?.goal();

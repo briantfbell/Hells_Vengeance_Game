@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.beldeTriviaWon)rows.push('Belde · Freya defeats the ogre mage Yunero in Chelaxian Noble Trivia.');
+  if(q.beldeLiberated)rows.push('Belde · 11 Pharast, 4717. Freya’s company drives out the Glorious Reclamation.');
   if(q.paleDuelWon)rows.push('Egorian · 8 Pharast, 4717. Freya defeats Hellknight Vokadus Fex at the Night of the Pale with the Queen’s consent.');
   if(q.paleArmorSummoned)rows.push('Egorian · Freya summons her Hellknight plate at the Night of the Pale.');
   if(q.paleShowSeen)rows.push('Egorian · Draymus performs as the Great Mysterio at the Night of the Pale.');
