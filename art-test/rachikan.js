@@ -103,5 +103,5 @@ window.Rachikan=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,afterBattle,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,afterBattle,interact,pirateModel:model};
 })();

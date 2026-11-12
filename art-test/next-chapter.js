@@ -1,11 +1,18 @@
 'use strict';
 window.NextChapter=(()=>{
  const rect=(x,y,w,h)=>({x,y,w,h});
+ const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
+ const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
+  {x:7,y:17,w:524,h:699,anchorX:323,anchorY:716},
+  {x:614,y:71,w:795,h:645,anchorX:1065,anchorY:716},
+  {x:1527,y:13,w:524,h:703,anchorX:1840,anchorY:716}
+ ],maxHeight:703,cycle:[0,2],attackFrames:true};
  const stage={
  western_star:{name:'Chapter Two · The Western Star',image:'ship-deck-foreground.png',spawn:[360,248],walk:[rect(144,132,352,132),rect(48,116,112,148),rect(496,156,40,84)],blocks:[rect(192,168,48,64),rect(288,180,48,44),rect(400,168,48,64)],points:[
   {id:'voyage',x:360,y:144,label:'Make the stop at Pezzack'},
   {id:'voyageLookout',x:104,y:144,label:'Check the sail at the lookout'},
   {id:'land',x:520,y:232,label:'Wait for the pirates to board'},
+  {id:'voyageCorentyn',x:520,y:232,label:'Take both ships to Corentyn'},
   {id:'voyageLand',x:520,y:232,label:'Continue to Remesiana'}
  ],lights:[]},
  remesiana:{name:'Remesiana · Harbor Market',image:'remesiana-foreground.png',spawn:[520,280],walk:[rect(80,144,480,112),rect(448,224,96,48),rect(496,240,112,112)],blocks:[],points:[{id:'supplies',x:200,y:176,label:'Visit the outfitter'},{id:'cimri',x:424,y:184,label:'Speak to Cimri'},{id:'guapoDeparture',x:552,y:296,label:'See El Guapo off'},{id:'road',x:104,y:232,label:'Ride to Longacre'}],lights:[]},
@@ -13,7 +20,15 @@ window.NextChapter=(()=>{
  ash_house:{name:'The Ash House · A Hidden Employer',image:'ash-house-foreground.png',spawn:[328,328],walk:[rect(224,144,336,160),rect(272,288,96,80),rect(192,256,48,48)],blocks:[rect(496,96,80,144)],points:[{id:'krenshar',x:240,y:280,label:'Approach the guardian'},{id:'razelago',x:328,y:160,label:'Speak through the screens'},{id:'rest',x:232,y:240,label:'Eat and rest'},{id:'bathStairs',x:536,y:208,label:'Investigate the splashing'}],lights:[[112,164],[496,120]]},
  bathroom:{name:'Ash House · Something in the Water',image:'bathroom-foreground.png',spawn:[328,328],walk:[rect(160,208,320,96),rect(272,288,96,80)],blocks:[],points:[{id:'bath',x:328,y:208,label:'Examine the porcelain tub'},{id:'bathExit',x:328,y:352,label:'Return downstairs'}],lights:[]}
  };
- function install(){Object.assign(scenes,stage);Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
+ function install(){
+  Object.assign(STATS,{[captain]:{hp:28,ac:13,atk:5,dmg:[1,6,2]},[boarder]:{hp:11,ac:11,atk:3,dmg:[1,6,1]}});
+  COMBAT_IDLES[captain]=captainModel;
+  COMBAT_IDLES[boarder]=window.Rachikan.pirateModel;
+  for(const id of [captain,boarder]){
+   const model=COMBAT_IDLES[id];
+   FUTURE_NPCS[id]={source:model.src,frame:model.frames[0]};
+  }
+  Object.assign(scenes,stage);Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
  async function loadImages(loader){await Promise.all(Object.entries(stage).map(async([id,s])=>art[id]=await loader(s.image)));art.nextNPCs=await loader('longacre-cast.png');}
  function syncRoster(){const roster=partyRoster(),fixed=window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.DisruptionArc?.roster()||window.KantariaArc?.roster()||window.CourtArc?.roster()||window.FortArc?.roster()||window.ArmoryArc?.roster();for(const opt of $('character').options)opt.disabled=!roster.includes(opt.value);$('character').value=soloParty()?'jamal':fixed?units[0]?.id:lead;$('character').disabled=soloParty()||!!fixed||!!window.CovertArc?.roster()||!!battle;paintParty();}
  function objective(){if(!quest.done&&!quest.chapter2)return false;
@@ -26,12 +41,24 @@ window.NextChapter=(()=>{
  return quest.spiritCalmed?[{id:'spirit',x:328,y:184}]:[];}
  function drawNPC(u){if(window.LORE_CAST?.[u.id]){const m=LORE_CAST[u.id],f=m.frame,height=u.id==='krenshar'?35:55,scale=height/f.h;(window.PresentationPolish?.draw||function(g,im,f,...d){g.drawImage(im,f.x,f.y,f.w,f.h,...d)})(ctx,art[m.source],f,u.x-f.w*scale/2,u.y-height,f.w*scale,height);return true;}if(u.id==='razelago'){ctx.save();ctx.globalAlpha=.4;ctx.fillStyle='#171a22';ctx.beginPath();ctx.ellipse(u.x,u.y-35,9,12,0,0,Math.PI*2);ctx.fill();ctx.fillRect(u.x-14,u.y-25,28,24);ctx.restore();return true;}
  const f=window.NEXT_NPCS?.[u.id];if(!f)return false;const height=['dog','krenshar'].includes(u.id)?35:55,scale=height/f.h;ctx.drawImage(art.nextNPCs,f.x,f.y,f.w,f.h,Math.round(u.x-f.w*scale/2),u.y-height,Math.round(f.w*scale),height);return true;}
- function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':'land']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:['bath'];return point(ids[0]);}
+ function target(){const ids=scene==='western_star'?[quest.scimitarDisposed?'voyageLand':!quest.voyagePezzack?'voyage':!quest.voyageBoardingReady?'voyageLookout':quest.voyageBoardingWon?'voyageCorentyn':'land']:scene==='remesiana'?[!quest.supplied?'supplies':!quest.metCimri?'cimri':!quest.guapoAway?'guapoDeparture':'road']:scene==='tannery'?[!quest.scouted?'scout':!quest.ownerDeal?'owner':!quest.payroll?'payroll':'ashRoad']:scene==='ash_house'?[!quest.reward?'razelago':!quest.rested?'rest':!quest.spiritCalmed?'bathStairs':'razelago']:['bath'];return point(ids[0]);}
  function refresh(){for(const id of CORE){hp[id]=STATS[id].hp;uses[id]=0;}potions=2;mendUses=2;quest.smokeUsed=false;paintParty();}
  async function begin(){quest.chapter2=true;quest.chapter2Complete=false;quest.activeRoster=[...OPENING_ROSTER];refresh();await travel('western_star',360,248);await say('guapo','A proper meal. A proper bunk. I could get used to this.');save();}
+ function surrenderReady(fight){
+  return fight?.kind===boardingKind&&fight.enemies.some(enemy=>enemy.id===captain&&enemy.hp<=0);
+ }
+ async function afterBoarding(position){
+  quest.voyageBoardingWon=true;
+  seedParty(...position);
+  paintParty();
+  save();
+  updateObjective();
+  await say('Chronicle','The captain falls. The surviving pirates lower their weapons and surrender.');
+  await say('Captain Mildred','I can spare a few hands for the prize. We’ll take both ships into Corentyn.');
+ }
  async function interact(id){const all=new Set(['nextChapter',...Object.values(stage).flatMap(s=>s.points.map(p=>p.id))]);if(!all.has(id))return false;
  if(id==='nextChapter'){await begin();return true;}
- if(['voyage','voyageLookout','land','voyageLand'].includes(id)&&(scene!=='western_star'||target()?.id!==id))return false;
+ if(['voyage','voyageLookout','land','voyageCorentyn','voyageLand'].includes(id)&&(scene!=='western_star'||target()?.id!==id))return false;
  if(id==='voyage'){
   await journeyCard('Pezzack · Unwanted recognition','The team sells stolen musical instruments from the Silver Star. El Guapo takes Viggo’s scimitar to a blacksmith to disguise it, but bounty posters betray his identity. Next morning, three brigands ambush the unarmed pirate; J’Mal, who has followed him, helps defeat them. El Guapo is confined aboard for the rest of the voyage.');
   quest.voyagePezzack=true;
@@ -44,7 +71,19 @@ window.NextChapter=(()=>{
   quest.voyageBoardingReady=true;
  }
  if(id==='land'){
-  await journeyCard('The Western Star · A pirate boarding','The Western Star feigns surrender. The pirates board. Their captain is killed in the ensuing battle, and the survivors surrender. Borrowed and pressed crew bring both vessels into Corentyn.');
+  await say('Captain Mildred','Keep your weapons low. Let them come over the rail.');
+  await say('guapo','That one is their captain. Take him down and the rest may yield.');
+  const {x,y,dir}=units[0];
+  const enemy=(id,name,shortName)=>({id,name,shortName,hp:STATS[id].hp,max:STATS[id].hp});
+  save();
+  startBattle(0,false,{kind:boardingKind,returnPosition:[x,y,dir],opening:'The pirates board. Defeat their captain to force a surrender.',enemies:[
+   enemy(boarder,'Boarding Pirate 1','Boarder 1'),
+   enemy(captain,'Pirate Captain','Captain'),
+   enemy(boarder,'Boarding Pirate 2','Boarder 2')
+  ]});
+  return true;
+ }
+ if(id==='voyageCorentyn'){
   await journeyCard('Corentyn · The false trail','The captured ship is sold to the Chelish government. Prisoners and bodies are turned over for bounties. Viggo’s scimitar is planted on the dead pirate captain, and the party buys better equipment before sailing onward.');
   quest.scimitarDisposed=true;
   if(inventory.equipped.freya==='scimitar')inventory.equipped.freya='freya';
@@ -74,5 +113,5 @@ window.NextChapter=(()=>{
  await say('draymus','She is trapped in this house. We need to calm her, not cut her down.');
  let controlled=false;for(let attempt=0;attempt<3&&!controlled;attempt++){const c=await say('The Woman in the Bath','Her form shakes above the tub.',['[Draymus: control and calm her]','[Keep the others clear of the tub]']);if(c===1){await say('Chronicle','The group steps back. Draymus continues his work from a safe distance.');}const total=await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');controlled=total>=10;if(!controlled)await say('draymus','Again. She is afraid. Give me a moment.');}
  await say('Chronicle','Draymus steadies the spirit. The burned house returns in fragments: a mother hiding in the bathtub, her child, her war medals, and flames outside the door.');await say('draymus','You don’t have to hold him. He isn’t the one you lost.');await say('Chronicle','The grasping water settles. J’Mal is safe; the spirit is quiet.');quest.spiritCalmed=true;save();}
- return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh};
+ return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding};
 })();
