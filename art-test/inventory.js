@@ -44,6 +44,7 @@ window.Inventory=(()=>{
  );
  if(q.skadiComplete)result.push({id:'skadi_cultural_items',name:'Objects recovered by the Frost Giants',kind:'quest',description:'Skadi gives the company several cultural objects as part of the passage agreement.'});
  if(q.darkrainClothed)result.push({id:'polar_bear_winter_clothing',name:'Polar-bear winter clothing',owner:'reese',kind:'gear',description:'Reese makes warm clothing for the company from the hide of the dire polar bear.'});
+ if(q.dinyarCleared)result.push({id:'parnoneryx_head',name:'Parnoneryx’s head',kind:'quest',description:'The head of the gold dragon slain at Citadel Dinyar.'});
  if(q.molthuneCoffinLifted&&!q.molthuneBreach)result.push({id:'nidal_travel_coffin',name:'Reinforced travel coffin',kind:'quest',description:'Recovered from the ancient remorhaz’s territory.'});
  if(q.darkrainBearWon&&!q.molthuneBaitSet)result.push({id:'polar_bear_carcass',name:'Dire polar bear carcass',kind:'quest',description:'The company keeps the carcass after taking the hide.'});
  if(q.tathlumDuels===3)result.push({id:'championship_belt',name:'Championship Belt',owner:'freya',kind:'gear',description:'Freya’s dwarven belt. The Cave Giant rune grants 120 ft. darkvision and aids detection of hidden doors. The Ogre Magi rune records her victory over Yunero.'});

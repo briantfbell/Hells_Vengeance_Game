@@ -35,6 +35,13 @@ window.EnemyTactics=(()=>{
    else if(e.id==='whisper_bear'){move=round%2?'Raking claw':'Maul';extra=round%2?0:2;}
    else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
    else if(e.id==='darkrain_bear'){move=round%2?'Raking claws':'Bite';extra=round%2?0:2;}
+   else if(e.id==='parnoneryx'){
+    const breath=round%3===2;
+    move=breath?'Fire breath':round%3===0?'Wing slam':'Bite and claws';
+    extra=breath?4:round%3===0?2:0;
+    effect=breath?'parnoneryx_breath':null;
+    physical=!breath;
+   }
    else if(e.id==='tathlum_cave_giant'){move='Heavy club swing';extra=round%2?1:3;}
    else if(e.id==='luthon_malix'){
     physical=false;move=round%2?'Arcane bolt':'Infernal blast';extra=round%2?0:3;effect='arcaneBolt';

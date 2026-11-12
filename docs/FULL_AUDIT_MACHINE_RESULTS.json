@@ -1,20 +1,20 @@
 {
   "scripts": 98,
-  "scenes": 158,
-  "replays": 445,
-  "framesInspected": 645,
-  "framesChecked": 645,
+  "scenes": 160,
+  "replays": 451,
+  "framesInspected": 649,
+  "framesChecked": 649,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 65,
+  "combatStats": 66,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 660435710,
+  "assetBytes": 667604474,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 262,
-  "startupCompressedBytes": 605222861,
-  "startupDecodedRgbaBytes": 1640364808,
+  "startupAssets": 265,
+  "startupCompressedBytes": 612384155,
+  "startupDecodedRgbaBytes": 1659237448,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -125,6 +125,8 @@
     "darkrain-skull-v1.png",
     "darkrain-wight-mother-v1.png",
     "dice-atlas-v1.png",
+    "dinyar-bridge-ward-v1.png",
+    "dinyar-lower-works-v1.png",
     "dinyar-ridge-v1.png",
     "dottari.png",
     "draymus-chair-walk-v1.png",
@@ -238,6 +240,7 @@
     "pale-graveyard-v1.png",
     "pale-royals-v1.png",
     "pale-vokadus-v1.png",
+    "parnoneryx-v1.png",
     "pezzack-blue-dragon-v1.png",
     "pezzack-manse-ruined-v1.png",
     "pezzack-manse-v1.png",

@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.dinyarCleared)rows.push('Isger · 15 Gozran, 4717. Citadel Dinyar is cleared. The company takes the gold dragon Parnoneryx’s head.');
   if(q.dinyarReconComplete)rows.push('Isger · J’Mal and Reese find the concealed entrance at Citadel Dinyar. Freya plans to search for surviving Godclaw Hellknights.');
   if(q.nidalOperationSought)rows.push('14 Gozran, 4717 · Draymus, Violetta and Corrine travel to Nidal to seek a physician. Freya takes J’Mal, Reese and Jason to scout Dinyar.');
   if(q.molthuneComplete)rows.push('Molthune · Lady Violetta Pavel, a diplomat from Nidal, offers to help the company after her escape from the coffin.');

@@ -353,3 +353,7 @@ Continue from Skadi’s feast hall or select replay **429**. Scout as Reese, use
 ### Nidal and Citadel Dinyar
 
 Continue from the Molthune wayside or select replay **437**. Follow Draymus to Nidal, then scout Citadel Dinyar with Freya, J’Mal, Reese and Jason. Replays **437–441** cover the split and discovery of the hidden entrance. See [the section notes](docs/dinyar-recon.md) for sources, maps and verification.
+
+### The assault on Citadel Dinyar
+
+Continue from the ridge or select replay **442**. Open the concealed entrance, clear the lower works, and defeat Parnoneryx at the bridge ward. Replays **442–447** cover the assault and recovery of the gold dragon’s head. See [the section notes](docs/dinyar-assault.md) for sources, artwork and verification.
