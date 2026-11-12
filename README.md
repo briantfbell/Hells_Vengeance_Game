@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 407 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 410 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -329,3 +329,7 @@ Continue after Bob recovers or select replay **387**. Mark the first thirteen st
 ### The Covenant of Hell
 
 Continue from the Barrowood trail or select replay **396**. Face the rogue Asmodeans, complete the rite at the fourteenth stone, and witness the company’s elevation. Replays **396–403** cover the covenant. See [the section notes](docs/barrow-covenant.md) for the battle, sources and artwork.
+
+### Menador and the Queen’s demand
+
+Continue after the Covenant of Hell or select replay **404**. Hear Corrine’s report and travel to Menador, where the chapter card marks the Meeting of the Twins. Replays **404–406** cover the approach. See [the section notes](docs/menador.md) for the two campaign records.

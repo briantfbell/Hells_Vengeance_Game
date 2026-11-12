@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const menador=window.Menador?.goal();
+ if(menador)return {text:menador,target:Menador.target()};
  const covenant=window.BarrowCovenant?.goal();
  if(covenant)return {text:covenant,target:BarrowCovenant.target()};
  const trail=window.BarrowTrail?.goal();

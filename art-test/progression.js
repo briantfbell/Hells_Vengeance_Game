@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.menadorComplete)rows.push('Menador · 3 Gozran, 4717. Meeting of the Twins.');
+  if(q.menadorBriefed)rows.push('Crown briefing · Corrine reports the fall of Westcrown and Barzillai’s death. The Queen demands that the responsible parties be turned over.');
   if(q.covenantComplete)rows.push('Barrowood · Freya, Jason, J’Mal, Draymus and Reese are elevated to Bound Agents of Thrune.');
   if(q.covenantJasonRaised)rows.push('Barrowood · At the Queen’s request, Gorthoklekk raises Jason.');
   if(q.covenantClaimed)rows.push('Barrowood · 2 Gozran, 4717. Gorthoklekk claims Sethic’s soul and the Covenant of Hell is reaffirmed.');
