@@ -6,6 +6,8 @@ Corrine learned about the concealed entrance from a young Hellknight signifier w
 
 The exported Foundry journal `JournalEntry.KCdVUuF4I36HvXIj` contains an image reference for Citadel Dinyar. The referenced artwork returned HTTP 404 in the archive. The game uses the blog’s architectural description for the new map.
 
+Replays **442–442A** show the concealed postern opening before the party descends. The open doorway stays visible when the ridge checkpoint reloads. The opening motion and doorway placement are game staging. Existing checkpoints below the ridge still load.
+
 ## Artwork prompts
 
 Both maps were created with the built-in image generator.
@@ -18,6 +20,12 @@ High-detail dark fantasy pixel art environment for a fixed 640x400 RPG game map,
 
 Wide 8:5 landscape overhead three-quarter orthographic map for a detailed dark fantasy pixel RPG with fine hard pixel clusters, used as a playable 640x400 canvas. Citadel Dinyar, rocky mountain fortress of two separate gray-black stone keeps connected by a high narrow masonry bridge crossing a very deep rocky chasm, two distinct keeps and connecting bridge clearly recognizable along upper half. The nearer keep on the upper left, other on upper right, everything north of y 54 percent. In the foreground a broad continuous rocky observation shelf spans x 16 to 83 percent from y 57 to 88 percent, connected with a clear footpath exiting bottom center. The rock face of the nearer keep meets the shelf at x 24 percent near midline, with an unremarkable masonry seam near there suggesting a hidden postern. A low ledge on the right provides a view of the bridge. No people, no labels, no grid, no game UI. Muted iron blue and charcoal, gray slate and sparse amber torches, detailed evening lighting and rock textures.
 
+**Open postern** · `art-test/dinyar-ridge-postern-v1.png`
+
+Built-in image generator edit prompt: Make a precise localized edit to this exact 1586 by 992 wide detailed pixel art fortress game map. Change only a small patch at the very bottom of the near LEFT fortress wall, at approximately pixel x=375, y=550, 24% from left and 55% from top. The foot of the masonry wall touches the rocky foreground shelf around y=598 there. In that stone wall, open a narrow concealed postern, a roughly human-height small black rectangular stone doorway about 65 image pixels wide and 95 pixels tall, bottom flush with the existing rocky ledge at y=594. Make it unmistakably open, with two dim worn stone stair treads descending into darkness, dark recessed lintel, a hint of warm reflected light deep inside. The shifted door itself blends with the wall and sits to one side. It should appear just ahead of the player on the left shelf, BELOW every existing torch, gate, window and stair on the left fortress. Match the wall perspective, masonry texture and pixel clusters. Preserve the original source frame, scale, camera, viewpoint and all areas outside this tiny patch as exactly as possible, including foreground walking shelf, both keeps, bridge, cliff, sky, banners and all lighting. No characters, lettering, grids, glow or interface.
+
 ## Verification
 
 The browser playthrough started from the Molthune checkpoint, followed the briefing, reloaded in Nidal, verified both playable rosters, and completed the ridge scouting and lower-approach plan. The final checkpoint loaded at 640×480 with no browser console errors. All 165 automated tests passed. The structural audit checked 158 scenes, 445 replays and 645 sprite frames.
+
+The postern audit played replay 442 at 640×480, opened the door, reloaded on the ridge, and entered the lower works. The Reclamation watch objective loaded with no browser errors. All 174 tests passed, including all 476 replay checkpoints and a legacy lower-works save. The structural audit reported no geometry, frame or asset errors.

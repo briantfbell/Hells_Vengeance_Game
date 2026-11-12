@@ -2,7 +2,10 @@
 
 window.DinyarRecon=(()=>{
  const wayside='molthune_waystation',nidal='nidal_arrival_court',ridge='dinyar_ridge';
- const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png';
+ const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png',posternArt='dinyar-ridge-postern-v1.png';
+ const posternOutline=[[172,214],[199,205],[202,242],[195,248],[173,248]];
+ const posternDuration=850;
+ let opening=null;
  const lower='dinyar_lower_works',bridge='dinyar_bridge_ward',court='egorian_westcrown_orders';
  const lowerArt='dinyar-lower-works-v1.png',bridgeArt='dinyar-bridge-ward-v1.png',dragonArt='parnoneryx-v1.png';
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
@@ -31,9 +34,10 @@ window.DinyarRecon=(()=>{
    walk:[{x:128,y:240,w:416,h:64},{x:176,y:304,w:272,h:16},{x:272,y:320,w:96,h:32},{x:304,y:352,w:48,h:48}],lights:[],
    points:[
     {id:'dinyarView',x:456,y:272,label:'Survey the two keeps'},
-    {id:'dinyarPostern',x:152,y:248,label:'Search for the hidden entrance'},
+    {id:'dinyarPostern',x:184,y:248,label:'Search for the hidden entrance'},
     {id:'dinyarPlan',x:216,y:280,label:'Plan the approach through the lower works'},
-    {id:'dinyarDescend',x:152,y:248,label:'Open the hidden entrance'}
+    {id:'dinyarOpenPostern',x:184,y:248,label:'Open the hidden entrance'},
+    {id:'dinyarDescend',x:184,y:248,label:'Enter the lower works'}
    ]
   };
   scenes[lower]={
@@ -81,7 +85,7 @@ window.DinyarRecon=(()=>{
  }
  async function load(loader){
   const assets=[[nidal,nidalArt],[ridge,ridgeArt],[lower,lowerArt],[bridge,bridgeArt],
-   [dragonArt,dragonArt],[fallenArt,fallenArt],[recoveredArt,recoveredArt]];
+   [dragonArt,dragonArt],[fallenArt,fallenArt],[recoveredArt,recoveredArt],[posternArt,posternArt]];
   await Promise.all(assets.map(async ([id,source])=>{art[id]=await loader(source);}));
  }
  function mapImage(){return scene===court?art.egorian_court:[nidal,ridge,lower,bridge].includes(scene)?art[scene]:null;}
@@ -110,7 +114,11 @@ window.DinyarRecon=(()=>{
  function points(){
   if(scene===wayside&&quest.molthuneComplete)return [point('dinyarSplit')];
   if(scene===nidal)return [point('nidalConsult')];
-  if(scene===ridge)return [point(!quest.dinyarSurveyed?'dinyarView':!quest.dinyarEntranceFound?'dinyarPostern':!quest.dinyarReconComplete?'dinyarPlan':'dinyarDescend')];
+  if(scene===ridge){
+   const id=!quest.dinyarSurveyed?'dinyarView':!quest.dinyarEntranceFound?'dinyarPostern':
+    !quest.dinyarReconComplete?'dinyarPlan':quest.dinyarPosternOpen?'dinyarDescend':'dinyarOpenPostern';
+   return [point(id)];
+  }
   if(scene===lower)return [point(!quest.dinyarWatchCleared?'dinyarWatch':!quest.dinyarCellsChecked?'dinyarCells':'dinyarClimb')];
   if(scene===bridge)return [point(quest.dinyarCleared?'dinyarReturn':quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
   if(scene===court){
@@ -142,6 +150,24 @@ window.DinyarRecon=(()=>{
   paintParty();
   updateObjective();
   if(kind===dragonBattle)await say('Chronicle','Parnoneryx falls. The company holds the crossing.');
+ }
+ function drawPostern(g){
+  if(scene!==ridge||!art[posternArt])return;
+  const animating=opening?.epoch===epoch;
+  const progress=quest.dinyarPosternOpen?1:animating?Math.min(1,(performance.now()-opening.at)/posternDuration):0;
+  if(progress<=0)return;
+  g.save();
+  g.beginPath();
+  for(const [index,[x,y]] of posternOutline.entries()){
+   if(index===0)g.moveTo(x,y);else g.lineTo(x,y);
+  }
+  g.closePath();
+  g.clip();
+  g.beginPath();
+  g.rect(172,205,30*progress,43);
+  g.clip();
+  SceneLayers.foreground(g,art[posternArt],{contain:true});
+  g.restore();
  }
  function effect(g,action){
   if(action.type!=='parnoneryx_breath')return false;
@@ -194,6 +220,17 @@ window.DinyarRecon=(()=>{
     await say('freya','We go in below their defenses. If any Godclaw Hellknights are still in the dungeons, we find them on the way.');
     quest.dinyarReconComplete=true;
     break;
+   case 'dinyarOpenPostern': {
+    const token=epoch;
+    if(!reduce.matches){
+     opening={epoch:token,at:performance.now()};
+     await delay(posternDuration);
+     if(token!==epoch)return false;
+    }
+    quest.dinyarPosternOpen=true;
+    opening=null;
+    break;
+   }
    case 'dinyarDescend':
     quest.dinyarLowerReached=true;
     await travel(lower,328,344);
@@ -241,5 +278,5 @@ window.DinyarRecon=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,effect};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawPostern,effect};
 })();
