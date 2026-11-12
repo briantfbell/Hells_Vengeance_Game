@@ -2,6 +2,48 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'art-test',name),'utf8');
 function world(){const nodes={},w={quest:{},scene:'ash_house',lead:'freya',OPENING_ROSTER:['freya','jamal','jason','draymus','guapo'],CORE:['freya','jamal','jason','draymus','guapo','reese'],NAMES:{},STATS:{},hp:{},uses:{},units:[],potions:2,mendUses:2,inventory:{equipped:{}},transcript:[],journeys:[],travels:[],saved:0,performance:{now:()=>0},structuredClone};w.window=w;w.$=id=>nodes[id]??={textContent:'',replaceChildren:()=>{}};for(const id of w.CORE)w.STATS[id]={hp:20};w.say=async(name,text,choices)=>{w.transcript.push({name,text,choices});return 0;};w.journeyCard=async(title,text,commit)=>{w.journeys.push({title,text});commit?.();};w.travel=async(scene)=>{w.scene=scene;w.travels.push(scene);};w.save=()=>w.saved++;for(const name of ['paintParty','updateObjective','seedParty','applyProgression','awardSermonMilestone'])w[name]=()=>{};w.point=id=>({id,x:0,y:0});w.visiblePoints=()=>[];w.partyRoster=()=>w.quest.activeRoster||w.CORE;w.soloParty=()=>false;w.document={querySelector:()=>null};w.battle=null;w.planEnemyRound=()=>{};vm.createContext(w);vm.runInContext(read('enemy-tactics.js'),w);for(const name of ['next-chapter.js','next-arc.js','political-movement.js'])vm.runInContext(read(name),w);w.NextChapter.syncRoster=()=>{};return w;}
 test('party authors the restrictions, and all four notices are counted',async()=>{const w=world();w.quest={chapter3:true,sermonDispersed:true};await w.NextArc.interact('razelago');assert(w.transcript.some(x=>x.text.includes('carte blanche')));assert(w.transcript.some(x=>x.text.includes('six people privately or twelve publicly')));assert(w.transcript.some(x=>x.text.includes('party’s choices')));w.PoliticalMovement.goal=()=>null;w.DebtsRumors={goal:()=>null};w.LastStand={goal:()=>null};vm.runInContext(read('quest-guide.js'),w);w.quest.noticePosted=w.quest.tavernPosted=w.quest.gatePosted=true;w.scene='longacre_jail';assert.equal(w.QuestGuide.current().text,'Post the public notices [3/4].');assert.equal(w.QuestGuide.current().target.id,'jailDecree');await w.NextArc.interact('jailDecree');assert(w.quest.jailPosted);assert(w.quest.rhonaDismissed);assert(w.transcript.some(x=>x.text.includes('fourth copy')));assert(w.transcript.some(x=>x.text.includes('Other deputies remain')));assert.equal(w.QuestGuide.current().text,'Leave the jail courtyard.');});
+test('both sermon approaches reveal the helm and disperse the crowd before the report',async()=>{
+ for(const choice of [0,1]){
+  const w=world();
+  w.scene='longacre_square';
+  w.quest={chapter3:true};
+  w.epoch=1;
+  w.reduce={matches:false};
+  const helm={},draws=[],citizen={id:'citizen-0',x:224,y:240,crowd:true};
+  w.art={'longacre-angel-knight-helm-v1.png':helm};
+  const g={save(){},restore(){},drawImage:(image)=>draws.push(image)};
+  const say=w.say;
+  w.say=async(...args)=>{
+   if(args[0]==='allamar'){
+    w.NextArc.drawSermonHelm(g);
+    assert.equal(draws.length,0);
+   }
+   if(args[1].includes('display the Angel Knight’s helm')){
+    w.NextArc.drawSermonHelm(g);
+    assert.deepEqual(draws,[helm]);
+   }
+   await say(...args);
+   return args[2]?choice:0;
+  };
+  w.delay=async duration=>{
+   w.performance.now=()=>duration*.8;
+   const leaving=w.NextArc.sermonPose(citizen);
+   assert.equal(leaving.dir,'left');
+   assert(leaving.x<citizen.x&&leaving.sermonOpacity<1);
+   assert.equal(w.quest.sermonDispersed,undefined);
+  };
+  await w.NextArc.interact('sermon');
+  const replies=w.transcript.slice(w.transcript.findIndex(line=>line.choices)+1).filter(line=>['freya','jamal'].includes(line.name));
+  assert.deepEqual(replies.map(line=>line.name),choice===0?['freya','jamal']:['jamal','freya']);
+  assert.equal(w.quest.sermonApproach,choice===0?'challenge':'whispers');
+  assert(w.quest.sermonDispersed);
+  assert.equal(w.NextArc.sermonPose(citizen),citizen);
+  w.NextArc.drawSermonHelm(g);
+  assert.equal(draws.length,1);
+  await w.NextArc.interact('ashReturn');
+  assert.deepEqual(w.travels,['ash_house']);
+ }
+});
 test('both peaceful approaches expose the payroll once and lead to Ash House',async()=>{
  for(const choice of [0,1]){
   const w=world();
