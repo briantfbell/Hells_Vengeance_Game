@@ -1,21 +1,25 @@
 {
-  "scripts": 61,
-  "scenes": 102,
-  "replays": 221,
-  "framesInspected": 560,
-  "framesChecked": 560,
+  "scripts": 62,
+  "scenes": 103,
+  "replays": 226,
+  "framesInspected": 564,
+  "framesChecked": 564,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 44,
+  "combatStats": 48,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 399024994,
+  "assetBytes": 407854854,
   "largestAssets": [
+    {
+      "name": "whisperwood-unicorn-glade-v1.png",
+      "bytes": 3863874
+    },
     {
       "name": "south-road-ambush-v1.png",
       "bytes": 3647774
@@ -51,16 +55,12 @@
     {
       "name": "valor-fastness-landing-v1.png",
       "bytes": 3463485
-    },
-    {
-      "name": "valor-fastness-gate-v1.png",
-      "bytes": 3436587
     }
   ],
   "startupComplete": true,
-  "startupAssets": 154,
-  "startupCompressedBytes": 344135694,
-  "startupDecodedRgbaBytes": 960829960,
+  "startupAssets": 158,
+  "startupCompressedBytes": 352953832,
+  "startupDecodedRgbaBytes": 985998928,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -211,9 +211,13 @@
     "valor-fastness-tower-base-v1.png",
     "whisperwood-carriage-road-v1.png",
     "whisperwood-coachman-v1.png",
+    "whisperwood-glade-defenders-v1.png",
     "whisperwood-heavy-creatures-v1.png",
     "whisperwood-night-camp-v1.png",
+    "whisperwood-stone-giant-v1.png",
     "whisperwood-trail-v1.png",
+    "whisperwood-unicorn-glade-v1.png",
+    "whisperwood-unicorn-v1.png",
     "whisperwood-web-creatures-v1.png",
     "zara-geitta-display-v1.png"
   ]

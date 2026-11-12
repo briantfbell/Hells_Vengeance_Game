@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const glade=window.WhisperwoodGlade?.goal();
+ if(glade)return {text:glade,target:WhisperwoodGlade.target()};
  const camp=window.WhisperwoodCamp?.goal();
  if(camp)return {text:camp,target:WhisperwoodCamp.target()};
  const citadel=window.SenaraCitadel?.goal();

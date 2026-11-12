@@ -97,7 +97,7 @@ window.SenaraDaggers=(()=>{
     break;
    case 'daggersStrike':
     save();
-    startBattle(0,false,{kind,scripted:true,returnPosition:[328,240],enemies:members.map(e=>({...e,hp:1,max:1}))});
+    startBattle(0,false,{kind,scripted:true,script,scriptActor:'draymus',returnPosition:[328,240],enemies:members.map(e=>({...e,hp:1,max:1}))});
     return true;
    case 'daggersTerms':
     await say(members[0].id,'We surrender. The talisman is yours. Let us walk away and we’ll send you word whenever the Reclamation moves.');
@@ -116,8 +116,8 @@ window.SenaraDaggers=(()=>{
  function command(){
   if(battle?.kind!==kind)return null;
   return battle.daggerSpell==='tentacles'?
-   {name:'Black Tentacles',description:'Bind the guild before they can act.'}:
-   {name:'Glitterdust',description:'Blind the guild in the surprise round.'};
+   {title:'Initiative won',name:'Black Tentacles',description:'Bind the guild before they can act.'}:
+   {title:'Surprise round',name:'Glitterdust',description:'Blind the guild in the surprise round.'};
  }
  async function castSpell(action,actor){
   const spell=command();
@@ -149,6 +149,7 @@ window.SenaraDaggers=(()=>{
    await say('jamal','I’ll bring Freya down. She can hear their offer herself.');
   });
  }
+ const script={command,act:castSpell,opening:'Surprise round · Draymus has the opening.',enemyStatus:()=>battle.daggerSpell==='tentacles'?'BLINDED':'ON WATCH'};
  function effect(g,a){
   if(battle?.kind!==kind||a.type!=='special')return false;
   const p=CombatArt.phase(a),amount=Math.max(0,(p-.22)/.78),binding=battle.daggerSpell==='tentacles';

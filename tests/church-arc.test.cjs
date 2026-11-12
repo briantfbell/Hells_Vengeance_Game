@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 221 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,221);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 226 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,226);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -565,4 +565,50 @@ test('Whisperwood watch, battles, and Bob’s rescue keep their checkpoints in s
  assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(complete)).quest.whisperwoodNightComplete,true);
  const forged=structuredClone(complete);forged.quest.whisperwoodBobRescued=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Whisperwood camp sequence/);
+});
+
+test('the Unicorn Glade preserves the first three horns and awards the fourth only after the playable retreat',async()=>{
+ const w=world(),list=w.replaySections(),start=list.find(s=>s.id==='whisperwood-glade-trail');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:224,dir:'up'}],
+  SouthRoad:{recover:()=>{}},reduce:{matches:true},$:()=>({}),canvas:{focus(){}},delay:async()=>{},
+  animateAction:async(_actor,_target,_type,_hit,impact)=>impact?.(),
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),run:fn=>fn(),
+  storyRoll:async(label,face)=>w.rolls.push([label,face]),rolls:[]});
+ w.scenes[start.scene].points=[];
+ w.STATS.whisper_giant={hp:38};
+ vm.runInContext(read('whisperwood-glade.js'),w);
+ w.WhisperwoodGlade.install();
+ const step=async id=>assert.equal(await w.WhisperwoodGlade.interact(id),true,id);
+ const horns=()=>w.Inventory.items(w.quest,2).find(i=>i.id==='whisperwood_unicorn_horns')?.name;
+ await step('gladeTrail');
+ await step('gladeAssault');
+ assert.equal(w.battle.kind,'whisperwood_unicorn_assault');
+ assert.deepEqual(Array.from(w.battle.enemies,e=>e.id),Array(3).fill('whisper_unicorn'));
+ assert.equal(await w.WhisperwoodGlade.interact('gladeCollect'),false);
+ const position=w.battle.returnPosition;
+ w.battle=null;
+ await w.WhisperwoodGlade.afterBattle(position);
+ await step('gladeCollect');
+ assert.equal(horns(),'Unicorn horns [3/4]');
+ await step('gladeCamp');
+ await step('gladeCounterattack');
+ const battle=w.battle,script=battle.script;
+ assert.deepEqual(Array.from(battle.enemies,e=>e.id),['whisper_unicorn','whisper_stone_giant','whisper_unicorn','whisper_owlbear','whisper_swan']);
+ assert.equal(battle.scriptActor,'freya');
+ assert.equal(script.command().name,'Hold the line');
+ await script.act('special',{id:'freya'});
+ assert.equal(battle.enemies[2].hp,0);
+ assert.equal(battle.scriptActor,'jamal');
+ assert.equal(script.command().name,'Take the horn');
+ await script.act('special',{id:'jamal'});
+ assert.equal(horns(),'Unicorn horns [3/4]');
+ assert.deepEqual(w.rolls,[['J’Mal · Reach the fallen unicorn',17]]);
+ assert.equal(script.command().name,'Leave the glade');
+ await script.act('special',{id:'jamal'});
+ assert.equal(w.scene,start.scene);
+ assert.equal(horns(),'Unicorn horns [4/4]');
+ const save=checkpoint(w,{...start,quest:w.quest});
+ assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(save)).quest.whisperwoodGladeComplete,true);
+ const forged=structuredClone(save);forged.quest.whisperwoodThreeHorns=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid unicorn glade sequence/);
 });

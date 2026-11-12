@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 221 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 226 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -189,3 +189,7 @@ Continue after recovering the Infernal Talisman or select replay **209**. Visit 
 ### The Whisperwood night camp
 
 Continue from the carriage stop or select replay **215**. Set the watch, fight the creatures that come out of the trees, and help J’Mal and El Guapo pull Bob clear. Replays **215–221** cover the approach through dawn. See [the section notes](docs/whisperwood-camp.md) for campaign sources, artwork and verification.
+
+### The Blessing of Unicorns
+
+Follow the unicorn trail from the Whisperwood night camp or select replay **222**. Recover three horns from the first assault, then recover the fourth under pressure as J’Mal. Replays **222–226** cover the glade. See [the section notes](docs/whisperwood-glade.md) for sources, artwork and verification.

@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.whisperwoodGladeComplete)rows.push('Whisperwood · J’Mal retrieves the fourth unicorn horn while the company retreats. Fex’s next requirement is angel hearts.');
+  if(q.whisperwoodThreeHorns)rows.push('Whisperwood · Three horns recovered after the first assault on the Blessing of Unicorns.');
   if(q.whisperwoodBobRescued)rows.push('Whisperwood · A bear mauls Bob at camp. J’Mal and El Guapo pull him clear in time. He survives with lasting injuries.');
   if(q.whisperwoodNightComplete)rows.push('Whisperwood · The company survived the attacks at camp and will follow the unicorns’ trail at dawn.');
   if(q.senaraCarriageDeparted)rows.push('Whisperwood · Bob drives the black carriage southwest of Senara with a team of four warhorses. Freya’s next objective is four unicorn horns.');
