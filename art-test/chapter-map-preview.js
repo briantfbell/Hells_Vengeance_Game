@@ -40,11 +40,24 @@ window.ChapterMapPreview=(()=>{
   },
   'barleybridge-throne-v1':{
    spawn:[328,376],
-   walk:[[304,288,48,112],[144,144,352,160],[256,112,128,48],[480,160,128,32],[560,112,48,64]],
+   walk:[[304,288,48,112],[144,144,352,160],[256,112,128,48],[48,176,112,16],[480,160,128,32],[560,112,48,64]],
    points:[
     {label:'Town approach',x:328,y:376,destination:'barleybridge-town-v1',arrival:[328,152]},
     {label:'Audience dais',x:328,y:120,note:'The prepared layout places bowmen, glaive guards, and samurai in this hall.'},
+    {label:'West gallery',x:56,y:184,destination:'barleybridge-councillor-v1',arrival:[120,264]},
     {label:'East stairs',x:584,y:120,destination:'barleybridge-basement-v1',arrival:[328,88]}
+   ]
+  },
+  'barleybridge-councillor-v1':{
+   spawn:[120,264],
+   walk:[
+    [96,224,496,80],[48,224,64,16],[48,240,32,48],
+    [176,192,96,48],[128,144,176,64],[416,192,96,48],[384,144,144,64]
+   ],
+   points:[
+    {label:'Return stairs',x:56,y:248,destination:'barleybridge-throne-v1',arrival:[104,184]},
+    {label:'Council room',x:216,y:152,note:'A low council table overlooks the west end of the landing.'},
+    {label:'Library study',x:472,y:152,note:'The library opens onto the east end of the landing, with a writing table by the shelves.'}
    ]
   },
   'barleybridge-basement-v1':{
