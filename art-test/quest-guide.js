@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const cover=window.SenaraCover?.goal();
+ if(cover)return {text:cover,target:SenaraCover.target()};
  const senara=window.SenaraArrival?.goal();
  if(senara)return {text:senara,target:SenaraArrival.target()};
  const excruciation=window.EgorianExecution?.goal();

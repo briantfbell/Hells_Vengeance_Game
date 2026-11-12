@@ -1,9 +1,9 @@
 {
-  "scripts": 57,
-  "scenes": 94,
-  "replays": 195,
-  "framesInspected": 545,
-  "framesChecked": 545,
+  "scripts": 58,
+  "scenes": 97,
+  "replays": 202,
+  "framesInspected": 551,
+  "framesChecked": 551,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 369606937,
+  "assetBytes": 377474259,
   "largestAssets": [
     {
       "name": "south-road-ambush-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 140,
-  "startupCompressedBytes": 314758838,
-  "startupDecodedRgbaBytes": 872734328,
+  "startupAssets": 144,
+  "startupCompressedBytes": 322616444,
+  "startupDecodedRgbaBytes": 897902392,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -176,6 +176,10 @@
     "rohalendi-hospice.png",
     "scarlet-manor.png",
     "senara-fex-villa-v1.png",
+    "senara-orphan-witnesses-v1.png",
+    "senara-orphan-yard-v1.png",
+    "senara-orphanage-v1.png",
+    "senara-revel-cast-v1.png",
     "senara-waterfront-v1.png",
     "ship-deck-foreground.png",
     "silver-star-music-shop-v2.png",

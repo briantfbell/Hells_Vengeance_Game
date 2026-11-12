@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 195 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 202 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -173,3 +173,7 @@ Continue from the morning at Falco Manor or select replay **180**. Follow J’Ma
 ## Charges dropped and the road to Senara
 
 Continue after Oppian’s excruciation or select replay **189**. Hear the Asmodean judges’ ruling, take Razelago’s orders, and search Fex’s residence for the Infernal Talisman. Replays **189–195** cover the departure and arrival. See [the section audit and artwork notes](docs/senara-arrival.md).
+
+## The reception and orphanage
+
+Continue from the empty coffer at Fex’s residence or select replay **196**. Welcome the garrison guests as El Guapo, then investigate the orphanage as Draymus and Jason. Replays **196–202** cover the reconnaissance. See [the section audit and artwork notes](docs/senara-cover.md).
