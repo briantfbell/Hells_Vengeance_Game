@@ -9,6 +9,7 @@ window.NextChapter=(()=>{
  const barrowArt='tannery-wheelbarrow-v1.png';
  const scoutTiming={delivery:1150,dump:650,escape:950,sap:520,bolt:460};
  const vat=[235,198],farmerGate=[328,344],farmerVat=[302,224],dogYard=[440,248],scoutYard=[388,248];
+ const payrollBox={id:'payroll',x:456,y:168,label:'Collect the payroll box'};
  const bareHands={name:'Unarmed',move:'Unarmed strike',dmg:[1,3,2]};
  const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
  const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
@@ -46,7 +47,7 @@ window.NextChapter=(()=>{
   ]
  },
  remesiana:{name:'Remesiana · Harbor Market',image:'remesiana-foreground.png',spawn:[520,280],walk:[rect(80,144,480,112),rect(448,224,96,48),rect(496,240,112,112)],blocks:[],points:[{id:'supplies',x:200,y:176,label:'Visit the outfitter'},{id:'cimri',x:424,y:184,label:'Speak to Cimri'},{id:'guapoDeparture',x:552,y:296,label:'See El Guapo off'},{id:'road',x:104,y:232,label:'Ride to Longacre'}],lights:[]},
- tannery:{name:'Longacre · Louslik Tannery',image:'tannery-foreground.png',spawn:[136,280],walk:[rect(304,160,256,144),rect(304,272,48,80),rect(280,272,32,48),rect(320,128,240,48),rect(112,256,208,48),rect(304,336,48,32)],blocks:[],points:[{id:'scout',x:136,y:280,label:'Scout the tannery'},{id:'owner',x:488,y:176,label:'Speak to the owner'},{id:'payroll',x:520,y:144,label:'Collect the payroll box'},{id:'ashRoad',x:328,y:352,label:'Return to Cimri'}],lights:[]},
+ tannery:{name:'Longacre · Louslik Tannery',image:'tannery-foreground.png',spawn:[136,280],walk:[rect(304,160,256,144),rect(304,272,48,80),rect(280,272,32,48),rect(320,128,240,48),rect(112,256,208,48),rect(304,336,48,32)],blocks:[],points:[{id:'scout',x:136,y:280,label:'Scout the tannery'},{id:'owner',x:488,y:176,label:'Speak to the owner'},payrollBox,{id:'ashRoad',x:328,y:352,label:'Leave with Cimri'}],lights:[]},
  ash_house:{name:'The Ash House · A Hidden Employer',image:'ash-house-foreground.png',spawn:[328,328],walk:[rect(224,144,336,160),rect(272,288,96,80),rect(192,256,48,48)],blocks:[rect(496,96,80,144)],points:[{id:'krenshar',x:240,y:280,label:'Approach the guardian'},{id:'razelago',x:328,y:160,label:'Speak through the screens'},{id:'rest',x:232,y:240,label:'Eat and rest'},{id:'bathStairs',x:536,y:208,label:'Investigate the splashing'}],lights:[[112,164],[496,120]]},
  bathroom:{name:'Ash House · Something in the Water',image:'bathroom-foreground.png',spawn:[328,328],walk:[rect(160,208,320,96),rect(272,288,96,80)],blocks:[],points:[{id:'bath',x:328,y:208,label:'Examine the porcelain tub'},{id:'bathExit',x:328,y:352,label:'Return downstairs'}],lights:[]}
  };
@@ -110,7 +111,7 @@ window.NextChapter=(()=>{
   const beat=activeTanneryBeat(),progress=beat?tanneryProgress(beat):0;
   const dog={id:'dog',x:dogYard[0]+(beat?.phase==='sap'?Math.round(Math.sin(progress*Math.PI)*11):0),y:dogYard[1]};
   const owner={id:'owner',x:488,y:176};
-  if(quest.scouted)return [owner,dog];
+  if(quest.scouted)return [owner,dog,{id:'cimri',x:360,y:280}];
   if(!beat)return [dog];
   if(beat.phase==='sap'||beat.phase==='bolt')return [owner,dog];
   const farmerPosition=beat.phase==='delivery'?between(farmerGate,farmerVat,progress):
@@ -166,6 +167,7 @@ window.NextChapter=(()=>{
   return true;
  }
  function drawTanneryEffects(g){
+  if(scene==='tannery'&&quest.ownerDeal&&!quest.payroll)drawPayrollBox(g);
   const beat=activeTanneryBeat();
   if(!beat||reduce.matches)return;
   const progress=tanneryProgress(beat);
@@ -183,6 +185,17 @@ window.NextChapter=(()=>{
    const [x,y]=between([488,143],[405,282],progress);
    g.translate(x,y);g.rotate(-1.03);g.fillStyle='#d8c3a0';g.fillRect(-6,0,12,2);
   }
+  g.restore();
+ }
+ function drawPayrollBox(g){
+  const {x,y}=payrollBox;
+  g.save();
+  g.translate(x,y);
+  g.fillStyle='#201713';g.fillRect(-10,-13,20,13);
+  g.fillStyle='#805438';g.fillRect(-9,-12,18,4);
+  g.fillStyle='#503326';g.fillRect(-9,-7,18,6);
+  g.fillStyle='#a27a50';g.fillRect(-7,-12,2,11);g.fillRect(5,-12,2,11);
+  g.fillStyle='#d6a35f';g.fillRect(-2,-8,4,4);
   g.restore();
  }
  function rosterOverride(){
@@ -340,8 +353,30 @@ window.NextChapter=(()=>{
   seedParty(328,280);
   syncRoster();
  }
- if(id==='owner'){if(!quest.scouted)await say('Chronicle','Send J’Mal ahead to scout before approaching the office.');else if(quest.ownerDeal)await say('owner','Take the box and leave my dog alone.');else{const c=await say('owner','Get away from my dog! What do you want?',['[Let Jason explain the crown’s demands]','[Ask Cimri to help negotiate]']);await say(c===0?'jason':'cimri',c===0?'No blood needs to be spilled here. Hand over the payroll box, and everyone walks away.':'Lower the crossbow. Give us the payroll box and we leave. Your workers and your dog keep breathing.');await say('owner','Fine. The box is in the office. Take it. Then get out.');quest.ownerDeal=true;}}
- if(id==='payroll'){if(!quest.ownerDeal)await say('Chronicle','The owner still has his crossbow. Resolve the confrontation first.');else if(quest.payroll)await say('Chronicle','The payroll box is already in your possession.');else{quest.payroll=true;await say('Chronicle','Obtained: the tannery payroll box. The job ends without bloodshed.');}}
+ if(id==='owner'){
+  if(!quest.scouted)await say('Chronicle','Send J’Mal ahead to scout before approaching the office.');
+  else if(quest.ownerDeal)await say('owner',quest.payroll?'You have the box. Leave my dog alone.':'The box is by the office door. Take it and go.');
+  else{
+   await say('owner','I saw him swing at my dog. Give me one reason I shouldn’t reload.');
+   const c=await say('Cimri’s crew','The dog crowds against the owner’s boots. He keeps one hand on the crossbow.',['[Let Jason address the owner]','[Ask Cimri to negotiate]']);
+   if(c===0){
+    await say('jason','Asmodeus teaches that order comes from knowing the price of defiance. The price I ask of you is a box of coin. Put it down and everyone here walks away.');
+   }else{
+    await say('cimri','Put that crossbow down. We came for the payroll. Give us the box and we’ll be out the gate. You can get back to your dog and your work.');
+   }
+   await say('owner','Fine. I’ll put it by the office door. Then you get out of my yard.');
+   quest.ownerDeal=true;
+  }
+ }
+ if(id==='payroll'){
+  if(!quest.ownerDeal)await say('Chronicle','The owner still has his crossbow. Resolve the confrontation first.');
+  else if(quest.payroll)await say('Chronicle','The payroll box is already in your possession.');
+  else{
+   quest.payroll=true;
+   await say('Chronicle','The party takes the owner’s payroll box. Nobody at the tannery was hurt.');
+   await say('cimri','Out through the gate. We’ll stop at the river before we go to Ash House. J’Mal, you’re going in first.');
+  }
+ }
  if(id==='ashRoad'){if(!quest.payroll)await say('cimri','Razelago expects the payroll box. We’re not finished.');else{await travel('ash_house',328,328);await say('cimri','That’s our guardian. A krenshar. Stay close to me and keep your hands where it can see them.');}}
  if(id==='krenshar'){await say('cimri','It guards the house. We’re expected; give it room.');await say('Chronicle','The great feline watches through its hideous, skull-like face. It lets Cimri’s guests pass.');}
  if(id==='razelago'){if(!quest.reward){await say('razelago','Cimri tells me the task is complete. Well done.');await say('Chronicle','Only a silhouette moves behind the thin paper screens. The voice is dry and raspy; the employer’s identity remains hidden.');await say('razelago','One hundred gold pieces for each of you. Food and wine are laid out. You may stay here tonight.');quest.reward=true;quest.goldReward=100;}
