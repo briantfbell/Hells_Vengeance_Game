@@ -38,10 +38,24 @@ test('Pezzack and the lookout gate the Western Star boarding',async()=>{
  assert(w.quest.voyageBoardingWon);
  assert.equal(w.NextChapter.target().id,'voyageCorentyn');
  await w.NextChapter.interact('voyageCorentyn');
- assert.deepEqual(w.journeys.map(x=>x.title),['Pezzack · Unwanted recognition','Corentyn · The false trail']);
- assert.equal(w.scene,'remesiana');
+ assert.deepEqual(w.journeys.map(x=>x.title),['Pezzack · Unwanted recognition']);
+ assert.equal(w.scene,'western_star_corentyn');
+ assert.equal(w.NextChapter.target().id,'voyagePlantBlade');
+ assert.equal(await w.NextChapter.interact('voyageHandOverPrize'),false);
+ assert.equal(await w.NextChapter.interact('voyageLand'),false);
+ await w.NextChapter.interact('voyagePlantBlade');
  assert(w.quest.scimitarDisposed);
  assert.equal(w.inventory.equipped.freya,'freya');
+ await w.NextChapter.interact('voyageHandOverPrize');
+ assert(w.quest.voyagePrizeTurnedIn);
+ assert(!w.NextChapter.npcs().some(u=>u.pose==='prone'));
+ w.hp.freya=1;w.potions=0;
+ await w.NextChapter.interact('voyageReequip');
+ assert(w.quest.voyageCorentynSupplied);
+ assert.equal(w.hp.freya,w.STATS.freya.hp);
+ assert.equal(w.potions,2);
+ await w.NextChapter.interact('voyageLand');
+ assert.equal(w.scene,'remesiana');
 
  const older=world();
  older.scene='western_star';

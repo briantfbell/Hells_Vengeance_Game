@@ -355,7 +355,7 @@ async function awardSermonMilestone(){
 function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
 // Later Ash House interactions are exposed only by their chapter’s gated points() handler.
 function storyPointAvailable(p){
- if(scene==='western_star')return p.id===NextChapter.target()?.id;
+ if(['western_star','western_star_corentyn'].includes(scene))return p.id===NextChapter.target()?.id;
  const completed={supplies:'supplied',cimri:'metCimri',guapoDeparture:'guapoAway',scout:'scouted',owner:'ownerDeal',payroll:'payroll',rest:'rested',bathStairs:'spiritCalmed',sermon:'sermonDispersed',noticeDecree:'noticePosted',tavernDecree:'tavernPosted',gateDecree:'gatePosted',jailDecree:'rhonaDismissed'};
  if(completed[p.id]&&quest[completed[p.id]])return false;
  if(['noticeDecree','tavernDecree','gateDecree','jailDecree'].includes(p.id)&&!quest.decreesIssued)return false;
@@ -833,7 +833,10 @@ function replaySections(){
  add('ship-lookout','05A · The pursuing sail','western_star',[360,144],'voyagePezzack');
  add('ship-boarding','05B · The pirate boarding','western_star',[104,144],'voyageBoardingReady');
  add('ship-prize','05C · Take both ships to Corentyn','western_star',[520,232],'voyageBoardingWon');
- q.scimitarDisposed=true;add('market','06 · Remesiana harbor','remesiana',[520,280]);
+ add('ship-blade','05D · Plant the disguised scimitar','western_star_corentyn',[552,200],'voyageCorentynReached');
+ add('ship-prize-sale','05E · Hand over the prize','western_star_corentyn',[472,216],'scimitarDisposed');
+ add('ship-refit','05F · Refit at Corentyn','western_star_corentyn',[280,168],'voyagePrizeTurnedIn');
+ add('market','06 · Remesiana harbor','remesiana',[520,280],'voyageCorentynSupplied');
  add('tannery','07 · J’Mal scouts the tannery','tannery',[136,280],'supplied metCimri guapoAway');q.activeRoster=OPENING_ROSTER.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
  add('employer','08 · Ash House employer','ash_house',[328,328],'scouted ownerDeal payroll');q.goldReward=100;add('rest','09 · Rest at Ash House','ash_house',[328,296],'reward');add('bath','10 · The upstairs bath','bathroom',[328,328],'rested');
  add('sermon','11 · Allamar’s sermon','longacre_square',[328,296],'bathStarted jamalRescued spiritCalmed chapter2Complete chapter3');
