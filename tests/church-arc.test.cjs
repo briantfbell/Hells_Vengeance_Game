@@ -1740,6 +1740,8 @@ test('the fourteenth stone preserves Jason’s death until Gorthoklekk raises hi
  w.STATS.fastness_cleric={hp:20};
  w.STATS.jason={hp:40};
  w.epoch=1;
+ w.reduce={matches:false};
+ w.CANCEL=Symbol('cancel');
  w.animateAction=async(_a,_t,_type,_hit,impact)=>impact();
  w.flash=()=>{};
  const rolls=[];
@@ -1765,9 +1767,19 @@ test('the fourteenth stone preserves Jason’s death until Gorthoklekk raises hi
  assert(!w.BarrowCovenant.roster().includes('jason'));
  await step('covenantSacrifice');
  assert.equal(w.quest.barrowStones,14);
+ const transformation=[];
+ w.delay=async()=>transformation.push(!!w.quest.covenantTrueForm);
  await step('covenantFiend');
+ assert.deepEqual(transformation,[false,true]);
  await step('covenantAudience');
+ w.delay=async()=>{w.epoch++;};
+ await assert.rejects(w.BarrowCovenant.interact('covenantRaiseJason'),error=>error===w.CANCEL);
+ assert.equal(w.hp.jason,0);
+ assert.equal(w.quest.covenantJasonRaised,undefined);
+ const resurrection=[];
+ w.delay=async()=>resurrection.push(w.hp.jason);
  await step('covenantRaiseJason');
+ assert.deepEqual(resurrection,[0,20]);
  assert.equal(w.hp.jason,20);
  assert(w.BarrowCovenant.roster().includes('jason'));
  await step('covenantPromotion');

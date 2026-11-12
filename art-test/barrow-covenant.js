@@ -4,7 +4,11 @@ window.BarrowCovenant=(()=>{
  const grove='barrow_grove',glade='barrow_covenant',kind='barrow_malix';
  const altar='barrow-final-stone-v1.png',sheet='barrow-malix-v1.png',fiends='barrow-gorthoklekk-v1.png';
  const malix='luthon_malix',human='gorthoklekk',fiend='gorthoklekk_fiend',cleric='fastness_cleric';
- let royalArrival=null;
+ const rituals={
+  reveal:{x:328,y:151,radius:76,duration:1100,light:'#ffad62',spark:'#ffd3a2'},
+  raise:{x:276,y:234,radius:54,duration:1200,light:'#e6cd91',spark:'#fff0b0'}
+ };
+ let royalArrival=null,ritualEffect=null;
  const model={src:sheet,deferred:true,frames:[
   {x:119,y:1,w:359,h:714,anchorX:315,anchorY:713},
   {x:731,y:6,w:618,h:709,anchorX:1087,anchorY:713},
@@ -77,6 +81,46 @@ window.BarrowCovenant=(()=>{
   if(quest.covenantQueenArrived)actors.push({id:'abrogail',x:408,y:191,height:58},{id:'contessa',x:450,y:192,height:58});
   return actors;
  }
+ async function showRitual(name,commit){
+  if(reduce.matches){commit();return;}
+  const effect={...rituals[name],epoch,started:performance.now()};
+  ritualEffect=effect;
+  try{
+   await delay(effect.duration/2);
+   if(effect.epoch!==epoch)throw CANCEL;
+   commit();
+   await delay(effect.duration/2);
+   if(effect.epoch!==epoch)throw CANCEL;
+  }finally{
+   if(ritualEffect===effect)ritualEffect=null;
+  }
+ }
+ function drawRitual(g){
+  const effect=ritualEffect;
+  if(!effect||effect.epoch!==epoch||reduce.matches)return;
+  const phase=Math.min(1,(performance.now()-effect.started)/effect.duration);
+  const glow=Math.sin(phase*Math.PI),{x,y,radius,light,spark}=effect;
+  g.save();
+  g.globalCompositeOperation='lighter';
+  g.globalAlpha=glow*.65;
+  const halo=g.createRadialGradient(x,y,2,x,y,radius);
+  halo.addColorStop(0,light);
+  halo.addColorStop(1,'#31180b00');
+  g.fillStyle=halo;
+  g.fillRect(x-radius,y-radius,radius*2,radius*2);
+  g.strokeStyle=light;
+  g.lineWidth=2;
+  g.beginPath();
+  g.ellipse(x,y+12,10+phase*radius*.65,3+phase*radius*.19,0,0,Math.PI*2);
+  g.stroke();
+  g.fillStyle=spark;
+  for(let i=0;i<24;i++){
+   const angle=i*2.4+phase*1.8,drift=10+(i%6)*3+phase*16;
+   const px=x+Math.cos(angle)*drift,py=y+Math.sin(angle)*drift*.38-phase*(15+i%7*4);
+   g.fillRect(Math.round(px),Math.round(py),2+i%2,2+i%4);
+  }
+  g.restore();
+ }
  function effects(g,t){
   if(scene!==glade||!quest.covenantSacrificeMade)return;
   const pulse=reduce.matches?.42:.37+.08*Math.sin(t*3.3);
@@ -105,6 +149,7 @@ window.BarrowCovenant=(()=>{
    }
   }
   g.restore();
+  drawRitual(g);
  }
  function beginFight(){
   const {x,y,dir}=units[0],resolve=STATS[malix].hp,max=STATS[cleric].hp;
@@ -160,7 +205,7 @@ window.BarrowCovenant=(()=>{
     break;
    case 'covenantFiend':
     await say(human,'Let him see who brought him here.');
-    quest.covenantTrueForm=true;
+    await showRitual('reveal',()=>{quest.covenantTrueForm=true;});
     await say('Chronicle','Gorthoklekk takes his true form. The pit fiend casts Heal, clearing Sethic’s mind long enough for him to recognize the company.');
     await say('Chronicle','Bob makes finger-guns at Sethic. Gorthoklekk devours him and casts his remains and soul through the gate.');
     quest.covenantClaimed=true;
@@ -173,10 +218,13 @@ window.BarrowCovenant=(()=>{
     break;
    case 'covenantRaiseJason':
     await say(fiend,'As Your Majesty commands.');
+    await showRitual('raise',()=>{
+     hp.jason=Math.max(1,Math.ceil(STATS.jason.hp/2));
+     quest.covenantJasonRaised=true;
+     seedParty(328,264,'up');
+     paintParty();
+    });
     await say('Chronicle','Gorthoklekk casts Raise Dead. Jason draws a breath.');
-    hp.jason=Math.max(1,Math.ceil(STATS.jason.hp/2));
-    quest.covenantJasonRaised=true;
-    seedParty(328,264,'up');
     break;
    case 'covenantPromotion':
     await say('abrogail','Freya, Jason, J’Mal, Draymus, Reese. You are Bound Agents of Thrune. While you serve me, you answer to the Crown.');

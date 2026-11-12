@@ -4,6 +4,8 @@ GM timeline row S133 records the reaffirmation on 2 Gozran, 4717 in the Barrowoo
 
 The clearing, cast appearances, exact battle lineup and fatal opening roll are game adaptations. Malix uses resolve so he can escape the fight. Jason stays dead through the aftermath and returns at half HP when Gorthoklekk casts Raise Dead. The inventory provisionally identifies the Queen’s gift as Abbie’s Ring, the item on Jason’s Foundry export (Actor.AlT4CD1PVRkoMT6C, Item.1GK5lRiqzOogM4zX). Its recorded Freedom of Movement and fire resistance are described in the inventory. Those properties have no combat implementation in this section.
 
+Gorthoklekk’s true form and Raise Dead are staged on the altar map. The transformation reveals the fiend during a burst of embers. Raise Dead restores Jason as the light rises from his position. The effects and timing are game staging. Reduced motion applies the same story changes immediately.
+
 ## Artwork prompts
 
 **Fourteenth stone** · `art-test/barrow-final-stone-v1.png`
