@@ -1,6 +1,12 @@
 'use strict';
 window.Handheld=(()=>{
  let open=false,view='home',slotMode='save',member=0,frozen=0,page=0,itemId=null,itemBusy=false,historyPage=0;
+ let planId=null,planImage=null,planPaths=false;
+ const planningMaps={
+  'barleybridge-town-v1':'Barleybridge · Gate and market',
+  'warlock-library-v1':'Warlock Island · Circular library',
+  'warlock-archive-v1':'Warlock Island · Museum archive'
+ };
  const slots='hells-bubbies-night-of-ashes-v1-slot-';
  const confirm=k=>['Enter','e','E',' '].includes(k),back=k=>['Escape','b','B'].includes(k);
  function navigate(buttons,d,cols=2){if(!buttons.length)return;let index=buttons.indexOf(document.activeElement);if(index<0)index=0;let row=Math.floor(index/cols),col=index%cols,rows=Math.ceil(buttons.length/cols);for(let i=0;i<buttons.length+cols;i++){if(d==='left')col=(col-1+cols)%cols;else if(d==='right')col=(col+1)%cols;else row=(row+(d==='up'?-1:1)+rows)%rows;const next=row*cols+col;if(buttons[next]&&!buttons[next].disabled){buttons[next].focus({preventScroll:true});return;}}}
@@ -14,7 +20,9 @@ window.Handheld=(()=>{
  function paintInventory(){const items=itemList(),pages=Math.ceil(items.length/4);page=Math.min(page,pages-1);$('pause-title').textContent='Inventory · '+(page+1)+'/'+pages;entries([...items.slice(page*4,page*4+4).map(item=>[item.name,()=>{itemId=item.id;view='item';paint();}]),['Previous',()=>{page--;paint();},page===0],['Next',()=>{page++;paint();},page===pages-1],['Back',()=>{view='home';paint();}]]);details(['Weapons, shared potions and mission items.','Select an item to inspect it.',battle?'Equipment and potion use are locked during combat.':'Equipment changes and potion use save immediately.']);}
  function paintItem(){const item=itemList().find(i=>i.id===itemId);if(!item){view='inventory';paint();return;}$('pause-title').textContent=item.name;const buttons=[],rows=[item.description];if(item.kind==='weapon'){const id=item.owner,selected=Inventory.stats(Progression.stats(BASE_STATS[id],id,progression.levels[id]),{equipped:{[id]:item.id}},id,quest),current=Inventory.weapon(inventory,id);rows.push(NAMES[id]+' · Hit D20'+signed(selected.atk),'Damage '+rollSummary(selected.dmg)+(selected.frostDice?' + 1D6 frost':''),'Equipped: '+current.name+' · '+rollSummary(STATS[id].dmg));if(id==='freya')rows.push('Challenge uses the equipped blade’s damage die.');const away=!(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)).includes(id);buttons.push([inventory.equipped[id]===item.id?'Equipped':'Equip · '+NAMES[id],()=>{inventory=Inventory.equip(inventory,quest,id,item.id);applyProgression();paintParty();save();paint();message(item.name+' equipped.');},!!battle||away||inventory.equipped[id]===item.id]);if(away)rows.push('This companion is away.');}else if(item.kind==='consumable'){for(const id of partyRoster())buttons.push([NAMES[id]+' · '+hp[id]+'/'+STATS[id].hp,()=>usePotion(id),!!battle||potions<=0||hp[id]>=STATS[id].hp]);rows.push('Choose a companion to heal. Full-health companions do not consume a potion.');}else if(item.kind==='gear')rows.push('Worn by '+NAMES[item.owner]);else rows.push('Story item · Inspect only');buttons.push(['Back',()=>{view='inventory';paint();}]);entries(buttons);details(rows);}
  async function usePotion(id){if(itemBusy||battle||!open||potions<=0||!partyRoster().includes(id)||hp[id]>=STATS[id].hp)return;itemBusy=true;$('pause-options').querySelectorAll('button').forEach(b=>b.disabled=true);message('Uncorking a healing potion…');document.body.classList.add('inventory-roll');try{const before=hp[id],value=await damage([2,4,2],NAMES[id]+' · Healing potion');hp[id]=Math.min(STATS[id].hp,before+value);potions--;paintParty();save();paint();message(NAMES[id]+' healed '+(hp[id]-before)+' HP · '+potions+'/2 potions remain.');}catch(error){if(error!==CANCEL)message('The potion could not be used.');}finally{itemBusy=false;$('dice-panel').hidden=true;document.body.classList.remove('inventory-roll');}}
- function paint(){ $('pause-panel').dataset.view=view;$('pause-panel').hidden=false;$('pause-title').textContent='Pause';message('Arrows / WASD: select · E / Enter: confirm · B: back');if(view==='character'){paintCharacter();return;}if(view==='inventory'){paintInventory();return;}if(view==='item'){paintItem();return;}
+ function paint(){ $('pause-plan-map').hidden=true;$('pause-panel').dataset.view=view;$('pause-panel').hidden=false;$('pause-title').textContent='Pause';message('Arrows / WASD: select · E / Enter: confirm · B: back');if(view==='character'){paintCharacter();return;}if(view==='inventory'){paintInventory();return;}if(view==='item'){paintItem();return;}
+ if(view==='plan-map'){paintPlanMap();return;}
+ if(view==='planning-maps'){paintPlanningMaps();return;}
  if(view==='home'){entries([['Resume',close],['Party & equipment',()=>{view='character';member=Math.max(0,CORE.indexOf(lead));paint();}],['Inventory',()=>{view='inventory';page=0;paint();}],[battle?'Combat help':'Current quest',()=>{view=battle?'combat-help':'quest';paint();}],['Progression',()=>{view='progression';historyPage=0;paint();}],['Save game',()=>{slotMode='save';view='slots';paint();},!!battle],['Load game',()=>{slotMode='load';view='slots';paint();},!!battle],['Export save',()=>{save();$('save-export').click();message('Save exported.');},!!battle],['Import save',()=>{close();$('save-import').click();},!!battle],['Audio',()=>{view='audio';paint();}],['Controls',()=>{view='controls';paint();}],['Title screen',()=>{save();close();reset();TitleScreen.show();},!!battle]]);}
  else if(view==='progression'){
  const rows=Progression.history(quest,progression),pages=Math.max(1,Math.ceil(rows.length/4));historyPage=Math.max(0,Math.min(historyPage,pages-1));
@@ -32,7 +40,9 @@ window.Handheld=(()=>{
  message('B / F1 / Select · Resume combat');
  }
  else if(view==='quest'||view==='combat-help'){
- const combat=view==='combat-help';$('pause-title').textContent=combat?'Combat help':'Current quest';entries(combat?[['Selected command',()=>{view='combat-command';paint();}],['Back',()=>{view='home';paint();}]]:[['Back',()=>{view='home';paint();}]]);
+ const combat=view==='combat-help';$('pause-title').textContent=combat?'Combat help':'Current quest';const options=combat?[['Selected command',()=>{view='combat-command';paint();}]]:[];
+ if(!combat&&quest.barleybridgePlanReviewed)options.push(['Planning maps',()=>{view='planning-maps';paint();}]);
+ options.push(['Back',()=>{view='home';paint();}]);entries(options);
  if(combat)details(['D-pad selects a command. A confirms, then selects a target. B cancels targeting.', 'Initiative rolls once; Now / Next shows the fixed turn order.', 'Skill spends a limited use, even on a miss.', 'Guard adds +4 AC and halves damage until your next turn.', 'Select / F1 shows details for the selected command. X / Y inspect gear and party.']);
  else{const goal=QuestGuide.current();details([scenes[scene].name,goal.text,'Follow the diamond marker to the next interaction.','A / Enter / E interacts when you are close enough.']);}
  message('A / Enter or B: back · Start: resume');
@@ -40,7 +50,44 @@ window.Handheld=(()=>{
  else if(view==='audio'){const s=GameAudio.settings();$('pause-title').textContent='Audio';entries([['Music · '+s.music+'%',()=>{GameAudio.change('music');paint();$('pause-options').children[0].focus();}],['Effects · '+s.effects+'%',()=>{GameAudio.change('effects');paint();$('pause-options').children[1].focus();}],['Sound · '+(s.muted?'Muted':'On'),()=>{GameAudio.change('muted');paint();$('pause-options').children[2].focus();}],['Back',()=>{view='home';paint();}]]);details(['Select a volume to cycle 0 / 25 / 50 / 75 / 100%.','Music includes original temporary cues and three combat variations.','Your campaign tracks can replace these when ready.']);}
  else{ $('pause-title').textContent='Controls';entries([['Back',()=>{view='home';paint();}]]);$('pause-details').hidden=false;$('pause-details').replaceChildren(...['D-pad / Arrows / WASD · Move or select','Controller A / Enter / E · Confirm','Controller B · Back; hold + direction to run','X / I · Inventory; Y / O · Party','Start / P · Pause; Select / F1 · Quest or command details',window.GameInput?.status()||'Keyboard controls active'].map(text=>{const p=document.createElement('p');p.textContent=text;return p;}));}
  }
- function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=view==='item'?'inventory':'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
+ function paintPlanningMaps(){
+  $('pause-title').textContent='Tathlum planning maps';
+  entries([...Object.entries(planningMaps).map(([id,label])=>[label,()=>openPlanMap(id)]),['Back',()=>{view='quest';paint();}]]);
+  details(['Reference layouts for the Barleybridge and Warlock Island plans.']);
+ }
+ async function openPlanMap(id){
+  planId=id;planImage=null;view='plan-map';ChapterMapPreview.select(id);paint();
+  message('Opening map…');
+  try{
+   const loaded=await imageLoad(id+'.png');
+   if(!open||view!=='plan-map'||planId!==id)return;
+   planImage=loaded;drawPlanMap();message('D-pad / arrows: move marker · E: toggle paths · B: back');
+  }catch{
+   if(open&&view==='plan-map'&&planId===id)message('The map could not load. Press B to return.');
+  }
+ }
+ function drawPlanMap(){
+  const map=$('pause-plan-map'),g=map.getContext('2d');
+  g.clearRect(0,0,map.width,map.height);
+  if(!planImage)return;
+  g.imageSmoothingEnabled=false;
+  SceneLayers.foreground(g,planImage,{contain:true});
+  ChapterMapPreview.draw(g,{font:'12px FolkenPixel, Georgia'});
+ }
+ function togglePlanPaths(){
+  planPaths=ChapterMapPreview.togglePaths();
+  $('pause-options').querySelector('button').textContent=planPaths?'Hide paths':'Show paths';
+  drawPlanMap();
+ }
+ function paintPlanMap(){
+  const map=$('pause-plan-map'),title=planningMaps[planId];
+  $('pause-title').textContent=title;
+  map.setAttribute('aria-label',title+'. Move the planning marker with the direction controls.');
+  map.hidden=false;
+  entries([[planPaths?'Hide paths':'Show paths',togglePlanPaths],['Back',()=>{view='planning-maps';paint();}]]);
+  drawPlanMap();
+ }
+ function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=({item:'inventory','plan-map':'planning-maps','planning-maps':'quest'})[view]||'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='plan-map'){if(DIR[d]){ChapterMapPreview.key(e);drawPlanMap();}else if(confirm(e.key))togglePlanPaths();return true;}if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
  function dialogKey(e){if(!dialogOpen)return false;const d=KEY[e.key],buttons=[...$('choices').querySelectorAll('button')];if(d){e.preventDefault();navigate(buttons,d);return true;}if(confirm(e.key)){e.preventDefault();if(!e.repeat){if(buttons.length){(buttons.includes(document.activeElement)?document.activeElement:buttons[0])?.click();}else $('close').click();}return true;}if(back(e.key)){e.preventDefault();if(!buttons.length)$('close').click();return true;}return false;}
  function importKey(e){if(!$('save-import-dialog').open)return false;const d=KEY[e.key];if(d){e.preventDefault();navigate([$ ('import-confirm'),$('import-cancel')],d);}else if(confirm(e.key)){e.preventDefault();if(!e.repeat)(['import-confirm','import-cancel'].includes(document.activeElement.id)?document.activeElement:$('import-confirm')).click();}else if(back(e.key)){e.preventDefault();$('import-cancel').click();}return true;}
  function install(){ $('pause-toggle').onclick=show;}

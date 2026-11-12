@@ -22,6 +22,8 @@ The browser playthrough continued from the St. Ilnius checkpoint, verified El Gu
 
 Replay **464** presents the plan as three consecutive journey cards from El Guapo’s completed scouting checkpoint. It records the plan in the journal without advancing the outcome of any of the three objectives. The browser audit checked each card’s content and order and reloaded the handoff at 640×480 without console errors. All 168 automated tests passed. The structural audit checked 165 scenes, 468 replays and 657 sprite frames.
 
+After reviewing the briefing, open Current quest and select Planning maps. The town, circular library and museum archive reuse their reference layouts. The direction controls move a marker, confirm toggles walkable paths, and Back returns to the quest. Planning maps are available after reloading a completed briefing.
+
 ## Questions for the campaign record
 
 - After El Guapo scouted Barleybridge, did the rest of the company reach the town? What did El Guapo report, who was there, and what happened next?

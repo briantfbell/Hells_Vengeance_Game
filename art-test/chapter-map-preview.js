@@ -49,14 +49,14 @@ window.ChapterMapPreview=(()=>{
   position=selected?[...selected.spawn]:null;
  }
  function key(event){
-  const direction=directions[event.key];
+  const direction=directions[event.key]||directions[event.key.toLowerCase()];
   if(!selected||!direction)return;
   event.preventDefault();
   const next=position.map((coordinate,index)=>coordinate+direction[index]*tile);
   if(passable(selected,...next))position=next;
  }
  function togglePaths(){showPaths=!showPaths;return showPaths;}
- function draw(g){
+ function draw(g,{font='11px system-ui'}={}){
   if(!selected)return;
   g.save();
   if(showPaths){
@@ -66,7 +66,7 @@ window.ChapterMapPreview=(()=>{
     if(passable(selected,x+tile/2,y+tile/2))g.fillRect(x+1,y+1,tile-2,tile-2);
    }
   }
-  g.font='11px system-ui';
+  g.font=font;
   g.textAlign='center';
   for(const {label,x,y} of selected.points){
    g.fillStyle='#13141ddd';
