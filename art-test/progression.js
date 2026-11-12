@@ -43,6 +43,7 @@ window.Progression=(()=>{
   if(q.kantariaMayorMet)rows.push('The council appoints Linton Demeer as Kantaria’s mayor.');
   if(q.uskwoodDeedSigned)rows.push('Loredana leaves for Nidal and signs over the Uskwood property.');
   if(q.kantariaGiftsReceived)rows.push('Fex pays 10,600 gp in back pay, awards four gifts and commissions Freya’s plate.');
+  if(q.egorianContractAccepted)rows.push('Jaquen’s contract · two days to kill the noble. 5,000 gp and the guard on completion, plus 5,000 gp for a public kill.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');
   if(!rows.length)rows.push('No campaign milestones reached yet.');
   return rows;

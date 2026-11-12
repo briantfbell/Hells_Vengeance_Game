@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const night=window.EgorianNight?.goal();
+ if(night)return {text:night,target:EgorianNight.target()};
  const egorian=window.EgorianArrival?.goal();
  if(egorian)return {text:egorian,target:EgorianArrival.target()};
  const road=window.SouthRoad?.goal();

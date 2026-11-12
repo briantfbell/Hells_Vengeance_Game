@@ -1,9 +1,9 @@
 {
-  "scripts": 52,
-  "scenes": 85,
-  "replays": 159,
-  "framesInspected": 496,
-  "framesChecked": 496,
+  "scripts": 53,
+  "scenes": 87,
+  "replays": 165,
+  "framesInspected": 498,
+  "framesChecked": 498,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 325747352,
+  "assetBytes": 335412344,
   "largestAssets": [
     {
       "name": "south-road-ambush-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 118,
-  "startupCompressedBytes": 270950510,
-  "startupDecodedRgbaBytes": 734311472,
+  "startupAssets": 122,
+  "startupCompressedBytes": 280607674,
+  "startupDecodedRgbaBytes": 759480880,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -94,7 +94,11 @@
     "draymus-sheet.png",
     "egorian-central-square-v1.png",
     "egorian-falco-manor-v1.png",
+    "egorian-guard-lane-v1.png",
+    "egorian-jaquen-v1.png",
+    "egorian-lantern-lane-v1.png",
     "egorian-midnight-temple-v1.png",
+    "egorian-svetlana-v1.png",
     "egorian-tria-falco-v1.png",
     "egorian-west-bridge-v1.png",
     "execution-square-v1.png",
