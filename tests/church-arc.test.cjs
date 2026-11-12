@@ -2176,7 +2176,15 @@ test('Dinyar’s fights gate the search, crossing, and gold dragon trophy',async
  assert.deepEqual([...w.battle.enemies].map(enemy=>enemy.shortName),['Paladin','Guard']);
  assert.equal(capture('dinyar-watch').quest.dinyarWatchCleared,undefined);
  await w.DinyarRecon.afterBattle(w.battle.kind,w.battle.returnPosition);
- await step('dinyarCells');
+ assert.deepEqual(Array.from(w.DinyarRecon.points(),p=>p.id),['dinyarCells','dinyarCellsEast']);
+ w.units=[{id:'freya',x:456,y:184,dir:'up'}];
+ assert(w.DinyarRecon.visibleCellDoors().includes(588));
+ assert(!w.DinyarRecon.visibleCellDoors().includes(48));
+ w.hp.freya=0;
+ assert.equal(w.DinyarRecon.visibleCellDoors().length,0);
+ w.hp.freya=44;
+ await step('dinyarCellsEast');
+ assert(w.transcript.some(line=>line.name==='freya'&&line.text.includes('past the bars')));
  await step('dinyarClimb');
  w.units=[{id:'freya',x:328,y:256,dir:'up'}];
  await step('dinyarDragon');

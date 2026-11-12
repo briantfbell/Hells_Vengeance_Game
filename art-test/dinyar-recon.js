@@ -5,9 +5,10 @@ window.DinyarRecon=(()=>{
  const nidalArt='nidal-arrival-court-v1.png',ridgeArt='dinyar-ridge-v1.png',posternArt='dinyar-ridge-postern-v1.png';
  const posternOutline=[[172,214],[199,205],[202,242],[195,248],[173,248]];
  const posternDuration=850,departureDuration=1400;
- const posternRange=32;
+ const posternRange=32,darkvisionRange=384;
+ const cellDoors=[48,106,161,217,423,477,533,588];
  const nidalTravelers=['draymus','violetta','corrine'];
- let opening=null,departure=null;
+ let opening=null,departure=null,cellVision=null;
  const lower='dinyar_lower_works',bridge='dinyar_bridge_ward',court='egorian_westcrown_orders';
  const lowerArt='dinyar-lower-works-v1.png',bridgeArt='dinyar-bridge-ward-v1.png',dragonArt='parnoneryx-v1.png';
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
@@ -48,6 +49,7 @@ window.DinyarRecon=(()=>{
    points:[
     {id:'dinyarWatch',x:328,y:248,label:'Clear the Reclamation watch'},
     {id:'dinyarCells',x:184,y:184,label:'Check the Godclaw cells'},
+    {id:'dinyarCellsEast',x:456,y:184,label:'Check the Godclaw cells'},
     {id:'dinyarClimb',x:328,y:168,label:'Climb to the bridge ward'}
    ]
   };
@@ -122,7 +124,11 @@ window.DinyarRecon=(()=>{
    const stop=point(id);
    return [id==='dinyarPostern'&&quest.dinyarBeltHintSeen?{...stop,label:'Check the seam Freya noticed'}:stop];
   }
-  if(scene===lower)return [point(!quest.dinyarWatchCleared?'dinyarWatch':!quest.dinyarCellsChecked?'dinyarCells':'dinyarClimb')];
+  if(scene===lower){
+   if(!quest.dinyarWatchCleared)return [point('dinyarWatch')];
+   if(!quest.dinyarCellsChecked)return [point('dinyarCells'),point('dinyarCellsEast')];
+   return [point('dinyarClimb')];
+  }
   if(scene===bridge)return [point(quest.dinyarCleared?'dinyarReturn':quest.dinyarDragonSlain?'dinyarTrophy':'dinyarDragon')];
   if(scene===court){
    if(quest.westcrownDeployed)return [];
@@ -205,10 +211,38 @@ window.DinyarRecon=(()=>{
    if(departure?.epoch===token)departure=null;
   }
  }
+ function runeBearer(){
+  if(!quest.tathlumHuntComplete||quest.tathlumDuels!==3||hp.freya<=0)return null;
+  return units.find(unit=>unit.id==='freya')||null;
+ }
+ function visibleCellDoors(){
+  if(scene!==lower)return [];
+  const freya=runeBearer();
+  return freya?cellDoors.filter(x=>Math.hypot(freya.x-x,freya.y-134)<=darkvisionRange):[];
+ }
+ function drawCellVision(g){
+  const doors=visibleCellDoors();
+  if(!doors.length||!art[lower])return;
+  if(!cellVision){
+   cellVision=document.createElement('canvas');
+   cellVision.width=640;cellVision.height=400;
+   const view=cellVision.getContext('2d');
+   view.filter='grayscale(1) brightness(1.85)';
+   SceneLayers.foreground(view,art[lower],{contain:true});
+  }
+  g.save();
+  g.beginPath();
+  for(const x of doors){
+   g.moveTo(x-15,151);g.lineTo(x-15,121);g.quadraticCurveTo(x,99,x+15,121);
+   g.lineTo(x+15,151);g.closePath();
+  }
+  g.clip();
+  g.drawImage(cellVision,0,0);
+  g.restore();
+ }
  function canSensePostern(){
-  if(scene!==ridge||!quest.dinyarSurveyed||quest.dinyarEntranceFound||quest.dinyarBeltHintSeen||
-   !quest.tathlumHuntComplete||quest.tathlumDuels!==3)return false;
-  const freya=units.find(unit=>unit.id==='freya');
+  if(scene!==ridge||!quest.dinyarSurveyed||quest.dinyarEntranceFound||quest.dinyarBeltHintSeen)return false;
+  const freya=runeBearer();
   const entrance=point('dinyarPostern');
   return !!freya&&Math.hypot(freya.x-entrance.x,freya.y-entrance.y)<=posternRange;
  }
@@ -321,6 +355,10 @@ window.DinyarRecon=(()=>{
     beginFight(lowerBattle,watch,'The Reclamation watch bars the way to the cells.');
     return true;
    case 'dinyarCells':
+   case 'dinyarCellsEast':
+    if(visibleCellDoors().some(x=>Math.abs(x-point(id).x)<72)){
+     await say('freya','I can see past the bars into the shadows. No movement in these cells.');
+    }
     await say('reese','No one answers from these cells. If anyone survived, they’re farther in.');
     quest.dinyarCellsChecked=true;
     break;
@@ -359,5 +397,5 @@ window.DinyarRecon=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,canSensePostern,sensePostern,drawPostern,effect};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isDinyarBattle,afterBattle,drawDeparture,departurePose,canSensePostern,sensePostern,drawPostern,visibleCellDoors,drawCellVision,effect};
 })();

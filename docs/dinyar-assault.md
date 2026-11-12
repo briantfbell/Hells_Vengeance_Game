@@ -8,6 +8,10 @@ Foundry actor `Actor.nV7jJKWRctqtUVtW` lists Bite & Claws, Wing Slam, and dragon
 
 At replay **447**, Parnoneryx lies intact at the bridge ward after the fight. Recovering the head adds the quest item and switches to a matching pose with a stylized cut neck. The fallen body and trophy state follow the saved quest flags. The pose and recovery staging are adaptations of the recorded outcome.
 
+## The Godclaw cells
+
+After clearing the watch, the player can inspect the cells from the east or west side of the hall in replay **444**. Freya’s active Cave Giant rune gives her 120 feet of darkvision according to Foundry item `B8WdcS4xvdExMyJb`. The game uses a grayscale view of barred openings within 24 tiles of Freya. The vision effect and added dialogue are staging. The inspection still ends without an answer about surviving prisoners.
+
 ## The Dinyar dispatch
 
 Foundry Player Notes page `ch0MchgiPuWLvgku` records the party’s intention to resurrect Hellknight Scipio alongside the result at Dinyar. Foundry actor `Actor.s5BDCmBTYIdV3vOj` supplies his name. The notes do not establish where he died, whether the party found his body at Dinyar, or whether a resurrection happened. Replay 449A presents the note as an optional dispatch after Freya’s promotion in Egorian. The timing and placement of the dispatch are adaptations. Reading it records the intention in the journal and leaves the main departure available.
@@ -39,3 +43,5 @@ The built-in image generator created the intact fallen pose with the head restin
 The browser playthrough started from the Dinyar scouting checkpoint. It defeated the watch, searched the cells, climbed to the ward, defeated Parnoneryx, reloaded before taking his head, and reloaded the final checkpoint. The game ran at 640×480 with no browser console errors. All 166 automated tests passed. The structural audit checked 160 scenes, 451 replays, and 649 sprite frames.
 
 The follow-up audit opened replay 447 at 640×480, recovered the trophy, inspected it in inventory, and reloaded the cut-neck pose with the Egorian objective. All 174 tests passed. The structural audit checked 168 scenes, 475 replays and 659 sprite frames with no asset, frame or geometry errors.
+
+The cell audit played replay 444 at 640×480, saw the darkvision treatment on the barred openings, inspected the cells from the east, and reloaded with the bridge objective. The browser reported no errors. All 174 tests passed, including range and incapacitation checks, and the structural audit checked 476 replays.
