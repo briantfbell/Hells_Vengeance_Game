@@ -1,4 +1,9 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hell’s Rebels · Night of Ashes</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hell’s Rebels · Night of Ashes</title>
+<script>
+ if (new URLSearchParams(location.search).get('handheld') === '1') {
+  document.documentElement.classList.add('handheld-display');
+ }
+</script><style>
 *{box-sizing:border-box}body{margin:0;background:#0b1018;color:#ddd6c9;font:15px system-ui,sans-serif}main{max-width:1120px;margin:24px auto;padding:0 18px}header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}h1{font:24px Georgia,serif;color:#e6c47c;margin:0 0 5px}p{margin:5px 0;color:#a8adbb}.eyebrow{font-size:11px;letter-spacing:3px;color:#ba765d}button,select{font:inherit;color:#e5dac4;background:#202330;border:1px solid #58505a;border-radius:4px;padding:8px 12px;cursor:pointer}button:hover{background:#34303b}button:disabled{opacity:.4;cursor:default}button:focus-visible,select:focus-visible,canvas:focus-visible{outline:2px solid #e6c47c;outline-offset:2px}[hidden]{display:none!important}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.stage{position:relative;background:#05080d;border:1px solid #4f4140;box-shadow:0 15px 60px #0008}#game{display:block;width:100%;height:auto;image-rendering:pixelated;aspect-ratio:4/3;touch-action:none}#prompt{position:absolute;bottom:15px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#10121aee;border:1px solid #a58b59;padding:8px 14px;color:#e6c47c}#dialog{position:absolute;bottom:16px;left:3%;right:3%;background:#10121af5;border:1px solid #9c8055;padding:18px;box-shadow:0 5px 30px #000a}#speaker{color:#e6c47c;font-weight:bold;margin-bottom:8px}#line{font-size:17px;line-height:1.5;margin-bottom:14px}#choices{display:grid;gap:7px}#choices button{text-align:left}#close{float:right}#dialog:after{content:'';display:block;clear:both}#loading{position:absolute;inset:0;display:grid;place-content:center;background:#10121a;text-align:center}.party{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}.party-card{position:relative;display:flex;align-items:center;gap:5px;padding:7px;overflow:hidden;text-align:left;font-size:12px;min-width:0}.party-card canvas{width:32px;height:48px;image-rendering:pixelated;flex-shrink:0}.party-card i{position:absolute;bottom:0;left:0;height:3px;background:#93aa79}.party-card.down{opacity:.45}.selected{border-color:#e6c47c}.current{background:#3b3031}footer{display:flex;justify-content:space-between;gap:20px;font-size:12px;margin:12px 0;color:#8e929e}.touch{display:flex;gap:6px;justify-content:center;margin:12px 0;touch-action:none}.touch button{min-width:45px;user-select:none}#objective{color:#cbc2b0}a{color:#e6c47c}@media(max-width:650px){main{margin:12px auto;padding:0 8px}header{display:block}h1{font-size:21px}.party{gap:4px}.party-card{flex-direction:column;text-align:center;padding:4px;font-size:10px}.toolbar button,.toolbar select,.toolbar input[type=search]{font-size:12px;padding:7px}
 #section-search{color:#e5dac4;background:#202330;border:1px solid #58505a;border-radius:4px;width:15rem;max-width:100%}
 #section-replay{max-width:min(26rem,100%)}
@@ -31,7 +36,20 @@
 @media(max-width:650px){#level-up{padding:9px}#level-up .eyebrow{font-size:7px;letter-spacing:1px;margin:0}#level-description{margin:3px 0 5px}.level-row{padding:2px 7px;gap:5px;line-height:1.15}#level-rows{gap:3px}.level-footnote{margin:3px 0}#level-continue{font-size:10px;min-height:25px;padding:4px 18px}}
 /* Shared device screen: mode changes never resize or move the viewport.
    Browser-only title, save and touch controls sit below the game surface. */
-body main,body.is-intro main,body.is-level main{display:flex;flex-direction:column;width:min(1084px,100vw,calc(100dvh * 4 / 3));max-width:1084px;margin:0 auto;padding:0}
+html{scrollbar-gutter:stable both-edges}
+#save-file-status:empty{display:none}
+body main,body.is-intro main,body.is-level main{display:flex;flex-direction:column;width:min(1084px,100%,calc(100dvh * 4 / 3));max-width:1084px;margin:0 auto;padding:0}
+html.handheld-display,.handheld-display body{overflow:hidden;scrollbar-gutter:auto}
+.handheld-display body{display:grid;min-height:100dvh;place-items:center}
+.handheld-display body main{position:relative;margin:0}
+.handheld-display main > :is(header,#party,.toolbar,.touch,#status,footer){display:none}
+.handheld-display #save-file-status{display:none}
+.handheld-display body.is-title #save-file-status:not(:empty),
+.handheld-display body:has(#pause-panel:not([hidden])) #save-file-status:not(:empty){
+ position:absolute;display:block;z-index:30;bottom:0;inset-inline:0;
+ margin:0;padding:.35em .8em;background:#15121fee;color:#efdaae;font:clamp(9px,2vw,13px) system-ui;
+ pointer-events:none;
+}
 body .stage,body.is-intro .stage,body.is-level .stage{order:-1;flex:none;width:100%;aspect-ratio:4/3;border:0;box-shadow:0 0 0 1px #4f4140}
 body #game,body.is-intro #game,body.is-level #game{width:100%;height:auto;aspect-ratio:4/3}
 body header{margin:14px 0 4px}body main>.toolbar,body main>.touch,body main>header,body main>footer,body main>.party,body main>p{padding-inline:8px}

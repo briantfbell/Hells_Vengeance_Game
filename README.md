@@ -45,6 +45,8 @@ This is a static website: index.html and art-test/ can be served by a static web
 
 ## Handheld direction
 
+Add `?handheld=1` to the game URL to run it without page scrolling or the development controls. For example, open `http://127.0.0.1:8080/?handheld=1` on the local server. At 640×480 the game fills the display, and other display sizes keep the 4:3 frame centered. The title and pause menus still handle saves, inventory, audio, and controls. Remove the query parameter to access the replay toolbar. Both views share saves when opened from the same browser origin.
+
 The web build is the current playable prototype. Final handheld packaging, native handheld input adapters, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
 
 The admin toolbar’s **Find replay** field filters checkpoints by number, scene title, or location. **Return to prior progress** restores the checkpoint from before the replay.

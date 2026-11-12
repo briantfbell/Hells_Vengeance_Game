@@ -301,7 +301,9 @@ function reset(resume=false,selected=null){
  progression=saved?.progression||Progression.fresh();inventory=saved?.inventory||Inventory.fresh();applyProgression();
  hp=saved?.hp||Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=saved?.uses||Object.fromEntries(CORE.map(id=>[id,0]));potions=saved?.potions??2;mendUses=saved?.mendUses??2;lead=saved?.lead||selected||'freya';$('character').value=lead;
  $('save-file-status').textContent='';
- const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();canvas.focus();
+ const next=saved?.scene||'street',spawn=scenes[next].spawn||[312,next==='street'?248:next==='tavern'?280:312];setScene(next,saved?.position?.x??spawn[0],saved?.position?.y??spawn[1]);window.NextChapter.syncRoster();
+ canvas.focus({preventScroll:true});
+ window.scrollTo(0,0);
  if(!saved||quest.briefed===false)run(deliverOpeningMission);else if(quest.burned&&!quest.done)run(finishTempleEscape);
 }
 $('intro-start').onclick=()=>{const id=ROSTER[introIndex];if(OPENING_ROSTER.includes(id))reset(false,id);};$('intro-resume').onclick=()=>reset(true);
