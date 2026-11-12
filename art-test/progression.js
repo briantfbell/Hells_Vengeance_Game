@@ -52,6 +52,9 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.senaraCarriageDeparted)rows.push('Whisperwood · Bob drives the black carriage southwest of Senara with a team of four warhorses. Freya’s next objective is four unicorn horns.');
+  if(q.senaraForestIntel)rows.push('Senara · The local Hellknight patrol reports place the unicorns southwest of town. The chapter has pulled back to its citadel.');
+  if(q.senaraDraymusTrained)rows.push('Senara · Draymus learns a new spell at the Hellknight citadel.');
   if(q.senaraTalismanRecovered)rows.push('Senara · The Black Daggers return Fex’s Infernal Talisman and agree to report rebel movements to Thrune.');
   if(q.senaraOrphanageComplete)rows.push('Senara · Draymus and Jason learn that the sewers lead to the Black Daggers beneath the town.');
   if(q.corrineAssigned)rows.push('Corrine assigned to Captain Freya’s team as liaison.');

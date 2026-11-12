@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 208 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,208);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 214 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,214);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -475,4 +475,54 @@ test('Black Daggers route preserves the recorded spell order, surrender and tali
  assert.equal(restored.quest.senaraTalismanRecovered,true);
  const forged=structuredClone(finished);forged.quest.senaraGuildSurrendered=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Black Daggers sequence/);
+});
+
+test('citadel spell study and patrol reports precede the carriage trip and survive portable saves',async()=>{
+ const w=world(),sections=w.replaySections();
+ const start=sections.find(s=>s.id==='senara-citadel-visit');
+ const road=sections.find(s=>s.id==='whisperwood-road');
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),DIALOGUE_FACE_CROPS:{}});
+ w.scenes[start.scene].points=[];
+ vm.runInContext(read('senara-citadel.js'),w);
+ w.SenaraCitadel.install();
+ const step=async id=>assert.equal(await w.SenaraCitadel.interact(id),true,id);
+ assert.equal(await w.SenaraCitadel.interact('citadelDepart'),false);
+ await step('senaraCitadel');
+ assert.equal(w.SenaraCitadel.target().id,'citadelRespect');
+ assert.equal(await w.SenaraCitadel.interact('citadelStudy'),false);
+ await step('citadelRespect');
+ const say=w.say;
+ w.say=async(name,text,options)=>{
+  await say(name,text);
+  return options?0:undefined;
+ };
+ await step('citadelStudy');
+ assert(w.transcript.some(line=>line.text.includes('Now that I’ve written it out')));
+ w.quest.senaraDraymusTrained=false;
+ w.say=async(name,text,options)=>{
+  await say(name,text);
+  return options?1:undefined;
+ };
+ await step('citadelStudy');
+ assert(w.transcript.some(line=>line.text.includes('The casting holds')));
+ assert.equal(w.quest.senaraDraymusTrained,true);
+ assert.equal(await w.SenaraCitadel.interact('citadelDepart'),false);
+ await step('citadelTrail');
+ await step('citadelDepart');
+ assert.equal(w.scene,road.scene);
+ assert.equal(w.SenaraCitadel.npcs()[0].id,'bob');
+ await step('whisperwoodBob');
+ assert.equal(w.SenaraCitadel.target(),null);
+ assert.equal(w.SenaraCitadel.goal(),'Ready to enter the Whisperwood.');
+ assert.equal(await w.SenaraCitadel.interact('whisperwoodBob'),false);
+ const saved=checkpoint(w,{...road,quest:w.quest});
+ const back=w.SaveFiles.decode(w.SaveFiles.encode(saved));
+ assert.equal(back.quest.senaraWhisperwoodReady,true);
+ assert.equal(back.progression.levels.draymus,w.Progression.migrate(start.quest).levels.draymus);
+ for(const flag of ['senaraTalismanRecovered','senaraDraymusTrained','senaraForestIntel','senaraCarriageDeparted']){
+  const forged=structuredClone(saved);forged.quest[flag]=false;
+  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Hellknight citadel sequence/);
+ }
+ const stale=structuredClone(saved);stale.scene='senara_hellknight_citadel';
+ assert.throws(()=>w.SaveFiles.validate(stale),/Progress does not match the Hellknight citadel/);
 });

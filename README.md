@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 208 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 214 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -181,3 +181,7 @@ Continue from the empty coffer at Fex’s residence or select replay **196**. We
 ### The Black Daggers
 
 Continue from Fex’s residence after the orphanage reconnaissance or select replay **203**. Follow the sewers, scout the Black Daggers with J’Mal, and use Draymus’s two spells to force a surrender. Replays **203–208** cover the approach, ambush and terms. See [the section notes](docs/senara-daggers.md) for the campaign sources, artwork and verification.
+
+### The Hellknight citadel
+
+Continue after recovering the Infernal Talisman or select replay **209**. Visit the local chapter, study a spell with Draymus, and use the old patrol reports to plan the unicorn hunt. Replays **209–214** end at the edge of the Whisperwood. See [the section notes](docs/senara-citadel.md) for the campaign sources, artwork and verification.

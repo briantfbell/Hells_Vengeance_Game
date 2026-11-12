@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const citadel=window.SenaraCitadel?.goal();
+ if(citadel)return {text:citadel,target:SenaraCitadel.target()};
  const daggers=window.SenaraDaggers?.goal();
  if(daggers)return {text:daggers,target:SenaraDaggers.target()};
  const cover=window.SenaraCover?.goal();
