@@ -4,6 +4,11 @@ window.BellflowerBarge=(()=>{
  const home='pezzack_egorian',barge='egorian_bellflower_barge',hide='egorian_migos_hideaway';
  const kind='bellflower_boarding',boarder='bellflower_boarder';
  const deck='bellflower-barge-v1.png',room='bellflower-migos-v1.png',sheet='bellflower-boarders-v1.png';
+ const captives=[
+  {id:'citizen-barge-1',x:294,y:143,dir:'down',variant:1,height:37},
+  {id:'citizen-barge-2',x:358,y:145,dir:'down',variant:6,height:37}
+ ];
+ let cutaway=null;
  const model={src:sheet,frames:[
   {x:51,y:91,w:550,h:555,anchorX:345,anchorY:646},
   {x:680,y:143,w:760,h:503,anchorX:1095,anchorY:646},
@@ -63,11 +68,17 @@ window.BellflowerBarge=(()=>{
   if(scene===home&&quest.pezzackComplete)return [{id:'corrine',x:328,y:231,height:58}];
   if(scene===hide)return [];
   if(scene!==barge)return null;
-  const captives=[
-   {id:'citizen-barge-1',x:294,y:143,dir:'down',variant:1,height:37},
-   {id:'citizen-barge-2',x:358,y:145,dir:'down',variant:6,height:37}
-  ];
-  if(quest.bellflowerHeld)return [];
+  if(quest.bellflowerHeld){
+   if(cutaway?.name!=='rescue'||cutaway.epoch!==epoch)return [];
+   const time=phase();
+   return captives.flatMap((captive,index)=>{
+    const pace=Math.max(0,Math.min(1,(time-index*.12)/.82));
+    if(pace>=1)return [];
+    const gather=Math.min(1,pace/.38);
+    const x=captive.x+(316-captive.x)*gather,y=captive.y+(344-captive.y)*pace;
+    return [{...captive,x,y,step:pace>0,anim:time*cutaway.duration/1000}];
+   });
+  }
   if(!quest.bellflowerPartyStarted)return captives.concat([
    {id:'citizen-barge-guest-1',x:122,y:178,dir:'right',variant:4},
    {id:'citizen-barge-guest-2',x:516,y:176,dir:'left',variant:7},
@@ -77,6 +88,40 @@ window.BellflowerBarge=(()=>{
    {id:boarder,x:218,y:195,height:39},
    {id:boarder,x:169,y:226,height:39}
   ]);
+ }
+ function phase(){return Math.min(1,(performance.now()-cutaway.started)/cutaway.duration);}
+ async function playCutaway(name,duration){
+  if(reduce.matches)return;
+  const effect={name,duration,epoch,started:performance.now()};
+  cutaway=effect;
+  try{
+   await delay(duration);
+   if(effect.epoch!==epoch)throw CANCEL;
+  }finally{
+   if(cutaway===effect)cutaway=null;
+  }
+ }
+ function effects(g){
+  if(scene!==barge||cutaway?.name!=='recall'||cutaway.epoch!==epoch||reduce.matches)return;
+  const time=phase(),glow=Math.sin(time*Math.PI);
+  g.save();
+  g.globalCompositeOperation='lighter';
+  g.globalAlpha=glow*.62;
+  for(const [index,{x,y}] of units.entries()){
+   const radius=18+time*14;
+   const light=g.createRadialGradient(x,y,2,x,y,radius);
+   light.addColorStop(0,'#d3afff');
+   light.addColorStop(1,'#614c8d00');
+   g.fillStyle=light;
+   g.fillRect(x-radius,y-radius,radius*2,radius*2);
+   g.fillStyle='#e2cdfb';
+   for(let i=0;i<7;i++){
+    const angle=i*1.8+time*5+index,px=x+Math.cos(angle)*(8+time*12);
+    const py=y+Math.sin(angle)*7-time*(32+i*5);
+    g.fillRect(Math.round(px),Math.round(py),2,3+i%3);
+   }
+  }
+  g.restore();
  }
  function beginFight(){
   const {x,y,dir}=units[0],max=STATS[boarder].hp;
@@ -95,6 +140,7 @@ window.BellflowerBarge=(()=>{
   paintParty();
   save();
   updateObjective();
+  await playCutaway('rescue',1750);
   await say('Chronicle','While the company holds the deck, the Bellflower rescuers get many of the captives clear.');
   if(jasonDown)await say('Chronicle','Jason comes round as Freya pulls him clear of the fighting.');
   await say('jason','Stay close. I can get us back to Migos Street.');
@@ -122,6 +168,7 @@ window.BellflowerBarge=(()=>{
     return true;
    case 'bellflowerRecall':
     await say('jason','Kendrick Lamar!');
+    await playCutaway('recall',1000);
     await journeyCard('Migos Street · Word of recall','Jason’s recall brings the company back to its Egorian hideaway. The Bellflower Network has freed many halflings, and the trap has failed.',()=>{
      quest.bellflowerBargeComplete=true;
      setScene(hide,328,296);
@@ -133,5 +180,5 @@ window.BellflowerBarge=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,retreatReady,afterBattle,interact};
+ return {install,load,mapImage,roster,points,target,goal,npcs,effects,retreatReady,afterBattle,interact};
 })();

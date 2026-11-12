@@ -1553,6 +1553,10 @@ test('the Bellflower barge starts with Draymus wounded and ends with Jason’s r
  w.COMBAT_IDLES={};
  w.setScene=id=>w.scene=id;
  w.journeyCard=async(title,text,commit)=>{w.transcript.push({name:title,text});commit();};
+ w.epoch=1;
+ w.reduce={matches:false};
+ let now=0;
+ w.performance.now=()=>now;
  vm.runInContext(read('bellflower-barge.js'),w);
  w.BellflowerBarge.install();
  const step=async id=>assert.equal(await w.BellflowerBarge.interact(id),true,id);
@@ -1572,10 +1576,18 @@ test('the Bellflower barge starts with Draymus wounded and ends with Jason’s r
  assert.equal(w.BellflowerBarge.retreatReady(w.battle),true);
  assert.equal(w.BellflowerBarge.retreatReady({kind:'rachikan_raid',round:1}),false);
  assert.equal(await w.BellflowerBarge.interact('bellflowerRecall'),false);
+ w.delay=async duration=>{
+  now+=duration*.8;
+  const escaping=w.BellflowerBarge.npcs();
+  assert(escaping.every(captive=>captive.x===316&&captive.y>270));
+  assert.equal(escaping.length,2);
+ };
  await w.BellflowerBarge.afterBattle(w.battle.returnPosition);
+ assert.equal(w.BellflowerBarge.npcs().length,0);
  const capture=()=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('bellflower-recall'),scene:w.scene,quest:w.quest})));
  w.quest=capture().quest;
  assert.equal(w.BellflowerBarge.target().id,'bellflowerRecall');
+ w.delay=async()=>assert.equal(w.scene,'egorian_bellflower_barge');
  await step('bellflowerRecall');
  assert(w.transcript.some(line=>line.name==='jason'&&line.text==='Kendrick Lamar!'));
  const saved=capture();

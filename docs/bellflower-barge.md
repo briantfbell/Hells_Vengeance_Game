@@ -4,6 +4,8 @@ GM timeline row S119 records the Bellflower Network attacking Draymus and compan
 
 The deck layout, fighter roster, guest and captive sprite counts, dialogue beyond the word of recall, and timing of Draymus’s return from Rachikan are adapted. Combat opens with Draymus at no more than 5 HP and the company holds for one full initiative round. Clearing all active boarders also opens the escape. If Jason was knocked out, he comes round at 1 HP before casting recall. The rescue and retreat remain the recorded outcome. El Guapo’s return remains unresolved at this point.
 
+After combat, two representative captives cross the deck and leave by the gangway. A short spell effect plays after Jason speaks and before the Migos Street transition. Both sequences use existing sprites and are skipped under reduced motion. The exact route and visual treatment are adaptations.
+
 ## Artwork prompts
 
 **River barge** · `art-test/bellflower-barge-v1.png`
