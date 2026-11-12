@@ -149,7 +149,7 @@ window.InfernoGate=(()=>{
   return true;
  }
  function effects(g,t){
-  if(scene!==gate||reduce.matches)return;
+  if(scene!==gate||quest.aregoGateSealed||reduce.matches)return;
   const [px,py]=ashOrigin;
   g.save();
   for(let i=0;i<24;i++){

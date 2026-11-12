@@ -115,7 +115,7 @@ test('Kantaria rewards validate in sequence and preserve equipped gear and spent
  end.quest.uskwoodDeedSigned=false;
  assert.throws(()=>w.SaveFiles.validate(end),/Invalid Kantaria aftermath sequence/);
 });
-test('all 262 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,262);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 267 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,267);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -861,4 +861,43 @@ test('Reese’s pact transfers the talisman and restores the company before the 
  assert.equal(back.quest.aregoFexAftermath,true);
  const forged=structuredClone(saved);forged.quest.aregoCompanyFreed=false;
  assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Fort Arego rematch sequence/);
+});
+
+test('Corrine and Contessa negotiate before sealing the gate, then evacuate to Hotel Barato',async()=>{
+ const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='arego-corrine');
+ const audio=[];
+ Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{id:'freya',x:328,y:192,dir:'up'}],
+  setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
+  AregoReturn:{npcs:()=>[{id:'visperthul'}]},GameAudio:{effect:id=>audio.push(id)},delay:async()=>{},
+  reduce:{matches:true},epoch:0,CANCEL:Symbol('cancel'),DIALOGUE_FACE_CROPS:{}});
+ w.scenes[start.scene].points=[];
+ w.art['arego-inferno-gate-sealed-v1.png']={sealed:true};
+ vm.runInContext(read('arego-exit.js'),w);
+ w.AregoExit.install();
+ const step=async id=>assert.equal(await w.AregoExit.interact(id),true,id);
+ assert.equal(await w.AregoExit.interact('aregoSealPortal'),false);
+ await step('aregoIntervention');
+ assert.deepEqual(Array.from(w.AregoExit.npcs(),u=>u.id),['visperthul','corrine','contessa']);
+ assert(w.transcript.some(line=>line.text.includes('whole battalion')));
+ await step('aregoNegotiateExit');
+ assert(w.transcript.some(line=>line.text.includes('The contract stands.')));
+ assert.equal(await w.AregoExit.interact('aregoEscape'),false);
+ w.delay=async()=>{w.epoch++;};
+ await assert.rejects(w.AregoExit.interact('aregoSealPortal'),error=>error===w.CANCEL);
+ assert.equal(w.quest.aregoGateSealed,undefined);
+ w.delay=async()=>{};
+ await step('aregoSealPortal');
+ assert.equal(w.AregoExit.mapImage().sealed,true);
+ await step('aregoEscape');
+ assert.equal(w.scene,'egorian_hotel_barato');
+ assert.deepEqual(audio,['spell','spell','spell']);
+ await step('aregoHotelReports');
+ assert.deepEqual(Array.from(w.AregoExit.roster()),['jamal','draymus','guapo','reese']);
+ const arrival=sections.find(s=>s.id==='arego-barato');
+ const saved=checkpoint(w,{...arrival,quest:w.quest});
+ const back=w.SaveFiles.decode(w.SaveFiles.encode(saved));
+ assert.equal(back.quest.aregoReportsSent,true);
+ assert.equal(back.quest.aregoReeseContract,true);
+ const forged=structuredClone(saved);forged.quest.aregoGateSealed=false;
+ assert.throws(()=>w.SaveFiles.validate(forged),/Invalid Fort Arego evacuation sequence/);
 });

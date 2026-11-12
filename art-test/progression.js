@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.aregoReportsSent)rows.push('Egorian · Jason reports to the Temple of Asmodeus and Freya reports to Army Command. The others wait at Hotel Barato.');
+  if(q.aregoEgorianEscaped)rows.push('Fort Arego · Corrine and Contessa negotiate the gate’s closure and teleport the company to Egorian. Reese’s contract still stands.');
   if(q.aregoFexSlain)rows.push('Inferno Gate · The company and Visperthul’s bone devils defeat Fex. Reese’s contract still binds them.');
   if(q.aregoReeseContract)rows.push('Malebolge · Reese gives Visperthul the Phlegmatic Talisman and pledges the company’s fealty in exchange for help.');
   if(q.aregoReeseCrossed)rows.push('Inferno Gate · Fex and Razelago overpower the company. Wounded, Reese carries the Phlegmatic Talisman through the gate to Malebolge.');

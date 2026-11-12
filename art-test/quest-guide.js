@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const escape=window.AregoExit?.goal();
+ if(escape)return {text:escape,target:AregoExit.target()};
  const rematch=window.AregoReturn?.goal();
  if(rematch)return {text:rematch,target:AregoReturn.target()};
  const ambush=window.AregoAmbush?.goal();

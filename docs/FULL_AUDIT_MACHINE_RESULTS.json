@@ -1,9 +1,9 @@
 {
-  "scripts": 68,
-  "scenes": 113,
-  "replays": 262,
-  "framesInspected": 576,
-  "framesChecked": 576,
+  "scripts": 69,
+  "scenes": 114,
+  "replays": 267,
+  "framesInspected": 577,
+  "framesChecked": 577,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 448868920,
+  "assetBytes": 455895401,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,16 +58,18 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 176,
-  "startupCompressedBytes": 393904883,
-  "startupDecodedRgbaBytes": 1099252688,
+  "startupAssets": 179,
+  "startupCompressedBytes": 400923475,
+  "startupDecodedRgbaBytes": 1118126672,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
     "arego-bearded-devil-v1.png",
     "arego-bone-devil-v1.png",
     "arego-champions-v1.png",
+    "arego-contessa-v1.png",
     "arego-forest-approach-v1.png",
+    "arego-inferno-gate-sealed-v1.png",
     "arego-inferno-gate-v1.png",
     "arego-loose-devil-v1.png",
     "arego-malebolge-ledge-v1.png",
@@ -111,6 +113,7 @@
     "egorian-excruciation-square-v1.png",
     "egorian-falco-manor-v1.png",
     "egorian-guard-lane-v1.png",
+    "egorian-hotel-barato-v1.png",
     "egorian-jaquen-v1.png",
     "egorian-joe-kek-v1.png",
     "egorian-lantern-lane-v1.png",

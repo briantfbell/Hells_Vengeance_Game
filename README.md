@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 262 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 267 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -217,3 +217,7 @@ Continue after Visperthul’s first pact or select replay **254**. Reveal Fex an
 ### Reese’s bargain and the death of Fex
 
 Continue from the basalt ledge or select replay **257**. Hand over the talisman, return with Visperthul and two bone devils, free the company, and confront Fex again. Replays **257–262** cover the bargain through its immediate aftermath. See [the section notes](docs/arego-return.md) for sources, artwork and verification.
+
+### The closing of the Inferno Gate
+
+Continue after Fex’s defeat or select replay **263**. Meet Corrine and Contessa, close the Inferno Gate, and escape to Hotel Barato. Replays **263–267** end with Jason and Freya reporting to their respective superiors. See [the section notes](docs/arego-exit.md) for sources, artwork and verification.
