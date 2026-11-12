@@ -51,8 +51,8 @@ window.BarleybridgeScout=(()=>{
     quest.barleybridgeScoutComplete=true;
     break;
    case 'barleybridgePlan':
-    await journeyCard('Tathlum Plan · Barleybridge','The company plans to use the blood of slain innocents at Barleybridge to anoint Parnoneryx’s head.',()=>{});
-    await journeyCard('Tathlum Plan · Warlock Island','The next target is the Archive of Redacted Histories. The company intends to burn the archive and apply its ashes to the dragon’s head.',()=>{});
+    await journeyCard('Tathlum Plan · Barleybridge','El Guapo has scouted the approach. The plan called for the blood of slain innocents to anoint Parnoneryx’s head. The outcome at Barleybridge remains unknown.',()=>{});
+    await journeyCard('Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.',()=>{});
     await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.',()=>{});
     quest.barleybridgePlanReviewed=true;
     break;

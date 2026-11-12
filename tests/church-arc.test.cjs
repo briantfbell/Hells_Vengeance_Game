@@ -2124,7 +2124,11 @@ test('Barleybridge uses El Guapo’s solo roster and gates the scout report',asy
  assert(saved.quest.barleybridgeScoutComplete);
  assert.equal(w.BarleybridgeScout.target().id,'barleybridgePlan');
  await step('barleybridgePlan');
- assert.equal(w.transcript.filter(line=>line.name.startsWith('Tathlum Plan')).length,3);
+ const plans=w.transcript.filter(line=>line.name.startsWith('Tathlum Plan'));
+ assert.deepEqual(plans.map(line=>line.name),['Tathlum Plan · Barleybridge','Tathlum Plan · Warlock Island','Tathlum Plan · Egorian']);
+ assert.match(plans[0].text,/outcome at Barleybridge remains unknown/);
+ assert.match(plans[1].text,/After St. Ilnius.*last component/);
+ assert.match(plans[2].text,/intends to bring/);
  assert(w.quest.barleybridgePlanReviewed);
  assert.match(w.BarleybridgeScout.goal(),/El Guapo waits outside Barleybridge/);
  saved.quest.barleybridgeGateSeen=false;

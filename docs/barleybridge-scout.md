@@ -6,6 +6,8 @@ The snowy riverside setting is based on Foundry scenes `Scene.5vgQuoZspvon4viX` 
 
 The GM timeline row S147 plans for blood from 100 slain innocents at Barleybridge, while the Player Notes give 1,000 in a single day. The game leaves the quantity unresolved. Row S148 identifies the planned library as the Archive of Redacted Histories on Warlock Island. Row S149 plans for Queen Abrogail to complete the Tathlum ritual. The Foundry Warlock Island Library folder includes two prepared maps with no placed tokens, `Scene.AHKdFTaUaJ1sP66c` and `Scene.AKXADR2Bz9BDgrpN`. No record reviewed for this section establishes that the Barleybridge objective, archive fire, or completed Tathlum occurred.
 
+The plan card and journal preserve a distinction between S147 and S151. The first lists a Barleybridge objective as planned. The second reports the events at St. Ilnius and names an ancient library as the last component. The surviving accounts do not explain what happened to the Barleybridge requirement. The game presents its outcome as unknown.
+
 ## Artwork prompt
 
 The Barleybridge approach map was created with the built-in image generator and saved as `art-test/barleybridge-approach-v1.png`.

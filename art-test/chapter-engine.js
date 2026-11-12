@@ -70,7 +70,7 @@ const JOURNEYS={
 function cancelJourney(){const resolve=journeyResolve;journeyResolve=null;journeyOpen=false;$('journey').hidden=true;$('journey').classList.remove('visible');$('journey-continue').disabled=true;if(resolve)resolve();}
 async function journeyCard(title,summary,commit=()=>{}){
  const token=epoch,panel=$('journey'),button=$('journey-continue');journeyOpen=true;keys.clear();path=[];$('prompt').hidden=true;$('dice-panel').hidden=true;
- $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
+ $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
  commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
  button.disabled=true;journeyOpen=false;keys.clear();canvas.focus();save();
  // Keep the black card covering the map until the next card, dialogue or end of the scene.
