@@ -1,20 +1,20 @@
 {
-  "scripts": 84,
-  "scenes": 134,
-  "replays": 360,
-  "framesInspected": 608,
-  "framesChecked": 608,
+  "scripts": 85,
+  "scenes": 135,
+  "replays": 364,
+  "framesInspected": 612,
+  "framesChecked": 612,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 58,
+  "combatStats": 59,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 548798458,
+  "assetBytes": 553358624,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 218,
-  "startupCompressedBytes": 493708002,
-  "startupDecodedRgbaBytes": 1363513872,
+  "startupAssets": 220,
+  "startupCompressedBytes": 498262022,
+  "startupDecodedRgbaBytes": 1376092992,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -213,6 +213,8 @@
     "pale-royals-v1.png",
     "pale-vokadus-v1.png",
     "political-cast-v1.png",
+    "rachikan-pirates-v1.png",
+    "rachikan-ruins-v1.png",
     "reese-early-portrait.png",
     "reese-early-sheet-v1.png",
     "remesiana-florio-v1.png",

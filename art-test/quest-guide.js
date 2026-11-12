@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const rachikan=window.Rachikan?.goal();
+ if(rachikan)return {text:rachikan,target:Rachikan.target()};
  const ballerina=window.Ballerina?.goal();
  if(ballerina)return {text:ballerina,target:Ballerina.target()};
  const hinjiTavern=window.HinjiTavern?.goal();

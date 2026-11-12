@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 360 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 364 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -297,3 +297,7 @@ Continue from Yunero’s concession or select replay **350**. Join El Guapo at t
 ### Corentyn and the Ballerina
 
 Continue from the Hinji arrest or select replay **353**. Sign on at Corentyn, check the cargo deck and take the coastal watch. Replays **353–356** cover the departure. See [the section notes](docs/ballerina.md) for sources, adaptations and artwork.
+
+### Rachikan Ruins
+
+Continue after taking the coastal watch or select replay **357**. Land at Rachikan, scout the pirate storehouse, and break the operation. Replays **357–360** cover the raid and Draymus’s aftermath. See [the section notes](docs/rachikan.md) for sources and artwork.
