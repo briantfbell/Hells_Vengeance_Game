@@ -7,6 +7,9 @@ window.DinyarRecon=(()=>{
  const lowerArt='dinyar-lower-works-v1.png',bridgeArt='dinyar-bridge-ward-v1.png',dragonArt='parnoneryx-v1.png';
  const nidalParty=['draymus'],ridgeParty=['freya','jamal','reese','jason'];
  const dragon='parnoneryx',watch=['fastness_paladin','kantaria_guard'];
+ const fallenDragon='parnoneryx_fallen',recoveredDragon='parnoneryx_head_recovered';
+ const fallenArt='parnoneryx-fallen-intact-v1.png',recoveredArt='parnoneryx-fallen-after-recovery-v2.png';
+ const fallenFrame={x:0,y:0,w:1920,h:819};
  const guardPositions=[[280,168],[376,168]];
  const watchLabels={fastness_paladin:'Paladin',kantaria_guard:'Guard'};
  const lowerBattle='dinyar_watch',dragonBattle='dinyar_parnoneryx';
@@ -47,7 +50,7 @@ window.DinyarRecon=(()=>{
    walk:[{x:112,y:208,w:416,h:128},{x:288,y:336,w:80,h:64}],lights:[],
    points:[
     {id:'dinyarDragon',x:328,y:256,label:'Confront Parnoneryx'},
-    {id:'dinyarTrophy',x:328,y:232,label:'Recover Parnoneryx’s head'},
+    {id:'dinyarTrophy',x:280,y:256,label:'Recover Parnoneryx’s head'},
     {id:'dinyarReturn',x:328,y:344,label:'Return to Egorian'}
    ]
   };
@@ -68,6 +71,8 @@ window.DinyarRecon=(()=>{
   NAMES[dragon]='Parnoneryx';
   STATS[dragon]={hp:86,ac:15,atk:7,dmg:[1,8,3]};
   FUTURE_NPCS[dragon]={source:dragonArt,frame:dragonFrames[0]};
+  FUTURE_NPCS[fallenDragon]={source:fallenArt,frame:fallenFrame};
+  FUTURE_NPCS[recoveredDragon]={source:recoveredArt,frame:fallenFrame};
   COMBAT_IDLES[dragon]={src:dragonArt,deferred:true,frames:dragonFrames,cycle:[0,2],maxHeight:Math.max(...dragonFrames.map(frame=>frame.h))};
   MAP_LAYERS[nidal]={foreground:nidalArt,contain:true,background:{type:'solid',color:'#1f1929'}};
   MAP_LAYERS[ridge]={foreground:ridgeArt,contain:true,background:{type:'solid',color:'#242b35'}};
@@ -75,7 +80,9 @@ window.DinyarRecon=(()=>{
   JOURNEYS[ridge]='Meanwhile, Freya, J’Mal, Reese, and Jason reach Citadel Dinyar in Isger. Use Corrine’s directions to find the hidden entrance.';
  }
  async function load(loader){
-  await Promise.all([[nidal,nidalArt],[ridge,ridgeArt],[lower,lowerArt],[bridge,bridgeArt],[dragonArt,dragonArt]].map(async ([id,source])=>{art[id]=await loader(source);}));
+  const assets=[[nidal,nidalArt],[ridge,ridgeArt],[lower,lowerArt],[bridge,bridgeArt],
+   [dragonArt,dragonArt],[fallenArt,fallenArt],[recoveredArt,recoveredArt]];
+  await Promise.all(assets.map(async ([id,source])=>{art[id]=await loader(source);}));
  }
  function mapImage(){return scene===court?art.egorian_court:[nidal,ridge,lower,bridge].includes(scene)?art[scene]:null;}
  function roster(){
@@ -94,7 +101,10 @@ window.DinyarRecon=(()=>{
   if(scene===court)return [{id:'corrine',x:328,y:232,height:58}];
   if(scene===ridge)return [];
   if(scene===lower)return watch.map((id,i)=>({id,x:guardPositions[i][0],y:guardPositions[i][1],height:55,pose:quest.dinyarWatchCleared?'prone':null}));
-  if(scene===bridge)return quest.dinyarCleared?[]:[{id:dragon,x:328,y:214,height:94,pose:quest.dinyarDragonSlain?'prone':null}];
+  if(scene===bridge){
+   if(!quest.dinyarDragonSlain)return [{id:dragon,x:328,y:214,height:94}];
+   return [{id:quest.dinyarCleared?recoveredDragon:fallenDragon,x:344,y:264,height:72}];
+  }
   return null;
  }
  function points(){
