@@ -3,6 +3,9 @@ window.NextChapter=(()=>{
  const rect=(x,y,w,h)=>({x,y,w,h});
  const corentyn='western_star_corentyn',pezzack='western_star_pezzack',ambushKind='western_star_pezzack_ambush';
  const mildred='western_star_mildred',mildredArt='western-star-mildred-v1.png';
+ const pursuingShip='western-star-pursuing-sloop-v1.png',approachDuration=1450;
+ const shipFrame={x:105,y:48,w:1347,h:914};
+ let approach=null;
  const bareHands={name:'Unarmed',move:'Unarmed strike',dmg:[1,3,2]};
  const boardingKind='western_star_boarding',captain='western_star_captain',boarder='western_star_boarder';
  const captainModel={src:'western-star-pirate-captain-v1.png',frames:[
@@ -56,6 +59,7 @@ window.NextChapter=(()=>{
   FUTURE_NPCS[mildred]={source:mildredArt,frame:{x:204,y:11,w:599,h:1521}};
   DIALOGUE_FACE_CROPS[mildred]={x:366,y:12,w:268,h:268};
   Object.assign(scenes,stage);
+  MAP_LAYERS.western_star.drawUnderlay=drawPursuit;
   JOURNEYS[pezzack]='The Western Star puts in at Pezzack. The party plans to sell the instruments taken from the Silver Star and have Viggo’s blade disguised.';
   JOURNEYS[corentyn]='Borrowed and pressed crew limp both vessels into Corentyn near the Arch of Aroden. Before the authorities take the bodies, plant the disguised scimitar on the dead pirate captain.';
   Object.assign(NAMES,{cimri:'Cimri Staelish',razelago:'Razelago',owner:'Tannery Owner',farmer:'Delivery Farmer',dog:'Owner’s Dog',krenshar:'Krenshar',spirit:'The Woman in the Bath'});for(const [id,s] of Object.entries(stage)){if(id==='western_star')continue;if([pezzack,corentyn].includes(id)){window.MAP_LAYERS[id]={foreground:s.image,contain:true,background:{type:'solid',color:'#21333c'}};continue;}window.MAP_LAYERS[id]={foreground:s.image,background:id==='remesiana'?{type:'ocean',speed:3,waterline:245,landColor:'#18252c',palette:['#102635','#173747','#205064','#347287']}:{type:'solid',color:'#101817',surface:id==='bathroom'?{x:240,y:96,w:176,h:80,color:'#1b3435'}:null}};}}
@@ -63,8 +67,25 @@ window.NextChapter=(()=>{
   await Promise.all([
    ...Object.entries(stage).map(async([id,s])=>{art[id]=await loader(s.image);}),
    (async()=>{art.nextNPCs=await loader('longacre-cast.png');})(),
-   (async()=>{art[mildredArt]=await loader(mildredArt);})()
+   (async()=>{art[mildredArt]=await loader(mildredArt);})(),
+   (async()=>{art[pursuingShip]=await loader(pursuingShip);})()
   ]);
+ }
+ function drawPursuit(g,t,{reduced=false}={}){
+  if(!quest.voyagePezzack||quest.scimitarDisposed)return;
+  const im=art[pursuingShip];
+  if(!im)return;
+  const closing=approach&&approach.epoch===epoch;
+  const elapsed=quest.voyageBoardingWon||closing&&reduced?1:closing?Math.min(1,(performance.now()-approach.at)/approachDuration):0;
+  const progress=elapsed*elapsed*(3-2*elapsed);
+  const width=Math.round(68+128*progress),height=Math.round(width*shipFrame.h/shipFrame.w);
+  const x=Math.round(154+308*progress-width/2);
+  const y=Math.round(50+113*progress-height+(reduced?0:Math.sin(t*1.9)*2));
+  g.save();
+  g.imageSmoothingEnabled=false;
+  g.globalAlpha=.68+.32*progress;
+  g.drawImage(im,shipFrame.x,shipFrame.y,shipFrame.w,shipFrame.h,x,y,width,height);
+  g.restore();
  }
  function syncRoster(){const roster=partyRoster(),fixed=rosterOverride()||window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.DisruptionArc?.roster()||window.KantariaArc?.roster()||window.CourtArc?.roster()||window.FortArc?.roster()||window.ArmoryArc?.roster();for(const opt of $('character').options)opt.disabled=!roster.includes(opt.value);$('character').value=soloParty()?'jamal':fixed?units[0]?.id:lead;$('character').disabled=soloParty()||!!fixed||!!window.CovertArc?.roster()||!!battle;paintParty();}
  function objective(){if(!quest.done&&!quest.chapter2)return false;
@@ -168,6 +189,10 @@ window.NextChapter=(()=>{
  }
  if(id==='land'){
   await say(mildred,'Keep your weapons low. Let them come over the rail.');
+  const token=epoch;
+  approach={epoch:token,at:performance.now()};
+  await delay(reduce.matches?200:approachDuration);
+  if(token!==epoch)return false;
   await say('guapo','That one is their captain. Take him down and the rest may yield.');
   const {x,y,dir}=units[0];
   const enemy=(id,name,shortName)=>({id,name,shortName,hp:STATS[id].hp,max:STATS[id].hp});
@@ -221,5 +246,5 @@ window.NextChapter=(()=>{
  await say('draymus','She is trapped in this house. We need to calm her, not cut her down.');
  let controlled=false;for(let attempt=0;attempt<3&&!controlled;attempt++){const c=await say('The Woman in the Bath','Her form shakes above the tub.',['[Draymus: control and calm her]','[Keep the others clear of the tub]']);if(c===1){await say('Chronicle','The group steps back. Draymus continues his work from a safe distance.');}const total=await storyRoll('Draymus · Control undead',12,6,'Spirit calmed');controlled=total>=10;if(!controlled)await say('draymus','Again. She is afraid. Give me a moment.');}
  await say('Chronicle','Draymus steadies the spirit. The burned house returns in fragments: a mother hiding in the bathtub, her child, her war medals, and flames outside the door.');await say('draymus','You don’t have to hold him. He isn’t the one you lost.');await say('Chronicle','The grasping water settles. J’Mal is safe; the spirit is quiet.');quest.spiritCalmed=true;save();}
- return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush};
+ return {install,load:loadImages,interact,objective,npcs,drawNPC,target,syncRoster,refresh,surrenderReady,afterBoarding,rosterOverride,unarmed,isAmbush,afterPezzackAmbush,drawPursuit};
 })();

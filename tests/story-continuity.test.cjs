@@ -44,6 +44,22 @@ test('Pezzack and the lookout gate the Western Star boarding',async()=>{
  w.STATS.western_star_boarder={hp:11};
  w.startBattle=(_count,_shaken,config)=>w.battle=config;
  assert.equal(await w.NextChapter.interact('voyageCorentyn'),false);
+ w.epoch=1;
+ w.reduce={matches:false};
+ let time=0;
+ w.performance.now=()=>time;
+ const ship={};
+ w.art={'western-star-pursuing-sloop-v1.png':ship};
+ const draws=[],g={save(){},restore(){},drawImage:(...args)=>draws.push(args)};
+ w.NextChapter.drawPursuit(g,0,{reduced:false});
+ assert.equal(draws.at(-1)[7],68);
+ w.delay=async duration=>{
+  time=duration/2;
+  w.NextChapter.drawPursuit(g,0,{reduced:false});
+  assert(draws.at(-1)[7]>68&&draws.at(-1)[7]<196);
+  w.NextChapter.drawPursuit(g,0,{reduced:true});
+  assert.equal(draws.at(-1)[7],196);
+ };
  await w.NextChapter.interact('land');
  const [first,captain,last]=w.battle.enemies;
  assert.equal(captain.name,'Pirate Captain');

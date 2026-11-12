@@ -57,7 +57,7 @@ function drawWaterChannels(g,map,image,t,options){
  foreground(g,image,layer);
  g.restore();
 }
-function draw(g,map,image,t,options={}){background(g,map,t,options);if(map.waterChannels){drawWaterChannels(g,map,image,t,options);return;}if(map.openGatePatch&&art.longacre_jail){
+function draw(g,map,image,t,options={}){background(g,map,t,options);map.drawUnderlay?.(g,t,options);if(map.waterChannels){drawWaterChannels(g,map,image,t,options);return;}if(map.openGatePatch&&art.longacre_jail){
  foreground(g,art.longacre_jail,options);g.save();const sx=(options.width||640)/1586,sy=(options.height||400)/992;
  const door=[[415,235],[430,211],[456,190],[488,176],[519,182],[544,197],[567,221],[584,245],[584,365],[415,393]];
  g.beginPath();door.forEach(([x,y],i)=>i?g.lineTo(x*sx,y*sy):g.moveTo(x*sx,y*sy));g.closePath();g.clip();foreground(g,image,options);g.restore();
