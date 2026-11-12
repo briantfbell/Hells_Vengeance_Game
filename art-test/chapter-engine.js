@@ -647,7 +647,7 @@ $('paths').onclick=()=>{showPaths=!showPaths;$('paths').textContent=showPaths?'H
 $('interact').onclick=interact;
 $('heal-target').onclick=()=>{if(!battle||battle.busy)return;cycleCombatTarget('ally',1);paintBattle();};
 $('character').onchange=e=>{if(battle||taskBusy||dialogOpen){e.target.value=lead;return;}const old=lead;if(units[0].step){units[0].x=units[0].step.sx;units[0].y=units[0].step.sy;}lead=e.target.value;const displaced=units.find(u=>u.id===lead);if(displaced)displaced.id=old;units[0].id=lead;units[0].step=null;path=[];keys.clear();paintParty();save();canvas.focus();};
-document.addEventListener('keydown',e=>{if(campaignLoading){e.preventDefault();return;}if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
+document.addEventListener('keydown',e=>{if(e.target.id==='section-search')return;if(campaignLoading){e.preventDefault();return;}if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&['i','o','F1'].includes(e.key)){e.preventDefault();if(!e.repeat)Handheld.show(e.key==='i'?'inventory':e.key==='o'?'character':battle?'combat-help':'quest');return;}
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&(e.key.toLowerCase()==='p'||['Escape','b','B'].includes(e.key)&&(!battle||battle.control?.mode==='commands'))){e.preventDefault();if(!e.repeat)Handheld.show();return;}
  if(levelOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('level-continue').click();else if(e.key==='Tab')$('level-continue').focus();return;}
@@ -1060,12 +1060,46 @@ function replaySections(){
  add('barleybridge-plan','464 · Review the Tathlum plan','barleybridge_approach',[328,344],'barleybridgeScoutComplete');
  return list;
 }
+function replaySearchText(value){
+ return value.normalize('NFD').replace(/\p{M}/gu,'').toLowerCase().replace(/['’]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+}
+function matchingReplaySections(sections,query){
+ const terms=replaySearchText(query);
+ if(!terms)return sections;
+ if(/^\d+$/.test(terms))return sections.filter(section=>Number(section.name.match(/^\d+/)?.[0])===Number(terms));
+ const words=terms.split(' ');
+ return sections.filter(section=>{
+  const entry=replaySearchText(section.name+' '+(scenes[section.scene]?.name||'')+' '+section.scene);
+  return words.every(word=>entry.includes(word));
+ });
+}
 function replayAllowed(){return !campaignLoading&&ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
 function installSectionReplay(){
- for(const section of replaySections()){const o=document.createElement('option');o.value=section.id;o.textContent=section.name;$('section-replay').append(o);}
+ const sections=replaySections(),sectionsById=new Map(sections.map(section=>[section.id,section]));
+ const search=$('section-search'),picker=$('section-replay'),go=$('section-go');
+ function showResults(){
+  const previous=picker.value,matches=matchingReplaySections(sections,search.value);
+  const options=matches.map(section=>{
+   const option=document.createElement('option');
+   option.value=section.id;
+   option.textContent=section.name;
+   return option;
+  });
+  picker.replaceChildren(...options);
+  if(matches.some(section=>section.id===previous))picker.value=previous;
+  picker.disabled=go.disabled=matches.length===0;
+  $('section-count').textContent=matches.length===0?'No matching sections':matches.length+' of '+sections.length+' sections';
+ }
+ search.oninput=showResults;
+ search.onkeydown=event=>{
+  if(event.key==='Enter'&&!picker.disabled){event.preventDefault();picker.focus();}
+ };
+ showResults();
  $('section-restore').hidden=!localStorage.getItem(REPLAY_BACKUP);
  $('section-go').onclick=()=>{if(!replayAllowed()){$('save-file-status').textContent='Finish the conversation, journey or fight before replaying a section.';return;}
- const section=replaySections().find(x=>x.id===$('section-replay').value),q=section.quest,p=Progression.migrate(q),chosen=(q.guapoAway&&lead==='guapo'||lead==='reese'&&!q.chapter3Complete)?'freya':lead;
+ const section=sectionsById.get(picker.value);
+ if(!section)return;
+ const q=structuredClone(section.quest),p=Progression.migrate(q),chosen=(q.guapoAway&&lead==='guapo'||lead==='reese'&&!q.chapter3Complete)?'freya':lead;
  const replayHealth=Object.fromEntries(CORE.map(id=>[id,Progression.stats(BASE_STATS[id],id,p.levels[id]).hp]));
  if(section.scene==='egorian_excruciation'&&q.egorianAssassination)replayHealth.jamal=q.egorianJmalEscaped?12:0;
  if(section.scene==='egorian_excruciation'&&q.egorianJmalEscaped)q.mosswaterSpent=1;

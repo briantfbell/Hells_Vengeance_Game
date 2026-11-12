@@ -47,6 +47,8 @@ This is a static website: index.html and art-test/ can be served by a static web
 
 The web build is the current playable prototype. Final handheld packaging, native handheld input adapters, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
 
+The admin toolbar’s **Find replay** field filters checkpoints by number, scene title, or location. **Return to prior progress** restores the checkpoint from before the replay.
+
 ## Validation
 
 Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 468 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
