@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.ballerinaBoarded)rows.push('Corentyn · 13 Pharast, 4717. The company signs on as guards aboard the Ballerina, bound for Pezzack.');
   if(q.hinjiTavernArrested)rows.push('El Guapo · 12 Pharast, 4717. The watch arrests him for public drunkenness under the name Titus Vel.');
   if(q.beldeTriviaWon)rows.push('Belde · Freya defeats the ogre mage Yunero in Chelaxian Noble Trivia.');
   if(q.beldeLiberated)rows.push('Belde · 11 Pharast, 4717. Freya’s company drives out the Glorious Reclamation.');

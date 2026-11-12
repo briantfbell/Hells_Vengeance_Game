@@ -1,9 +1,9 @@
 {
-  "scripts": 83,
-  "scenes": 132,
-  "replays": 356,
-  "framesInspected": 607,
-  "framesChecked": 607,
+  "scripts": 84,
+  "scenes": 134,
+  "replays": 360,
+  "framesInspected": 608,
+  "framesChecked": 608,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,11 +14,15 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 541729590,
+  "assetBytes": 548798458,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
       "bytes": 3863874
+    },
+    {
+      "name": "corentyn-quay-v1.png",
+      "bytes": 3852398
     },
     {
       "name": "pale-graveyard-v1.png",
@@ -51,16 +55,12 @@
     {
       "name": "valor-fastness-hall-v1.png",
       "bytes": 3505140
-    },
-    {
-      "name": "valor-fastness-tower-base-v1.png",
-      "bytes": 3501201
     }
   ],
   "startupComplete": true,
-  "startupAssets": 215,
-  "startupCompressedBytes": 486644963,
-  "startupDecodedRgbaBytes": 1344638300,
+  "startupAssets": 218,
+  "startupCompressedBytes": 493708002,
+  "startupDecodedRgbaBytes": 1363513872,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -81,6 +81,8 @@
     "ash-house-foreground.png",
     "attack-freya-v1.png",
     "attack-party-v1.png",
+    "ballerina-deck-v1.png",
+    "ballerina-quartermaster-v1.png",
     "barzillai-model.png",
     "bathroom-foreground.png",
     "belde-square-liberated-v1.png",
@@ -100,6 +102,7 @@
     "church-ruins-v1.png",
     "church-weapons-packed-v1.png",
     "combat-void-v2.png",
+    "corentyn-quay-v1.png",
     "corrine-model-v1.png",
     "court-cast-packed-v1.png",
     "court-platforms-v1.png",
