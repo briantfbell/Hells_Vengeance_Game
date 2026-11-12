@@ -234,6 +234,11 @@ function drawIntroArt(c,id){
 function paintIntro(){const id=ROSTER[introIndex],bio=BIOS[id];drawIntroArt($('intro-art'),id);$('intro-name').textContent=bio.name;$('intro-role').textContent=bio.role;$('intro-bio').textContent=bio.bio;$('intro-ability').textContent=bio.ability;$('intro-art').setAttribute('aria-label',bio.name+' character sprite');$('intro-start').disabled=!OPENING_ROSTER.includes(id);$('intro-start').textContent=OPENING_ROSTER.includes(id)?'Play as '+NAMES[id]:'Joins in a later chapter';Array.from($('intro-roster').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(i===introIndex)));}
 function showIntro(){introOpen=true;document.body.classList.add('is-intro');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;$('intro').hidden=false;$('intro-resume').hidden=!readSave();$('intro-roster').replaceChildren();ROSTER.forEach((id,i)=>{const b=document.createElement('button'),c=document.createElement('canvas'),name=document.createElement('span');c.width=110;c.height=130;drawIntroArt(c,id);name.textContent=NAMES[id]||BIOS[id].name;b.append(c,name);b.setAttribute('aria-label',BIOS[id].name+(OPENING_ROSTER.includes(id)?'':', joins later'));if(!OPENING_ROSTER.includes(id)){const tag=document.createElement('small');tag.textContent='Later';b.append(tag);}b.onclick=()=>{introIndex=i;paintIntro();};$('intro-roster').append(b);});introIndex=Math.max(0,ROSTER.indexOf(lead));paintIntro();$('intro-start').focus();}
 function reset(resume=false,selected=null){
+ if(campaignLoading)return;
+ if(resume&&!campaignReady&&readSave()?.quest.chapter2){
+  void prepareCampaign().then(loaded=>{if(loaded)reset(resume,selected);});
+  return;
+ }
  TitleScreen.hide();Handheld.close();
  epoch++;$('initiative-reveal').hidden=true;cancelJourney();cancelLevel();briefingOpen=false;$('dice-panel').hidden=true;$('dice-panel').classList.remove('rolling');clearDialog();battle=null;$('combat-log').replaceChildren();showCombatMessage('');taskBusy=false;fx=[];path=[];keys.clear();$('battle').hidden=true;$('character').disabled=false;syncBattleView();
  if(!resume&&!selected){showIntro();return;}
@@ -310,6 +315,7 @@ async function interact(requestedId=null){
  if(Handheld.isOpen()||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||units[0]?.step||finished())return;const p=typeof requestedId==='string'?visiblePoints().find(p=>p.id===requestedId&&Math.hypot(units[0].x-p.x,units[0].y-p.y)<INTERACTION_RADIUS):nearPoint();if(!p)return;if(p.id==='rileyBanter'){run(()=>PresentationPolish.banter());return;}
  run(async()=>{
   if(p.id.startsWith('citizen-')){await say(p.id,citizenLine(p.id));return;}
+  if(p.id==='nextChapter'&&!await prepareCampaign())return;
   if(await window.BarleybridgeScout?.interact(p.id)||await window.IlniusFountain?.interact(p.id)||await window.DinyarRecon?.interact(p.id)||await window.MolthuneCoffin?.interact(p.id)||await window.SkadiParley?.interact(p.id)||await window.DarkRain?.interact(p.id)||await window.TathlumHunt?.interact(p.id)||await window.Menador?.interact(p.id)||await window.BarrowCovenant?.interact(p.id)||await window.BarrowTrail?.interact(p.id)||await window.VyreWish?.interact(p.id)||await window.SethicMansion?.interact(p.id)||await window.BellflowerBarn?.interact(p.id)||await window.BellflowerBarge?.interact(p.id)||await window.Pezzack?.interact(p.id)||await window.Rachikan?.interact(p.id)||await window.Ballerina?.interact(p.id)||await window.HinjiTavern?.interact(p.id)||await window.Belde?.interact(p.id)||await window.PaleBall?.interact(p.id)||await window.NicoloArc?.interact(p.id)||await window.SethicLedgers?.interact(p.id)||await window.SethicFarm?.interact(p.id)||await window.EgorianFeud?.interact(p.id)||await window.EgorianSting?.interact(p.id)||await window.EfisioArc?.interact(p.id)||await window.Hinji?.interact(p.id)||await window.Westcrown?.interact(p.id)||await window.RemesianaMarket?.interact(p.id)||await window.EgorianFountain?.interact(p.id)||await window.EgorianDischarge?.interact(p.id)||await window.AregoExit?.interact(p.id)||await window.AregoReturn?.interact(p.id)||await window.AregoAmbush?.interact(p.id)||await window.InfernoGate?.interact(p.id)||await window.FortArego?.interact(p.id)||await window.SenaraGraveyard?.interact(p.id)||await window.SenaraWagon?.interact(p.id)||await window.WhisperwoodGlade?.interact(p.id)||await window.WhisperwoodCamp?.interact(p.id)||await window.SenaraCitadel?.interact(p.id)||await window.SenaraDaggers?.interact(p.id)||await window.SenaraCover?.interact(p.id)||await window.SenaraArrival?.interact(p.id)||await window.EgorianExecution?.interact(p.id)||await window.EgorianMort?.interact(p.id)||await window.EgorianTrial?.interact(p.id)||await window.EgorianNight?.interact(p.id)||await window.EgorianArrival?.interact(p.id)||await window.SouthRoad?.interact(p.id)||await window.KantariaAftermath?.interact(p.id)||await window.FastnessArc?.interact(p.id)||await window.SupplyArc?.interact(p.id)||await window.CovertArc?.interact(p.id)||await DisruptionArc.interact(p.id)||await KantariaArc.interact(p.id)||await CourtArc.interact(p.id)||await FortArc.interact(p.id)||await ArmoryArc.interact(p.id)||await ChurchArc.interact(p.id)||await PoliticalMovement.interact(p.id)||await DebtsRumors.interact(p.id)||await LastStand.interact(p.id)||await window.NextArc.interact(p.id)||await window.NextChapter.interact(p.id))return;
   if(p.id==='silver'){await travel('tavern',312,280);if(!quest.entered){quest.entered=true;await say('The Silver Star','Lutes, horns, and instrument cases fill Shensen’s shop. The famous actress is away; a shopkeeper remains. Somewhere beneath the floorboards, chanting rises through the wood.');save();}}
   if(p.id==='outside'){await travel('street',152,152,'down');}
@@ -575,7 +581,7 @@ function stepUnit(u,gx,gy){if(!passable(gx,gy))return false;const tx=gx*T+8,ty=g
 function advance(u,dt,speed){if(!u.step)return false;u.step.p=Math.min(1,u.step.p+dt*speed);u.x=u.step.sx+(u.step.tx-u.step.sx)*u.step.p;u.y=u.step.sy+(u.step.ty-u.step.sy)*u.step.p;u.anim+=dt;if(u.step.p>=1){u.x=u.step.tx;u.y=u.step.ty;u.step=null;return true;}return false;}
 function walkTo(gx,gy){if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;const u=units[0],from=u.step?cell(u.step.tx,u.step.ty):cell(u.x,u.y),p=findPath(from,[gx,gy]);if(p){path=p;return true;}return false;}
 function beginWalkTap(d){if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished()||!DIR[d]||units[0].step)return false;const u=units[0],a=cell(u.x,u.y),v=DIR[d];path=[];u.dir=d;return stepUnit(u,a[0]+v[0],a[1]+v[1]);}
-function update(dt){if(Handheld.isOpen()||$('save-import-dialog').open)return;if(ready&&!introOpen&&!journeyOpen&&!levelOpen&&!briefingOpen&&!dialogOpen&&!taskBusy&&!battle)updateCitizens(dt);
+function update(dt){if(campaignLoading||Handheld.isOpen()||$('save-import-dialog').open)return;if(ready&&!introOpen&&!journeyOpen&&!levelOpen&&!briefingOpen&&!dialogOpen&&!taskBusy&&!battle)updateCitizens(dt);
  for(const u of units){u.flash=Math.max(0,(u.flash||0)-dt);u.lunge=Math.max(0,(u.lunge||0)-dt);}for(const e of battle?.enemies||[]){e.flash=Math.max(0,(e.flash||0)-dt);e.lunge=Math.max(0,(e.lunge||0)-dt);}
  fx=fx.filter(f=>(f.life-=dt)>0);if(!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||battle||finished())return;
  const u=units[0],speed=keys.has('run')?8:5;
@@ -638,7 +644,7 @@ $('paths').onclick=()=>{showPaths=!showPaths;$('paths').textContent=showPaths?'H
 $('interact').onclick=interact;
 $('heal-target').onclick=()=>{if(!battle||battle.busy)return;cycleCombatTarget('ally',1);paintBattle();};
 $('character').onchange=e=>{if(battle||taskBusy||dialogOpen){e.target.value=lead;return;}const old=lead;if(units[0].step){units[0].x=units[0].step.sx;units[0].y=units[0].step.sy;}lead=e.target.value;const displaced=units.find(u=>u.id===lead);if(displaced)displaced.id=old;units[0].id=lead;units[0].step=null;path=[];keys.clear();paintParty();save();canvas.focus();};
-document.addEventListener('keydown',e=>{if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
+document.addEventListener('keydown',e=>{if(campaignLoading){e.preventDefault();return;}if(e.repeat&&dialogOpen&&['Enter',' ','e','E','Escape','b','B'].includes(e.key)){e.preventDefault();return;}if(Handheld.importKey(e)||TitleScreen.key(e)||Handheld.key(e)||Handheld.dialogKey(e))return;
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&['i','o','F1'].includes(e.key)){e.preventDefault();if(!e.repeat)Handheld.show(e.key==='i'?'inventory':e.key==='o'?'character':battle?'combat-help':'quest');return;}
  if(!introOpen&&!levelOpen&&!journeyOpen&&!dialogOpen&&(e.key.toLowerCase()==='p'||['Escape','b','B'].includes(e.key)&&(!battle||battle.control?.mode==='commands'))){e.preventDefault();if(!e.repeat)Handheld.show();return;}
  if(levelOpen){e.preventDefault();if(['Enter',' ','e','E'].includes(e.key)&&!e.repeat)$('level-continue').click();else if(e.key==='Tab')$('level-continue').focus();return;}
@@ -655,7 +661,7 @@ document.addEventListener('keydown',e=>{if(e.repeat&&dialogOpen&&['Enter',' ','e
 });
 document.addEventListener('keyup',e=>keys.delete(KEY[e.key]));window.addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{keys.clear();last=0;});
 document.querySelectorAll('[data-dir]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(!dialogOpen&&!battle&&!taskBusy)keys.add(b.dataset.dir);};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>keys.delete(b.dataset.dir));});
-canvas.onpointerdown=e=>{if(Handheld.isOpen()||!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||finished())return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*SCREEN.height/r.height-(battle?0:SCREEN.mapTop);if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;if(battle.control?.mode==='enemy')performAction(battle.control.action);else paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;if(battle.control?.mode==='ally')performAction(battle.control.action);else paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<INTERACTION_RADIUS&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<INTERACTION_RADIUS)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
+canvas.onpointerdown=e=>{if(campaignLoading||Handheld.isOpen()||!ready||introOpen||journeyOpen||levelOpen||dialogOpen||taskBusy||finished())return;canvas.focus();const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*640/r.width,y=(e.clientY-r.top)*SCREEN.height/r.height-(battle?0:SCREEN.mapTop);if(battle){if(battle.busy)return;const i=battle.enemies.findIndex(a=>{const v=battlePosition(a);return a.hp>0&&Math.abs(x-v.x)<35&&y>v.y-v.height-22&&y<v.y+8;});if(i>=0){battle.target=i;if(battle.control?.mode==='enemy')performAction(battle.control.action);else paintBattle();}else{const ally=units.find(a=>{const v=battlePosition(a);return Math.abs(x-v.x)<44&&y>v.y-v.height&&y<v.y+38;});if(ally){battle.ally=ally.id;if(battle.control?.mode==='ally')performAction(battle.control.action);else paintBattle();}}return;}const object=visiblePoints().find(p=>Math.hypot(x-p.x,y-p.y)<25);if(object){if(Math.hypot(units[0].x-object.x,units[0].y-object.y)<INTERACTION_RADIUS&&!units[0].step){interact(object.id);return;}const candidates=[];for(let gy=0;gy<25;gy++)for(let gx=0;gx<40;gx++)if(passable(gx,gy)&&Math.hypot(gx*T+8-object.x,gy*T+8-object.y)<INTERACTION_RADIUS)candidates.push([gx,gy]);candidates.sort((a,b)=>Math.hypot(a[0]*T+8-units[0].x,a[1]*T+8-units[0].y)-Math.hypot(b[0]*T+8-units[0].x,b[1]*T+8-units[0].y));for(const c of candidates)if(walkTo(...c))return;}else walkTo(...cell(x,y));};
 const citizenCache=new Map(),CITIZEN_FRAMES=[{"frames":[{"x":96,"y":27,"w":137,"h":256},{"x":96,"y":307,"w":136,"h":260},{"x":96,"y":582,"w":137,"h":255},{"x":95,"y":852,"w":141,"h":247},{"x":120,"y":1113,"w":89,"h":259}],"maxHeight":260},{"frames":[{"x":365,"y":30,"w":117,"h":254},{"x":370,"y":306,"w":116,"h":261},{"x":367,"y":580,"w":118,"h":259},{"x":369,"y":854,"w":114,"h":247},{"x":370,"y":1118,"w":102,"h":254}],"maxHeight":261},{"frames":[{"x":623,"y":23,"w":129,"h":261},{"x":620,"y":300,"w":131,"h":270},{"x":624,"y":578,"w":133,"h":261},{"x":625,"y":851,"w":130,"h":257},{"x":644,"y":1113,"w":82,"h":263}],"maxHeight":270},{"frames":[{"x":896,"y":32,"w":118,"h":251},{"x":897,"y":310,"w":118,"h":259},{"x":899,"y":584,"w":124,"h":255},{"x":902,"y":854,"w":114,"h":247},{"x":903,"y":1119,"w":99,"h":253}],"maxHeight":259}];
 function townsfolk(){const egorian=window.EgorianExecution?.crowd();if(egorian)return egorian;if(scene==='execution_square')return PoliticalMovement.crowd();
  const plans={street:[[384,184],[424,184]],remesiana:[[280,184],[328,216],[168,232]],longacre_jail:[[232,280],[440,296]],last_stand:quest.bolgartSubdued?[]:[[200,256],[456,232],[240,288]],longacre_square:quest.sermonDispersed?[[200,280],[472,312],[376,296],[176,232],[456,264],[248,296],[424,232]]:[[192,224],[240,232],[288,248],[344,248],[392,232],[448,224],[208,280],[424,288]]};
@@ -1051,7 +1057,7 @@ function replaySections(){
  add('barleybridge-plan','464 · Review the Tathlum plan','barleybridge_approach',[328,344],'barleybridgeScoutComplete');
  return list;
 }
-function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
+function replayAllowed(){return !campaignLoading&&ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
 function installSectionReplay(){
  for(const section of replaySections()){const o=document.createElement('option');o.value=section.id;o.textContent=section.name;$('section-replay').append(o);}
  $('section-restore').hidden=!localStorage.getItem(REPLAY_BACKUP);
@@ -1069,15 +1075,145 @@ function installSectionReplay(){
  };
  $('section-restore').onclick=()=>{if(!replayAllowed()){$('save-file-status').textContent='Finish the current conversation or fight first.';return;}const raw=localStorage.getItem(REPLAY_BACKUP);if(!raw)return;SaveFiles.decode(raw);localStorage.setItem(SAVE,raw);localStorage.removeItem(REPLAY_BACKUP);reset(true);$('section-restore').hidden=true;$('save-file-status').textContent='Your previous progress is restored.';};
 }
-function imageLoad(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Could not load '+src));im.src='art-test/'+src;});}
+const imageRequests=new Map();
+function imageLoad(src){
+ if(!imageRequests.has(src))imageRequests.set(src,new Promise((resolve,reject)=>{
+  const im=new Image();
+  im.onload=()=>resolve(im);
+  im.onerror=()=>{imageRequests.delete(src);reject(Error('Could not load '+src));};
+  im.src='art-test/'+src;
+ }));
+ return imageRequests.get(src);
+}
+let campaignReady=false,campaignLoading=false;
+
+async function loadPrologueArt(){
+ const maps={briefingRoom:'kintargo-briefing-v1.png',citizens:'townsfolk-sheet-v1.png',
+  street:'kintargo-map.png',tavern:'silver-star-music-shop-v2.png',temple:'chapter-temple.png',
+  npcs:'chapter-npcs.png',guard:'dottari.png'};
+ const openingCast=[...OPENING_ROSTER,'viggo','cultist','nox','corrine','barzillai'];
+ const sharedArt=new Set(openingCast.flatMap(id=>[LORE_CAST[id]?.src,COMBAT_IDLES[id]?.src].filter(Boolean)));
+ await Promise.all([
+  ...Object.entries(maps).map(async ([id,src])=>{art[id]=await imageLoad(src);}),
+  ...[...sharedArt].map(async src=>{art[src]=await imageLoad(src);}),
+  ...ROSTER.map(async id=>{
+   const model=PARTY_FRAMES[id];
+   [sheets[id],sheets[id+'-opposite']]=await Promise.all([model.src||id+'-sheet.png',model.oppositeStep.src].map(imageLoad));
+  }),
+  ...Object.entries(QUESTGIVER_MODELS).map(async ([id,model])=>{art[id]=await imageLoad(model.src);}),
+  CombatArt.load(imageLoad),PresentationPolish.load(imageLoad)
+ ]);
+}
+async function loadCampaignArt(){
+  await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
+  await LastStand.load(imageLoad);
+  await DebtsRumors.load(imageLoad);
+  await PoliticalMovement.load(imageLoad);
+  await ChurchArc.load(imageLoad);
+  await ArmoryArc.load(imageLoad);
+  await FortArc.load(imageLoad);
+  await CourtArc.load(imageLoad);
+  await KantariaArc.load(imageLoad);
+  await DisruptionArc.load(imageLoad);
+  await CovertArc.load(imageLoad);
+  await SupplyArc.load(imageLoad);
+  await FastnessArc.load(imageLoad);
+  await KantariaAftermath.load(imageLoad);
+  await SouthRoad.load(imageLoad);
+  await EgorianArrival.load(imageLoad);
+  await EgorianNight.load(imageLoad);
+  await EgorianTrial.load(imageLoad);
+  await EgorianMort.load(imageLoad);
+  await EgorianExecution.load(imageLoad);
+  await SenaraArrival.load(imageLoad);
+  await SenaraCover.load(imageLoad);
+  await SenaraDaggers.load(imageLoad);
+  await SenaraCitadel.load(imageLoad);
+  await WhisperwoodCamp.load(imageLoad);
+  await WhisperwoodGlade.load(imageLoad);
+  await SenaraWagon.load(imageLoad);
+  await SenaraGraveyard.load(imageLoad);
+  await FortArego.load(imageLoad);
+  await InfernoGate.load(imageLoad);
+  await AregoAmbush.load(imageLoad);
+  await AregoReturn.load(imageLoad);
+  await AregoExit.load(imageLoad);
+  await EgorianDischarge.load(imageLoad);
+  await EgorianFountain.load(imageLoad);
+  await RemesianaMarket.load(imageLoad);
+  await Hinji.load(imageLoad);
+  await Westcrown.load(imageLoad);
+  await EfisioArc.load(imageLoad);
+  EgorianSting.load();
+  await EgorianFeud.load(imageLoad);
+  await SethicFarm.load(imageLoad);
+  await SethicLedgers.load(imageLoad);
+  await NicoloArc.load(imageLoad);
+  await PaleBall.load(imageLoad);
+  await Belde.load(imageLoad);
+  await HinjiTavern.load(imageLoad);
+  await Ballerina.load(imageLoad);
+  await Rachikan.load(imageLoad);
+  await Pezzack.load(imageLoad);
+  await BellflowerBarge.load(imageLoad);
+  await BellflowerBarn.load(imageLoad);
+  await SethicMansion.load(imageLoad);
+  await VyreWish.load(imageLoad);
+  await BarrowTrail.load(imageLoad);
+  await BarrowCovenant.load(imageLoad);
+  await Menador.load(imageLoad);
+  await TathlumHunt.load(imageLoad);
+  await DarkRain.load(imageLoad);
+  await SkadiParley.load(imageLoad);
+  await MolthuneCoffin.load(imageLoad);
+  await DinyarRecon.load(imageLoad);
+  await IlniusFountain.load(imageLoad);
+  await BarleybridgeScout.load(imageLoad);
+  await window.NextChapter.load(imageLoad);
+  await window.NextArc.load(imageLoad);
+  await Promise.all([...new Set(Object.values(COMBAT_IDLES).map(m=>m.src))].map(async src=>{art[src]=await imageLoad(src);}));
+  await Promise.all(['reese','bruce'].map(async id=>{art[id+'-portrait']=await imageLoad(id==='reese'?'reese-early-portrait.png':'bruce-foundry-portrait.webp');}));
+}
+async function prepareCampaign(){
+ if(campaignReady)return true;
+ if(campaignLoading)return false;
+ campaignLoading=true;
+ keys.clear();
+ $('loadingText').textContent='Loading campaign artwork…';
+ $('loading').hidden=false;
+ $('load-retry').hidden=true;
+ try{
+  await loadCampaignArt();
+  campaignReady=true;
+  return true;
+ }catch(error){
+  console.error(error);
+  $('loading').hidden=true;
+  campaignLoading=false;
+  $('save-file-status').textContent='Campaign artwork could not load. Try opening the chapter or checkpoint again.';
+  if(introOpen)TitleScreen.show(true);
+  else await say('Artwork unavailable','Campaign artwork could not load. Try opening the chapter again.');
+  return false;
+ }finally{
+  $('loading').hidden=true;
+  campaignLoading=false;
+ }
+}
 async function load(){
- try{art.briefingRoom=await imageLoad('kintargo-briefing-v1.png');art.citizens=await imageLoad('townsfolk-sheet-v1.png');const values=await Promise.all(['kintargo-map.png','silver-star-music-shop-v2.png','chapter-temple.png','chapter-npcs.png','dottari.png'].map(imageLoad));[art.street,art.tavern,art.temple,art.npcs,art.guard]=values;await Promise.all([...new Set(Object.values(LORE_CAST).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await CombatArt.load(imageLoad);await LastStand.load(imageLoad);await DebtsRumors.load(imageLoad);await PoliticalMovement.load(imageLoad);await ChurchArc.load(imageLoad);await ArmoryArc.load(imageLoad);await FortArc.load(imageLoad);await CourtArc.load(imageLoad);await KantariaArc.load(imageLoad);await DisruptionArc.load(imageLoad);await CovertArc.load(imageLoad);await SupplyArc.load(imageLoad);await FastnessArc.load(imageLoad);await KantariaAftermath.load(imageLoad);await SouthRoad.load(imageLoad);await EgorianArrival.load(imageLoad);await EgorianNight.load(imageLoad);await EgorianTrial.load(imageLoad);await EgorianMort.load(imageLoad);await EgorianExecution.load(imageLoad);await SenaraArrival.load(imageLoad);await SenaraCover.load(imageLoad);await SenaraDaggers.load(imageLoad);await SenaraCitadel.load(imageLoad);await WhisperwoodCamp.load(imageLoad);await WhisperwoodGlade.load(imageLoad);await SenaraWagon.load(imageLoad);await SenaraGraveyard.load(imageLoad);await FortArego.load(imageLoad);await InfernoGate.load(imageLoad);await AregoAmbush.load(imageLoad);await AregoReturn.load(imageLoad);await AregoExit.load(imageLoad);await EgorianDischarge.load(imageLoad);await EgorianFountain.load(imageLoad);await RemesianaMarket.load(imageLoad);await Hinji.load(imageLoad);await Westcrown.load(imageLoad);await EfisioArc.load(imageLoad);EgorianSting.load();await EgorianFeud.load(imageLoad);await SethicFarm.load(imageLoad);await SethicLedgers.load(imageLoad);await NicoloArc.load(imageLoad);await PaleBall.load(imageLoad);await Belde.load(imageLoad);await HinjiTavern.load(imageLoad);await Ballerina.load(imageLoad);await Rachikan.load(imageLoad);await Pezzack.load(imageLoad);await BellflowerBarge.load(imageLoad);await BellflowerBarn.load(imageLoad);await SethicMansion.load(imageLoad);await VyreWish.load(imageLoad);await BarrowTrail.load(imageLoad);await BarrowCovenant.load(imageLoad);await Menador.load(imageLoad);await TathlumHunt.load(imageLoad);await DarkRain.load(imageLoad);await SkadiParley.load(imageLoad);await MolthuneCoffin.load(imageLoad);await DinyarRecon.load(imageLoad);await IlniusFountain.load(imageLoad);await BarleybridgeScout.load(imageLoad);await PresentationPolish.load(imageLoad);await window.NextChapter.load(imageLoad);await window.NextArc.load(imageLoad);await Promise.all([...new Set(Object.values(window.COMBAT_IDLES).map(m=>m.src))].map(async src=>art[src]=await imageLoad(src)));await Promise.all(ROSTER.map(async id=>{sheets[id]=await imageLoad(PARTY_FRAMES[id].src||id+'-sheet.png');sheets[id+'-opposite']=await imageLoad(window.PARTY_FRAMES[id].oppositeStep.src);}));await Promise.all(Object.entries(window.QUESTGIVER_MODELS).map(async([id,m])=>art[id]=await imageLoad(m.src)));await Promise.all(['reese','bruce'].map(async id=>art[id+'-portrait']=await imageLoad(id==='reese'?'reese-early-portrait.png':id+'-foundry-portrait.webp')));await TitleScreen.load(imageLoad);ready=true;$('loading').hidden=true;TitleScreen.show();}
+ $('loading').hidden=false;
+ $('load-retry').hidden=true;
+ try{
+  await Promise.all([loadPrologueArt(),TitleScreen.load(imageLoad)]);
+  ready=true;
+  $('loading').hidden=true;
+  TitleScreen.show();
+ }
  catch(e){console.error(e);$('loadingText').textContent='The chapter art could not load. Keep this HTML beside its art-test folder.';$('load-retry').hidden=false;}
 }
 $('load-retry').onclick=load;
 function loop(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;update(dt);render(now/1000);requestAnimationFrame(loop);}
 window.__chapter={state:()=>({title:TitleScreen.state(),ready,introOpen,briefingOpen,journeyOpen,levelOpen,progression:structuredClone(progression),scene,lead,quest:{...quest},hp:{...hp},potions,uses:{...uses},mendUses,interaction:nearPoint()?.id,guide:window.QuestGuide.current(),dialogOpen,taskBusy,party:units.map(u=>({id:u.id,x:u.x,y:u.y,dir:u.dir,moving:!!u.step})),pathLength:path.length,battle:battle?{round:battle.round,turn:battle.turn,actor:activeUnit()?.id,busy:battle.busy,enemies:battle.enemies.map(e=>({name:e.name,hp:e.hp})),smoke:battle.smoke}:null}),passable,findPath};
-window.NextChapter.install();window.NextArc.install();LastStand.install();DebtsRumors.install();PoliticalMovement.install();ChurchArc.install();ArmoryArc.install();FortArc.install();CourtArc.install();KantariaArc.install();DisruptionArc.install();CovertArc.install();SupplyArc.install();FastnessArc.install();KantariaAftermath.install();SouthRoad.install();EgorianArrival.install();EgorianNight.install();EgorianTrial.install();EgorianMort.install();EgorianExecution.install();SenaraArrival.install();SenaraCover.install();SenaraDaggers.install();SenaraCitadel.install();WhisperwoodCamp.install();WhisperwoodGlade.install();SenaraWagon.install();SenaraGraveyard.install();FortArego.install();InfernoGate.install();AregoAmbush.install();AregoReturn.install();AregoExit.install();EgorianDischarge.install();EgorianFountain.install();RemesianaMarket.install();Hinji.install();Westcrown.install();EfisioArc.install();EgorianSting.install();EgorianFeud.install();SethicFarm.install();SethicLedgers.install();NicoloArc.install();PaleBall.install();Belde.install();HinjiTavern.install();Ballerina.install();Rachikan.install();Pezzack.install();BellflowerBarge.install();BellflowerBarn.install();SethicMansion.install();VyreWish.install();BarrowTrail.install();BarrowCovenant.install();Menador.install();TathlumHunt.install();DarkRain.install();SkadiParley.install();MolthuneCoffin.install();DinyarRecon.install();IlniusFountain.install();BarleybridgeScout.install();PresentationPolish.install();window.SaveFiles.install({scenes,core:CORE,stats:BASE_STATS,special:BASE_SPECIAL,names:NAMES,key:SAVE,read:readSave,capture:save,safeToCapture:()=>ready&&!introOpen&&!battle&&!dialogOpen&&!taskBusy,canImport:()=>ready&&!battle&&!dialogOpen&&!taskBusy,resume:()=>reset(true)});installSectionReplay();Handheld.install();GameInput.install({
- context:()=>!ready||taskBusy||battle?.busy&&!battle.reveal?'blocked':Handheld.isOpen()||introOpen||dialogOpen||journeyOpen||levelOpen||battle||$('save-import-dialog').open?'menu':'world',
+window.NextChapter.install();window.NextArc.install();LastStand.install();DebtsRumors.install();PoliticalMovement.install();ChurchArc.install();ArmoryArc.install();FortArc.install();CourtArc.install();KantariaArc.install();DisruptionArc.install();CovertArc.install();SupplyArc.install();FastnessArc.install();KantariaAftermath.install();SouthRoad.install();EgorianArrival.install();EgorianNight.install();EgorianTrial.install();EgorianMort.install();EgorianExecution.install();SenaraArrival.install();SenaraCover.install();SenaraDaggers.install();SenaraCitadel.install();WhisperwoodCamp.install();WhisperwoodGlade.install();SenaraWagon.install();SenaraGraveyard.install();FortArego.install();InfernoGate.install();AregoAmbush.install();AregoReturn.install();AregoExit.install();EgorianDischarge.install();EgorianFountain.install();RemesianaMarket.install();Hinji.install();Westcrown.install();EfisioArc.install();EgorianSting.install();EgorianFeud.install();SethicFarm.install();SethicLedgers.install();NicoloArc.install();PaleBall.install();Belde.install();HinjiTavern.install();Ballerina.install();Rachikan.install();Pezzack.install();BellflowerBarge.install();BellflowerBarn.install();SethicMansion.install();VyreWish.install();BarrowTrail.install();BarrowCovenant.install();Menador.install();TathlumHunt.install();DarkRain.install();SkadiParley.install();MolthuneCoffin.install();DinyarRecon.install();IlniusFountain.install();BarleybridgeScout.install();PresentationPolish.install();window.SaveFiles.install({scenes,core:CORE,stats:BASE_STATS,special:BASE_SPECIAL,names:NAMES,key:SAVE,read:readSave,capture:save,safeToCapture:()=>ready&&!campaignLoading&&!introOpen&&!battle&&!dialogOpen&&!taskBusy,canImport:()=>ready&&!campaignLoading&&!battle&&!dialogOpen&&!taskBusy,resume:()=>reset(true)});installSectionReplay();Handheld.install();GameInput.install({
+ context:()=>!ready||campaignLoading||taskBusy||battle?.busy&&!battle.reveal?'blocked':Handheld.isOpen()||introOpen||dialogOpen||journeyOpen||levelOpen||battle||$('save-import-dialog').open?'menu':'world',
  emit:event=>canvas.dispatchEvent(new KeyboardEvent(event.type,{key:event.key,repeat:!!event.repeat,bubbles:true,cancelable:true}))
 });TitleScreen.install();GameAudio.install();load();requestAnimationFrame(loop);

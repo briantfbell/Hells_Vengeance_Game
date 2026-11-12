@@ -14,6 +14,8 @@ Every launch opens the animated **Hell’s Rebels — a Hell’s Vengeance story
 
 Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese joins in Longacre. Bruce’s portrait is available in the gallery; his recruitment awaits a confirmed joining point. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
 
+The title and Night of Ashes load with the opening artwork. The rest of the artwork loads when you board the Western Star or open a later checkpoint or replay. Keep the complete `art-test` folder available for the whole story.
+
 ## Controls
 
 - Arrows / WASD: move or select. Enter / E / Space: confirm. B / Escape: back or pause. P also opens pause. Shift runs during exploration.
@@ -47,7 +49,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 440 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 468 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
