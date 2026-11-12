@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 179 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 188 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -165,3 +165,7 @@ Continue from dawn at Falco Manor or select replay **166**. Give testimony as Fr
 ## Draymus in Lower Lane
 
 Continue from the evening at Falco Manor or select replay **174**. Walk Egorian’s Lower Lane as Draymus, meet the attackers, and prepare the disguise he takes to Oppian’s public excruciation. Replays **174–179** cover the outing. See [the section audit and artwork notes](docs/egorian-mort.md).
+
+## Oppian’s public excruciation
+
+Continue from the morning at Falco Manor or select replay **180**. Follow J’Mal and El Guapo into the crowd, fight the noble’s bodyguards as Freya, and witness the resumed ceremony. Replays **180–188** cover the square. See [the section audit and artwork notes](docs/egorian-excruciation.md).

@@ -5,7 +5,7 @@ const w={window:null,structuredClone,console,document:{createElement:()=>({getCo
 for(const f of scripts.filter(f=>!f.endsWith('chapter-engine.js')))vm.runInContext(read(f),w,{filename:f});
 const engine=read('art-test/chapter-engine.js');vm.runInContext(engine.slice(engine.indexOf('const OPENING_ROSTER='),engine.indexOf('const SAVE=')),w);
 vm.runInContext('const art={},sheets={};let scene="street",quest={},hp={},lead="freya",units=[];',w);
-for(const n of ['NextChapter','NextArc','LastStand','DebtsRumors','PoliticalMovement','ChurchArc','ArmoryArc','FortArc','CourtArc','KantariaArc','DisruptionArc','CovertArc','SupplyArc','FastnessArc','KantariaAftermath','SouthRoad','EgorianArrival','EgorianNight','EgorianTrial','EgorianMort','PresentationPolish'])vm.runInContext(n+'.install()',w);
+for(const n of ['NextChapter','NextArc','LastStand','DebtsRumors','PoliticalMovement','ChurchArc','ArmoryArc','FortArc','CourtArc','KantariaArc','DisruptionArc','CovertArc','SupplyArc','FastnessArc','KantariaAftermath','SouthRoad','EgorianArrival','EgorianNight','EgorianTrial','EgorianMort','EgorianExecution','PresentationPolish'])vm.runInContext(n+'.install()',w);
 vm.runInContext(engine.slice(engine.indexOf('function replaySections(){'),engine.indexOf('function replayAllowed(){')),w);
 const data=vm.runInContext('({scenes,stats:STATS,core:CORE,names:NAMES,special:BASE_SPECIAL,base:BASE_STATS,sections:replaySections()})',w);
 const imageSizes={};for(const f of fs.readdirSync(path.join(root,'art-test'))){if(f.endsWith('.png')){const b=fs.readFileSync(path.join(root,'art-test',f));imageSizes[f]=[b.readUInt32BE(16),b.readUInt32BE(20)];}}
@@ -21,6 +21,8 @@ const checks=[];for(const section of data.sections){const s=data.scenes[section.
 inspect(w.EgorianTrial.armored,'EgorianTrial.armored');
 inspect(w.EgorianMort.disguise,'EgorianMort.disguise');
 inspect(w.EgorianMort.spellAtlas,'EgorianMort.spellAtlas');
+inspect(w.EgorianExecution.armorModels,'EgorianExecution.armorModels');
+inspect(w.EgorianExecution.fxAtlas,'EgorianExecution.fxAtlas');
 const enemies=Object.keys(data.stats).filter(id=>!data.core.includes(id)),noFrame=enemies.filter(id=>!w.FUTURE_NPCS[id]?.frame&&!w.CHAPTER_NPCS[id]); // renderBattle reads this fallback before trying an idle atlas.
 w.SaveFiles.install({core:data.core,scenes:data.scenes,names:data.names,stats:data.base,special:data.special,key:'audit'});
 const base=data.sections.find(s=>s.id==='church-breach'),q=structuredClone(base.quest),checkpoint={version:2,scene:'church_sanctuary',lead:'freya',quest:q,progression:w.Progression.migrate(q),position:{x:328,y:312},hp:Object.fromEntries(data.core.map(id=>[id,30])),uses:Object.fromEntries(data.core.map(id=>[id,0])),potions:2,mendUses:2};

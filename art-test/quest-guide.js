@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const excruciation=window.EgorianExecution?.goal();
+ if(excruciation)return {text:excruciation,target:EgorianExecution.target()};
  const mort=window.EgorianMort?.goal();
  if(mort)return {text:mort,target:EgorianMort.target()};
  const trial=window.EgorianTrial?.goal();

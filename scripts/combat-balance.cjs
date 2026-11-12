@@ -29,6 +29,7 @@ const cases=[
  {name:'Valor’s Fastness · warpriest',kind:'fastness_landing',roster:['freya','jamal','jason','draymus','guapo','reese'],level2:true,church:true},
  {name:'Valor’s Fastness · Angel Knight',kind:'fastness_gallery',roster:['freya','jamal','jason','draymus','guapo','reese'],level2:true,church:true},
  {name:'Valor’s Fastness · summit',kind:'fastness_summit',roster:['freya','jamal','jason','draymus','guapo','reese'],level2:true,church:true},
+ {name:'Egorian · Freya and the bodyguards',kind:'egorian_bodyguards',roster:['freya'],level2:true,church:true,zaraGeitta:true},
  {name:'South Road · infantry',kind:'south_road_infantry',roster:['freya','jason','draymus','reese'],level2:true,church:true,kantariaGifts:true},
  {name:'South Road · Sword Knights',kind:'south_road_knights',roster:['freya','jason','draymus','reese'],level2:true,church:true,kantariaGifts:true},
  {name:'Stranglehold · mine defenders',kind:'supply_mines',roster:['freya','jamal','jason','draymus','guapo','reese'],enemies:['kantaria_guard','kantaria_guard','kantaria_guard'],level2:true,church:true},
@@ -46,9 +47,9 @@ const winPercent=results=>results.length?+(100*results.filter(r=>r.won).length/r
 async function playPair(first,second,firstSeed,secondSeed,runner=play){const result=await runner(first,firstSeed);return result.won?runner(second,secondSeed,result):result;}
 function create(c,seed,carry){
  const w={window:null,structuredClone,console,epoch:1,dialogOpen:false,taskBusy:false,Handheld:{isOpen:()=>false},GameAudio:{effect:()=>{}},CANCEL:Symbol('cancel'),scene:'temple',lead:c.roster[0],ready:true};w.window=w;w.ChurchArc={support:async()=>{}};vm.createContext(w);
- for(const name of ['inventory.js','progression.js','enemy-tactics.js','initiative.js','church-assault.js','armory-jail-chapter.js','fort-estazano.js','court-of-spears.js','kantaria-opening.js','kantaria-disruption.js','kantaria-covert.js','kantaria-supply.js','valor-fastness.js','south-road.js'])vm.runInContext(read(name),w);
+ for(const name of ['inventory.js','progression.js','enemy-tactics.js','initiative.js','church-assault.js','armory-jail-chapter.js','fort-estazano.js','court-of-spears.js','kantaria-opening.js','kantaria-disruption.js','kantaria-covert.js','kantaria-supply.js','valor-fastness.js','south-road.js','egorian-excruciation.js'])vm.runInContext(read(name),w);
  const data=vm.runInContext('(()=>{'+head+'return {CORE,NAMES,STATS,SPECIAL,BASE_STATS,BASE_SPECIAL,WEAPONS,ATTACKS,SKILL_TEXT,inventory,progression};})()',w);Object.assign(w,data);
- Object.assign(w.STATS,w.FastnessArc.combatStats,w.SouthRoad.combatStats);
+ Object.assign(w.STATS,w.FastnessArc.combatStats,w.SouthRoad.combatStats,w.EgorianExecution.combatStats);
  for(const file of ['last-stand-chapter.js','political-movement.js'])for(const match of read(file).matchAll(/STATS\.\w+=\{[^}]+\}/g))vm.runInContext(match[0],w);
  vm.runInContext(read('church-assault.js').match(/Object.assign\(STATS,\{church_acolyte[^\n]+/)[0],w);
  vm.runInContext(read('armory-jail-chapter.js').match(/Object.assign\(STATS,\{armory_bo[^\n]+/)[0],w);
@@ -58,12 +59,12 @@ function create(c,seed,carry){
  vm.runInContext(read('kantaria-disruption.js').match(/Object.assign\(STATS,\{jonas[^\n]+/)[0],w);
  vm.runInContext(read('kantaria-supply.js').match(/Object.assign\(STATS,\{lamashtu_sentry[^\n]+/)[0],w);
  for(let i=1;i<=4;i++)w.STATS['deputy'+i]={hp:18,ac:13,atk:4,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])w.STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
- w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',kantariaGiftsReceived:!!c.kantariaGifts,chapter6:['ovinnik','execution'].includes(c.kind)};w.quest.churchLoadout=!!c.church;w.inventory=w.Inventory.fresh(w.quest);w.progression=w.Progression.migrate(w.quest);
+ w.quest={decreesIssued:!!c.level2,templeWound:c.kind==='temple',kantariaGiftsReceived:!!c.kantariaGifts,zaraGeitta:!!c.zaraGeitta,chapter6:['ovinnik','execution'].includes(c.kind)};w.quest.churchLoadout=!!c.church;w.inventory=w.Inventory.fresh(w.quest);w.progression=w.Progression.migrate(w.quest);
  vm.runInContext(source.slice(source.indexOf('function applyProgression('),source.indexOf('function cancelLevel(')),w);w.applyProgression();if(c.kind==='armory_heist')w.SPECIAL.draymus={...w.SPECIAL.draymus,name:'Shocking Grasp',dmg:[1,6,0]};
  w.hp=Object.fromEntries(w.CORE.map(id=>[id,w.STATS[id].hp]));w.uses=Object.fromEntries(w.CORE.map(id=>[id,0]));w.potions=w.mendUses=2;if(carry){Object.assign(w.hp,carry.hp);Object.assign(w.uses,carry.uses);w.potions=carry.potions;w.mendUses=carry.mendUses;}if(c.down)w.hp[c.down]=0;
  if(c.prepareEscort)w.SouthRoad.recover(1);
  if(c.kind==='fort_manticore')w.hp.jamal=Math.floor(w.STATS.jamal.hp*.5);
- w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.kind.startsWith('south_road_')?w.SouthRoad.encounter(c.kind,!!c.sentryMarked).enemies:c.kind.startsWith('fastness_')?w.FastnessArc.encounter(c.kind).enemies:c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));if(c.kind==='armory_porch')w.enemies[1].hp=w.enemies[1].max=8;w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.battle.paralyzed=c.paralyzed;if(c.kind==='church_entry')w.enemies.forEach(e=>e.shaken=2);w.lastRound=1;w.planEnemyRound=()=>w.EnemyTactics.plan(w.enemies,w.units,w.hp,w.STATS,w.battle.round);w.planEnemyRound();
+ w.units=c.roster.map(id=>({id,guard:false}));w.enemies=c.kind==='egorian_bodyguards'?w.EgorianExecution.encounter().enemies:c.kind.startsWith('south_road_')?w.SouthRoad.encounter(c.kind,!!c.sentryMarked).enemies:c.kind.startsWith('fastness_')?w.FastnessArc.encounter(c.kind).enemies:c.enemies.map(id=>({id,name:id,hp:w.STATS[id].hp,max:w.STATS[id].hp,shaken:0}));if(c.kind==='armory_porch')w.enemies[1].hp=w.enemies[1].max=8;w.battle={kind:c.kind,round:1,turn:0,target:0,ally:c.roster[0],enemies:w.enemies,busy:false,smoke:0,control:{mode:'commands'}};w.battle.paralyzed=c.paralyzed;if(c.kind==='church_entry')w.enemies.forEach(e=>e.shaken=2);w.lastRound=1;w.planEnemyRound=()=>w.EnemyTactics.plan(w.enemies,w.units,w.hp,w.STATS,w.battle.round);w.planEnemyRound();
  const nodes={};w.$=id=>nodes[id]??={hidden:false,disabled:false,classList:{remove:()=>{}},textContent:''};w.keys={clear:()=>{}};w.delay=async()=>{};w.animateAction=async(_a,_t,_type,_hit,impact)=>impact?.();w.flash=()=>{};w.log=()=>{};w.paintParty=w.updateObjective=w.save=()=>{};w.run=()=>{};
  w.canvas={focus:()=>{}};w.paintBattle=()=>{if(w.battle)w.lastRound=w.battle.round;};
  w.activeUnit=()=>{const entry=w.battle?.order?.[w.battle.turn];return entry?.side==='party'?w.Initiative.actor(entry,w.units,w.enemies):null;};w.livingEnemy=()=>w.battle?.enemies.find(e=>e.hp>0);w.combatAC=id=>w.STATS[id].ac+(c.kind==='execution'&&id==='jason'?2:0)-(c.kind==='armory_heist'&&['freya','jason'].includes(id)?1:0);
