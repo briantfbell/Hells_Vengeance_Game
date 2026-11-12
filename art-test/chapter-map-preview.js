@@ -67,7 +67,17 @@ window.ChapterMapPreview=(()=>{
    points:[
     {label:'Return stairs',x:520,y:248,destination:'barleybridge-councillor-v1',arrival:[536,264]},
     {label:'Private suite',x:392,y:168,note:'The landing opens into the lord’s tatami suite. Folding screens stand behind the bed.'},
-    {label:'Writing study',x:152,y:184,note:'Scroll shelves and a low writing desk line the study walls.'}
+    {label:'Writing study',x:152,y:184,note:'Scroll shelves and a low writing desk line the study walls.'},
+    {label:'Trace route to observatory',x:104,y:264,destination:'barleybridge-observatory-v1',arrival:[440,280]}
+   ]
+  },
+  'barleybridge-observatory-v1':{
+   spawn:[440,280],
+   walk:[[144,240,352,64],[64,256,96,16],[304,224,96,32]],
+   points:[
+    {label:'Return stairs',x:488,y:280,destination:'barleybridge-lords-chambers-v1',arrival:[152,264]},
+    {label:'Observation floor',x:344,y:232,note:'The prepared map places Lord Oda Nobunaga here with a guardsman, bowman, and samurai.'},
+    {label:'West balcony',x:88,y:264,note:'The west balcony looks over the castle roofs and the snowy valley.'}
    ]
   },
   'barleybridge-basement-v1':{

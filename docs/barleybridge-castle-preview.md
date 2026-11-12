@@ -14,6 +14,10 @@ Foundry scene `Scene.xLyKPIa4rbdZ1OEW` supplies the reference for the councillor
 
 Foundry scene `Scene.iiniVv5xhDqdz7mp` shows the private quarters, including tatami rooms, a study and an eastern stair. Its prepared tokens include one Guardsman, one Bowman and one Samurai. The planning map condenses the floor around the private suite, study and open landing. Use **Trace route upstairs** at the east end of the councillor’s landing. The stair connection is an adaptation for the preview.
 
+## Observatory
+
+Foundry scene `Scene.TgwO6xXhcXfFGlKs` shows an upper observation floor and west balcony. The prepared placements include Lord Oda Nobunaga (`Actor.Dp2eF1CD16Bp3eJc`), a Guardsman, a Bowman and a Samurai. Inspect the marked observation floor for that placement note. The brass instrument and the route from the lord’s chambers are game adaptations. Players can trace the route and return in Planning maps.
+
 ## Artwork prompts
 
 The built-in image generator produced these assets from written descriptions of the Foundry references. For the councillor’s floor, the in-game throne room supplied the style reference. The new map places the west staircase beside an open landing, with the council room and library above it.
