@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const road=window.SouthRoad?.goal();
+ if(road)return {text:road,target:SouthRoad.target()};
  const aftermath=window.KantariaAftermath?.goal();
  if(aftermath)return {text:aftermath,target:KantariaAftermath.target()};
  const fastness=window.FastnessArc?.goal();

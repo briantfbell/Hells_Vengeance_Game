@@ -22,6 +22,7 @@ window.EnemyTactics=(()=>{
    else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='fastness_mage'){move=round%2?'Arcane bolt':'Charged bolt';extra=round%2?0:3;effect='arcaneBolt';}
    else if(e.id==='fastness_warpriest'){move=round%2?'Warhammer strike':'Overhead hammer';extra=round%2?0:2;}
+   else if(e.id==='south_road_knight'){move=round%2?'Lance charge':'Cavalry thrust';extra=round%2?2:0;}
    else if(e.id==='oppian'){move=round%2?'Sword cut':'Heavy sword cut';extra=round%2?0:2;}
    else if(e.id==='fastness_archon'){move=round%2?'Greatsword cut':'Radiant strike';extra=round%2?0:2;}
    else if(e.id==='court_rhona'){move=round%2?'Twin hand axes':'Press the crossing';extra=round%2?1:0;}

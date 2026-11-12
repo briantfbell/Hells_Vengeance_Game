@@ -8,7 +8,7 @@ The deed names Freya, J’Mal, Jason and Draymus. The inventory tracks 10,600 gp
 
 ## Reward mechanics
 
-- Silent Sentry is equipped on Reese when awarded. It provides +2 to hit and a separate 1D6 frost roll on a successful Attack or Aimed Shot. The standard bow remains available. Ammunition has no counter, and the campaign’s sentry-post power is pending an encounter that uses it.
+- Silent Sentry is equipped on Reese when awarded. It provides +2 to hit and a separate 1D6 frost roll on a successful Attack or Aimed Shot. The standard bow remains available. Ammunition has no counter. On the [South Road](south-road.md), Reese can use the equipped bow to mark the ambush.
 - The Ring of Wizardry I expands Draymus’s compressed spell allowance by four uses and preserves uses already spent.
 - The Mosswater Tunic gives J’Mal +3 AC. Phase spends one of five charges to evade enemy attacks until his next turn. The game represents one round of ethereal jaunt per charge.
 - The Dragon Helm lets Jason maximize Burning Hands three times per rest, spending a helm charge and a Burning Hands use. Wisdom modifiers and spell duration extension are outside this combat implementation.

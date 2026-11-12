@@ -1,21 +1,25 @@
 {
-  "scripts": 50,
-  "scenes": 79,
-  "replays": 144,
-  "framesInspected": 486,
-  "framesChecked": 486,
+  "scripts": 51,
+  "scenes": 81,
+  "replays": 152,
+  "framesInspected": 493,
+  "framesChecked": 493,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 38,
+  "combatStats": 39,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 305080615,
+  "assetBytes": 313254883,
   "largestAssets": [
+    {
+      "name": "south-road-ambush-v1.png",
+      "bytes": 3647774
+    },
     {
       "name": "court-of-spears.png",
       "bytes": 3582358
@@ -51,16 +55,12 @@
     {
       "name": "valor-fastness-gate-v1.png",
       "bytes": 3436587
-    },
-    {
-      "name": "kantaria-council-v1.png",
-      "bytes": 3243024
     }
   ],
   "startupComplete": true,
-  "startupAssets": 110,
-  "startupCompressedBytes": 250305995,
-  "startupDecodedRgbaBytes": 683971760,
+  "startupAssets": 113,
+  "startupCompressedBytes": 258466898,
+  "startupDecodedRgbaBytes": 702848368,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -153,6 +153,9 @@
     "scarlet-manor.png",
     "ship-deck-foreground.png",
     "silver-star-music-shop-v2.png",
+    "south-road-ambush-v1.png",
+    "south-road-camp-v1.png",
+    "south-road-cavalry-v1.png",
     "spell-effects-v1.png",
     "tannery-foreground.png",
     "title-background.png",
