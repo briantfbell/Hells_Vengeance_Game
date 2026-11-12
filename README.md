@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 410 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 418 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -333,3 +333,7 @@ Continue from the Barrowood trail or select replay **396**. Face the rogue Asmod
 ### Menador and the Queen’s demand
 
 Continue after the Covenant of Hell or select replay **404**. Hear Corrine’s report and travel to Menador, where the chapter card marks the Meeting of the Twins. Replays **404–406** cover the approach. See [the section notes](docs/menador.md) for the two campaign records.
+
+### Tathlum orders and the Nidal cave-giant hunt
+
+Continue from Menador or select replay **407**. Take the Queen’s assignment, follow Reese to the lair and win Freya’s three duels. Replays **407–414** cover the expedition. See [the section notes](docs/tathlum-hunt.md) for sources, combat and artwork.

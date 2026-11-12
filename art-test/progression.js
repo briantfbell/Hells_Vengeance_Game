@@ -52,6 +52,8 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.tathlumHuntComplete)rows.push('Nidal · Freya defeats the cave giants in single combat and awakens their rune on the dwarven champion’s belt.');
+  if(q.tathlumBriefed)rows.push('Egorian · 4 Gozran, 4717. Lieutenant Colonel Freya receives the Queen’s Tathlum assignment.');
   if(q.menadorComplete)rows.push('Menador · 3 Gozran, 4717. Meeting of the Twins.');
   if(q.menadorBriefed)rows.push('Crown briefing · Corrine reports the fall of Westcrown and Barzillai’s death. The Queen demands that the responsible parties be turned over.');
   if(q.covenantComplete)rows.push('Barrowood · Freya, Jason, J’Mal, Draymus and Reese are elevated to Bound Agents of Thrune.');

@@ -42,6 +42,7 @@ window.Inventory=(()=>{
   {id:'dragon_helm',name:'Dragon Helm',kind:'gear',owner:'jason',description:'Maximize rolls full Burning Hands damage and spends a spell use. '+giftCharges(q,'jason')+'/3 charges remain.'},
   {id:'kantaria_back_pay',name:'Kantaria back pay · 10,600 gp',kind:'quest',description:'The company’s shared back pay from Archbaron Fex.'}
  );
+ if(q.tathlumDuels===3)result.push({id:'championship_belt',name:'Championship Belt',owner:'freya',kind:'gear',description:'Freya’s dwarven belt. The Cave Giant rune grants 120 ft. darkvision and aids detection of hidden doors. The Ogre Magi rune records her victory over Yunero.'});
  if(q.covenantComplete)result.push({id:'abbies_ring',name:'Abbie’s Ring',owner:'jason',kind:'gear',description:'Given to Jason by Queen Abrogail after the covenant. The Foundry sheet records Freedom of Movement and fire resistance.'});
  if(hasFreyaPlate(q))result.push({id:'zara_geitta',name:'Zara Geitta',owner:'freya',kind:'gear',description:'Freya’s fitted adamantine Hellknight plate. +2 AC. Absorbs up to 3 physical damage per hit.'});
  else if(q.kantariaGiftsReceived&&!q.zaraGeitta)result.push({id:'egorian_commission',name:'Hellknight plate commission',kind:'quest',description:'Zara has ridden to Egorian to work on Freya’s custom plate.'});

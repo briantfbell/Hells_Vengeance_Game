@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const tathlum=window.TathlumHunt?.goal();
+ if(tathlum)return {text:tathlum,target:TathlumHunt.target()};
  const menador=window.Menador?.goal();
  if(menador)return {text:menador,target:Menador.target()};
  const covenant=window.BarrowCovenant?.goal();

@@ -1,20 +1,20 @@
 {
-  "scripts": 93,
-  "scenes": 147,
-  "replays": 410,
-  "framesInspected": 630,
-  "framesChecked": 630,
+  "scripts": 94,
+  "scenes": 150,
+  "replays": 418,
+  "framesInspected": 634,
+  "framesChecked": 634,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
   "invalidGeometry": [],
-  "combatStats": 63,
+  "combatStats": 64,
   "enemiesWithoutKnownFrames": [],
   "prematureImport": {
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 607783236,
+  "assetBytes": 616697449,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -53,14 +53,14 @@
       "bytes": 3578233
     },
     {
-      "name": "valor-fastness-chapel-v1.png",
-      "bytes": 3513995
+      "name": "tathlum-cave-lair-v1.png",
+      "bytes": 3559696
     }
   ],
   "startupComplete": true,
-  "startupAssets": 243,
-  "startupCompressedBytes": 552618944,
-  "startupDecodedRgbaBytes": 1520808936,
+  "startupAssets": 246,
+  "startupCompressedBytes": 561522583,
+  "startupDecodedRgbaBytes": 1539685544,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -274,6 +274,9 @@
     "south-road-cavalry-v1.png",
     "spell-effects-v1.png",
     "tannery-foreground.png",
+    "tathlum-cave-giant-v1.png",
+    "tathlum-cave-lair-v1.png",
+    "tathlum-nidal-village-v1.png",
     "title-background.png",
     "title-card.png",
     "townsfolk-sheet-v1.png",
