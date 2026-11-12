@@ -2190,16 +2190,36 @@ test('St. Ilnius stages Bruce’s Blink and gates the inner entrance on all five
  saved.quest.ilniusStatuesCleared=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid St. Ilnius sequence/);
  w.SouthRoad={recover:()=>{}};
- w.GameAudio={effect:()=>{}};
+ const sounds=[];
+ w.GameAudio={effect:sound=>sounds.push(sound)};
  await step('ilniusEnterTemple');
  assert.equal(await w.IlniusFountain.interact('ilniusRite'),false);
  await step('ilniusPaladin');
  assert.equal(w.battle.enemies[0].id,'ilnius_sylvestra');
  assert.equal(w.battle.enemies[0].resolve,true);
+ let now=0,midpoint;
+ w.performance.now=()=>now;
+ w.seedParty=()=>w.units=[{id:'jamal',x:328,y:248,dir:'up'},{id:'jason',x:328,y:280,dir:'up'}];
+ w.delay=async ms=>{now+=ms;midpoint?.();};
+ midpoint=()=>{
+  if(now!==234)return;
+  assert(!w.quest.ilniusPaladinSlain);
+  assert.equal(w.IlniusFountain.npcs()[0].pose,'prone');
+  assert.equal(w.IlniusFountain.stagePose(w.units[0]).x,304);
+ };
  await w.IlniusFountain.afterBattle(w.battle.kind,w.battle.returnPosition);
+ assert.deepEqual(sounds,['hit']);
+ assert.equal(w.IlniusFountain.stagePose(w.units[0]),w.units[0]);
  assert(w.transcript.some(line=>/J’Mal closes the distance/.test(line.text)));
  w.quest=capture('ilnius-rite').quest;
+ midpoint=()=>{
+  if(now!==684)return;
+  assert(!w.quest.ilniusDefiled);
+  assert.equal(w.IlniusFountain.stagePose(w.units[1]).x,368);
+ };
  await step('ilniusRite');
+ assert.deepEqual(sounds,['hit','spell']);
+ assert.equal(w.IlniusFountain.stagePose(w.units[1]),w.units[1]);
  assert.match(w.Inventory.items(w.quest,2).find(item=>item.id==='parnoneryx_head').description,/Jason used/);
  await step('ilniusLibrary');
  assert(capture('ilnius-library').quest.ilniusTempleComplete);

@@ -11,7 +11,9 @@ window.IlniusFountain=(()=>{
   {x:790,y:0,w:564,h:714,anchorX:1030,anchorY:714},
   {x:1518,y:44,w:586,h:670,anchorX:1810,anchorY:714}
  ];
- let rite=null;
+ const basin={x:320,y:108,outline:[[251,109],[256,95],[285,86],[355,86],[383,95],[389,109],[355,126],[285,126]]};
+ const paladinPosition={x:328,y:216};
+ let staging=null;
  const party=['jamal','jason','reese','draymus'];
  const sentries=[[168,201],[240,185],[328,174],[416,185],[488,201]];
  const frames=[
@@ -72,7 +74,10 @@ window.IlniusFountain=(()=>{
  function roster(){return [forest,shrine,temple].includes(scene)?party:null;}
  function npcs(){
   if(scene===forest)return [{id:'bruce',x:456,y:240,dir:'down'}];
-  if(scene===temple)return [{id:paladin,x:328,y:216,height:60,pose:quest.ilniusPaladinSlain?'prone':null}];
+  if(scene===temple){
+   const fallen=quest.ilniusPaladinSlain||(stageProgress('strike')??0)>=.52;
+   return [{id:paladin,...paladinPosition,height:60,pose:fallen?'prone':null}];
+  }
   if(scene!==shrine)return null;
   const figures=sentries.map(([x,y])=>({id:statue,x,y,height:53,pose:quest.ilniusStatuesCleared?'prone':null}));
   return figures.concat({id:'bruce',x:456,y:296,dir:'up'});
@@ -114,30 +119,86 @@ window.IlniusFountain=(()=>{
   }
   g.restore();
  }
+ const clamp=value=>Math.max(0,Math.min(1,value));
+ function stageProgress(kind){
+  if(scene!==temple||staging?.kind!==kind||staging.epoch!==epoch)return null;
+  return clamp((performance.now()-staging.at)/staging.duration);
+ }
+ async function stageAction(kind,actor,x,y,duration){
+  const token=epoch;
+  const length=reduce.matches?450:duration;
+  staging={kind,actor,x,y,epoch:token,at:performance.now(),duration:length};
+  const impact=Math.round(length*.52);
+  await delay(impact);
+  if(token!==epoch)return false;
+  GameAudio.effect(kind==='strike'?'hit':'spell');
+  await delay(length-impact);
+  return token===epoch;
+ }
+ function stagePose(unit){
+  if(!staging||unit.id!==staging.actor)return unit;
+  const p=stageProgress(staging.kind);
+  if(p===null)return unit;
+  const outward=clamp(p/.42),back=clamp((p-.76)/.24);
+  const distance=reduce.matches?1:outward*(1-back);
+  const x=unit.x+(staging.x-unit.x)*distance,y=unit.y+(staging.y-unit.y)*distance;
+  const walking=!reduce.matches&&(p<.42||p>.76);
+  const dx=staging.x-unit.x,dy=staging.y-unit.y;
+  const dir=walking?(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'))
+   :staging.kind==='strike'?'right':'up';
+  const opposite={up:'down',down:'up',left:'right',right:'left'};
+  return {...unit,x,y,dir:back?opposite[dir]:dir,step:walking,anim:p*2,
+   lunge:!reduce.matches&&staging.kind==='strike'&&p>=.42&&p<.60?.22*(p-.42)/.18:0};
+ }
+ function drawStrike(g){
+  const p=stageProgress('strike');
+  if(reduce.matches||p===null||p<.48||p>.68)return;
+  g.save();
+  g.globalAlpha=1-(p-.48)/.20;
+  g.strokeStyle='#ffdeb1';
+  g.lineWidth=3;
+  g.beginPath();
+  g.moveTo(301,176);
+  g.quadraticCurveTo(321,176,345,195);
+  g.stroke();
+  g.restore();
+ }
  function drawRite(g,t){
   if(scene!==temple)return;
-  const progress=quest.ilniusDefiled?1:rite?.epoch===epoch?Math.min(1,(performance.now()-rite.at)/1400):0;
-  if(progress<=0)return;
-  const im=art[headArt],x=320,y=109;
-  g.save();
-  g.globalAlpha=progress*.83;
-  g.fillStyle='#431927';
-  g.beginPath();
-  g.ellipse(x,y,56*progress,13*progress,0,0,2*Math.PI);
-  g.fill();
-  if(im){
-   const w=45,h=w*im.height/im.width;
-   g.globalAlpha=1-progress*.44;
-   g.drawImage(im,x-w/2,y-h+Math.round(progress*12),w,h);
-  }
-  if(!reduce.matches){
-   g.globalAlpha=.38;
-   g.fillStyle='#a14b51';
-   for(let i=0;i<8;i++){
-    const age=(t*.8+i/8)%1;
-    g.fillRect(x-28+i*8,y-Math.round(age*13),2,1);
+  const p=stageProgress('rite');
+  const progress=quest.ilniusDefiled?1:p===null?0:clamp((p-.48)/.26);
+  if(!progress&&(p===null||p<.32))return;
+  const {x,y,outline}=basin;
+  if(progress){
+   g.save();
+   g.beginPath();
+   for(const [index,[px,py]] of outline.entries()){
+    if(index===0)g.moveTo(px,py);else g.lineTo(px,py);
    }
+   g.closePath();
+   g.clip();
+   g.fillStyle='#49192c';
+   g.globalAlpha=.88;
+   g.beginPath();
+   g.ellipse(x,y,77*progress,25*progress,0,0,2*Math.PI);
+   g.fill();
+   if(!reduce.matches){
+    for(let i=0;i<12;i++){
+     const age=(t*.55+i/12)%1;
+     g.globalAlpha=progress*(1-age)*.5;
+     g.fillStyle='#b66b73';
+     g.fillRect(x-55+i*10,y-12+i%4*7+Math.round(age*4),3+i%3,1);
+    }
+   }
+   g.restore();
   }
+  const im=art[headArt];
+  if(!im||p===null||p>=.78)return;
+  const lift=clamp((p-.32)/.2),sink=clamp((p-.52)/.26);
+  const w=45,h=w*im.height/im.width;
+  g.save();
+  g.globalAlpha=1-sink;
+  g.drawImage(im,x+43*(1-lift)-w/2,y+58*(1-lift)-h+sink*14,w,h);
   g.restore();
  }
  function drawSupport(g){
@@ -156,14 +217,16 @@ window.IlniusFountain=(()=>{
   g.restore();
  }
  async function afterBattle(kind,position){
+  seedParty(...position);
   if(kind===templeBattle){
    if(hp.jamal===0){
     await say('Chronicle','The company helps J’Mal to his feet as Sylvestra’s defense falters.');
     hp.jamal=1;
    }
+   if(!await stageAction('strike','jamal',304,232,1250))return;
    quest.ilniusPaladinSlain=true;
+   staging=null;
   }else quest.ilniusStatuesCleared=true;
-  seedParty(...position);
   save();
   paintParty();
   updateObjective();
@@ -213,12 +276,10 @@ window.IlniusFountain=(()=>{
      await say('Chronicle','Jason steadies himself and takes the burden to the basin.');
     }
     await say('jason','Bring me Parnoneryx’s head. I’ll finish what we came here to do.');
-    const token=epoch;
-    rite={at:performance.now(),epoch:token};
-    GameAudio.effect('spell');
-    await delay(reduce.matches?400:1400);
-    if(token!==epoch)return false;
+    if(!await stageAction('rite','jason',368,181,1900))return false;
     quest.ilniusDefiled=true;
+    staging=null;
+    save();
     await say('Chronicle','Jason lowers the dragon’s head into the basin. The water darkens and the consecration breaks.');
     break;
    }
@@ -232,5 +293,5 @@ window.IlniusFountain=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact,isBattle,openingStrike,drawWater,drawRite,drawSupport,afterBattle};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,isBattle,openingStrike,drawWater,drawRite,drawStrike,stagePose,drawSupport,afterBattle};
 })();

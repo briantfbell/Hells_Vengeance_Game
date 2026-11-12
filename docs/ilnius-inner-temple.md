@@ -2,7 +2,7 @@
 
 GM timeline row S151 records the confrontation on 20 Gozran, 4717. J’Mal kills the paladin Sylvestra Hanel, and Jason defiles the temple with Parnoneryx’s head. The entry identifies an ancient library as the final component still needed for the Tathlum. Row S146 records a proposed fountain defilement on 18 Gozran. This section uses the date of the reported event.
 
-The matching Foundry actor, `Actor.C4hRb7865QDuIah0`, is named Sevestra Hanail. The game uses the timeline spelling and draws on the recovered Foundry portrait for her appearance. Her sheet lists Silent Vigil as a composite longbow and Heavenly Arc as a glaive. This encounter uses Silent Vigil. Its damage, alternating aimed shots, dialogue and exact sanctuary layout are adaptations. The party breaks her resolve in combat, and J’Mal delivers the recorded killing blow after victory. The water-darkening effect stages Jason’s ritual, and the quest log records the library lead.
+The matching Foundry actor, `Actor.C4hRb7865QDuIah0`, is named Sevestra Hanail. The game uses the timeline spelling and draws on the recovered Foundry portrait for her appearance. Her sheet lists Silent Vigil as a composite longbow and Heavenly Arc as a glaive. This encounter uses Silent Vigil. Its damage, alternating aimed shots, dialogue and exact sanctuary layout are adaptations. The party breaks her resolve in combat, and J’Mal delivers the recorded killing blow after victory. The game shows J’Mal approach the paladin and deliver the finishing strike after combat. Jason then steps to the basin, lowers Parnoneryx’s head, and darkens the water. These motions and timings are game staging. The quest log records the library lead.
 
 ## Artwork prompts
 
@@ -23,3 +23,5 @@ A single isolated pixel art video game prop on a fully transparent PNG backgroun
 ## Verification
 
 The browser playthrough continued from the fountain court, defeated Sylvestra, reloaded before Jason’s ritual, completed the rite, and reloaded the library-lead checkpoint. The game ran at 640×480 with no browser console errors. All 167 automated tests passed. The structural audit checked 164 scenes, 463 replays and 657 sprite frames.
+
+The follow-up audit won the Sylvestra encounter in the browser and reached J’Mal’s finishing scene. Replay 458 showed the darkened basin and restored exploration with the library objective at 640×480. No console errors appeared. All 174 automated tests passed. The structural audit checked 168 scenes, 475 replays and 657 frames.
