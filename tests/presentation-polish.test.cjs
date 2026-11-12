@@ -5,6 +5,21 @@ test('porch guard idle cycle never indexes a missing pose across repeated combat
 test('duplicate defenders retain independent idle timing and dead defenders stay still',()=>{const w=world(),m={cycle:[0,1,2,1]},a={id:'acolyte',hp:10,idleOffset:0},b={id:'acolyte',hp:10,idleOffset:.54};w.battle.enemies=[a,b];assert.notEqual(w.PresentationPolish.phase(a,.01,m),w.PresentationPolish.phase(b,.01,m));b.hp=0;assert.equal(w.PresentationPolish.phase(b,12,m),0);});
 test('Riley chatter is available while captive and disappears after the jailbreak',async()=>{const w=world();w.quest.prisonersJailed=true;const lines=[];w.say=async(n,t,choices)=>{lines.push({n,t,choices});return 2;};assert(w.PresentationPolish.captive());assert.equal(w.PresentationPolish.captivePoints()[0].id,'rileyBanter');await w.PresentationPolish.banter();assert.equal(lines[0].choices.length,5);assert.equal(lines[1].n,'freya');assert.equal(lines[2].n,'riley');w.quest.jailbreakHeard=true;assert(!w.PresentationPolish.captive());assert.equal(w.PresentationPolish.captivePoints().length,0);});
 test('all eight townsfolk choose their own front portrait metadata',()=>{const w=world();for(let i=0;i<8;i++)assert.equal(w.PresentationPolish.citizenMeta(i).frames[0].variant,i);});
-test('decree overlay releases its parchment class even when a transition is cancelled',async()=>{const w=world(),classes=new Set();w.$=()=>({classList:{add:n=>classes.add(n),remove:n=>classes.delete(n)}});w.journeyCard=async(t,s)=>{assert(classes.has('decree-page'));assert(s.includes('six persons'));assert(s.includes('twelve persons'));throw new Error('cancelled');};await assert.rejects(w.PresentationPolish.decree(),/cancelled/);assert(!classes.has('decree-page'));});
+test('the full decree fits three parchment pages and releases the overlay on cancellation',async()=>{
+ const w=world(),classes=new Set(),pages=[];
+ w.$=()=>({classList:{add:n=>classes.add(n),remove:n=>classes.delete(n)}});
+ w.journeyCard=async(title,text)=>{assert(classes.has('decree-page'));pages.push({title,text});};
+ await w.PresentationPolish.decree();
+ assert.deepEqual(pages.map(page=>page.title.slice(-5)),['[1/3]','[2/3]','[3/3]']);
+ assert.match(pages[0].text,/Castle Gate.*north or south gates/);
+ assert.match(pages[1].text,/six in private.*twelve in public/);
+ assert.match(pages[1].text,/curfew.*hour after dusk to the hour before dawn/);
+ assert.match(pages[2].text,/seditious agents/);
+ assert.match(pages[2].text,/Darellus Fex,\nArchbaron of Longacre/);
+ assert(!classes.has('decree-page'));
+ w.journeyCard=async()=>{assert(classes.has('decree-page'));throw new Error('cancelled');};
+ await assert.rejects(w.PresentationPolish.decree(),/cancelled/);
+ assert(!classes.has('decree-page'));
+});
 test('quiet square includes all four new townsfolk and scene variants are not always the same person',()=>{const w=world(),s=read('chapter-engine.js');w.scene='longacre_square';w.quest.sermonDispersed=true;w.citizenCache=new Map();w.PoliticalMovement={crowd:()=>[]};vm.runInContext(s.slice(s.indexOf('function townsfolk(){'),s.indexOf('function citizenLine(')),w);const variants=Array.from(w.townsfolk(),u=>u.variant);for(const v of [4,5,6,7])assert(variants.includes(v));w.scene='remesiana';assert.equal(w.townsfolk()[0].variant,4);});
 test('dice sprites paint both roll trays and initiative results',()=>{const w=world();let painted=0;w.art={'dice-atlas-v1.png':{}};w.document={querySelectorAll:selector=>{assert(selector.includes('#initiative-results'));return [4,1].map(d=>({dataset:{die:d},getContext:()=>({clearRect:()=>{},drawImage:()=>painted++})}));}};w.PresentationPolish.paintDice();assert.equal(painted,2);});

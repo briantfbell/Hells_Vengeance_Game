@@ -65,14 +65,49 @@ window.NextArc=(()=>{
   await say('cimri','They’re going home. Let’s tell Razelago what Allamar showed them.');
  }
 
+ async function prepareDecrees(){
+  await say('razelago','Good. Allamar has had her audience. Get some rest. Tomorrow you’ll have more to do than break up a sermon.');
+  await journeyCard('Ash House · The next morning','The party rests at Ash House after dispersing Allamar’s sermon. By morning, Longacre is back at its usual business.',save);
+  await awardSermonMilestone();
+  await say('razelago','Fex has given your company carte blanche to deal with the rebellion. What measures will you take?');
+  await say('Chronicle','The party decides to restrict gatherings: no more than six people privately or twelve publicly, with exceptions for families and business.');
+  await say('freya','Close the western gate. Have the other gates check who’s authorized to pass. Put a curfew in the order, too.');
+  await say('Chronicle','The company draws up the new rules. The public copy bears Fex’s name and seal.');
+  await say('freya','Four copies. The square, the Last Stand, the western gate, and the jail. Put Rhona’s dismissal on a separate sheet. I’ll hand her that one myself.');
+  quest.decreesIssued=true;
+ }
+ const postings={
+  noticeDecree:{flag:'noticePosted',line:'The new notice goes up on the square’s event board. A few passersby stop to read it.'},
+  tavernDecree:{flag:'tavernPosted',line:'The party puts up a copy outside the Last Stand before anyone can turn it into an argument.'},
+  gateDecree:{flag:'gatePosted',line:'The party posts the gate order beside the western gate. From here on, authorized traffic must use the north or south gate.'}
+ };
+ async function postDecree(id){
+  const {flag,line}=postings[id];
+  if(!quest.decreesIssued)await say('Chronicle','Report the sermon to Razelago before delivering tomorrow’s orders.');
+  else if(quest[flag])await say('Chronicle','The posted order remains in place.');
+  else{
+   await say('Chronicle',line);
+   if(!Object.values(postings).some(posting=>quest[posting.flag]))await window.PresentationPolish?.decree();
+   quest[flag]=true;
+  }
+ }
+
  async function afterBattle(){quest.deputiesDefeated=true;await say('Chronicle','The former deputies are subdued. You lock all four in the jail. Cimri remains to watch the building.');save();}
  async function interact(id){if(id==='chapterThree'){await begin();return true;}if(!quest.chapter3)return false;
- if(id==='razelago'){if(!quest.sermonDispersed)await say('razelago','The sermon is this afternoon. Listen—and make sure the crowd hears the crown’s answer.');else if(!quest.decreesIssued){await say('razelago','Fex has given your company carte blanche to deal with the rebellion. What measures will you take?');await say('Chronicle','The party decides to restrict gatherings: no more than six people privately or twelve publicly, with exceptions for families and business. The western gate will close; passage through the other gates will require approved writs.');await say('freya','Prepare copies for the notice post, the Last Stand, the western gate, and the jail. We will also remove Rhona from office by a separate order.');await say('Chronicle','These policies are the party’s choices, enacted under Fex’s authority.');quest.decreesIssued=true;await awardSermonMilestone();await journeyCard('Ash House · The next morning','The party rests after the sermon. A new day brings copies of the party’s decrees, Rhona’s dismissal, and a much less forgiving town.',save);}else if(quest.deputiesDefeated&&!quest.deputiesReported){await say('razelago','The orders stand and the former deputies are in custody. Your work has drawn the Archbaron’s attention. He expects you at Scarlet Manor tomorrow morning.');quest.deputiesReported=true;}else await say('razelago','Finish the postings. Then bring me your report.');save();return true;}
+ if(id==='razelago'){
+  if(!quest.sermonDispersed)await say('razelago','The sermon is this afternoon. Listen—and make sure the crowd hears the crown’s answer.');
+  else if(!quest.decreesIssued)await prepareDecrees();
+  else if(quest.deputiesDefeated&&!quest.deputiesReported){
+   await say('razelago','The orders stand and the former deputies are in custody. Your work has drawn the Archbaron’s attention. He expects you at Scarlet Manor tomorrow morning.');
+   quest.deputiesReported=true;
+  }else await say('razelago','Finish the postings. Then bring me your report.');
+  save();updateObjective();return true;
+ }
  if(id==='sermon'){
   if(quest.sermonDispersed)await say('Chronicle','The crowd has gone. The church doors are watched from within.');
   else await sermon();
  }
- else if(['noticeDecree','tavernDecree','gateDecree'].includes(id)){if(!quest.decreesIssued)await say('Chronicle','Report the sermon to Razelago before delivering tomorrow’s orders.');else{const flag={noticeDecree:'noticePosted',tavernDecree:'tavernPosted',gateDecree:'gatePosted'}[id];if(quest[flag])await say('Chronicle','The posted order remains in place.');else{if(!quest.noticePosted&&!quest.tavernPosted&&!quest.gatePosted)await window.PresentationPolish?.decree();await say('Chronicle','The party posts its decree '+({noticeDecree:'on the square’s notice board',tavernDecree:'outside the Last Stand, where its customers gather',gateDecree:'at the western gate, beside the closure notice'}[id])+'. Private gatherings are limited to six people and public gatherings to twelve, with family and business exceptions. The western gate is closed; other passage requires approved writs.');quest[flag]=true;}}}
+ else if(Object.hasOwn(postings,id))await postDecree(id);
  else if(id==='jailRoad')await travel('longacre_jail',328,312);
  else if(id==='jailDecree'){if(!quest.decreesIssued)await say('rhona','If you have official business, bring official orders.');else if(!quest.noticePosted||!quest.tavernPosted||!quest.gatePosted)await say('Chronicle','Post the other copies first. The sheriff’s dismissal will end the day’s easy work.');else if(!quest.rhonaDismissed){await say('Chronicle','A fourth copy of the party’s gathering and gate notices is posted at the jail. A separate order removes Rhona from office.');quest.jailPosted=true;await say('rhona','Removed. By a separate decree. I see.');await say('Chronicle','Rhona sets down her sheriff’s longsword and vest. She takes her personal crossbow and leaves without a word to Cimri. Four deputies throw down their own vests and storm out. Other deputies remain; replacement guards will help staff the jail.');quest.jailPosted=true;quest.rhonaDismissed=true;save();}else await say('Chronicle','Rhona’s badge and vest lie on the desk. The dismissal is delivered.');}
  else if(id==='jailReport'){if(quest.rhonaDismissed&&!quest.deputiesDefeated){await say('Chronicle','The four former deputies have waited outside with saps. They rush the party before you can report back.');startBattle(0,false,{kind:'deputies',enemies:Array.from({length:4},(_,i)=>({id:'deputy'+(i+1),name:'Deputy '+(i+1),x:248+i*64,y:152,hp:18,max:18}))});}else await travel('longacre_square',136,296);}

@@ -74,7 +74,7 @@ async function journeyCard(title,summary,commit=()=>{},illustration=null){
  panel.querySelector('.journey-card').style.backgroundImage=illustration
   ? `linear-gradient(transparent 42%, #100d14eb 68%, #100d14), url("art-test/${illustration}")`
   : '';
- $('journey-title').textContent=title;$('journey-summary').textContent=summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
+ $('journey-title').textContent=title;$('journey-summary').textContent=panel.classList.contains('decree-page')?summary:summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
  commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
  button.disabled=true;journeyOpen=false;keys.clear();canvas.focus();save();
  // Keep the black card covering the map until the next card, dialogue or end of the scene.
@@ -349,6 +349,7 @@ function cancelLevel(){const resolve=levelResolve;levelResolve=null;levelOpen=fa
 $('level-continue').onclick=()=>{const resolve=levelResolve;levelResolve=null;if(resolve)resolve();};
 async function awardSermonMilestone(){
  if(progression.milestones.includes(Progression.milestone))return false;
+ $('journey').hidden=true;
  const token=epoch;progression.milestones.push(Progression.milestone);for(const id of Progression.members)progression.levels[id]=2;applyProgression();
  for(const id of Progression.members){hp[id]=STATS[id].hp;uses[id]=0;}mendUses=2;save();paintParty();levelOpen=true;document.body.classList.add('is-level');canvas.height=SCREEN.height;ctx.imageSmoothingEnabled=false;keys.clear();path=[];$('dice-panel').hidden=true;$('level-rows').replaceChildren();
  for(const id of Progression.members){const row=document.createElement('div'),name=document.createElement('strong'),detail=document.createElement('div'),skill=document.createElement('small');row.className='level-row';name.textContent=NAMES[id]+' · Lv 2';detail.textContent='HP '+BASE_STATS[id].hp+' → '+STATS[id].hp+' · Hit +'+BASE_STATS[id].atk+' → +'+STATS[id].atk;skill.textContent=SPECIAL[id].name+' '+BASE_SPECIAL[id].uses+' → '+SPECIAL[id].uses+' uses';detail.append(skill);row.append(name,detail);$('level-rows').append(row);}
