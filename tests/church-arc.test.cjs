@@ -1936,6 +1936,14 @@ test('Dark Rain gates the skull behind the bargain and Reese’s solo hunt',asyn
  w.quest=capture().quest;
  assert(w.Inventory.items(w.quest,2).some(item=>item.id==='polar_bear_carcass'));
  assert(w.Inventory.items(w.quest,2).some(item=>item.id==='polar_bear_winter_clothing'));
+ assert.equal(w.DarkRain.goal(),'Inspect the frozen undead [0/2]');
+ assert.equal(await w.DarkRain.interact('darkrainReadSkull'),false);
+ await step('darkrainReadWights');
+ w.quest=capture().quest;
+ assert.equal(w.DarkRain.goal(),'Inspect the frozen undead [1/2]');
+ assert.equal(await w.DarkRain.interact('darkrainReadWights'),false);
+ await step('darkrainReadGiant');
+ assert.equal(w.DarkRain.target().id,'darkrainReadSkull');
  await step('darkrainReadSkull');
  await step('darkrainThroughSkull');
  assert.equal(w.scene,'darkrain_skull_passage');
@@ -1944,6 +1952,8 @@ test('Dark Rain gates the skull behind the bargain and Reese’s solo hunt',asyn
  assert.equal(saved.quest.darkrainComplete,undefined);
  const legacy={...saved,scene:'darkrain_skull_slope',position:{x:328,y:152},quest:{...saved.quest,darkrainComplete:true}};
  delete legacy.quest.darkrainInsideSkull;
+ delete legacy.quest.darkrainGiantInspected;
+ delete legacy.quest.darkrainWightsInspected;
  assert.equal(w.SaveFiles.validate(legacy).scene,'darkrain_skull_slope');
  saved.quest.darkrainPact=false;
  assert.throws(()=>w.SaveFiles.validate(saved),/Invalid Dark Rain sequence/);

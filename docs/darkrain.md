@@ -4,6 +4,10 @@ GM timeline row S138 places Freya’s visit to the Pass of Dark Rain and Draymus
 
 The Wight Mother’s appearance, layout, exact dialogue, bear statistics and timing of the ascent are game adaptations. The winter clothing and retained carcass are recorded in the inventory. The carcass carries forward for its documented use later in the mountain expedition.
 
+## The frozen undead
+
+Replay **421** lets the player inspect the storm giant skeleton and winter wights in either order. Both observations save, and the objective counts them before Draymus gives his interpretation of the ward. The individual examination points and the faint blue light are game staging for the recorded discovery. Earlier saves that already reached Draymus’s explanation can still proceed to the jaws.
+
 ## Through the dragon’s jaws
 
 Replay 422 leads from the slope into the skull. Replay 423 starts inside the passage, where the party can follow the floor to the far side of the ridge. P001 describes the party passing through the skull. The cavern layout and faint ward lights are adaptations. Checkpoints from earlier builds that already completed the crossing still lead directly into Frost Giant territory.
@@ -35,3 +39,5 @@ Keep the exact three left-facing dire polar bear poses, scale, framing and order
 ## Verification
 
 The browser playthrough continued from the Nidal lair, completed the bargain, climbed to the skull, and won the bear fight as Reese alone. It reloaded after the hunt, made winter clothing, and reloaded the completed crossing at 640×480 with no console errors. All 162 automated tests passed. The structural audit checked 152 scenes, 426 replays and 639 sprite frames.
+
+The frozen-undead audit played replay 421 at 640×480, inspected the wights first, reloaded at [1/2], inspected the skeleton, and heard Draymus’s explanation before the jaws objective appeared. No browser errors appeared. All 174 tests passed, and the structural audit checked 476 replays.

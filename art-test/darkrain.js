@@ -28,7 +28,9 @@ window.DarkRain=(()=>{
     {id:'darkrainCold',x:328,y:272,label:'Stop in the shelter of the rocks'},
     {id:'darkrainHunt',speaker:bear,x:440,y:240,label:'Hunt the dire polar bear as Reese'},
     {id:'darkrainMakeClothing',x:440,y:240,label:'Make winter clothing from the hide'},
-    {id:'darkrainReadSkull',x:328,y:192,label:'Examine the frozen undead and the skull'},
+    {id:'darkrainReadGiant',x:136,y:200,label:'Inspect the storm giant skeleton'},
+    {id:'darkrainReadWights',x:504,y:200,label:'Inspect the frozen winter wights'},
+    {id:'darkrainReadSkull',speaker:'draymus',x:328,y:192,label:'Ask Draymus about the ward'},
     {id:'darkrainThroughSkull',x:328,y:152,label:'Enter the dragon’s jaws'}
    ]
   };
@@ -69,12 +71,24 @@ window.DarkRain=(()=>{
   if(scene===pass)return [point(quest.darkrainPact?'darkrainClimb':'darkrainMeetMother')];
   if(scene!==slope)return null;
   if(quest.darkrainComplete)return [];
-  const id=!quest.darkrainColdSeen?'darkrainCold':!quest.darkrainBearWon?'darkrainHunt':
-   !quest.darkrainClothed?'darkrainMakeClothing':!quest.darkrainSkullSeen?'darkrainReadSkull':'darkrainThroughSkull';
-  return [point(id)];
+  if(!quest.darkrainColdSeen)return [point('darkrainCold')];
+  if(!quest.darkrainBearWon)return [point('darkrainHunt')];
+  if(!quest.darkrainClothed)return [point('darkrainMakeClothing')];
+  if(quest.darkrainSkullSeen)return [point('darkrainThroughSkull')];
+  const clues=[];
+  if(!quest.darkrainGiantInspected)clues.push(point('darkrainReadGiant'));
+  if(!quest.darkrainWightsInspected)clues.push(point('darkrainReadWights'));
+  return clues.length?clues:[point('darkrainReadSkull')];
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===slope&&quest.darkrainComplete?'The company has passed through the dragon’s skull.':null);}
+ function goal(){
+  const next=target();
+  if(next?.id==='darkrainReadGiant'||next?.id==='darkrainReadWights'){
+   const inspected=Number(!!quest.darkrainGiantInspected)+Number(!!quest.darkrainWightsInspected);
+   return 'Inspect the frozen undead ['+inspected+'/2]';
+  }
+  return next?.label||(scene===slope&&quest.darkrainComplete?'The company has passed through the dragon’s skull.':null);
+ }
  function npcs(){
   if(scene===pass)return [{id:mother,x:328,y:174,height:67}];
   if(scene===passage)return [];
@@ -83,9 +97,14 @@ window.DarkRain=(()=>{
  }
  function drawWard(g,t){
   const inside=scene===passage;
-  if(!inside&&(scene!==slope||!quest.darkrainSkullSeen))return;
+  if(!inside&&scene!==slope)return;
   const motion=reduce.matches?0:t;
-  const sources=inside?[[206,212],[388,241],[382,152]]:[[249,160],[407,163]];
+  const sources=inside?[[206,212],[388,241],[382,152]]:[];
+  if(!inside){
+   if(quest.darkrainGiantInspected)sources.push([79,135]);
+   if(quest.darkrainWightsInspected)sources.push([577,139],[606,149]);
+   if(quest.darkrainSkullSeen)sources.push([249,160],[407,163]);
+  }
   g.save();
   for(const [index,[x,y]] of sources.entries()){
    const radius=inside?40:25;
@@ -133,7 +152,7 @@ window.DarkRain=(()=>{
   await say('Chronicle','Reese brings down the bear alone. Its thick hide can keep the company warm.');
  }
  async function interact(id){
-  if(target()?.id!==id)return false;
+  if(!points()?.some(p=>p.id===id))return false;
   switch(id){
    case 'darkrainLeaveNidal':
     quest.darkrainReached=true;
@@ -164,9 +183,17 @@ window.DarkRain=(()=>{
     await say('Chronicle','Reese makes winter clothing from the bear’s hide. The company keeps the carcass as it prepares to move on.');
     quest.darkrainClothed=true;
     break;
+   case 'darkrainReadGiant':
+    await say('Chronicle','Frost hangs from the storm giant’s ribs. Its bones do not move as the company approaches.');
+    quest.darkrainGiantInspected=true;
+    break;
+   case 'darkrainReadWights':
+    await say('Chronicle','The winter wights stand frozen beside the jaws, each caught in place.');
+    quest.darkrainWightsInspected=true;
+    break;
    case 'darkrainReadSkull':
-    await say('Chronicle','A storm giant skeleton and winter wights stand motionless beside the immense skull.');
-    await say('draymus','I can feel the bones holding them. It’s like Halt Undead. This might have been an ancestor of the gold or silver dragons.');
+    await say('draymus','A storm giant skeleton and winter wights, all stopped in the same place. I can feel the ward, but it lets me through.');
+    await say('draymus','It reminds me of Halt Undead. My guess is these bones once belonged to an ancestor of the gold or silver dragons.');
     quest.darkrainSkullSeen=true;
     break;
    case 'darkrainThroughSkull':

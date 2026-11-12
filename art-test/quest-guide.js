@@ -10,7 +10,7 @@ window.QuestGuide={current(){
  const skadi=window.SkadiParley?.goal();
  if(skadi)return {text:skadi,target:SkadiParley.target()};
  const darkrain=window.DarkRain?.goal();
- if(darkrain)return {text:darkrain,target:DarkRain.target()};
+ if(darkrain)return {text:darkrain,target:DarkRain.target(),targets:DarkRain.points()??[]};
  const tathlum=window.TathlumHunt?.goal();
  if(tathlum)return {text:tathlum,target:TathlumHunt.target()};
  const menador=window.Menador?.goal();
