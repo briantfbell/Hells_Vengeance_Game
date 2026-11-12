@@ -373,3 +373,5 @@ Continue from the fountain court or select replay **456**. Break Sylvestra Hanel
 ### El Guapo scouts Barleybridge
 
 Continue from the inner temple or select replay **460**. Follow El Guapo’s solo reconnaissance of the river crossing and town gate. Replays **460–463** cover the cutaway and scouting. See [the section notes](docs/barleybridge-scout.md) for the Foundry references and the remaining gaps in the ritual timeline.
+
+Replay **464** reviews the documented Tathlum plan for Barleybridge, Warlock Island, and Egorian.

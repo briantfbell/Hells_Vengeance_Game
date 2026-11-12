@@ -15,3 +15,14 @@ Wide 8:5 landscape orthographic overhead three-quarter RPG map, richly detailed 
 ## Verification
 
 The browser playthrough continued from the St. Ilnius checkpoint, verified El Guapo was the only playable member, and reloaded after the crossing and after the report. The game ran at 640×480 without console errors. All 168 automated tests passed. The structural audit checked 165 scenes, 467 replays and 657 sprite frames.
+
+## Playable briefing
+
+Replay **464** presents the plan as three consecutive journey cards from El Guapo’s completed scouting checkpoint. It records the plan in the journal without advancing the outcome of any of the three objectives. The browser audit checked each card’s content and order and reloaded the handoff at 640×480 without console errors. All 168 automated tests passed. The structural audit checked 165 scenes, 468 replays and 657 sprite frames.
+
+## Questions for the campaign record
+
+- After El Guapo scouted Barleybridge, did the rest of the company reach the town? What did El Guapo report, who was there, and what happened next?
+- The GM timeline lists blood from 100 slain innocents, while the Foundry player notes say 1,000 in a single day. Which was the requirement at the table, and was it ever fulfilled?
+- Did the company reach the Archive of Redacted Histories on Warlock Island? If they did, who was involved, what happened at the archive, and were its ashes applied to Parnoneryx’s head?
+- Did Queen Abrogail receive the prepared head, and did she complete or use the Tathlum? What happened in Westcrown after Freya’s assignment?

@@ -11,7 +11,8 @@ window.BarleybridgeScout=(()=>{
    points:[
     {id:'barleybridgeBridge',x:168,y:216,label:'Scout the river crossing'},
     {id:'barleybridgeGate',x:456,y:224,label:'Observe the town gate'},
-    {id:'barleybridgeReport',x:328,y:344,label:'Mark the route for the company'}
+    {id:'barleybridgeReport',x:328,y:344,label:'Mark the route for the company'},
+    {id:'barleybridgePlan',x:328,y:344,label:'Review the Tathlum plan'}
    ]
   };
   MAP_LAYERS[approach]={foreground:image,contain:true,background:{type:'solid',color:'#222c37'}};
@@ -24,11 +25,12 @@ window.BarleybridgeScout=(()=>{
  function points(){
   if(scene===temple&&quest.ilniusTempleComplete)return [point('barleybridgeCutaway')];
   if(scene!==approach)return null;
-  if(quest.barleybridgeScoutComplete)return [];
-  return [point(!quest.barleybridgeCrossingSeen?'barleybridgeBridge':!quest.barleybridgeGateSeen?'barleybridgeGate':'barleybridgeReport')];
+  if(quest.barleybridgePlanReviewed)return [];
+  const id=!quest.barleybridgeCrossingSeen?'barleybridgeBridge':!quest.barleybridgeGateSeen?'barleybridgeGate':!quest.barleybridgeScoutComplete?'barleybridgeReport':'barleybridgePlan';
+  return [point(id)];
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===approach&&quest.barleybridgeScoutComplete?'The approach is marked. El Guapo waits outside Barleybridge.':null);}
+ function goal(){return target()?.label||(scene===approach&&quest.barleybridgePlanReviewed?'El Guapo waits outside Barleybridge. The company’s next move is pending.':null);}
  async function interact(id){
   if(target()?.id!==id)return false;
   switch(id){
@@ -47,6 +49,12 @@ window.BarleybridgeScout=(()=>{
    case 'barleybridgeReport':
     await say('guapo','Bridge, gate, and a place to wait out of sight. That’ll do for a first look.');
     quest.barleybridgeScoutComplete=true;
+    break;
+   case 'barleybridgePlan':
+    await journeyCard('Tathlum Plan · Barleybridge','The company plans to use the blood of slain innocents at Barleybridge to anoint Parnoneryx’s head.',()=>{});
+    await journeyCard('Tathlum Plan · Warlock Island','The next target is the Archive of Redacted Histories. The company intends to burn the archive and apply its ashes to the dragon’s head.',()=>{});
+    await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.',()=>{});
+    quest.barleybridgePlanReviewed=true;
     break;
   }
   save();

@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.barleybridgePlanReviewed)rows.push('Tathlum plan · Anoint Parnoneryx’s head at Barleybridge, add ashes from the Archive of Redacted Histories on Warlock Island, and bring the prepared head to Abrogail in Egorian.');
   if(q.barleybridgeReached)rows.push('Barleybridge · El Guapo is sent ahead to scout. The company expects a limited paladin presence.');
   if(q.ilniusDefiled)rows.push('St. Ilnius · 20 Gozran, 4717. J’Mal kills Sylvestra Hanel, and Jason defiles the temple with Parnoneryx’s head. An ancient library is still needed.');
   if(q.ilniusStatuesCleared)rows.push('St. Ilnius Fountain · Bruce escapes the guardians’ opening strike with Blink. The company defeats the five archon statues.');

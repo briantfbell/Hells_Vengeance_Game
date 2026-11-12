@@ -1,7 +1,7 @@
 {
   "scripts": 100,
   "scenes": 165,
-  "replays": 467,
+  "replays": 468,
   "framesInspected": 657,
   "framesChecked": 657,
   "uncheckedFrames": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 686328115,
+  "assetBytes": 686329341,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",

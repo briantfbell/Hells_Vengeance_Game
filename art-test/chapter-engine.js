@@ -45,7 +45,7 @@ const q=[from],prev=new Map([[from.join(','),null]]);for(let i=0;i<q.length;i++)
 function soloScout(){return scene==='tannery'&&!quest.scouted;}
 function soloParty(){return soloScout()||(scene==='bathroom'&&!quest.bathStarted)||PoliticalMovement.soloWatch();}
 function partyRoster(){return window.BarleybridgeScout?.roster()||window.IlniusFountain?.roster()||window.DinyarRecon?.roster()||window.MolthuneCoffin?.roster()||window.SkadiParley?.roster()||window.DarkRain?.roster()||window.TathlumHunt?.roster()||window.Menador?.roster()||window.BarrowCovenant?.roster()||window.BarrowTrail?.roster()||window.VyreWish?.roster()||window.SethicMansion?.roster()||window.BellflowerBarn?.roster()||window.BellflowerBarge?.roster()||window.Pezzack?.roster()||window.Rachikan?.roster()||window.Ballerina?.roster()||window.HinjiTavern?.roster()||window.PaleBall?.roster()||window.EfisioArc?.roster()||window.EgorianFountain?.roster()||window.EgorianDischarge?.roster()||window.AregoExit?.roster()||window.AregoReturn?.roster()||window.AregoAmbush?.roster()||window.SenaraDaggers?.roster()||window.SenaraCover?.roster()||window.SenaraArrival?.roster()||window.EgorianExecution?.roster()||window.EgorianMort?.roster()||window.EgorianTrial?.roster()||window.EgorianNight?.roster()||window.SouthRoad?.roster()||window.SupplyArc?.roster()||window.CovertArc?.roster()||DisruptionArc.roster()||KantariaArc.roster()||CourtArc.roster()||FortArc.roster()||ArmoryArc.roster()|| (soloParty()?['jamal']:(quest.activeRoster||(quest.reeseJoined?CORE:OPENING_ROSTER)));}
-function finished(){return !!quest.barleybridgeScoutComplete;}
+function finished(){return !!quest.barleybridgePlanReviewed;}
 function seedParty(x,y,dir='up'){
  const start=cell(x,y),seen=new Set([start.join(',')]);trail=[start];let cur=start,heading=dir==='up'?'down':'up';
  for(let i=0;i<16;i++){let next=null;for(const d of [heading,'left','right','up','down']){const v=DIR[d],a=[cur[0]+v[0],cur[1]+v[1]];if(passable(...a)&&!seen.has(a.join(','))){next=a;heading=d;break;}}if(!next)break;trail.push(next);seen.add(next.join(','));cur=next;}
@@ -1048,6 +1048,7 @@ function replaySections(){
  add('barleybridge-crossing','461 · The Barleybridge crossing','barleybridge_approach',[328,344],'barleybridgeReached');
  add('barleybridge-gate','462 · The Barleybridge gate','barleybridge_approach',[168,216],'barleybridgeCrossingSeen');
  add('barleybridge-report','463 · Mark the approach','barleybridge_approach',[456,224],'barleybridgeGateSeen');
+ add('barleybridge-plan','464 · Review the Tathlum plan','barleybridge_approach',[328,344],'barleybridgeScoutComplete');
  return list;
 }
 function replayAllowed(){return ready&&!introOpen&&!dialogOpen&&!battle&&!taskBusy&&!journeyOpen&&!levelOpen;}
