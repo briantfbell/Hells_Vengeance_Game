@@ -1051,7 +1051,9 @@ function replaySections(){
  add('tathlum-patrol','409A · The Gheistano patrol','gheistano_road',[328,344],'tathlumBorderReached');
  add('tathlum-cover','409B · Slip past the patrol','gheistano_road',[296,248],'tathlumPatrolSpotted');
  add('tathlum-village','410 · Investigate the giant attacks','nidal_hunt_village',[328,344],'tathlumNidalReached');
- add('tathlum-track','411 · Follow the cave-giant trail','nidal_hunt_village',[216,200],'tathlumThrallMade');
+ add('tathlum-track','411 · Follow the thrall','nidal_hunt_village',[216,200],'tathlumThrallMade');
+ add('tathlum-attack-site','411A · The last cave-giant attack','nidal_giant_attack_site',[328,344],'tathlumAttackReached');
+ add('tathlum-trail-found','411B · The trail uphill','nidal_giant_attack_site',[216,248],'tathlumAttackExamined');
  add('tathlum-bait','412 · The cave-giant lair','nidal_giant_lair',[328,344],'tathlumLairReached');
  add('tathlum-duels','413 · Freya’s cave-giant duels','nidal_giant_lair',[328,248],'tathlumBaitSet');
  q.tathlumDuels=3;

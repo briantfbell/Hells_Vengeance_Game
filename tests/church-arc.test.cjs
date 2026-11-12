@@ -152,7 +152,7 @@ test('replay search matches section numbers, punctuated names and location names
  assert.equal(find('').length,sections.length);
 });
 
-test('all 470 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,470);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
+test('all 472 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,472);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
 test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
@@ -1835,7 +1835,19 @@ test('the Nidal hunt counts three separate Freya duels and records the belt rune
  delete missingSighting.quest.tathlumBorderReached;
  assert.equal(w.SaveFiles.validate(missingSighting).scene,'nidal_hunt_village');
  await step('tathlumThrall');
+ await step('tathlumFollowThrall');
+ assert.equal(w.scene,'nidal_giant_attack_site');
+ assert.equal(await w.TathlumHunt.interact('tathlumTrack'),false);
+ await step('tathlumExamineAttack');
+ const trail=checkpoint(w,{...replay('tathlum-trail-found'),quest:w.quest});
+ w.quest=w.SaveFiles.decode(w.SaveFiles.encode(trail)).quest;
+ assert.equal(w.TathlumHunt.goal(),'Follow the tracks uphill');
  await step('tathlumTrack');
+ const lair=checkpoint(w,{...replay('tathlum-bait'),quest:w.quest});
+ delete lair.quest.tathlumAttackExamined;
+ assert.throws(()=>w.SaveFiles.validate(lair),/has not picked up the cave-giant trail/);
+ delete lair.quest.tathlumAttackReached;
+ assert.equal(w.SaveFiles.validate(lair).scene,'nidal_giant_lair');
  await step('tathlumBait');
  assert.deepEqual([...w.TathlumHunt.roster()],['freya']);
  const capture=()=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('tathlum-duels'),quest:w.quest})));

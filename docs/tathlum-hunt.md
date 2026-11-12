@@ -10,7 +10,17 @@ The approach is playable in sections 409A and 409B. The player spots the patrol 
 
 The approach map is `art-test/gheistano-road-v1.png`. The patrol uses a transparent three-frame sheet at `art-test/nidal-patrol-v1.png` with a standing pose and alternate footfalls.
 
+## The last cave-giant attack
+
+Replays 411A and 411B expand the sequence from P001: Draymus’s thrall shows the company where the cave giants attacked, and Reese tracks them to their lair. The ruined holding, specific traces and dialogue are staging. Earlier checkpoints at the lair still load with their original state.
+
 ## Artwork prompts
+
+**Attack site** · `art-test/tathlum-nidal-attack-site-v1.png`
+
+Create a new detailed pixel art game environment, wide 8:5 landscape, for a 640×400 map in a dark fantasy RPG. Orthographic overhead three-quarter view, same scale as a 16-pixel tile walking map. A small abandoned Nidalese outlying hillside holding where a cave giant attacked recently: one small dark timber shed with a smashed corner and broken fence on the LEFT upper side only, weathered gray stone retaining wall, scattered timbers and disturbed dirt. A broad muddy open clearing from x 19–80 percent and y 45–87 percent, connected to a broad entry from bottom center; an uphill open rocky foot trail exits toward upper right x 72–80 percent starting at y 25 percent. Oversized faint humanoid footprints clearly pressed in wet earth along the trail to the right, without any other obstacles in the walkable foreground. Pine trees and rocky hills around the margins, mist in the upper distance, overcast twilight. Cool slate, muted forest greens, earthy gray-brown mud, restrained warm wood hues. Rich crisp hand-placed pixel clusters, hard edges, coherent realistic scale, no perspective horizon line. No figures, gore, fires, text, symbols, lettering, grid or UI.
+
+Outpaint this exact Nidal cave giant attack site pixel art map horizontally into a much wider 8:5 landscape game environment (target 1600×1000). Keep the original artwork, color palette, mud, broken shed, damage, and giant footprints as intact as possible at the center. Add the minimum width needed on the far left and far right, extending matching shadowed trees and rocky borders so the scene fills the wider aspect ratio edge to edge. Do not crop the existing lower entrance or upper right exit. The artwork must read as a detailed overhead three-quarter pixel art game map, and keep the full central walkable clearing. No UI, text, people or new structures.
 
 **Nidal village** · `art-test/tathlum-nidal-village-v1.png`
 

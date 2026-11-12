@@ -1,7 +1,7 @@
 "use strict";
 
 window.TathlumHunt=(()=>{
- const pass='menador_pass',orders='tathlum_orders',border='gheistano_road',village='nidal_hunt_village',cave='nidal_giant_lair';
+ const pass='menador_pass',orders='tathlum_orders',border='gheistano_road',village='nidal_hunt_village',attackSite='nidal_giant_attack_site',cave='nidal_giant_lair';
  const borderArt='gheistano-road-v1.png',patrolArt='nidal-patrol-v1.png',patrol='nidal_patrol';
  const patrolFrames=[
   {x:242,y:12,w:265,h:700,anchorX:401},
@@ -10,6 +10,7 @@ window.TathlumHunt=(()=>{
  ];
  const patrolRoute=[[488,190],[541,221],[533,255],[498,284],[476,312]];
  const townArt='tathlum-nidal-village-v1.png',caveArt='tathlum-cave-lair-v1.png',sheet='tathlum-cave-giant-v1.png';
+ const attackArt='tathlum-nidal-attack-site-v1.png';
  const giant='tathlum_cave_giant',kind='tathlum_giant_duel';
  const model={src:sheet,frames:[
   {x:4,y:17,w:617,h:670,anchorX:371,anchorY:680},
@@ -39,7 +40,15 @@ window.TathlumHunt=(()=>{
    walk:[{x:112,y:160,w:416,h:112},{x:192,y:272,w:240,h:48},{x:272,y:320,w:80,h:80},{x:288,y:128,w:64,h:32}],lights:[[177,122],[247,122],[393,116],[559,188]],
    points:[
     {id:'tathlumThrall',x:216,y:200,label:'Investigate the cave-giant attacks'},
-    {id:'tathlumTrack',x:328,y:152,label:'Follow Reese and the thrall'}
+    {id:'tathlumFollowThrall',x:328,y:152,label:'Follow the thrall to the last attack'}
+   ]
+  };
+  scenes[attackSite]={
+   name:'Nidal · The Last Cave-Giant Attack',image:attackArt,spawn:[328,344],blocks:[],
+   walk:[{x:144,y:208,w:368,h:96},{x:208,y:304,w:208,h:32},{x:288,y:336,w:80,h:64},{x:432,y:144,w:80,h:64}],lights:[],
+   points:[
+    {id:'tathlumExamineAttack',x:216,y:248,label:'Inspect the damage'},
+    {id:'tathlumTrack',x:472,y:152,label:'Follow the tracks uphill'}
    ]
   };
   scenes[cave]={
@@ -54,10 +63,12 @@ window.TathlumHunt=(()=>{
   MAP_LAYERS[orders]=MAP_LAYERS.egorian_court;
   MAP_LAYERS[border]={foreground:borderArt,contain:true,background:{type:'solid',color:'#19212b'}};
   MAP_LAYERS[village]={foreground:townArt,contain:true,background:{type:'solid',color:'#18232d'}};
+  MAP_LAYERS[attackSite]={foreground:attackArt,contain:true,background:{type:'solid',color:'#20292c'}};
   MAP_LAYERS[cave]={foreground:caveArt,contain:true,background:{type:'solid',color:'#161c23'}};
   JOURNEYS[orders]='4 Gozran, 4717. Freya returns to Egorian for the Queen’s next assignment.';
   JOURNEYS[border]='8 Gozran, 4717. Citadel Gheistano is in sight as the company enters Nidal. Avoid the patrols and continue toward the reported cave-giant attacks.';
   JOURNEYS[village]='The company leaves the patrols behind and reaches a Nidalese village near the reported cave-giant attacks.';
+  JOURNEYS[attackSite]='Draymus’s thrall leads the company to the site of the latest cave-giant attack. Look for signs of where the giants went.';
   JOURNEYS[cave]='With Reese scouting ahead, the company follows the trail to the giants’ lair.';
   NAMES[giant]='Cave Giant';
   FUTURE_NPCS[giant]={source:sheet,frame:model.frames[0]};
@@ -69,24 +80,26 @@ window.TathlumHunt=(()=>{
    (async()=>{art[border]=await loader(borderArt);})(),
    (async()=>{art[patrolArt]=await loader(patrolArt);})(),
    (async()=>{art[village]=await loader(townArt);})(),
+   (async()=>{art[attackSite]=await loader(attackArt);})(),
    (async()=>{art[cave]=await loader(caveArt);})(),
    (async()=>{art[sheet]=await loader(sheet);})()
   ]);
  }
  function mapImage(){
   if(scene===orders)return art.egorian_court;
-  return [border,village,cave].includes(scene)?art[scene]:null;
+  return [border,village,attackSite,cave].includes(scene)?art[scene]:null;
  }
  function roster(){
   if(scene===cave&&quest.tathlumBaitSet&&duels()<3)return ['freya'];
-  if(![orders,border,village,cave].includes(scene))return null;
+  if(![orders,border,village,attackSite,cave].includes(scene))return null;
   return (quest.activeRoster||CORE).filter(id=>id!=='guapo');
  }
  function points(){
   if(scene===pass&&quest.menadorComplete)return [point('tathlumReturn')];
   if(scene===orders)return [point(quest.tathlumBriefed?'tathlumDepartNidal':'tathlumReceiveOrders')];
   if(scene===border)return [point(quest.tathlumPatrolSpotted?'tathlumSkirtPatrol':'tathlumSpotPatrol')];
-  if(scene===village)return [point(quest.tathlumThrallMade?'tathlumTrack':'tathlumThrall')];
+  if(scene===village)return [point(quest.tathlumThrallMade?'tathlumFollowThrall':'tathlumThrall')];
+  if(scene===attackSite)return [point(quest.tathlumAttackExamined?'tathlumTrack':'tathlumExamineAttack')];
   if(scene!==cave)return null;
   if(quest.tathlumHuntComplete)return [];
   if(!quest.tathlumBaitSet)return [point('tathlumBait')];
@@ -104,6 +117,7 @@ window.TathlumHunt=(()=>{
    {id:'citizen-nidal-thrall',x:quest.tathlumThrallMade?321:218,y:quest.tathlumThrallMade?130:173,dir:'down',variant:6},
    {id:'citizen-nidal-villager',x:489,y:235,dir:'left',variant:1}
   ];
+  if(scene===attackSite)return [{id:'citizen-nidal-thrall',x:200,y:226,dir:'up',variant:6}];
   if(scene!==cave)return null;
   if(!quest.tathlumBaitSet)return [{id:'citizen-nidal-thrall',x:328,y:224,dir:'up',variant:6}];
   return [[270,168],[328,151],[385,173]].map(([x,y],i)=>({
@@ -181,8 +195,17 @@ window.TathlumHunt=(()=>{
     await say('reese','Let it show us the spot. I’ll take the trail from there.');
     quest.tathlumThrallMade=true;
     break;
+   case 'tathlumFollowThrall':
+    quest.tathlumAttackReached=true;
+    await travel(attackSite,328,344);
+    break;
+   case 'tathlumExamineAttack':
+    await say('draymus','It stopped here. Look what the giants did to the timber.');
+    await say('reese','The beams were torn out from the yard. See the deep prints? They lead out on the uphill side.');
+    quest.tathlumAttackExamined=true;
+    break;
    case 'tathlumTrack':
-    await say('reese','Fresh tracks go up into the hills. Stay low and keep behind me.');
+    await say('reese','This is where the trail leaves the yard. Stay low and keep behind me.');
     quest.tathlumLairReached=true;
     await travel(cave,328,344);
     break;
