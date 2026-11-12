@@ -4,7 +4,37 @@ function world(){const nodes={},w={quest:{},scene:'ash_house',lead:'freya',OPENI
 test('party authors the restrictions, and all four notices are counted',async()=>{const w=world();w.quest={chapter3:true,sermonDispersed:true};await w.NextArc.interact('razelago');assert(w.transcript.some(x=>x.text.includes('carte blanche')));assert(w.transcript.some(x=>x.text.includes('six people privately or twelve publicly')));assert(w.transcript.some(x=>x.text.includes('party’s choices')));w.PoliticalMovement.goal=()=>null;w.DebtsRumors={goal:()=>null};w.LastStand={goal:()=>null};vm.runInContext(read('quest-guide.js'),w);w.quest.noticePosted=w.quest.tavernPosted=w.quest.gatePosted=true;w.scene='longacre_jail';assert.equal(w.QuestGuide.current().text,'Post the public notices [3/4].');assert.equal(w.QuestGuide.current().target.id,'jailDecree');await w.NextArc.interact('jailDecree');assert(w.quest.jailPosted);assert(w.quest.rhonaDismissed);assert(w.transcript.some(x=>x.text.includes('fourth copy')));assert(w.transcript.some(x=>x.text.includes('Other deputies remain')));assert.equal(w.QuestGuide.current().text,'Leave the jail courtyard.');});
 test('completed payroll cannot be obtained twice',async()=>{const w=world();w.scene='tannery';w.quest={ownerDeal:true};await w.NextChapter.interact('payroll');await w.NextChapter.interact('payroll');assert.equal(w.transcript.filter(x=>x.text.includes('Obtained:')).length,1);});
 test('scouting instruction follows arrival and identifies theft',async()=>{const w=world();w.quest={metCimri:true,supplied:true,guapoAway:true};await w.NextChapter.interact('road');assert.equal(w.travels[0],'tannery');assert(w.transcript[0].text.includes('steal the payroll'));assert(w.transcript[1].text.includes('scout over the palisade'));});
-test('voyage preserves Pezzack, pirates, Corentyn order without advance Razelago knowledge',async()=>{const w=world();w.quest={};await w.NextChapter.interact('voyage');assert(!w.transcript[0].text.includes('Razelago'));await w.NextChapter.interact('land');assert.deepEqual(w.journeys.map(x=>x.title),['Pezzack · Unwanted recognition','The Western Star · A pirate boarding','Corentyn · The false trail']);assert.equal(w.scene,'remesiana');assert(w.quest.scimitarDisposed);});
+test('Pezzack and the lookout gate the Western Star boarding',async()=>{
+ const w=world();
+ w.scene='western_star';
+ w.quest={chapter2:true,scimitar:true,voyageSeen:true};
+ w.inventory.equipped.freya='scimitar';
+ assert.equal(w.NextChapter.target().id,'voyage');
+ assert.equal(await w.NextChapter.interact('land'),false);
+ await w.NextChapter.interact('voyage');
+ assert(w.quest.voyagePezzack);
+ assert.equal(w.NextChapter.target().id,'voyageLookout');
+ assert.equal(await w.NextChapter.interact('land'),false);
+ await w.NextChapter.interact('voyageLookout');
+ assert(w.quest.voyageBoardingReady);
+ assert.equal(w.NextChapter.target().id,'land');
+ assert.deepEqual(w.transcript.map(line=>line.name),['Lookout','Captain Mildred','guapo','freya']);
+ assert.match(w.transcript[1].text,/spyglass/);
+ assert.equal(w.scene,'western_star');
+ await w.NextChapter.interact('land');
+ assert.deepEqual(w.journeys.map(x=>x.title),['Pezzack · Unwanted recognition','The Western Star · A pirate boarding','Corentyn · The false trail']);
+ assert.equal(w.scene,'remesiana');
+ assert(w.quest.scimitarDisposed);
+ assert.equal(w.inventory.equipped.freya,'freya');
+
+ const older=world();
+ older.scene='western_star';
+ older.quest={chapter2:true,scimitarDisposed:true};
+ assert.equal(older.NextChapter.target().id,'voyageLand');
+ await older.NextChapter.interact('voyageLand');
+ assert.equal(older.scene,'remesiana');
+ assert.equal(older.journeys.length,0);
+});
 test('El Guapo returns on 21 Neth and rejoins the active company',async()=>{const w=world();w.quest={chapter5Complete:true,guapoAway:true,activeRoster:w.CORE.slice(0,4)};await w.PoliticalMovement.interact('movementRoad');assert(w.quest.guapoReturned);assert.equal(w.quest.guapoAway,false);assert.deepEqual(Array.from(w.quest.activeRoster),w.CORE);assert.equal(w.journeys[0].title,'Longacre · 21 Neth, 4716');assert.equal(w.scene,'gate_watch');});
 test('completed actions and future chapter interactions are hidden',()=>{const w=world(),s=read('chapter-engine.js');vm.runInContext(s.slice(s.indexOf('function storyPointAvailable('),s.indexOf('function visiblePoints(')),w);assert.equal(w.storyPointAvailable({id:'bolgartStocks'}),false);assert.equal(w.storyPointAvailable({id:'manorRoad'}),false);w.quest={payroll:true,decreesIssued:true};assert.equal(w.storyPointAvailable({id:'payroll'}),false);assert.equal(w.storyPointAvailable({id:'gateDecree'}),true);});
 test('a confirmation cannot instantly dismiss a newly opened dialogue',()=>{const w=world(),s=read('chapter-engine.js');w.GameAudio={effect:()=>{}};w.keys={clear:()=>{}};w.canvas={focus:()=>{}};vm.runInContext('let dialogOpen=true,dialogOpenedAt=0,dialogResolve=()=>window.resolved=true;'+s.slice(s.indexOf('function finishDialog('),s.indexOf('function run(')),w);w.performance.now=()=>100;w.finishDialog();assert(!w.resolved);w.performance.now=()=>200;w.finishDialog();assert(w.resolved);});

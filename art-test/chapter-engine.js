@@ -56,7 +56,7 @@ const JOURNEYS={
  street:'Return to Kintargo’s streets. Keep the operation quiet and follow the route to the next objective.',
  tavern:'Shensen, the famous actress, is absent from her musical instrument shop, the Silver Star. Jason searches for the entrance to the hidden temple of Sarenrae.',
  temple:'Descend beneath the Silver Star. Find Viggo, end the temple, and leave the false evidence.',
- western_star:'Kintargo falls behind the party. Their route runs through Pezzack, a pirate encounter, and Corentyn before Remesiana.',
+ western_star:'Kintargo falls behind the party. The first stop on the voyage is Pezzack.',
  remesiana:'10 Neth, 4716. The Western Star reaches Remesiana. Meet Cimri and arrange the road to Freya’s next assignment in Longacre.',
  last_stand:'The posted decree has been torn down. Repost it while J’Mal watches the back door. Subdue resistance and take the prisoners to jail.',
  angel_hill:'Riley describes a meeting two miles outside Longacre. Keep him under guard and inspect the hill before returning to the jail.',
@@ -355,6 +355,7 @@ async function awardSermonMilestone(){
 function readSave(){try{const raw=localStorage.getItem(SAVE);return raw?window.SaveFiles.decode(raw):null;}catch{return null;}}
 // Later Ash House interactions are exposed only by their chapter’s gated points() handler.
 function storyPointAvailable(p){
+ if(scene==='western_star')return p.id===NextChapter.target()?.id;
  const completed={supplies:'supplied',cimri:'metCimri',guapoDeparture:'guapoAway',scout:'scouted',owner:'ownerDeal',payroll:'payroll',rest:'rested',bathStairs:'spiritCalmed',sermon:'sermonDispersed',noticeDecree:'noticePosted',tavernDecree:'tavernPosted',gateDecree:'gatePosted',jailDecree:'rhonaDismissed'};
  if(completed[p.id]&&quest[completed[p.id]])return false;
  if(['noticeDecree','tavernDecree','gateDecree','jailDecree'].includes(p.id)&&!quest.decreesIssued)return false;
@@ -821,7 +822,10 @@ function replaySections(){
  const add=(id,name,map,position,flags='')=>{for(const k of flags.split(' ').filter(Boolean))q[k]=true;list.push({id,name,scene:map,position,quest:structuredClone(q)});};
  add('mission','01 · The mission orders','street',[312,248]);q.briefed=true;
  add('streets','02 · Kintargo streets','street',[312,248]);add('tavern','03 · The Silver Star','tavern',[312,280],'entered');add('temple','04 · Viggo’s temple','temple',[312,312],'ropeCut');
- add('ship','05 · The Western Star','western_star',[360,248],'victory scimitar planted burned done chapter2');q.scimitarDisposed=true;add('market','06 · Remesiana harbor','remesiana',[520,280]);
+ add('ship','05 · The Western Star','western_star',[360,248],'victory scimitar planted burned done chapter2');
+ add('ship-lookout','05A · The pursuing sail','western_star',[360,144],'voyagePezzack');
+ add('ship-boarding','05B · The pirate boarding','western_star',[104,144],'voyageBoardingReady');
+ q.scimitarDisposed=true;add('market','06 · Remesiana harbor','remesiana',[520,280]);
  add('tannery','07 · J’Mal scouts the tannery','tannery',[136,280],'supplied metCimri guapoAway');q.activeRoster=OPENING_ROSTER.filter(id=>id!=='guapo');list.at(-1).quest=structuredClone(q);
  add('employer','08 · Ash House employer','ash_house',[328,328],'scouted ownerDeal payroll');q.goldReward=100;add('rest','09 · Rest at Ash House','ash_house',[328,296],'reward');add('bath','10 · The upstairs bath','bathroom',[328,328],'rested');
  add('sermon','11 · Allamar’s sermon','longacre_square',[328,296],'bathStarted jamalRescued spiritCalmed chapter2Complete chapter3');
