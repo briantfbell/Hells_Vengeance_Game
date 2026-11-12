@@ -436,6 +436,22 @@ test('Riley’s interrogation yields both facts before the letter unlocks the ho
   assert(w.quest.doctorAlliance);
   assert(w.transcript.some(line=>line.text.includes('ask the Archbaron to forgive your unpaid taxes')));
   assert.equal(w.DebtsRumors.target().id,'churchRoad');
+  await w.DebtsRumors.interact('churchRoad');
+  assert.equal(w.scene,'longacre_church_front');
+  assert.equal(w.DebtsRumors.target().id,'churchForceDoor');
+  assert.equal(await w.DebtsRumors.interact('churchInspect'),false);
+  w.epoch=1;
+  w.reduce={matches:false};
+  w.delay=async()=>assert.equal(w.DebtsRumors.doorPose({id:'draymus'}).x,352);
+  await w.DebtsRumors.interact('churchForceDoor');
+  assert.equal(w.scene,'longacre_church');
+  assert(w.transcript.some(line=>line.text.includes('Acid Splash')));
+  assert.equal(await w.DebtsRumors.interact('churchRepair'),false);
+  await w.DebtsRumors.interact('churchInspect');
+  await w.DebtsRumors.interact('churchRepair');
+  assert(w.quest.churchEntered&&w.quest.churchDoorsRepaired);
+  assert.equal(w.scene,'longacre_jail');
+  assert.equal(w.LastStand.target().id,'hillRoad');
  }
 });
 test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.quest={chapter6:true};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});

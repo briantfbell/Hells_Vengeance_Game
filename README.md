@@ -53,7 +53,7 @@ The admin toolbar’s **Find replay** field filters checkpoints by number, scene
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 493 replay checkpoints. Late-campaign artwork loads in batches as the player reaches the Barrowood, Dark Rain, Molthune, Citadel Dinyar, St. Ilnius, and Barleybridge. Opening a late checkpoint loads the title and common game art plus the destination batch, including its shared assets. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 494 replay checkpoints. Late-campaign artwork loads in batches as the player reaches the Barrowood, Dark Rain, Molthune, Citadel Dinyar, St. Ilnius, and Barleybridge. Opening a late checkpoint loads the title and common game art plus the destination batch, including its shared assets. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
