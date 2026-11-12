@@ -1,6 +1,6 @@
 "use strict";
 
-window.WarlockMapPreview=(()=>{
+window.ChapterMapPreview=(()=>{
  const tile=16,columns=40,rows=25;
  const layouts={
   'warlock-library-v1':{
@@ -21,8 +21,20 @@ window.WarlockMapPreview=(()=>{
     [368,112,224,32],[560,96,32,48],[544,32,32,80]
    ],
    points:[{label:'Document stacks',x:72,y:248},{label:'Display gallery',x:472,y:184}]
-
+  },
+  'barleybridge-town-v1':{
+   spawn:[328,376],
+   walk:[[288,224,64,176],[80,192,496,48],[112,160,416,32],[240,112,224,48],[448,144,80,48]],
+   occluder:[288,240,64,64],
+   points:[{label:'Market square',x:328,y:200},{label:'Inn lane',x:184,y:168},{label:'Pagoda lane',x:472,y:152}]
   }
+ };
+ const cast={
+  barleybridge_guard:{name:'Barleybridge Guardsman',caption:'Glaive · watch, thrust and ready',src:'barleybridge-guard-v1.png',frames:[
+   {x:149,y:2,w:303,h:719,anchorX:315},
+   {x:556,y:108,w:854,h:613,anchorX:1085},
+   {x:1519,y:88,w:569,h:633,anchorX:1810}
+  ]}
  };
  const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1],
   a:[-1,0],d:[1,0],w:[0,-1],s:[0,1]};
@@ -65,11 +77,13 @@ window.WarlockMapPreview=(()=>{
    g.fillRect(x-2,y-2,5,5);
   }
   const [x,y]=position;
+  const roof=selected.occluder;
+  if(roof&&x>=roof[0]&&x<roof[0]+roof[2]&&y>=roof[1]&&y<roof[1]+roof[3])g.globalAlpha=.35;
   g.fillStyle='#201722';
   g.fillRect(x-5,y-5,11,11);
   g.fillStyle='#f2b956';
   g.fillRect(x-3,y-3,7,7);
   g.restore();
  }
- return {layouts,select,key,passable,togglePaths,draw};
+ return {layouts,cast,select,key,passable,togglePaths,draw};
 })();

@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 692221907,
+  "assetBytes": 696972286,
   "largestAssets": [
     {
       "name": "menador-pass-v1.png",
@@ -41,6 +41,10 @@
       "bytes": 3763759
     },
     {
+      "name": "barleybridge-town-v1.png",
+      "bytes": 3683148
+    },
+    {
       "name": "skadi-feast-hall-v1.png",
       "bytes": 3662728
     },
@@ -51,10 +55,6 @@
     {
       "name": "barleybridge-approach-v1.png",
       "bytes": 3652420
-    },
-    {
-      "name": "south-road-ambush-v1.png",
-      "bytes": 3647774
     }
   ],
   "startupComplete": true,

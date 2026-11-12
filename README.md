@@ -381,3 +381,7 @@ Replay **464** reviews the documented Tathlum plan for Barleybridge, Warlock Isl
 ### Warlock Island layout previews
 
 Open Longacre Art Studio and select either Warlock Island map to try the walking routes. These are environment previews for the planned archive expedition. See [the map notes](docs/warlock-island-preview.md) for sources, artwork prompts and route checks.
+
+### Barleybridge town preview
+
+Longacre Art Studio includes a walkable gate and market layout and a three-pose glaive guardsman. See [the preview notes](docs/barleybridge-town-preview.md) for the Foundry references and artwork prompts.
