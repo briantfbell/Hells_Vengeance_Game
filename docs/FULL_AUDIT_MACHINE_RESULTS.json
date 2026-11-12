@@ -1,9 +1,9 @@
 {
-  "scripts": 71,
-  "scenes": 118,
-  "replays": 285,
-  "framesInspected": 580,
-  "framesChecked": 580,
+  "scripts": 72,
+  "scenes": 119,
+  "replays": 292,
+  "framesInspected": 581,
+  "framesChecked": 581,
   "uncheckedFrames": [],
   "frameErrors": [],
   "missingLiteralAssets": [],
@@ -14,7 +14,7 @@
     "accepted": false,
     "error": "Premature campaign location: church_sanctuary"
   },
-  "assetBytes": 473535551,
+  "assetBytes": 481816402,
   "largestAssets": [
     {
       "name": "whisperwood-unicorn-glade-v1.png",
@@ -58,9 +58,9 @@
     }
   ],
   "startupComplete": true,
-  "startupAssets": 186,
-  "startupCompressedBytes": 418538537,
-  "startupDecodedRgbaBytes": 1162170456,
+  "startupAssets": 189,
+  "startupCompressedBytes": 426811540,
+  "startupDecodedRgbaBytes": 1181044440,
   "startupAssetFiles": [
     "accuser-home-v1.png",
     "angel-knight-hill.png",
@@ -193,7 +193,10 @@
     "political-cast-v1.png",
     "reese-early-portrait.png",
     "reese-early-sheet-v1.png",
+    "remesiana-florio-v1.png",
     "remesiana-foreground.png",
+    "remesiana-rival-market-ruined-v1.png",
+    "remesiana-rival-market-v1.png",
     "rohalendi-hospice.png",
     "scarlet-manor.png",
     "senara-balisse-v1.png",

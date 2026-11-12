@@ -47,7 +47,7 @@ The web build is the current playable prototype. Final handheld packaging, nativ
 
 ## Validation
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 285 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
+Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 292 replay checkpoints. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
 
 Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
 
@@ -236,3 +236,8 @@ Continue after dinner at Hotel Barato or select replay **275**. Follow Reese’s
 ### Dapper Street and Remesiana
 
 Continue from the completed reconnaissance or select replay **282**. See the aftermath at Wilfordshire Tailors and return to Remesiana to find Florio Cento. Replays **282–285** cover the section. See [the section notes](docs/dapper-street.md) for sources, artwork and verification.
+
+
+### Florio Cento’s rival market
+
+Continue from Remesiana’s harbor or select replay **286**. Meet Florio, evacuate the holding bays, and destroy the market. Replays **286–292** cover the assignment and report. See [the section notes](docs/remesiana-market.md) for sources, artwork and verification.

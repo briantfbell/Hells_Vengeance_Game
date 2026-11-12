@@ -1,4 +1,6 @@
 window.QuestGuide={current(){
+ const market=window.RemesianaMarket?.goal();
+ if(market)return {text:market,target:RemesianaMarket.target()};
  const fountain=window.EgorianFountain?.goal();
  if(fountain)return {text:fountain,target:EgorianFountain.target()};
  const discharge=window.EgorianDischarge?.goal();

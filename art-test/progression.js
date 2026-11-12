@@ -52,6 +52,7 @@ window.Progression=(()=>{
   if(q.egorianChargesDropped)rows.push('The Asmodean judges deny the mistrial motion and the Duke Fellatio case ends.');
   if(q.senaraOrders)rows.push('Razelago sends the company to Senara for Fex’s ritual components.');
   if(q.senaraTalismanMissing)rows.push('Senara · Fex’s residence was burgled. The Infernal Talisman is missing.');
+  if(q.remesianaMarketDestroyed)rows.push('Remesiana · 16 Calistril, 4717. Freya’s company destroys Florio Cento’s rival slave market.');
   if(q.remesianaReturned)rows.push('Remesiana · The company returns to find Florio Cento and repay more favors.');
   if(q.egorianTailorAftermathSeen)rows.push('Egorian · 15 Calistril, 4717. Four members of the tailor’s family are found dead in the tailor shop window. The city names no suspect.');
   if(q.egorianTailorScouted)rows.push('Egorian · J’Mal and El Guapo bring back the family’s morning routes. The company makes its plan.');
