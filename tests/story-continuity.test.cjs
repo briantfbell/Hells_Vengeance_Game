@@ -544,3 +544,29 @@ test('a confirm during the last step acts once on the requested point when the l
 });
 
 test('brief direction taps start a step immediately and respect movement locks',()=>{const w=world(),s=read('chapter-engine.js');Object.assign(w,{ready:true,introOpen:false,journeyOpen:false,levelOpen:false,dialogOpen:false,taskBusy:false,battle:null,finished:()=>false,DIR:{up:[0,-1]},units:[{id:'freya',x:312,y:248,step:null}],path:[1],cell:(x,y)=>[Math.floor(x/16),Math.floor(y/16)],stepUnit:(u,x,y)=>{u.step={x,y};return true;}});vm.runInContext(s.slice(s.indexOf('function beginWalkTap('),s.indexOf('function update(')),w);assert(w.beginWalkTap('up'));assert.equal(w.units[0].step.y,14);assert.equal(w.path.length,0);assert.equal(w.beginWalkTap('up'),false);w.units[0].step=null;w.taskBusy=true;assert.equal(w.beginWalkTap('up'),false);assert.equal(w.units[0].step,null);});
+test('the custody report and Ingoe agreement survive each travel boundary',async()=>{
+ const w=world();
+ for(const file of ['last-stand-chapter.js','debts-rumors-chapter.js'])vm.runInContext(read(file),w);
+ w.scene='longacre_jail';
+ w.quest={chapter4:true,bolgartSubdued:true,prisonersJailed:true,rileyQuestioned:true,churchEntered:true,doctorAlliance:true,churchDoorsRepaired:true,hillSearched:true,bolgartSecured:true};
+ assert.equal(await w.DebtsRumors.interact('debtsRoad'),false);
+ await w.LastStand.interact('lastReport');
+ assert(w.quest.chapter4Complete);
+ assert.equal(w.scene,'ash_house');
+ assert.match(w.transcript.at(-1).text,/Ingoe Zoags/);
+ w.quest.chapter5=true;
+ assert.equal(w.DebtsRumors.target().id,'debtsRoad');
+ await w.DebtsRumors.interact('debtsRoad');
+ assert.equal(w.scene,'longacre_north_docks');
+ assert.equal(await w.DebtsRumors.interact('docksReport'),false);
+ await w.DebtsRumors.interact('ingoeTalk');
+ assert(w.quest.ingoeAgreement);
+ assert(w.transcript.some(line=>line.name==='ingoe'&&line.text.includes('Ten gold a week')));
+ await w.DebtsRumors.interact('docksReport');
+ assert.equal(w.scene,'ash_house');
+ assert.equal(w.DebtsRumors.target().id,'razelago');
+ assert(!w.quest.chapter5Complete);
+ await w.DebtsRumors.interact('razelago');
+ assert(w.quest.chapter5Complete);
+ assert.equal(w.PoliticalMovement.target().id,'movementRoad');
+});
