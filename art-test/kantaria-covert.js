@@ -10,6 +10,14 @@ window.CovertArc=(()=>{
   for(const[id,name,image]of [['covert_briefing','The Uskwood · Quiet Knives','uskwood-inn-v1.png'],['kantaria_market','Kantaria · Market Unrest','kantaria-market-v1.png'],['kantaria_patrol_lane','Kantaria · The Patrol Route','kantaria-market-v1.png'],['kantaria_guild','Kantaria · Labor Guild','kantaria-guild-v1.png'],['kantaria_manor','Kantaria · Narikopolus Manor','kantaria-manor-v1.png'],['uskwood_last_night','The Uskwood · No Shelter Left','uskwood-inn-v1.png'],['fungus_shelter','Fungus Caves · A Cold Refuge','kantaria-caves-v1.png']]){
    const s=structuredClone(scenes.uskwood_inn);s.name=name;s.image=image;s.points=[];s.blocks=[];s.spawn=[328,344];s.walk=[r(144,160,352,144),r(288,304,80,80)];s.lights=id==='fungus_shelter'?[[520,152],[144,144],[464,264]]:[[136,112],[504,112],[264,328],[368,328]];
    if(id==='kantaria_market'||id==='kantaria_patrol_lane')s.walk=[r(288,304,64,80),r(144,128,352,192)];
+   if(id==='kantaria_guild'){
+    s.walk=[r(280,288,80,96),r(128,144,384,160),r(208,128,288,32)];
+    s.lights=[[120,88],[232,56],[376,56],[504,64],[252,308],[388,308]];
+   }
+   if(id==='kantaria_manor'){
+    s.walk=[r(280,288,80,96),r(128,144,384,160),r(416,112,80,48)];
+    s.lights=[[124,64],[216,64],[424,64],[504,64],[252,308],[388,308]];
+   }
    maps[id]=scenes[id]=s;MAP_LAYERS[id]={foreground:image,background:{type:'solid',color:id==='fungus_shelter'?'#081313':'#11121b'}};
   }
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
@@ -18,8 +26,8 @@ window.CovertArc=(()=>{
    ['covert_briefing',[['covertBrief',328,200,'[Plan the covert operations]'],['marketRoad',328,344,'[Go to the market]']]],
    ['kantaria_market',[['marketSurvey',200,200,'Listen at the market stalls'],['marketStir',328,200,'Address the gathered crowd'],['patrolRoad',328,344,'[Intercept a militia patrol]']]],
    ['kantaria_patrol_lane',[['covertPatrolFight',288,216,'Ambush the militia patrol'],['framePatrol',288,184,'Plant a false account of the ambush'],['guildRoad',328,344,'[Go to the labor guild]']]],
-   ['kantaria_guild',[['guildEntry',232,200,'[Get past the guild clerk]'],['alterGuildRecords',424,184,'[Tamper with the guild records]'],['manorRoad',328,344,'[Approach Narikopolus Manor]']]],
-   ['kantaria_manor',[['manorSurvey',328,200,'[Observe the Reclamation agents]'],['takeManorArtifacts',424,200,'[Steal the displayed artifacts]'],['innReturn',328,344,'[Return to the Uskwood]']]],
+   ['kantaria_guild',[['guildEntry',168,152,'[Distract the guild clerk]'],['alterGuildRecords',456,136,'[Tamper with the guild records]'],['manorRoad',328,344,'[Approach Narikopolus Manor]']]],
+   ['kantaria_manor',[['manorSurvey',328,232,'[Watch the Reclamation patrol]'],['takeManorArtifacts',328,152,'[Steal the displayed artifacts]'],['innReturn',328,344,'[Return to the Uskwood]']]],
    ['uskwood_last_night',[['uskwoodEscapeFight',328,216,'[Fight through the Uskwood]'],['cavesRoad',328,344,'[Escape to the caves]']]],
    ['fungus_shelter',[['caveRest',232,200,'[Rest in the shelter]'],['corrineArrival',328,200,'[Meet the assigned liaison]'],['covertEnd',328,344,'[Prepare the next operation]']]]
   ])for(const[id,x,y,label]of entries)add(map,id,x,y,label);
@@ -34,7 +42,7 @@ window.CovertArc=(()=>{
   const id=({covert_briefing:quest.covertBriefed?'marketRoad':'covertBrief',kantaria_market:!quest.marketSurveyed?'marketSurvey':!quest.marketRiot?'marketStir':'patrolRoad',kantaria_patrol_lane:!quest.patrolAmbushed?'covertPatrolFight':!quest.falseBlame?'framePatrol':'guildRoad',kantaria_guild:!quest.guildEntered?'guildEntry':!quest.guildRecordsTampered?'alterGuildRecords':'manorRoad',kantaria_manor:!quest.manorObserved?'manorSurvey':!quest.manorArtifactsTaken?'takeManorArtifacts':'innReturn',uskwood_last_night:quest.escapeOpened?'cavesRoad':'uskwoodEscapeFight',fungus_shelter:!quest.caveRested?'caveRest':!quest.corrineAssigned?'corrineArrival':'covertEnd'})[scene];return [point(id)].filter(Boolean);
  }
  const target=()=>points()?.[0]||null;
- function goal(){if(!quest.chapter12Complete)return null;if(!quest.chapter13)return 'Continue: Kantaria’s covert operations.';if(quest.chapter13Complete)return 'Quiet Knives complete · The cave refuge is established.';return ({covertRoad:'Continue the campaign.',covertBrief:'Plan the covert operations.',marketRoad:'Go to the market.',marketSurvey:'Listen at Kantaria’s market stalls.',marketStir:'Stir unrest against the occupation.',patrolRoad:'Find an isolated militia patrol.',covertPatrolFight:'Ambush the militia patrol.',framePatrol:'Plant a false account of the ambush.',guildRoad:'Enter the labor guild.',guildEntry:'Get past the clerk and reach the records.',alterGuildRecords:'Tamper with the labor guild records.',manorRoad:'Approach Narikopolus Manor.',manorSurvey:'Observe the manor’s Reclamation agents.',takeManorArtifacts:'Steal the manor artifacts.',innReturn:'Return to the Uskwood.',uskwoodEscapeFight:quest.uskwoodBurned?'Fight a path out of the burning Uskwood.':'Face the fight at the Uskwood.',cavesRoad:'Leave the burning inn for the caves.',caveRest:'Rest in the damp cave shelter.',corrineArrival:'Meet Corrine, the assigned liaison.',covertEnd:'Review the next targets.'})[target()?.id]||'Continue the operation.';}
+ function goal(){if(!quest.chapter12Complete)return null;if(!quest.chapter13)return 'Continue: Kantaria’s covert operations.';if(quest.chapter13Complete)return 'Quiet Knives complete · The cave refuge is established.';return ({covertRoad:'Continue the campaign.',covertBrief:'Plan the covert operations.',marketRoad:'Go to the market.',marketSurvey:'Listen at Kantaria’s market stalls.',marketStir:'Stir unrest against the occupation.',patrolRoad:'Find an isolated militia patrol.',covertPatrolFight:'Ambush the militia patrol.',framePatrol:'Plant a false account of the ambush.',guildRoad:'Enter the labor guild.',guildEntry:'Get past the clerk and reach the records.',alterGuildRecords:'Reach the ledgers along the far wall.',manorRoad:'Approach Narikopolus Manor.',manorSurvey:'Observe the manor’s Reclamation agents.',takeManorArtifacts:'Take the artifacts from the central display.',innReturn:'Return to the Uskwood.',uskwoodEscapeFight:quest.uskwoodBurned?'Fight a path out of the burning Uskwood.':'Face the fight at the Uskwood.',cavesRoad:'Leave the burning inn for the caves.',caveRest:'Rest in the damp cave shelter.',corrineArrival:'Meet Corrine, the assigned liaison.',covertEnd:'Review the next targets.'})[target()?.id]||'Continue the operation.';}
  function npcs(){if(!quest.chapter13)return null;
   if(scene==='covert_briefing')return [{id:'loredana',x:280,y:168}];
   if(scene==='kantaria_market'){
@@ -44,8 +52,10 @@ window.CovertArc=(()=>{
    return marketCrowd.map((actor,index)=>({...actor,x:Math.round(actor.x+(index%2?1:-1)*progress*48),y:Math.round(actor.y+progress*(index<2?12:30))}));
   }
   if(scene==='kantaria_patrol_lane')return quest.patrolAmbushed?[]:patrol;
-  if(scene==='kantaria_guild')return quest.guildEntered?[]:[{id:'guild_clerk',x:216,y:176}];
-  if(scene==='kantaria_manor')return quest.manorObserved?[]:[{id:'kantaria_guard',x:264,y:192},{id:'kantaria_guard',x:392,y:192}];
+  if(scene==='kantaria_guild')return [{id:'guild_clerk',x:quest.guildEntered?136:168,y:quest.guildEntered?232:144}];
+  if(scene==='kantaria_manor')return quest.manorObserved
+   ? [{id:'kantaria_guard',x:472,y:128},{id:'kantaria_guard',x:472,y:176}]
+   : [{id:'kantaria_guard',x:248,y:184},{id:'kantaria_guard',x:392,y:184}];
   if(scene==='fungus_shelter'&&quest.caveRested)return [{id:'corrine',x:328,y:168}];return [];
  }
  function drawNPC(u){if(u.id!=='corrine')return false;drawQuestgiver('corrine',u.x,u.y,62);return true;}
@@ -73,11 +83,33 @@ window.CovertArc=(()=>{
   else if(id==='covertPatrolFight'){await say('reese','Three militia. No other patrol in sight.');await say(null,'The patrol passes the empty stalls.', ['[Spring the ambush]']);fight('covert_patrol',patrol.length);log('Patrol ambush · Defeat the militia.');}
   else if(id==='framePatrol'){await say(null,'[Leave the false account]', ['[Plant the forged report]']);await say('Chronicle','The planted account falsely blames Kantaria’s homeless freed slaves. Freya’s company carried out the ambush.');quest.falseBlame=true;}
   else if(id==='guildRoad')await travel('kantaria_guild',328,344);
-  else if(id==='guildEntry'){await say('guild_clerk','The guild’s records are not open to casual visitors.');await say('jason','We have business to settle. You need not trouble yourself with every page.');await say('Chronicle','While the clerk is occupied, the company gains access to the records room.');quest.guildEntered=true;}
-  else if(id==='alterGuildRecords'){await say('Chronicle','The company burglarizes the labor guild and tampers with its records. They leave the paperwork compromised.');await say('jamal','A quiet job. Paper hardly ever screams.');quest.guildRecordsTampered=true;}
+  else if(id==='guildEntry'){
+   await say('guild_clerk','If it’s about the new fees, you’ll have to wait.');
+   await say('jason','I can wait. Would you show me the fee schedule by the window?');
+   await say(null,'The clerk reaches for the schedule.', ['[Slip past the desk]']);
+   quest.guildEntered=true;
+  }
+  else if(id==='alterGuildRecords'){
+   await say('jamal','Here are the guild ledgers. Jason, keep him talking.');
+   await say(null,'The records are within reach.', ['[Tamper with the ledgers]']);
+   quest.guildRecordsTampered=true;
+   save();
+   await say('Chronicle','The company alters the guild records and leaves the books in their place.');
+  }
   else if(id==='manorRoad')await travel('kantaria_manor',328,344);
-  else if(id==='manorSurvey'){await say('Chronicle','Glorious Reclamation agents occupy Narikopolus Manor. The party observes their movements before slipping into the gallery.');await say('jamal','Let them watch the entrances. We only need a moment inside.');quest.manorObserved=true;}
-  else if(id==='takeManorArtifacts'){await say('Chronicle','The company steals priceless artifacts from Narikopolus Manor beneath the agents’ noses. They secure the stolen objects for removal.');await say('guapo','I appreciate a room that has already sorted its valuables for us.');quest.manorArtifactsTaken=true;}
+  else if(id==='manorSurvey'){
+   await say('reese','Two Reclamation agents. Watch the door on the right.');
+   await say(null,'The guards cross the gallery on their rounds.', ['[Wait for the guards to turn away]']);
+   quest.manorObserved=true;
+   save();
+   await say('jamal','They’re by the door. Straight to the display, then back the way we came.');
+  }
+  else if(id==='takeManorArtifacts'){
+   await say(null,'The priceless artifacts are within reach. The guards are still facing the side door.', ['[Wrap and take the artifacts]']);
+   quest.manorArtifactsTaken=true;
+   save();
+   await say('guapo','Priceless and already sorted. How considerate.');
+  }
   else if(id==='innReturn'){quest.uskwoodReturned=true;await travel('uskwood_last_night',328,344);}
   else if(id==='uskwoodEscapeFight'){if(!quest.uskwoodBurned){await journeyCard('The Uskwood · Fireballs','A fight erupts at the Uskwood. Fireballs tear through the inn, destroying the company’s shelter. They must fight their way out.');quest.uskwoodBurned=true;}fight('covert_escape',3);log('The Uskwood burns · Open an escape route.');}
   else if(id==='cavesRoad'){quest.cavesReached=true;await travel('fungus_shelter',328,344);}
