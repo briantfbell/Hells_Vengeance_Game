@@ -154,7 +154,7 @@ test('replay search matches section numbers, punctuated names and location names
 
 test('all 494 replay checkpoints validate and survive export/import, including new equipment',()=>{const w=world(),list=w.replaySections();assert.equal(list.length,494);for(const section of list){const c=w.SaveFiles.validate(checkpoint(w,section)),back=w.SaveFiles.decode(w.SaveFiles.encode(c));assert.equal(back.scene,section.scene);assert.equal(back.progression.levels.jamal,section.quest.decreesIssued?2:1);}const final=w.SaveFiles.validate(checkpoint(w,list.at(-1)));assert.equal(final.inventory.equipped.jamal,'mantis_blades');assert.equal(final.inventory.equipped.jason,'lucerne');assert.equal(final.inventory.equipped.freya,'naginata');});
 test('church saves reject skipped evidence, forged training and premature chapter locations',()=>{const w=world(),c=w.SaveFiles.validate(checkpoint(w,w.replaySections().at(-1)));for(const flag of w.ChurchArc.chain.slice(0,-2)){const bad=structuredClone(c);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad));}const early=checkpoint(w,w.replaySections()[0]);early.scene='church_hall';assert.throws(()=>w.SaveFiles.validate(early));assert.throws(()=>w.Inventory.equip(w.Inventory.fresh(),{},'jamal','mantis_blades'));});
-test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');assert.equal(w.scene,'church_flank');assert(w.ChurchArc.soloFlank());assert.equal(w.ChurchArc.npcs().length,4);await w.ChurchArc.interact('kantariaWindow');assert.equal(w.scene,'church_sanctuary');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','mantisDrill','mantisFinish','conversionRoad','dedicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
+test('church flow follows missing bodies through all four encounters and recorded aftermath',async()=>{const w=world();w.quest={chapter6Complete:true};for(const id of ['churchArcRoad','missingRemains','followChurchTracks','breachChurch','entryFight'])await w.ChurchArc.interact(id);assert.equal(w.battles[0].enemies.length,4);assert.equal(w.inventory.equipped.jason,'lucerne');await w.ChurchArc.afterBattle('church_entry');await w.ChurchArc.interact('hallRoad');await w.ChurchArc.interact('hallFight');assert(!w.units.some(u=>u.id==='jamal'));await w.ChurchArc.afterBattle('church_hall');await w.ChurchArc.interact('sanctuaryRoad');assert.equal(w.scene,'church_flank');assert(w.ChurchArc.soloFlank());assert.equal(w.ChurchArc.npcs().length,4);await w.ChurchArc.interact('kantariaWindow');assert.equal(w.scene,'church_sanctuary');await w.ChurchArc.interact('interruptRitual');await w.ChurchArc.interact('sanctuaryFight');assert.equal(w.battle.paralyzed,'jamal');await w.ChurchArc.afterBattle('church_sanctuary');await w.ChurchArc.interact('allamarFight');assert(!w.units.some(u=>u.id==='draymus'));assert(w.units.some(u=>u.id==='reese'));await w.ChurchArc.afterBattle('church_allamar');for(const id of ['destroyGhast','altarRoad','breakAltar','assassinBoon','trainingRoad','mantisLesson','mantisDrill','mantisFinish','conversionRoad','dedicateChurch','rededicateChurch','churchArcComplete'])await w.ChurchArc.interact(id);assert(w.quest.chapter7Complete);assert.equal(w.inventory.equipped.jamal,'mantis_blades');assert(w.transcript.some(x=>/twenty-four/i.test(x.text)));assert(w.transcript.some(x=>x.text.includes('head pastor')));assert.equal(w.units.length,6);});
 test('Cimri support cannot bypass the normal last-enemy victory path',async()=>{const w=world(),enemy={id:'church_acolyte',name:'Acolyte',hp:2};w.battle={kind:'church_entry'};w.livingEnemy=()=>enemy;w.animateAction=async(a,t,k,h,impact)=>impact();w.flash=()=>{};await w.ChurchArc.support();assert.equal(enemy.hp,1);await w.ChurchArc.support();assert.equal(enemy.hp,1);});
 test('Allamar’s wolf remains until she falls and cannot keep her battle open',()=>{
  const w=world();
@@ -223,7 +223,41 @@ test('Kantaria portable saves reject skipped rescue prerequisites and premature 
 test('dock operation saves retain partial fires and reject skipped escape or premature towers',()=>{const w=world(),list=w.replaySections(),before=checkpoint(w,list.find(s=>s.id==='dock-fires'));before.quest.dockOfficeBurned=true;const back=w.SaveFiles.decode(w.SaveFiles.encode(before));assert(back.quest.dockOfficeBurned);assert.equal(back.quest.docksBurned,undefined);const incomplete=structuredClone(before);incomplete.quest.docksBurned=true;assert.throws(()=>w.SaveFiles.validate(incomplete),/Incomplete dock fires/);const early=structuredClone(before);early.scene='kantaria_west_tower';assert.throws(()=>w.SaveFiles.validate(early),/Premature Chapter Twelve/);const skipped=checkpoint(w,list.find(s=>s.id==='north-assault'));skipped.quest.jonasEscaped=false;assert.throws(()=>w.SaveFiles.validate(skipped),/disruption sequence/);});
 
 test('covert saves reject skipped operations, retain pre-fight fire and preserve previous chapter progress',()=>{const w=world(),list=w.replaySections(),final=checkpoint(w,list.find(s=>s.id==='covert-end'));final.quest.chapter13Complete=true;assert.equal(w.SaveFiles.decode(w.SaveFiles.encode(final)).quest.corrineAssigned,true);for(const flag of ['chapter12Complete','chapter13','covertBriefed','marketSurveyed','marketRiot','patrolAmbushed','falseBlame','guildEntered','guildRecordsTampered','manorObserved','manorArtifactsTaken','uskwoodReturned','uskwoodBurned','escapeOpened','cavesReached','caveRested','corrineAssigned']){const bad=structuredClone(final);bad.quest[flag]=false;assert.throws(()=>w.SaveFiles.validate(bad),/covert sequence/);}const before=checkpoint(w,list.find(s=>s.id==='uskwood-fire'));before.hp.jamal=4;before.potions=0;const saved=w.SaveFiles.decode(w.SaveFiles.encode(before));assert(saved.quest.uskwoodBurned);assert(!saved.quest.escapeOpened);assert.equal(saved.hp.jamal,4);assert.equal(saved.potions,0);assert.equal(saved.progression.levels.jamal,2);const early=checkpoint(w,list.find(s=>s.id==='covert-plan'));early.scene='fungus_shelter';assert.throws(()=>w.SaveFiles.validate(early),/Premature Chapter Thirteen/);const old=checkpoint(w,list.find(s=>s.id==='covert-start'));assert(w.SaveFiles.validate(old).quest.chapter12Complete);assert(!w.SaveFiles.validate(old).quest.chapter13);});
-test('entry, hallway and sanctuary are distinct and renovation retains ruins until dedication',async()=>{const w=world();w.quest={chapter6Complete:true,chapter7:true,altarBroken:true};w.art.churchBroken={id:'ruins'};w.scene='church_asmodeus';assert.equal(w.ChurchArc.mapImage(),w.art.churchBroken);assert.notEqual(w.scenes.church_entry.image,w.scenes.church_hall.image);assert.notEqual(w.scenes.church_hall.image,w.scenes.church_sanctuary.image);w.say=async(name,text)=>{if(name==='jason'){assert.equal(w.ChurchArc.mapImage(),w.art.churchBroken);assert(!w.quest.churchConverted);}};await w.ChurchArc.interact('dedicateChurch');assert(w.quest.churchConverted);assert.notEqual(w.ChurchArc.mapImage(),w.art.churchBroken);});
+test('the sanctuary stays ruined through payment and Jason’s ritual, then Cimri takes office',async()=>{
+ const w=world(),section=w.replaySections().find(s=>s.id==='church-conversion');
+ w.quest=structuredClone(section.quest);
+ w.scene=section.scene;
+ w.art.churchBroken={id:'ruins'};
+ w.art.church_asmodeus={id:'restored'};
+ assert.notEqual(w.scenes.church_entry.image,w.scenes.church_hall.image);
+ assert.notEqual(w.scenes.church_hall.image,w.scenes.church_sanctuary.image);
+ assert.equal(w.ChurchArc.target().id,'dedicateChurch');
+ assert.equal(await w.ChurchArc.interact('rededicateChurch'),false);
+ await w.ChurchArc.interact('dedicateChurch');
+ assert(w.quest.churchRenovationPaid);
+ assert.equal(w.ChurchArc.mapImage(),w.art.churchBroken);
+ assert.equal(w.ChurchArc.target().id,'rededicateChurch');
+ const mid=checkpoint(w,section);
+ mid.quest=w.quest;
+ w.quest=w.SaveFiles.decode(w.SaveFiles.encode(w.SaveFiles.validate(mid))).quest;
+ assert(w.quest.churchRenovationPaid);
+ let sawJason=false;
+ w.say=async(name,text)=>{
+  if(name==='jason'){
+   sawJason=true;
+   assert.equal(w.ChurchArc.mapImage(),w.art.churchBroken);
+   assert(!w.quest.churchConverted);
+  }
+  if(name==='Chronicle'&&text.startsWith('The last of the blood'))assert.equal(w.ChurchArc.mapImage(),w.art.church_asmodeus);
+ };
+ await w.ChurchArc.interact('rededicateChurch');
+ assert(sawJason);
+ assert(w.quest.churchConverted);
+ assert.equal(w.ChurchArc.target().id,'churchArcComplete');
+ assert.equal(w.ChurchArc.npcs()[0].id,'cimri');
+ await w.ChurchArc.interact('churchArcComplete');
+ assert(w.quest.chapter7Complete);
+});
 
 test('imports cannot jump into later rooms while earlier chapter encounters are unfinished',()=>{const w=world(),list=w.replaySections();for(const[from,to]of [['church-breach','church_sanctuary'],['accuser','burning_jail'],['fort-scout','fort_assault'],['court-approach','court_upper'],['uskwood-briefing','hardship_hall']]){const c=checkpoint(w,list.find(s=>s.id===from));c.scene=to;c.position={x:328,y:312};assert.throws(()=>w.SaveFiles.validate(c),/Premature campaign location/);}});
 
