@@ -11,14 +11,14 @@ window.SenaraDaggers=(()=>{
  const maps={
   [sewer]:{
    name:'Senara · The Sewers',image:'senara-sewers-v1.png',spawn:[328,344],blocks:[],lights:[[219,31],[420,31],[91,115],[547,115],[28,263],[611,263]],
-   walk:[{x:272,y:80,w:96,h:112},{x:240,y:192,w:160,h:192}],
+   walk:[{x:272,y:64,w:96,h:96},{x:256,y:144,w:128,h:112},{x:224,y:240,w:192,h:160}],
    points:[{id:'sewerRendezvous',x:328,y:248,label:'Approach the waiting figure'},
-    {id:'sewerGuild',x:328,y:112,label:'Follow J’Mal to the guild'}]
+    {id:'sewerGuild',x:328,y:96,label:'Follow J’Mal through the arch'}]
   },
   [guild]:{
    name:'Senara · Black Daggers’ Hideout',image:'senara-daggers-hideout-v1.png',spawn:[328,344],blocks:[],lights:[[131,52],[272,31],[367,31],[511,52],[63,147],[576,147],[64,185],[574,185]],
-   walk:[{x:112,y:112,w:416,h:208},{x:192,y:320,w:256,h:32},{x:288,y:352,w:64,h:48}],
-   points:[{id:'daggersScout',x:328,y:264,label:'Scout the hideout'},
+   walk:[{x:112,y:112,w:416,h:192},{x:176,y:288,w:288,h:64},{x:288,y:336,w:64,h:64}],
+   points:[{id:'daggersScout',x:328,y:288,label:'Scout the hideout from the entrance'},
     {id:'daggersStrike',x:328,y:240,label:'Spring the ambush'},
     {id:'daggersTerms',speaker:members[0].id,x:328,y:192,label:'Hear the Black Daggers’ terms'}]
   }
@@ -82,7 +82,7 @@ window.SenaraDaggers=(()=>{
     break;
    case 'sewerRendezvous':
     await say('draymus','J’Mal? Last I saw you, the Dottari were searching the square.');
-    await say('jamal','They can keep searching it. The Black Daggers are down here. Follow me.');
+    await say('jamal','Let them look. The Black Daggers are through that arch. I’ll take you to them.');
     quest.senaraJmalFound=true;
     setScene(sewer,328,248);
     break;
@@ -91,8 +91,8 @@ window.SenaraDaggers=(()=>{
     await travel(guild,328,344);
     break;
    case 'daggersScout':
-    await say('jamal','The watch is all in the open. If you want first crack, take it before they see us.');
-    await say('draymus','I’ll blind them. Stay back when I put the floor to work.');
+    await say('jamal','Three in the open, and none of them has seen us. You have the first move.');
+    await say('draymus','Glitterdust first. Once they’re blind, I’ll bind them.');
     quest.senaraGuildScouted=true;
     break;
    case 'daggersStrike':
@@ -102,6 +102,7 @@ window.SenaraDaggers=(()=>{
    case 'daggersTerms':
     await say(members[0].id,'We surrender. The talisman is yours. Let us walk away and we’ll send you word whenever the Reclamation moves.');
     await say('freya','Regular reports, for Thrune. Start with what you know about the rebels in Senara.');
+    await say(null,'The spokesperson offers Fex’s talisman.', ['[Take the Infernal Talisman]']);
     await journeyCard('The Black Daggers’ bargain','The guild returns Fex’s Infernal Talisman and agrees to report on the rebels’ movements. The company returns to the residence.',()=>{
      quest.senaraTalismanRecovered=true;
      setScene(villa,328,312);
