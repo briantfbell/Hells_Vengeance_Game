@@ -782,7 +782,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
   const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(freyaMounted&&u.id==='freya'));
   const drawables=[...partyDrawables.map(u=>window.MolthuneCoffin?.scoutPose(u)||window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].map(u=>DebtsRumors.doorPose(LastStand.jailPose(LastStand.tavernPose(NextArc.compactPose(NextArc.sermonPose(PoliticalMovement.executionPose(ChurchArc.ritualPose(FortArc.scoutPose(u))))))))).sort((a,b)=>a.y-b.y);
  for(const u of drawables){
-  const pose=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u)||window.SkadiParley?.feastPose(u,t);
+  const pose=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u)||window.SkadiParley?.feastPose(u,t)||CourtArc.escapePose(u);
   if(pose){
    ctx.save();ctx.translate(pose.x,pose.y);ctx.globalAlpha=pose.opacity;
    if(pose.tilt){ctx.translate(u.x,u.y);ctx.rotate(pose.tilt);ctx.translate(-u.x,-u.y);}
