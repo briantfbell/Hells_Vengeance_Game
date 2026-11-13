@@ -7,3 +7,19 @@ test('new mission checkpoints and objectives have connected walkable approaches'
 test('handheld task overlay prioritizes Kantaria over the completed Court arc',async()=>{const w=world();w.CourtArc={goal:()=> 'Longacre complete'};vm.runInContext(fs.readFileSync('art-test/quest-guide.js','utf8'),w);await w.KantariaArc.interact('kantariaRoad');assert.equal(w.QuestGuide.current().text,'Meet Loredana at the Uskwood Inn.');assert.equal(w.QuestGuide.current().target.id,'uskwoodBriefing');});
 
 test('all new objectives are reachable from their checkpoint on the movement grid',()=>{const w=world();for(const id of ['uskwood_inn','kantaria_streets','hardship_yard','hardship_hall','uskwood_hideout']){const s=w.scenes[id],valid=(x,y)=>x>=0&&y>=0&&x<40&&y<25&&s.walk.some(r=>x*16+8>=r.x&&x*16+8<r.x+r.w&&y*16+8>=r.y&&y*16+8<r.y+r.h);const queue=[[Math.floor(s.spawn[0]/16),Math.floor(s.spawn[1]/16)]],seen=new Set([queue[0].join(',')]);for(let i=0;i<queue.length;i++){const[x,y]=queue[i];for(const[dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const a=[x+dx,y+dy],key=a.join(',');if(valid(...a)&&!seen.has(key)){seen.add(key);queue.push(a);}}}for(const p of s.points)assert(queue.some(([x,y])=>Math.hypot(x*16+8-p.x,y*16+8-p.y)<48),id+' '+p.id);}});
+test('the road to Kantaria resumes after an acknowledged travel card',async()=>{
+ const w=world(),seen=[];
+ w.journeyCard=async title=>{
+  seen.push(title);
+  if(title.startsWith('An Overnight'))throw Error('interrupted at Egorian');
+ };
+ await assert.rejects(w.KantariaArc.interact('kantariaRoad'),/interrupted at Egorian/);
+ assert.equal(w.quest.kantariaRoadBandits,true);
+ assert.equal(w.quest.chapter11,undefined);
+ assert.equal(w.KantariaArc.target().id,'kantariaRoad');
+ w.journeyCard=async title=>seen.push(title);
+ await w.KantariaArc.interact('kantariaRoad');
+ assert.deepEqual(seen,['On the Road to Kantaria','An Overnight Stop in Egorian','An Overnight Stop in Egorian']);
+ assert.equal(w.scene,'uskwood_inn');
+ assert.equal(w.KantariaArc.target().id,'uskwoodBriefing');
+});

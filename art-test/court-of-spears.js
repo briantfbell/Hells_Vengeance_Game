@@ -18,16 +18,16 @@ window.CourtArc=(()=>{
   add('fort_patrol','courtArcRoad',328,344,'Continue: Court of Spears');add('court_approach','courtBriefing',328,216,'Regroup below the canopy');add('court_approach','courtClimb',328,120,'Climb to the lower platforms');
   add('court_lower','courtSurveyCrossing',328,248,'Scout the lower crossing');add('court_lower','courtLowerFight',328,216,'Break through the defenders');add('court_lower','courtRhonaFight',328,168,'Confront Rhona');add('court_lower','checkUpperBridge',328,120,'Check the upper bridge');add('court_lower','courtUpperRoad',328,72,'Cross to the upper court');
   add('court_upper','courtLenciaFight',328,216,'Face the Angel of Longacre');add('court_upper','courtEscape',528,200,'Follow Lencia to the platform edge');add('court_upper','secureCourt',328,152,'Secure the Court of Spears');add('court_upper','courtReportRoad',328,344,'Report to Archbaron Fex');
-  add('court_report','courtDebrief',328,200,'[Deliver the Longacre report]');add('court_report','courtArcComplete',328,344,'[Prepare for the next assignment]');
+  add('court_report','courtDebrief',328,200,'Deliver the Longacre report');add('court_report','courtArcComplete',328,344,'Begin the furlough');
   Object.assign(NAMES,{court_rhona:'Rhona Staelish',lencia:'Lencia Visserene',court_ranger:'Rebel Defender'});
   Object.assign(STATS,{court_rhona:{hp:46,ac:14,atk:5,dmg:[1,6,2]},lencia:{hp:70,ac:16,atk:6,dmg:[1,8,2]},court_ranger:{hp:22,ac:13,atk:4,dmg:[1,6,1]}});
   FUTURE_NPCS.court_ranger=FUTURE_NPCS.heist_ranger;COMBAT_IDLES.court_ranger=COMBAT_IDLES.heist_ranger;
-  Object.assign(JOURNEYS,{court_approach:'The patrol has named the hidden settlement. The party rides back into the Whisperwood to assault the Court of Spears, an old druidic tree-town used as the rebels’ base.',court_lower:'The stairs rise to a broad deck across the canopy. Three defenders hold the route to the next bridge.',court_upper:'Beyond the bridge, the upper deck opens into a broad court. The surviving defenders are making their stand here.',court_report:'The Court of Spears has been defeated. Rhona is dead; Lencia has escaped. Return to Scarlet Manor and report the outcome to Archbaron Fex.'});
+  Object.assign(JOURNEYS,{court_approach:'The patrol has named the hidden settlement. The party rides back into the Whisperwood to assault the Court of Spears, an old druidic tree-town used as the rebels’ base.',court_lower:'The stairs rise to a broad deck across the canopy. Three defenders hold the route to the next bridge.',court_upper:'Beyond the bridge, the upper deck opens into a broad court. The surviving defenders are making their stand here.',court_report:'The party returns to Scarlet Manor. Fex is waiting to hear what happened at the Court of Spears.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter10?art[scene]:null;}
  function roster(){return quest.chapter10?party:null;}
- function goal(){if(!quest.chapter9Complete)return null;if(!quest.chapter10)return 'Continue the operation at the Court of Spears.';if(['court_approach','court_lower','court_upper'].includes(scene)){const next=target();if(next)return next.label+'.';}const text=['Plan the Court of Spears assault.','Break through the lower-platform defenders.','Confront Rhona.','Cross to the upper court.','Face the Angel of Longacre.','Follow Lencia to the platform edge.','Secure the Court of Spears.','Report the outcome to Fex.','Prepare for the next assignment.','Longacre complete · The road to Kantaria awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
+ function goal(){if(!quest.chapter9Complete)return null;if(!quest.chapter10)return 'Continue the operation at the Court of Spears.';if(['court_approach','court_lower','court_upper','court_report'].includes(scene)){const next=target();if(next)return next.label+'.';}const text=['Plan the Court of Spears assault.','Break through the lower-platform defenders.','Confront Rhona.','Cross to the upper court.','Face the Angel of Longacre.','Follow Lencia to the platform edge.','Secure the Court of Spears.','Report the outcome to Fex.','Prepare for the next assignment.','Longacre complete · The road to Kantaria awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
  function points(){if(!quest.chapter9Complete)return null;if(!quest.chapter10)return scene==='fort_patrol'?[point('courtArcRoad')]:[];if(quest.chapter10Complete)return [];const id=({court_approach:quest.courtBriefed?'courtClimb':'courtBriefing',court_lower:!quest.lowerCleared?(quest.courtCrossingSurveyed?'courtLowerFight':'courtSurveyCrossing'):!quest.rhonaDefeated?'courtRhonaFight':quest.courtBridgeChecked?'courtUpperRoad':'checkUpperBridge',court_upper:!quest.lenciaDefeated?'courtLenciaFight':!quest.lenciaEscaped?'courtEscape':!quest.courtSecured?'secureCourt':'courtReportRoad',court_report:quest.courtReported?'courtArcComplete':'courtDebrief'})[scene];return [point(id)].filter(Boolean);}
  const target=()=>points()?.[0]||null;
  function npcs(){if(!quest.chapter10)return null;if(scene==='court_lower')return !quest.lowerCleared?defenders:!quest.rhonaDefeated?rhonaGuard:[{id:'court_rhona',x:312,y:168,pose:'prone'}];if(scene==='court_upper')return quest.lenciaEscaped?[]:quest.lenciaDefeated?[{id:'lencia',...eastRail}]:upperGuard;if(scene==='court_report')return [{id:'fex',x:328,y:168}];return [];}
@@ -128,8 +128,17 @@ window.CourtArc=(()=>{
    await say('freya','Tell Fex exactly what happened. Rhona fell here. Lencia escaped.');
   }
   else if(id==='courtReportRoad'&&scene==='court_upper'&&quest.courtSecured)await travel('court_report',328,344);
-  else if(id==='courtDebrief'){await say('freya','The Court of Spears has been taken. Rhona Staelish is dead. Lencia Visserene escaped. The company sustained no fatalities.');await say('fex','Your work in Longacre has met my expectations. Take your furlough. Your next assignment will be in Kantaria.');await say('Chronicle','Freya’s field report closes the Longacre operation. Archbaron Fex grants four weeks of furlough and a new assignment in Kantaria.');quest.courtReported=true;}
-  else if(id==='courtArcComplete'){await journeyCard('Chapter Ten · Longacre Complete','The rebellion’s principal base has fallen. Lencia remains at large. After their furlough, the party’s work will take them toward Kantaria.');quest.chapter10Complete=true;}
+  else if(id==='courtDebrief'&&scene==='court_report'&&quest.courtSecured&&!quest.courtReported){
+   await say('fex','Captain. What became of the Court of Spears?');
+   await say(null,'[Deliver Freya’s field report]', ['[Report the outcome of the assault]']);
+   await say('freya','The Court is broken. Rhona Staelish fell in the fighting. Lencia Visserene escaped below the canopy. We brought everyone home, with injuries but no fatalities.');
+   await say('fex','You’ve done what I asked of you in Longacre. Take four weeks of furlough. When it ends, I’ll need your company in Kantaria.');
+   quest.courtReported=true;
+  }
+  else if(id==='courtArcComplete'&&scene==='court_report'&&quest.courtReported&&!quest.chapter10Complete){
+   await journeyCard('Longacre · Four Weeks of Furlough','The company stands down after the Court of Spears assault.\nFour weeks pass before they set out for Kantaria.');
+   quest.chapter10Complete=true;
+  }
   else return false;save();paintParty();updateObjective();return true;
  }
  function effects(g,t){if(!quest.chapter10||!['court_lower','court_upper'].includes(scene))return;g.save();g.fillStyle='#73926c';g.globalAlpha=.1;for(let i=0;i<18;i++){const x=(i*83+(reduce.matches?0:Math.floor(t*5)))%640,y=(i*47)%400;if(y>120&&y<290)continue;g.fillRect(x,y,3,2);}g.restore();}

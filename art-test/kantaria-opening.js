@@ -33,7 +33,17 @@ window.KantariaArc=(()=>{
   else if(kind==='kantaria_yard'){quest.prisonYardCleared=true;await say('freya','The route is open. Reach the main building before the prison can recover.');}
   else if(kind==='kantaria_hall'){quest.prisonHallCleared=true;await say('Chronicle','The company forces the defenders back from the cell corridor. Jalila gives ground as the company reaches the captive’s corridor.');await say('freya','We came for the captive. Get her equipment and get her out.');}
   else return;prepare();updateObjective();}
- async function interact(id){if(id==='kantariaRoad'){if(!quest.chapter10Complete||quest.chapter11)return false;await journeyCard('From Longacre to Kantaria','Fex grants four weeks of furlough and the next assignment. On the road, the company eliminates bandits led by Sancho, who carries a Glorious Reclamation letter of marque.');await journeyCard('An Overnight Stop in Egorian','An attempted robbery at their inn leaves five assailants dead and one escaped. El Guapo fights off attackers while naked. The company repairs its injuries and continues toward Kantaria.');quest.chapter11=true;for(const id of party){hp[id]=STATS[id].hp;uses[id]=0;}mendUses=2;await travel('uskwood_inn',328,344);}
+ async function interact(id){if(id==='kantariaRoad'){if(!quest.chapter10Complete||quest.chapter11)return false;if(!quest.kantariaRoadBandits){
+   await journeyCard('On the Road to Kantaria','The company defeats a band led by Sancho. Among his belongings they find a letter of marque from the Glorious Reclamation.');
+   quest.kantariaRoadBandits=true;
+   save();
+  }
+  if(!quest.kantariaRoadEgorian){
+   await journeyCard('An Overnight Stop in Egorian','Robbers attack the company at their inn. El Guapo fights them off without a stitch on. Five assailants die and one escapes. The company tends its wounds and presses on.');
+   quest.kantariaRoadEgorian=true;
+   save();
+  }
+  quest.chapter11=true;for(const id of party){hp[id]=STATS[id].hp;uses[id]=0;}mendUses=2;await travel('uskwood_inn',328,344);}
   else if(!quest.chapter11||!points()?.some(p=>p.id===id))return false;
   else if(id==='uskwoodBriefing'){await say('loredana','Captain Freya. Your company will be employed here at the Uskwood. I am a trusted friend of Archbaron Fex; this arrangement gives you a reason to be in Kantaria.');await say('freya','Then our public business is private security. We will assess the occupation before making our move.');await say('Chronicle','The innkeeper is also a member of Kantaria’s governing council. The company gathers intelligence under the cover of its employment.');quest.uskwoodBriefed=true;}
   else if(id==='kantariaIntelRoad')await travel('kantaria_streets',328,344);
