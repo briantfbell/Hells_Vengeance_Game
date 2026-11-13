@@ -792,6 +792,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
   if(pose)ctx.restore();
  }
  NextArc.drawSermonHelm(ctx);
+ ChurchArc.drawAssassinStrike(ctx);
  LastStand.drawCellBars(ctx);
  LastStand.drawMountedFinish(ctx);
  window.DinyarRecon?.drawDeparture(ctx);

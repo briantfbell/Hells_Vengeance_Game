@@ -166,6 +166,30 @@ test('Allamar’s wolf remains until she falls and cannot keep her battle open',
  w.ChurchArc.dismissSummons(encounter);
  assert.equal(wolf.hp,0);
 });
+test('the assassin emerges only after the altar collapse and grants the training route',async()=>{
+ const w=world();
+ w.scene='church_ruins';
+ w.quest={chapter6Complete:true,chapter7:true,ghastDestroyed:true};
+ let time=0,delays=0;
+ w.performance.now=()=>time;
+ w.delay=async duration=>{
+  if(delays++===0)assert.equal(w.ChurchArc.npcs().length,0);
+  else{
+   const x=w.ChurchArc.npcs()[0].x;
+   time+=duration;
+   assert(w.ChurchArc.npcs()[0].x>x);
+   return;
+  }
+  time+=duration;
+ };
+ assert.equal(await w.ChurchArc.interact('assassinBoon'),false);
+ await w.ChurchArc.interact('breakAltar');
+ assert(w.quest.altarBroken);
+ assert.equal(w.ChurchArc.npcs()[0].id,'mantis_master');
+ await w.ChurchArc.interact('assassinBoon');
+ assert(w.quest.assassinKnowledge);
+ assert.equal(w.ChurchArc.target().id,'trainingRoad');
+});
 test('Riley transforms on the map before Draymus completes the interrupted ritual checkpoint',async()=>{
  const w=world();
  w.scene='church_sanctuary';
