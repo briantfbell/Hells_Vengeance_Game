@@ -14,9 +14,16 @@ window.WhisperwoodCamp=(()=>{
   whisperwood_giant:{ids:['whisper_giant'],flag:'whisperwoodGiantCleared'},
   whisperwood_bear:{ids:['whisper_bear'],flag:'whisperwoodBearDrivenOff'}
  };
+ const webIntruders=[
+  {id:'whisper_spider',x:264,y:168,height:27},
+  {id:'whisper_spider',x:344,y:168,height:27},
+  {id:'whisper_ettercap',x:304,y:144,height:57}
+ ];
+ const bearApproach={x:456,y:264};
+ const recoverySpot={x:144,y:272};
  const objectives=[
-  ['whisperwoodWatch',312,248,'Make camp and set the watch'],
-  ['whisperwoodWebs',296,184,'Investigate the webs'],
+  ['whisperwoodWatch',192,224,'Set the watch by the fire'],
+  ['whisperwoodWebs',296,184,'Investigate the webs on the trail'],
   ['whisperwoodGiant',408,168,'Meet the giant at the treeline'],
   ['whisperwoodBear',440,264,'Reach Bob at the horses'],
   ['whisperwoodRescue',424,288,'Pull Bob out of danger'],
@@ -26,7 +33,7 @@ window.WhisperwoodCamp=(()=>{
   scenes[road].points.push({id:'whisperwoodMakeCamp',x:328,y:88,label:'Follow the road into the Whisperwood'});
   scenes[camp]={
    name:'Whisperwood · Night Camp',image,spawn:[328,344],blocks:[{x:128,y:208,w:48,h:32}],
-   walk:[{x:144,y:144,w:352,h:176},{x:272,y:320,w:112,h:48},{x:304,y:368,w:48,h:32}],
+   walk:[{x:112,y:176,w:416,h:128},{x:176,y:144,w:320,h:48},{x:208,y:288,w:224,h:32},{x:304,y:304,w:48,h:96}],
    lights:[[150,216]],
    points:objectives.map(([id,x,y,label])=>({id,x,y,label}))
   };
@@ -60,8 +67,8 @@ window.WhisperwoodCamp=(()=>{
  function goal(){return target()?.label||(scene===camp&&quest.whisperwoodNightComplete?'The company is ready to follow the unicorn trail.':null);}
  function npcs(){
   if(scene!==camp)return null;
-  const bob={id:'bob',x:456,y:264,height:46,pose:quest.whisperwoodBobMauled?'prone':null};
-  if(quest.whisperwoodWatchSet&&!quest.whisperwoodWebsCleared)return [bob,{id:'whisper_spider',x:288,y:160,height:27}];
+  const bob={id:'bob',...(quest.whisperwoodBobRescued?recoverySpot:bearApproach),height:46,pose:quest.whisperwoodBobMauled?'prone':null};
+  if(quest.whisperwoodWatchSet&&!quest.whisperwoodWebsCleared)return [bob,...webIntruders];
   if(quest.whisperwoodWebsCleared&&!quest.whisperwoodGiantCleared)return [bob,{id:'whisper_giant',x:408,y:144,height:67}];
   if(quest.whisperwoodGiantCleared&&!quest.whisperwoodBearDrivenOff)return [bob,{id:'whisper_bear',x:472,y:232,height:48}];
   return [bob];
@@ -97,9 +104,12 @@ window.WhisperwoodCamp=(()=>{
     break;
    case 'whisperwoodWatch':
     await say('freya','We’ll stop here. Get some rest while we can, then keep two sets of eyes on the trees.');
-    await say('Chronicle','The company has time to bind wounds and prepare spells before the watch is disturbed.');
+    await say(null,'The fire is low and the watches are assigned.', ['[Rest before taking watch]']);
     SouthRoad.recover(.5);
     quest.whisperwoodWatchSet=true;
+    save();
+    updateObjective();
+    await say('Chronicle','After a short rest, the company hears movement on the trail. Strands of web catch the firelight.');
     break;
    case 'whisperwoodWebs':
     await say('reese','Webs across the trail. There’s something taller than the spiders moving behind them.');
@@ -114,6 +124,7 @@ window.WhisperwoodCamp=(()=>{
      await say('bob','Whoa! Steady, you lot. What’s got into—');
      await storyRoll('Bob · Evade the bear',3,0,'Mauled before he can get clear');
      quest.whisperwoodBobMauled=true;
+     save();
      await say('jamal','Bob’s down. Get that thing off him!');
     }
     begin('whisperwood_bear');
@@ -121,8 +132,10 @@ window.WhisperwoodCamp=(()=>{
    case 'whisperwoodRescue':
     await say('jamal','I’ve got him under the arms. Guapo, lift on three.');
     await storyRoll('J’Mal and El Guapo · Pull Bob clear',18,0,'Reach him in time');
-    await say('Chronicle','J’Mal and El Guapo pull Bob clear just in time. He lives, though the bear’s mauling will leave lasting effects.');
     quest.whisperwoodBobRescued=true;
+    save();
+    updateObjective();
+    await say('Chronicle','J’Mal and El Guapo get Bob back to the bedrolls. He’s alive, though the mauling will leave lasting effects.');
     break;
    case 'whisperwoodDawn':
     await say('freya','We’ll leave Bob here to recover. The horns are still our next objective. Find the herd’s trail.');
