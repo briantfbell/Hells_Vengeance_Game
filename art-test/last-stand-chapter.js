@@ -5,7 +5,8 @@ window.LastStand=(()=>{
  const jailCells='longacre_cells';
  const hillChecks={hillTree:{flag:'hillTreeSearched',speaker:'jamal',line:'Nothing fresh beneath the tree. No footprints I can follow.'},hillRidge:{flag:'hillRidgeSearched',speaker:'reese',line:'I can see both sides of the ridge from here. Nobody’s coming, and there’s no trail down.'}};
  const panDuration=420,captureDuration=880;
- let tavernBeat=null;
+ const stocks=[120,264],breakoutDuration=720,rideDuration=850;
+ let tavernBeat=null,jailBeat=null;
  const maps={last_stand:{name:'Chapter Four · The Last Stand',image:'last-stand.png',spawn:[328,328],walk:[r(144,144,336,176),r(272,304,80,80),r(272,80,80,80),r(480,176,64,96)],blocks:[],lights:[[116,116],[248,104],[520,176]],points:[{id:'lastDecree',x:328,y:328,label:'Repost the torn decree'},{id:'lastPatrons',x:424,y:256,label:'Speak to the patrons'},{id:'takePrisoners',x:328,y:352,label:'Escort the prisoners to jail'}]},angel_hill:{name:'Outside Longacre · The Angel Knight’s Hill',image:'angel-knight-hill.png',spawn:[328,344],walk:[r(288,240,80,144),r(176,128,288,128)],blocks:[],lights:[],points:[{id:'hillSearch',x:312,y:176,label:'Ask Riley to point out the spot'},{id:'hillTree',x:200,y:152,label:'Search beneath the tree'},{id:'hillRidge',x:440,y:152,label:'Check the ridge'},{id:'hillReturn',x:328,y:352,label:'Return to the jail'}]}};
  maps[jailCells]={
   name:'Longacre Jail · The Cells',image:'longacre-jail-cells-v1.png',spawn:[328,344],
@@ -30,12 +31,54 @@ window.LastStand=(()=>{
   if(!quest.chapter4)return null;
   if(scene==='last_stand')return tavernActors();
   if(scene===jailCells)return [{id:'riley',x:328,y:180}];
-  if(scene==='longacre_jail')return [
-   ...(quest.rileyQuestioned?[{id:'riley',x:456,y:216}]:[]),
-   quest.bolgartSecured?{id:'bolgart',pose:'stocks',x:224,y:248}:{id:'bolgart',pose:'stocks',x:120,y:264}
-  ];
+  if(scene==='longacre_jail')return jailActors();
   if(scene==='angel_hill')return [{id:'riley',x:328,y:163}];
   return null;
+ }
+ function currentJailBeat(){return scene==='longacre_jail'&&jailBeat&&jailBeat.epoch===epoch?jailBeat:null;}
+ function jailActors(){
+  const actors=quest.rileyQuestioned?[{id:'riley',x:456,y:216}]:[];
+  const beat=currentJailBeat();
+  if(beat?.phase==='breakout'){
+   const progress=beatProgress(beat,breakoutDuration);
+   actors.push(progress<.4?{id:'bolgart',pose:'stocks',x:stocks[0],y:stocks[1]}:{id:'bolgart_wereboar',x:120+126*progress,y:264+12*progress,height:74});
+  }else if(beat?.phase==='charge'){
+   actors.push({id:'bolgart_wereboar',x:246,y:276,height:74});
+  }else if(quest.bolgartSecured){
+   if(!quest.chapter4Complete)actors.push({id:'bolgart',x:420,y:211});
+  }else actors.push({id:'bolgart',pose:'stocks',x:stocks[0],y:stocks[1]});
+  return actors;
+ }
+ function jailPose(unit){
+  const beat=currentJailBeat();
+  if(!beat)return unit;
+  if(beat.phase==='breakout'&&unit.id==='jamal'){
+   const progress=beatProgress(beat,breakoutDuration);
+   return {...unit,x:240+Math.max(0,progress-.85)*100,y:280,dir:'left',step:null};
+  }
+  return unit;
+ }
+ function drawJailAction(g){
+  if(scene!=='longacre_jail')return;
+  const beat=currentJailBeat();
+  const broken=quest.bolgartSecured||beat?.phase==='charge'||(beat?.phase==='breakout'&&beatProgress(beat,breakoutDuration)>=.4);
+  if(!broken)return;
+  g.save();g.translate(...stocks);
+  for(const [x,y,angle] of [[-10,-4,.4],[9,6,-.8],[-1,10,.12]]){
+   g.save();g.translate(x,y);g.rotate(angle);
+   g.fillStyle='#29201a';g.fillRect(-9,-1,18,5);
+   g.fillStyle='#795139';g.fillRect(-8,-2,16,3);g.restore();
+  }
+  g.restore();
+ }
+ function drawMountedFinish(g){
+  const beat=currentJailBeat();
+  const model=window.MOVEMENT_FRAMES?.['mounted-freya-v1.png']?.[0];
+  if(beat?.phase!=='charge'||!model||!art.mounted)return;
+  const progress=beatProgress(beat,rideDuration);
+  const frame=model.frames[Math.min(model.frames.length-1,Math.floor(progress*model.frames.length))];
+  const height=88,scale=height/model.maxHeight,x=406-146*progress,y=303-25*progress;
+  g.drawImage(art.mounted,frame.x,frame.y,frame.w,frame.h,x-frame.w*scale/2,y-frame.h*scale,frame.w*scale,frame.h*scale);
  }
  function drawCellBars(g){
   if(scene!==jailCells||!art[jailCells])return;
@@ -99,10 +142,16 @@ window.LastStand=(()=>{
    await say('freya','Everyone else, go home. Put the utensils down and there’ll be no more trouble.');
    await say('Chronicle','The patrons leave, and the barmaids back away. Bolgart and Riley are in custody.');
   }else{
+   seedParty(328,296);
+   const token=epoch;
+   jailBeat={epoch:token,phase:'charge',start:performance.now()};
+   await delay(reduce.matches?0:rideDuration);
+   if(token!==epoch)return;
+   await say('Chronicle','With Bolgart staggered, Freya drives a mounted lance charge on Sleipnir and brings him down.');
    quest.bolgartSecured=true;
-   await say('Chronicle','With Bolgart staggered, Freya drives a mounted lance charge on Sleipnir to bring him down.');
-   await say('Chronicle','Bolgart is subdued and returns to human form. The party secures his wrists, legs and neck with shackles and locks him in the jail.');
-   await say('Chronicle','A carpenter is paid to restore a working pillory. The broken pieces are left on display while the party spreads word of Bolgart’s hidden curse.');
+   jailBeat=null;
+   await say('Chronicle','Bolgart returns to human form. The party shackles his wrists, legs, and neck, then takes him inside the jail.');
+   await say('Chronicle','The party pays a carpenter to repair the pillory and leaves the splintered boards on display. Word spreads that they took down a wereboar in the courtyard.');
   }
   save();
   updateObjective();
@@ -127,6 +176,18 @@ window.LastStand=(()=>{
   if(complete)await say('freya','The knight’s gone and we have no trail. Bring Riley back to the jail.');
   quest[flag]=true;
   if(complete)quest.hillSearched=true;
+ }
+ async function breakStocks(){
+  await say('bolgart','Back already? You looked braver when I had a frying pan.');
+  await say('jamal','Save it. You’re still in our custody.');
+  const token=epoch;
+  jailBeat={epoch:token,phase:'breakout',start:performance.now()};
+  await delay(reduce.matches?0:breakoutDuration);
+  if(token!==epoch)return;
+  await say('Chronicle','Tusks tear through Bolgart’s face as he wrenches the pillory apart. He charges straight at J’Mal and catches him with a tusk.');
+  await say('freya','Keep him off J’Mal. I’m getting Sleipnir.');
+  jailBeat=null;
+  startBattle(0,false,{kind:'wereboar',opening:'Roll initiative. Bolgart charges J’Mal. Subdue him alive.',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',hp:64,max:64}]});
  }
  async function interact(id){if(id==='lastStandRoad'){await begin();return true;}if(!quest.chapter4)return false;
  if(id==='lastDecree'&&!quest.bolgartSubdued)await confrontBolgart();
@@ -160,8 +221,8 @@ window.LastStand=(()=>{
  }
  else if(scene==='angel_hill'&&quest.hillSpotShown&&!quest.hillSearched&&Object.hasOwn(hillChecks,id))await searchHill(id);
  else if(id==='hillReturn'&&scene==='angel_hill'&&quest.hillSearched)await travel('longacre_jail',328,312);
- else if(id==='bolgartStocks'){await say('Chronicle','Back at the jail in the early morning, Bolgart looks remarkably recovered. He taunts the party from the stocks.');await say('jamal','You are still in our custody. Keep that in mind.');await say('Chronicle','Bolgart strains against the pillory. His body swells and twists; tusks push from his face. The hidden wereboar breaks free and charges J’Mal.');await say('Chronicle','Freya moves to her mount, Sleipnir, and readies her lance while the others hold Bolgart back.');startBattle(0,false,{kind:'wereboar',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',hp:64,max:64}]});}
+ else if(id==='bolgartStocks'&&scene==='longacre_jail'&&quest.hillSearched&&!quest.bolgartSecured)await breakStocks();
  else if(id==='lastReport'){await travel('ash_house',328,296);await say('razelago','The tavern’s gathering is ended, and both prisoners are secured. Keep your sashes visible. Longacre is watching you.');quest.chapter4Complete=true;await say('Chapter Four complete','Riley’s claimed meeting led to an empty hill. Bolgart’s hidden curse has been exposed. The prisoners remain alive in custody; their later fate is still ahead.');}
  else return false;save();updateObjective();return true;}
- return {tavernPose,drawPan,drawCellBars,install,load,goal,target,points,npcs,begin,interact,afterBattle};
+ return {tavernPose,jailPose,drawPan,drawCellBars,drawJailAction,drawMountedFinish,mountedFinish:()=>currentJailBeat()?.phase==='charge',install,load,goal,target,points,npcs,begin,interact,afterBattle};
 })();

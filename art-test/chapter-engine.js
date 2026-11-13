@@ -764,6 +764,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  NextArc.drawTornDecree(ctx);
  NextArc.drawCompactOffice(ctx);
  LastStand.drawPan(ctx);
+ LastStand.drawJailAction(ctx);
  DebtsRumors.drawChurchBreach(ctx);
  drawBellRope();window.PresentationPolish?.world(ctx,t);ChurchArc.effects?.(ctx,t);
  if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}
@@ -773,8 +774,9 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  let npcs=window.BarleybridgeScout?.npcs()||window.IlniusFountain?.npcs()||window.DinyarRecon?.npcs()||window.MolthuneCoffin?.npcs()||window.SkadiParley?.npcs()||window.DarkRain?.npcs()||window.TathlumHunt?.npcs()||window.Menador?.npcs()||window.BarrowCovenant?.npcs()||window.BarrowTrail?.npcs()||window.VyreWish?.npcs()||window.SethicMansion?.npcs()||window.BellflowerBarn?.npcs()||window.BellflowerBarge?.npcs()||window.Pezzack?.npcs()||window.Rachikan?.npcs()||window.Ballerina?.npcs()||window.HinjiTavern?.npcs()||window.Belde?.npcs()||window.PaleBall?.npcs()||window.NicoloArc?.npcs()||window.SethicLedgers?.npcs()||window.SethicFarm?.npcs()||window.EgorianFeud?.npcs()||window.EgorianSting?.npcs()||window.EfisioArc?.npcs()||window.Hinji?.npcs()||window.Westcrown?.npcs()||window.RemesianaMarket?.npcs()||window.EgorianFountain?.npcs()||window.EgorianDischarge?.npcs()||window.AregoExit?.npcs(t)||window.AregoReturn?.npcs(t)||window.AregoAmbush?.npcs()||window.InfernoGate?.npcs(t)||window.FortArego?.npcs()||window.SenaraGraveyard?.npcs()||window.SenaraWagon?.npcs()||window.WhisperwoodGlade?.npcs()||window.WhisperwoodCamp?.npcs()||window.SenaraCitadel?.npcs()||window.SenaraDaggers?.npcs()||window.SenaraCover?.npcs()||window.SenaraArrival?.npcs()||window.EgorianExecution?.npcs()||window.EgorianMort?.npcs()||window.EgorianTrial?.npcs()||window.EgorianNight?.npcs()||window.EgorianArrival?.npcs()||window.SouthRoad?.npcs()||window.KantariaAftermath?.npcs()||window.FastnessArc?.npcs()||window.SupplyArc?.npcs()||window.CovertArc?.npcs()||DisruptionArc.npcs()||KantariaArc.npcs()||CourtArc.npcs()||FortArc.npcs()||ArmoryArc.npcs()||ChurchArc.npcs()||PoliticalMovement.npcs()||DebtsRumors.npcs()||LastStand.npcs()||(quest.chapter3?window.NextArc.npcs():quest.chapter2?window.NextChapter.npcs():scene==='street'?[{id:'guard',x:472,y:184}]:scene==='tavern'?[{id:'cultist',x:264,y:120}]:battle?battle.enemies:quest.victory?[{id:'viggo',x:312,y:136,hp:0}]:[{id:'viggo',x:312,y:136}]);
  const captivePoint=PresentationPolish.captivePoints()[0];
  if(captivePoint&&!npcs.some(n=>n.id==='riley'))npcs=npcs.concat({id:'riley',x:captivePoint.x,y:captivePoint.y});
-  const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(PoliticalMovement.mountedVisible()&&u.id==='freya'));
-  const drawables=[...partyDrawables.map(u=>window.MolthuneCoffin?.scoutPose(u)||window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].map(u=>DebtsRumors.doorPose(LastStand.tavernPose(NextArc.compactPose(NextArc.sermonPose(u))))).sort((a,b)=>a.y-b.y);
+  const freyaMounted=PoliticalMovement.mountedVisible()||LastStand.mountedFinish();
+  const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(freyaMounted&&u.id==='freya'));
+  const drawables=[...partyDrawables.map(u=>window.MolthuneCoffin?.scoutPose(u)||window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].map(u=>DebtsRumors.doorPose(LastStand.jailPose(LastStand.tavernPose(NextArc.compactPose(NextArc.sermonPose(u)))))).sort((a,b)=>a.y-b.y);
  for(const u of drawables){
   const pose=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u)||window.SkadiParley?.feastPose(u,t);
   if(pose){
@@ -788,6 +790,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  }
  NextArc.drawSermonHelm(ctx);
  LastStand.drawCellBars(ctx);
+ LastStand.drawMountedFinish(ctx);
  window.DinyarRecon?.drawDeparture(ctx);
  window.IlniusFountain?.drawStrike(ctx);
  window.EgorianExecution?.effects(ctx);

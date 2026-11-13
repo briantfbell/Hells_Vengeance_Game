@@ -402,8 +402,20 @@ test('Bolgart fights include Reese, stage Riley’s capture, and restore Bolgart
  assert(w.units.some(unit=>unit.id==='jamal'));
  assert.equal(w.LastStand.target().id,'takePrisoners');
  w.scene='longacre_jail';
+ w.quest.hillSearched=true;
+ assert.equal(w.LastStand.npcs().find(actor=>actor.id==='bolgart').pose,'stocks');
+ w.say=async(...args)=>{
+  if(args[1].includes('wrenches the pillory apart'))assert(w.LastStand.npcs().some(actor=>actor.id==='bolgart_wereboar'));
+  if(args[1].includes('mounted lance charge'))assert(w.LastStand.mountedFinish());
+  return say(...args);
+ };
+ await w.LastStand.interact('bolgartStocks');
+ assert.equal(w.encounter.kind,'wereboar');
+ assert(w.units.some(unit=>unit.id==='reese'));
  await w.LastStand.afterBattle('wereboar');
- assert.equal(w.LastStand.npcs().find(n=>n.id.startsWith('bolgart')).id,'bolgart');
+ const prisoner=w.LastStand.npcs().find(n=>n.id.startsWith('bolgart'));
+ assert.equal(prisoner.id,'bolgart');
+ assert.equal(prisoner.pose,undefined);
  assert(w.transcript.some(x=>x.text.includes('returns to human form')));
 });
 test('Riley’s interrogation yields both facts before the letter unlocks the hospice',async()=>{
