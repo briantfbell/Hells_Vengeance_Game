@@ -21,17 +21,18 @@ window.EgorianExecution=(()=>{
  const stage={x:320,y:128},group={x:480,y:208},jamal={x:456,y:232};
  const spectators=[152,176,200,224,248,384,408,432,456,480].flatMap((x,i)=>
   [248,280,312].map((y,j)=>({id:'citizen-egorian-ceremony-'+i+'-'+j,x:x+(j%2)*8,y,variant:(i+j*3)%8,dir:'up',crowd:true})));
- let opening=null,spell=null;
+ const crowdDuration=600;
+ let opening=null,spell=null,crowdParting=null,jamalPhasing=null;
 
  function install(){
   scenes[manor].points.push({id:'excruciationLeave',x:328,y:312,label:'Go to Oppian’s excruciation'});
   scenes[square]={
    name:'Egorian · Excruciation Square',image:map,spawn:[328,344],blocks:[],
-   walk:[{x:112,y:208,w:448,h:112},{x:272,y:320,w:112,h:64},{x:480,y:160,w:80,h:48}],
+   walk:[{x:80,y:192,w:480,h:128},{x:272,y:304,w:112,h:96},{x:448,y:160,w:112,h:48}],
    lights:[[224,109],[416,109],[36,290],[604,290]],
    points:[
     {id:'excruciationCharges',x:328,y:200,label:'Hear the charges'},
-    {id:'excruciationFollow',x:416,y:216,label:'Follow J’Mal and El Guapo'},
+    {id:'excruciationFollow',x:416,y:216,label:'Follow J’Mal and El Guapo along the dais'},
     {id:'excruciationNoble',x:464,y:224,label:'Approach the young noble'},
     {id:'excruciationFight',x:448,y:232,label:'Defend J’Mal'},
     {id:'excruciationHold',x:480,y:224,label:'Stop the last bodyguard'},
@@ -61,7 +62,9 @@ window.EgorianExecution=(()=>{
  function crowd(){
   if(scene!==square)return null;
   if(quest.egorianAssassination&&!quest.egorianDottariHeard)return spectators.filter(u=>u.x<264);
-  return spectators;
+  if(!quest.egorianChargesRead||quest.egorianDottariHeard)return spectators;
+  const progress=crowdParting===null?(quest.egorianTracked?1:0):Math.min(1,(performance.now()-crowdParting)/crowdDuration);
+  return spectators.map(actor=>actor.x>360?{...actor,x:actor.x+Math.round(progress*36)}:actor);
  }
  function freyaCombat(){
   return Inventory.hasFreyaPlate(quest)?armorModels[inventory.equipped.freya==='naginata'?'naginata':'katana']:null;
@@ -87,7 +90,9 @@ window.EgorianExecution=(()=>{
    });
   }
   if(revealed&&!quest.egorianJmalEscaped){
-   actors.push({id:'jamal',...jamal,dir:'up',...(jamalDown?{pose:'prone'}:{})});
+   const phasing=jamalPhasing!==null;
+   const opacity=phasing?Math.max(0,1-(performance.now()-jamalPhasing)/crowdDuration):1;
+   actors.push({id:'jamal',...jamal,dir:'up',opacity,...(jamalDown&&!phasing?{pose:'prone'}:{})});
    actors.push({id:'guapo',x:488,y:256,dir:'up'});
   }
   if(quest.egorianDuelWon&&!quest.egorianDottariHeard)actors.push({id:'draymus',x:528,y:272,dir:'up'});
@@ -191,8 +196,20 @@ window.EgorianExecution=(()=>{
     break;
    }
    case 'excruciationFollow':
-    await say('Chronicle','The crowd parts for Freya’s Hellknight plate. She catches sight of the two companions, then loses them near a young noble flanked by four armed guards.');
+    if(!reduce.matches){
+     const token=epoch;
+     crowdParting=performance.now();
+     try{
+      await delay(crowdDuration);
+      if(token!==epoch)throw CANCEL;
+     }finally{
+      crowdParting=null;
+     }
+    }
     quest.egorianTracked=true;
+    save();
+    updateObjective();
+    await say('Chronicle','Spectators give way as Freya passes the dais. J’Mal and El Guapo disappear near a young noble and his four guards.');
     break;
    case 'excruciationNoble':
     await assassination();
@@ -205,15 +222,29 @@ window.EgorianExecution=(()=>{
     await storyRoll('Bodyguard · Resist Hold Person',4,0,'Fails to resist');
     await showSpell(2,{x:520,y:240});
     quest.egorianLastGuardDown=true;
+    save();
+    updateObjective();
     await say('Chronicle','The last guard locks in place. El Guapo closes the gap and finishes him before he can move again.');
     break;
    case 'excruciationHeal':{
     await say('Chronicle','Jason and Corrine arrive after the fighting. Jason drops beside J’Mal and stabilizes him.');
     const healed=await damage([2,8,3],'Jason · Stabilize and heal J’Mal');
+    if(!reduce.matches){
+     const token=epoch;
+     jamalPhasing=performance.now();
+     try{
+      await delay(crowdDuration);
+      if(token!==epoch)throw CANCEL;
+     }finally{
+      jamalPhasing=null;
+     }
+    }
     hp.jamal=Math.min(STATS.jamal.hp,healed);
     quest.mosswaterSpent=Math.min(5,(quest.mosswaterSpent||0)+1);
     quest.egorianJmalEscaped=true;
-    await say('Chronicle','J’Mal comes around. He uses the Mosswater Tunic to slip into the Ethereal Plane and escape the square.');
+    save();
+    updateObjective();
+    await say('Chronicle','J’Mal comes around. His Mosswater Tunic carries him into the Ethereal Plane and out of the square.');
     break;
    }
    case 'excruciationInquiry':
