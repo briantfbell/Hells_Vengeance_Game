@@ -11,7 +11,7 @@ window.Westcrown=(()=>{
  const unfinished=()=>favors.filter(([,flag])=>!quest[flag]);
 
  function install(){
-  scenes[harbor].points.push({id:'westcrownDepart',x:328,y:344,label:'Leave for Westcrown'});
+  scenes[harbor].points.push({id:'westcrownDepart',x:328,y:376,label:'Leave for Westcrown'});
   scenes[quay]={
    name:'Westcrown · Canal Quay',image,spawn:[328,264],
    walk:[{x:48,y:160,w:560,h:128},{x:544,y:288,w:64,h:96}],blocks:[],lights:[[111,121],[394,91]],

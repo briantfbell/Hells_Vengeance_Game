@@ -7,11 +7,11 @@ window.Hinji=(()=>{
   scenes[harbor].points.push({id:'hinjiDepart',x:104,y:232,label:'Leave for Hinji'});
   scenes[shipyard]={
    name:'Hinji · Naval Shipyard',image,spawn:[328,312],
-   walk:[{x:64,y:128,w:528,h:160},{x:304,y:288,w:40,h:80}],blocks:[],lights:[[146,84],[266,76],[374,74],[504,72]],
+   walk:[{x:48,y:128,w:544,h:160},{x:304,y:288,w:40,h:96}],blocks:[],lights:[[146,84],[266,76],[374,74],[504,72]],
    points:[
-    {id:'hinjiSpeakToBarksdale',speaker:'barksdale',x:120,y:184,label:'Speak to Nathin Barksdale'},
-    {id:'hinjiFileRefusal',x:416,y:152,label:'Move the refusal to the dispatch docket'},
-    {id:'hinjiHearAppointment',speaker:'lebeau',x:552,y:184,label:'Hear the result from LeBeau'}
+    {id:'hinjiSpeakToBarksdale',speaker:'barksdale',x:120,y:156,label:'Speak to Nathin Barksdale'},
+    {id:'hinjiFileRefusal',x:416,y:128,label:'Send Barksdale’s refusal from the dispatch board'},
+    {id:'hinjiHearAppointment',speaker:'lebeau',x:552,y:156,label:'Hear the result from LeBeau'}
    ]
   };
   MAP_LAYERS[shipyard]={foreground:image,contain:true,background:{
@@ -59,12 +59,12 @@ window.Hinji=(()=>{
    case 'hinjiSpeakToBarksdale':
     await say('barksdale','They offered me the admiralty. I told them to put my refusal in writing. I meant it.');
     await say('freya','And has anyone sent it on?');
-    await say('barksdale','My answer’s on file. What they do with it is their business.');
+    await say('barksdale','My answer’s on file. Outgoing papers go through the dispatch board beside the warehouse.');
     quest.hinjiDeclined=true;
     break;
    case 'hinjiFileRefusal':
     await say('Chronicle','Barksdale’s refusal is waiting in the shipyard file. The company moves it into the outgoing docket, ahead of the other promotion papers.');
-    await say('freya','They’ll see his answer before they send another offer.');
+    await say('freya','That puts his refusal on the next dispatch. They’ll have to name someone else.');
     quest.hinjiPapersSent=true;
     break;
    case 'hinjiHearAppointment':
