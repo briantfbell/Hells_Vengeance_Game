@@ -21,20 +21,20 @@ window.BarrowTrail=(()=>{
   scenes[vyre].points.push({id:'barrowDepart',x:320,y:392,label:'Rejoin the company for the Barrowood pilgrimage'});
   scenes[road]={
    name:'Barrowood · Pilgrim Road',image:roadArt,spawn:[328,344],blocks:stoneBlocks(0,6),
-   walk:[{x:112,y:128,w:416,h:192},{x:288,y:320,w:80,h:80}],lights:[],
+   walk:[{x:96,y:128,w:448,h:192},{x:288,y:320,w:64,h:80},{x:304,y:80,w:48,h:48}],lights:[],
    points:[
     ...stones.slice(0,6).map((_,i)=>stonePoint(i)),
     {id:'barrowScoutFight',x:328,y:192,label:'Repel the Reclamation scouts'},
-    {id:'barrowEnterGrove',x:328,y:128,label:'Follow the trail deeper into the Barrowood'}
+    {id:'barrowEnterGrove',x:328,y:96,label:'Follow the trail deeper into the Barrowood'}
    ]
   };
   scenes[grove]={
    name:'Barrowood · The Old Grove',image:groveArt,spawn:[328,344],blocks:stoneBlocks(6,13),
-   walk:[{x:112,y:128,w:416,h:192},{x:288,y:320,w:80,h:80}],lights:[],
+   walk:[{x:96,y:128,w:448,h:192},{x:288,y:320,w:64,h:80},{x:304,y:80,w:48,h:48}],lights:[],
    points:[
     ...stones.slice(6).map((_,i)=>stonePoint(i+6)),
     {id:'barrowGuardianFight',speaker:druid,x:328,y:216,label:'Face the paladins and the grove’s druid'},
-    {id:'barrowFinalApproach',x:328,y:128,label:'Approach the final stone'}
+    {id:'barrowFinalApproach',x:328,y:108,label:'Approach the final stone'}
    ]
   };
   MAP_LAYERS[road]={foreground:roadArt,contain:true,background:{type:'solid',color:'#212520'}};
@@ -133,7 +133,7 @@ window.BarrowTrail=(()=>{
  }
  async function markStone(){
   const next=tally()+1;
-  if(next===1)await say('jason','A drop of Sethic’s blood on each stone. The offering itself comes at the fourteenth.');
+  if(next===1)await say('jason','Follow the marker from stone to stone. One drop of Sethic’s blood on each. The offering comes at the fourteenth.');
   if(next===6)await say('freya','Six. Keep the pack steady. We take the trail through those trees.');
   if(next===13)await say('jason','Thirteen. The last stone is just ahead.');
   quest.barrowStones=next;
@@ -161,7 +161,7 @@ window.BarrowTrail=(()=>{
     beginFight(groveFight);
     return true;
    case 'barrowFinalApproach':
-    await say('Chronicle','The western flank of the Reclamation force has broken. The company carries Sethic toward the last stone.');
+    await say('Chronicle','The western flank of the Reclamation force has broken. The company takes the narrow trail north toward the fourteenth stone.');
     quest.barrowTrailComplete=true;
     break;
   }

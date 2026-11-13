@@ -16,7 +16,7 @@ window.BarrowCovenant=(()=>{
  ],maxHeight:714,cycle:[0,2],attackFrames:true};
 
  function install(){
-  scenes[grove].points.push({id:'covenantArrive',x:328,y:128,label:'Enter the final stone clearing'});
+  scenes[grove].points.push({id:'covenantArrive',x:328,y:88,label:'Enter the final stone clearing'});
   scenes[glade]={
    name:'Barrowood · The Fourteenth Stone',image:altar,spawn:[328,344],blocks:[{x:288,y:133,w:64,h:32}],
    walk:[{x:112,y:160,w:416,h:160},{x:288,y:320,w:80,h:80}],lights:[[261,147],[368,101],[381,147]],
