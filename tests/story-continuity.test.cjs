@@ -1,5 +1,32 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'art-test',name),'utf8');
+test('the execution order leaves the choice to the party and Bo’s arrest commits at the dusk transition',async()=>{
+ const w=world();
+ w.scene='escape_jail';
+ w.quest={chapter6:true,chapter5Complete:true,bolgartReleased:true};
+ w.epoch=1;
+ w.reduce={matches:false};
+ w.delay=async()=>{};
+ await w.PoliticalMovement.interact('ordersRoad');
+ await w.PoliticalMovement.interact('executionOrders');
+ assert(w.quest.executionOrdered);
+ assert(w.transcript.some(line=>line.name==='fex'&&line.text.includes('leave the choice')));
+ assert(w.transcript.some(line=>line.name==='freya'&&line.text.includes('arrest Bo')));
+ await w.PoliticalMovement.interact('gramelRoad');
+ assert.equal(w.scene,'gramel_gate');
+ w.setScene=scene=>{w.scene=scene;};
+ w.journeyCard=async(title,_summary,commit)=>{
+  assert.match(title,/Dusk in the Square/);
+  assert(!w.quest.boCaptured);
+  assert.equal(w.scene,'gramel_gate');
+  commit();
+  assert(w.quest.boCaptured);
+  assert.equal(w.scene,'execution_square');
+ };
+ await w.PoliticalMovement.interact('arrestBo');
+ assert.equal(w.PoliticalMovement.target().id,'prepareExecution');
+ assert.equal(await w.PoliticalMovement.interact('arrestBo'),false);
+});
 test('both jailbreak trails end without confirming a spell and unlock Bolgart’s release',async()=>{
  for(const order of [['trailStreet','trailWoods'],['trailWoods','trailStreet']]){
   const w=world();

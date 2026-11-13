@@ -766,6 +766,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  LastStand.drawPan(ctx);
  LastStand.drawJailAction(ctx);
  PoliticalMovement.drawWatch(ctx);
+ PoliticalMovement.drawArrest(ctx);
  DebtsRumors.drawChurchBreach(ctx);
  drawBellRope();window.PresentationPolish?.world(ctx,t);ChurchArc.effects?.(ctx,t);
  if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}
