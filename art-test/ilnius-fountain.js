@@ -38,8 +38,8 @@ window.IlniusFountain=(()=>{
    walk:[{x:112,y:208,w:416,h:128},{x:288,y:336,w:80,h:64}],lights:[],
    points:[
     {id:'ilniusWake',x:328,y:240,label:'Approach the fountain’s guardians'},
-    {id:'ilniusWard',x:328,y:224,label:'Check the inner entrance'},
-    {id:'ilniusEnterTemple',x:328,y:224,label:'Enter the inner temple'}
+    {id:'ilniusWard',x:328,y:224,marker:{x:320,y:146},label:'Check the inner entrance'},
+    {id:'ilniusEnterTemple',x:328,y:224,marker:{x:320,y:146},label:'Enter the inner temple'}
    ]
   };
   scenes[temple]={
@@ -306,7 +306,7 @@ window.IlniusFountain=(()=>{
     beginFight();
     return true;
    case 'ilniusWard':
-    await say('jamal','The statues are down. There’s still a way into the temple.');
+    await say('jamal','The statues are down. The way into the temple is up the steps, behind the fountain.');
     quest.ilniusWardChecked=true;
     break;
    case 'ilniusEnterTemple':
