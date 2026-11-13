@@ -3,18 +3,21 @@
 window.EgorianNight=(()=>{
  const manor='egorian_manor',lantern='egorian_lantern_lane',guardLane='egorian_guard_lane';
  const pair=['jamal','guapo'];
+ const leadRoute=[[176,200],[176,232],[488,232],[488,136]];
+ const leadDuration=1350;
+ let leadStarted=null;
  const layouts={
   [lantern]:{
    name:'Egorian · Lantern Lane',image:'egorian-lantern-lane-v1.png',spawn:[328,344],
-   walk:[{x:112,y:208,w:416,h:96},{x:272,y:304,w:112,h:80},
-    {x:144,y:176,w:64,h:32},{x:448,y:128,w:80,h:80}],
+   walk:[{x:80,y:208,w:480,h:112},{x:224,y:304,w:192,h:96},
+    {x:144,y:176,w:64,h:48},{x:448,y:112,w:80,h:112}],
    lights:[[176,111],[52,294],[588,293]],
    points:[{id:'nightSvetlana',speaker:'svetlana',x:184,y:216,label:'Speak to Svetlana'},
     {id:'nightFollowLead',speaker:'svetlana',x:488,y:152,label:'Follow the guard’s trail'}]
   },
   [guardLane]:{
    name:'Egorian · The Guard’s Lane',image:'egorian-guard-lane-v1.png',spawn:[328,344],
-   walk:[{x:272,y:80,w:112,h:304},{x:80,y:144,w:192,h:16},{x:304,y:64,w:64,h:16}],
+   walk:[{x:272,y:80,w:112,h:320},{x:80,y:144,w:208,h:32},{x:304,y:64,w:64,h:32}],
    lights:[[91,93],[152,93],[293,37],[397,37],[504,138]],
    points:[{id:'nightInspect',x:120,y:152,label:'Check the neighbor’s house'},
     {id:'nightContract',speaker:'jaquen',x:344,y:88,label:'Meet Jaquen'},
@@ -44,7 +47,23 @@ window.EgorianNight=(()=>{
  function mapImage(){return art[scene]&&Object.hasOwn(layouts,scene)?art[scene]:null;}
  function roster(){return Object.hasOwn(layouts,scene)?pair:null;}
  function npcs(){
-  if(scene===lantern)return [{id:'svetlana',...(quest.egorianSvetlanaMet?{x:488,y:136}:{x:176,y:200})}];
+  if(scene===lantern){
+   if(leadStarted===null){
+    const [x,y]=leadRoute[quest.egorianSvetlanaMet?3:0];
+    return [{id:'svetlana',x,y}];
+   }
+   let distance=Math.min(440,(performance.now()-leadStarted)/leadDuration*440);
+   for(let i=1;i<leadRoute.length;i++){
+    const [x,y]=leadRoute[i-1], [nextX,nextY]=leadRoute[i];
+    const length=Math.abs(nextX-x)+Math.abs(nextY-y);
+    if(distance<=length){
+     const step=distance/length;
+     return [{id:'svetlana',x:Math.round(x+(nextX-x)*step),y:Math.round(y+(nextY-y)*step)}];
+    }
+    distance-=length;
+   }
+   return [{id:'svetlana',x:488,y:136}];
+  }
   if(scene===guardLane){
    if(!quest.egorianGuardLeadChecked)return [{id:'svetlana',x:104,y:152}];
    return quest.egorianContractAccepted?[]:[{id:'jaquen',x:344,y:72}];
@@ -79,14 +98,25 @@ window.EgorianNight=(()=>{
     await say('jamal','I remember this street. Last time we came through, a city guard marked us for thieves. They came for us in our hotel. We killed them. He walked away.');
     await say('svetlana','J’Mal. I was hoping you’d come back without another pile of bodies to get rid of.');
     await say('jamal','Just one loose end. Have you heard anything about the guard who sold us out?');
-    await say('svetlana','I know where to start. Come with me.');
+    await say('svetlana','I know where to start. Meet me at the lane past the tavern.');
     quest.egorianSvetlanaMet=true;
+    save();
+    if(!reduce.matches){
+     const token=epoch;
+     leadStarted=performance.now();
+     try{
+      await delay(leadDuration);
+      if(token!==epoch)throw CANCEL;
+     }finally{
+      leadStarted=null;
+     }
+    }
     break;
    case 'nightFollowLead':
     await travel(guardLane,328,344);
     break;
    case 'nightInspect':
-    await say('svetlana','His neighbor was murdered. The guard disappeared, and this is where the trail stops.');
+    await say('svetlana','That’s the neighbor’s door. Someone killed him, and your guard vanished. This is where the trail goes cold.');
     await say('guapo','A dead neighbor and a missing guard. Someone had a busier night than we did.');
     await say('jamal','Could have been one of the Red Mantis. I’ll get word to my mentor. If anyone knows where the guard is, it’s Jaquen.');
     quest.egorianGuardLeadChecked=true;
@@ -96,8 +126,10 @@ window.EgorianNight=(()=>{
     await say('jamal','Who’s the job?');
     await say('jaquen','A lesser noble who thinks he’s a bard. You’ll likely find him at Oppian’s public excruciation. He’ll have capable bodyguards.');
     await say('jaquen','Kill him in public and I’ll add another five thousand.', ['[Take Jaquen’s contract]']);
-    await say('jamal','Keep the guard alive. We have unfinished business.');
     quest.egorianContractAccepted=true;
+    save();
+    updateObjective();
+    await say('jamal','Keep the guard alive. We have unfinished business.');
     break;
    case 'nightReturn':
     await journeyCard('Falco Manor · Before Dawn','J’Mal and El Guapo return just before dawn. Jaquen still holds the guard, and J’Mal has two days to fulfill the contract.',()=>{

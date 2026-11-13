@@ -298,6 +298,7 @@ test('Egorian night saves preserve the two-person investigation and the pending 
  w.DIALOGUE_FACE_CROPS={};
  w.journeyCard=async(name,text,commit)=>{w.transcript.push({name,text});commit?.();};
  w.setScene=id=>w.scene=id;
+ w.reduce={matches:true};
  vm.runInContext(read('egorian-night.js'),w);
  w.EgorianNight.install();
  w.scene=start.scene;
