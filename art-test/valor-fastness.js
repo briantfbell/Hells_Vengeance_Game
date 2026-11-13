@@ -151,19 +151,20 @@ window.FastnessArc = (() => {
     {id:'fastnessStudyRoad',x:440,y:160,label:'Climb the tower stairs'}
    ]
   };
+  const ascentStairs={x:328,y:168};
   for (const [id,floor] of Object.entries(towerFloors)) {
    scenes[id] = {
     name:'Valor’s Fastness · '+floor.title,image:images[id],spawn:[328,344],blocks:[],
-    walk:[{x:160,y:176,w:320,h:80},{x:288,y:256,w:64,h:128},{x:304,y:144,w:48,h:32}],
+    walk:[{x:144,y:176,w:352,h:96},{x:288,y:256,w:64,h:144},{x:288,y:144,w:64,h:48}],
     lights:floor.lights,
     points:[
      {id:floor.fight[0],x:328,y:224,label:floor.fight[1]},
-     {id:floor.exit[0],x:328,y:152,label:floor.exit[1]}
+     {id:floor.exit[0],...ascentStairs,label:floor.exit[1]}
     ]
    };
    JOURNEYS[id] = floor.arrival;
   }
-  scenes[gallery].points.push({id:'fastnessSummitRoad',x:328,y:152,label:'Climb to the summit'});
+  scenes[gallery].points.push({id:'fastnessSummitRoad',...ascentStairs,label:'Climb to the summit'});
   scenes[summit] = {
    name:'Valor’s Fastness · Summit',image:images[summit],spawn:[328,344],blocks:[],
    walk:[{x:144,y:160,w:368,h:128},{x:288,y:288,w:64,h:96},{x:448,y:144,w:48,h:16}],
@@ -303,8 +304,8 @@ window.FastnessArc = (() => {
    [gate]:'The last exterior defenders fall. The company has a clear path into the fortress.',
    [hall]:'The hall falls quiet. Follow the central aisle to the arch at the far end.',
    [chapel]:'The chapel defenders fall. The tower stair is to the right of the altar.',
-   [study]:'The mage and the study guards fall. The company clears the stair beyond the shelves.',
-   [landing]:'The warpriest falls. Beyond the landing, the stair turns toward the open gallery.',
+   [study]:'The mage and his guards fall. The stairs between the bookshelves lead up to the landing.',
+   [landing]:'The warpriest falls. Cross the landing to reach the open gallery above.',
    [gallery]:'Lencia Visserene falls on the gallery. The Angel Knight who escaped at the Court of Spears is dead.',
    [summit]:'The Archon is driven back. With his defense broken, Oppian staggers toward the edge of the tower.'
   };
@@ -372,13 +373,18 @@ window.FastnessArc = (() => {
     beginEncounter(chapel);
     return true;
    case 'fastnessHallFight':
+    beginEncounter(hall);
+    return true;
    case 'fastnessMageFight':
+    await say('draymus','He’s gathering power between bolts. Watch for the stronger cast.');
+    beginEncounter(study);
+    return true;
    case 'fastnessWarpriestFight':
-    beginEncounter(scene);
+    beginEncounter(landing);
     return true;
    case 'fastnessLenciaFight':
-    await say('freya','You made it out of the Court alive.');
-    await say('lencia','Then you know I won’t abandon this stair.');
+    await say('freya','Lencia. I saw you fall from the Court of Spears.');
+    await say('lencia','I had a way down. You won’t get a way up.');
     beginEncounter(gallery);
     return true;
    case 'fastnessStairs':
