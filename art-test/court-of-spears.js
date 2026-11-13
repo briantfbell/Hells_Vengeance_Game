@@ -51,7 +51,7 @@ window.CourtArc=(()=>{
   await say('freya','Let her go. Check our wounded and secure the deck.');
  }
  function prepare(position=scenes[scene].spawn){applyProgression();seedParty(...position);window.NextChapter?.syncRoster?.();paintParty();save();}
- function foe(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function foe(id,name,shortName){return {id,name:name||NAMES[id],shortName,hp:STATS[id].hp,max:STATS[id].hp};}
  async function afterBattle(kind){if(kind==='court_lower'){quest.lowerCleared=true;save();await say('freya','Keep moving. The connecting platforms lead deeper into their base.');}
   else if(kind==='court_rhona'){
    quest.rhonaDefeated=true;
@@ -100,7 +100,7 @@ window.CourtArc=(()=>{
    await say('court_rhona','You dismissed me at the gate. That was your town. This is our bridge.');
    await say(null,'[Confront Rhona at the crossing]', ['[Advance on Rhona and her defenders]']);
    prepare();
-   startBattle(0,false,{kind:'court_rhona',enemies:[foe('court_rhona'),foe('court_ranger','Bridge Defender 1'),foe('court_ranger','Bridge Defender 2')]});
+   startBattle(0,false,{kind:'court_rhona',enemies:[foe('court_rhona',NAMES.court_rhona,'Rhona'),foe('court_ranger','Bridge Defender 1','Guard 1'),foe('court_ranger','Bridge Defender 2','Guard 2')]});
    log('Rhona holds the crossing with twin hand axes.');
   }
   else if(id==='checkUpperBridge'&&scene==='court_lower'&&quest.rhonaDefeated&&!quest.courtBridgeChecked){
@@ -115,7 +115,7 @@ window.CourtArc=(()=>{
    await say('freya','Watch her sword arm. Keep your backs to the center of the deck.');
    await say(null,'[Face Lencia on the upper deck]', ['[Advance on the Angel of Longacre]']);
    prepare();
-   startBattle(0,false,{kind:'court_lencia',enemies:[foe('lencia'),foe('court_ranger','Court Defender 1'),foe('court_ranger','Court Defender 2')]});
+   startBattle(0,false,{kind:'court_lencia',enemies:[foe('lencia',NAMES.lencia,'Lencia'),foe('court_ranger','Court Defender 1','Guard 1'),foe('court_ranger','Court Defender 2','Guard 2')]});
    log('Lencia raises her shield. The defenders close in.');
   }
   else if(id==='courtEscape'&&scene==='court_upper'&&quest.lenciaDefeated&&!quest.lenciaEscaped)await escapeLencia();
