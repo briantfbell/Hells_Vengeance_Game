@@ -8,7 +8,7 @@ window.KantariaAftermath = (() => {
   scenes.fastness_tower_base.points.push({id:'kantariaAftermathRoad',x:328,y:344,label:'Return to Kantaria'});
   scenes[office] = {
    name:'Kantaria · Council Hall',image,spawn:[328,344],blocks:[],
-   walk:[{x:144,y:192,w:352,h:80},{x:288,y:272,w:64,h:112}],
+   walk:[{x:112,y:192,w:416,h:80},{x:288,y:256,w:64,h:144}],
    lights:[[190,126],[228,125],[414,126],[451,124]],
    points:[
     {id:'kantariaMayor',x:328,y:216,label:'Meet Mayor Demeer'},
@@ -18,9 +18,9 @@ window.KantariaAftermath = (() => {
    ]
   };
   MAP_LAYERS[office] = {foreground:image,background:{
-   type:'solid',color:'#141720',surface:{x:286,y:281,w:68,h:108,color:'#55505a'}
+   type:'solid',color:'#141720',surface:{x:280,y:281,w:80,h:119,color:'#55505a'}
   }};
-  JOURNEYS[office] = 'The banners and shrines have come down inside Valor’s Fastness. The former temple now houses the town government. The council has appointed Linton Demeer mayor, and he is already rebuilding it.';
+  JOURNEYS[office] = 'The banners and shrines have come down inside Valor’s Fastness. The former temple now houses the town government. Freya has chosen Linton Demeer as mayor. He is already rebuilding the council.';
   NAMES.linton = 'Linton Demeer';
   const sprite = 'linton-demeer-v1.png';
   LORE_CAST.linton = {src:sprite,source:sprite,frame:{x:186,y:15,w:579,h:1515}};
@@ -45,8 +45,9 @@ window.KantariaAftermath = (() => {
  }
  function npcs() {
   if (scene!==office) return null;
-  const visitors=[{id:'linton',x:328,y:200},{id:'razelago',x:424,y:208}];
-  if (!quest.uskwoodDeedSigned) visitors.push({id:'loredana',x:232,y:208});
+  const visitors=[{id:'linton',x:328,y:200}];
+  if (quest.kantariaMayorMet&&!quest.uskwoodDeedSigned) visitors.push({id:'loredana',x:232,y:208});
+  if (quest.uskwoodDeedSigned) visitors.push({id:'razelago',x:424,y:208});
   return visitors;
  }
 
@@ -57,14 +58,15 @@ window.KantariaAftermath = (() => {
     await travel(office,328,344);
     break;
    case 'kantariaMayor':
-    await say('linton','The council has appointed me mayor. We’ve offices again, but our docks are still in pieces and the traders are sailing past us.');
-    await say('freya','Start with the empty seats on the council. Kantaria needs people who will stay and put it back together.');
+    await say('linton','You put me in the mayor’s chair, Captain. I’m filling the council’s empty seats. Once we have a council that can sit, we can start on the docks.');
+    await say('freya','Choose people who’ll still be here when the work gets hard.');
     await say('Chronicle','Valor’s Fastness is deconsecrated. The temple of Iomedae and hidden shrine to Aroden are removed. Rioters loot and destroy Iomedae’s house.');
     quest.kantariaMayorMet=true;
     break;
    case 'uskwoodDeed':
     await say('loredana','I collected my father’s insurance. I’m going back to Nidal, and I won’t be returning to Kantaria.');
     await say('loredana','What’s left of the Uskwood is yours. I’ve put Freya, J’Mal, Jason and Draymus on the deed.');
+    await say(null,'Loredana holds out the deed.', ['[Accept the Uskwood deed]']);
     quest.uskwoodDeedSigned=true;
     break;
    case 'kantariaGifts':
@@ -74,6 +76,9 @@ window.KantariaAftermath = (() => {
     quest.kantariaGiftsReceived=true;
     inventory=Inventory.equip(inventory,quest,'reese','silent_sentry');
     applyProgression();
+    save();
+    updateObjective();
+    await say('Chronicle','Fex’s gifts and back pay are in your inventory. Reese has equipped Silent Sentry.');
     break;
    case 'capitalOrders':
     await say('razelago','Fex has promised the capital that Oppian will be delivered in five days. The South Road is the quickest way to Egorian.');
