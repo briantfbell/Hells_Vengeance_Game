@@ -1142,7 +1142,7 @@ test('the Remesiana market clears captives before destruction and saves the retu
  const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='remesiana-florio');
  Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),
   setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
-  DIALOGUE_FACE_CROPS:{}});
+  DIALOGUE_FACE_CROPS:{},epoch:0,reduce:{matches:true}});
  w.scenes.egorian_hotel_barato.points=[];
  vm.runInContext(read('egorian-fountain.js'),w);
  w.EgorianFountain.install();

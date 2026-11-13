@@ -3,6 +3,8 @@
 window.RemesianaMarket=(()=>{
  const harbor='remesiana_return',market='remesiana_rival_market';
  const image='remesiana-rival-market-v1.png',ruins='remesiana-rival-market-ruined-v1.png',portrait='remesiana-florio-v1.png';
+ const gathering=[[276,299],[300,312],[372,304],[395,319]];
+ let evacuation=null,ignition=null;
  function install(){
   scenes[harbor].points.push(
    {id:'remesianaMeetFlorio',speaker:'florio',x:405,y:162,label:'Speak to Florio Cento'},
@@ -11,12 +13,12 @@ window.RemesianaMarket=(()=>{
   );
   scenes[market]={
    name:'Remesiana · The Rival Market',image,spawn:[328,344],
-   walk:[{x:64,y:144,w:512,h:208},{x:256,y:352,w:128,h:32}],blocks:[],lights:[[40,40],[603,40]],
+   walk:[{x:32,y:144,w:576,h:208},{x:256,y:352,w:128,h:48}],blocks:[],lights:[[40,40],[603,40]],
    points:[
     {id:'remesianaOpenBays',x:136,y:152,label:'Open the holding bays'},
-    {id:'remesianaClearExit',x:328,y:360,label:'See the captives through the exit'},
+    {id:'remesianaClearExit',x:328,y:392,label:'See the captives through the exit'},
     {id:'remesianaBreakMarket',x:368,y:168,label:'Put the market out of business'},
-    {id:'remesianaWithdrawMarket',x:328,y:360,label:'Leave the ruined market'}
+    {id:'remesianaWithdrawMarket',x:328,y:392,label:'Leave the ruined market'}
    ]
   };
   MAP_LAYERS[market]={foreground:image,contain:true,background:{type:'solid',color:'#131922'}};
@@ -54,8 +56,15 @@ window.RemesianaMarket=(()=>{
   }
   if(scene!==market)return null;
   if(!quest.remesianaMarketBaysOpen||quest.remesianaMarketEvacuated)return [];
-  const gathering=[[276,299],[300,312],[372,304],[395,319]];
-  return gathering.map(([x,y],i)=>({id:'citizen-market-captive-'+i,x,y,dir:'down',variant:i+2}));
+  const leaving=evacuation?.token===epoch;
+  const elapsed=leaving?performance.now()-evacuation.at:0;
+  return gathering.flatMap(([x,y],i)=>{
+   const progress=leaving?Math.max(0,(elapsed-i*110)/900):0;
+   if(progress>=1)return [];
+   return [{id:'citizen-market-captive-'+i,
+    x:x+(296+i*14-x)*Math.min(1,progress*2),y:y+(416-y)*progress,
+    dir:'down',variant:i+2,step:progress>0,anim:elapsed/140}];
+  });
  }
  function effects(g,t){
   if(scene!==market)return;
@@ -67,7 +76,14 @@ window.RemesianaMarket=(()=>{
    SceneLayers.foreground(g,art[ruins],{contain:true});
    g.restore();
   }
-  if(!quest.remesianaMarketDestroyed)return;
+  if(ignition?.token===epoch){
+   const progress=Math.min(1,(performance.now()-ignition.at)/900);
+   g.save();
+   g.globalAlpha=progress;
+   SceneLayers.foreground(g,art[ruins],{contain:true});
+   g.restore();
+  }
+  if(!quest.remesianaMarketDestroyed&&ignition?.token!==epoch)return;
   g.save();
   for(let i=0;i<6;i++){
    const x=318+i*15,step=reduce.matches?0:Math.floor(t*(9+i%3))%34;
@@ -98,15 +114,31 @@ window.RemesianaMarket=(()=>{
     await say('Chronicle','The company opens the holding bays. The people inside gather near the yard exit.');
     quest.remesianaMarketBaysOpen=true;
     break;
-   case 'remesianaClearExit':
+   case 'remesianaClearExit':{
     await say('freya','This way. Keep moving until you’re clear of the walls.');
+    const token=epoch;
+    if(!reduce.matches){
+     evacuation={token,at:performance.now()};
+     await delay(1260);
+     if(epoch!==token)throw CANCEL;
+    }
     await say('Chronicle','The last captive reaches the street. The yard is empty.');
     quest.remesianaMarketEvacuated=true;
+    evacuation=null;
     break;
-   case 'remesianaBreakMarket':
-    await say('Chronicle','The company tears down the sale platform and sets the empty yard alight.');
+   }
+   case 'remesianaBreakMarket':{
+    const token=epoch;
+    if(!reduce.matches){
+     ignition={token,at:performance.now()};
+     await delay(900);
+     if(epoch!==token)throw CANCEL;
+    }
     quest.remesianaMarketDestroyed=true;
+    ignition=null;
+    await say('Chronicle','The company tears down the sale platform and sets the empty yard alight.');
     break;
+   }
    case 'remesianaWithdrawMarket':
     await journeyCard('Remesiana · Back at the harbor','Florio’s rival market is destroyed. The company leaves the yard behind and returns to the harbor.',()=>{
      quest.remesianaMarketWithdrawn=true;
