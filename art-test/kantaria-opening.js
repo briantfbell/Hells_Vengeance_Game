@@ -65,7 +65,7 @@ window.KantariaArc=(()=>{
    return [{id:'zara',x:320,y:121+Math.round(progress*55),height:47}];
   }return [];}
  function prepare(position=scenes[scene].spawn){applyProgression();seedParty(...position);window.NextChapter?.syncRoster?.();paintParty();save();}
- function foe(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function foe(id,name,shortName){return {id,name:name||NAMES[id],shortName,hp:STATS[id].hp,max:STATS[id].hp};}
  async function afterBattle(kind){if(kind==='kantaria_patrol'){quest.patrolsThinned=true;save();await say('Chronicle','The company begins thinning isolated guard patrols and spreading false leads. Their next objective is the Hellknight imprisoned at Hardship’s Hearth.');}
   else if(kind==='kantaria_yard'){
    quest.prisonYardCleared=true;
@@ -115,7 +115,7 @@ window.KantariaArc=(()=>{
    await say('freya','We need a name. Wait for a patrol to lose sight of the others, then we’ll open a route to the prison.');
    quest.kantariaAssessed=true;
   }
-  else if(id==='kantariaPatrol'){await say('freya','An isolated patrol. Strike before they can regroup with the occupation force.');prepare();startBattle(0,false,{kind:'kantaria_patrol',enemies:[foe('kantaria_guard','Patrol Guard 1'),foe('kantaria_guard','Patrol Guard 2'),foe('kantaria_guard','Patrol Guard 3')]});log('Isolated patrol · Three Reclamation guards.');}
+  else if(id==='kantariaPatrol'){await say('freya','An isolated patrol. Strike before they can regroup with the occupation force.');prepare();startBattle(0,false,{kind:'kantaria_patrol',enemies:[1,2,3].map(i=>foe('kantaria_guard','Patrol Guard '+i,'Guard '+i))});log('Isolated patrol · Three Reclamation guards.');}
   else if(id==='hardshipRoad')await travel('hardship_yard',328,344);
   else if(id==='hardshipObserve'){
    await say('reese','Three in the yard. The middle one is right on the door. I can cover you from the work benches.');
@@ -126,7 +126,7 @@ window.KantariaArc=(()=>{
   else if(id==='hardshipYardFight'){
    await say(null,'The guards turn toward the company.', ['[Cross the yard and take the entrance]']);
    prepare([328,216]);
-   const enemies=yardGuards.map(({id},index)=>foe(id,'Yard Guard '+(index+1)));
+   const enemies=yardGuards.map(({id},index)=>foe(id,'Yard Guard '+(index+1),'Guard '+(index+1)));
    startBattle(0,false,{kind:'kantaria_yard',enemies});
    log('Three guards stand between the company and the prison door.');
   }
@@ -136,7 +136,7 @@ window.KantariaArc=(()=>{
    await say('freya','We came for the prisoner. Stand aside.');
    await say(null,'Jalila raises her fists. Her guards move to block the cells.', ['[Break through the cell corridor]']);
    prepare([328,216]);
-   startBattle(0,false,{kind:'kantaria_hall',enemies:[foe('jalila'),foe('kantaria_guard','Hall Guard 1'),foe('kantaria_guard','Hall Guard 2')]});
+   startBattle(0,false,{kind:'kantaria_hall',enemies:[foe('jalila',NAMES.jalila,'Jalila'),...[1,2].map(i=>foe('kantaria_guard','Hall Guard '+i,'Guard '+i))]});
    log('Jalila fights unarmed. Two guards hold the corridor.');
   }
   else if(id==='zaraContact'){await say('freya','Captain Freya Kusanagi. We’re getting you out. What’s your name?');await say('zara','Zara Orcelani. My equipment is in the racks by the east wall. I want it back before we go.');quest.zaraIdentified=true;}
