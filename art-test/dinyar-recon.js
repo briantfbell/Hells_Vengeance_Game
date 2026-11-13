@@ -50,14 +50,14 @@ window.DinyarRecon=(()=>{
     {id:'dinyarWatch',x:328,y:248,label:'Clear the Reclamation watch'},
     {id:'dinyarCells',x:184,y:184,label:'Check the Godclaw cells'},
     {id:'dinyarCellsEast',x:456,y:184,label:'Check the Godclaw cells'},
-    {id:'dinyarClimb',x:328,y:168,label:'Climb to the bridge ward'}
+    {id:'dinyarClimb',x:328,y:168,marker:{x:328,y:133},label:'Climb to the bridge ward'}
    ]
   };
   scenes[bridge]={
    name:'Citadel Dinyar · Bridge Ward',image:bridgeArt,spawn:[328,344],blocks:[],
    walk:[{x:112,y:208,w:416,h:128},{x:288,y:336,w:80,h:64}],lights:[],
    points:[
-    {id:'dinyarDragon',x:328,y:256,label:'Confront Parnoneryx'},
+    {id:'dinyarDragon',speaker:dragon,x:328,y:256,label:'Confront Parnoneryx'},
     {id:'dinyarTrophy',x:280,y:256,label:'Recover Parnoneryx’s head'},
     {id:'dinyarReturn',x:328,y:344,label:'Return to Egorian'}
    ]
