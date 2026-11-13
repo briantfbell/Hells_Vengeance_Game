@@ -1,5 +1,27 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'art-test',name),'utf8');
+test('both jailbreak trails end without confirming a spell and unlock Bolgart’s release',async()=>{
+ for(const order of [['trailStreet','trailWoods'],['trailWoods','trailStreet']]){
+  const w=world();
+  w.scene='escape_jail';
+  w.quest={chapter5Complete:true,chapter6:true,jailbreakHeard:true};
+  assert.equal(w.PoliticalMovement.npcs().find(actor=>actor.id==='cimri').pose,'prone');
+  assert.equal(await w.PoliticalMovement.interact('escapeTrail'),false);
+  await w.PoliticalMovement.interact('cimriAccount');
+  await w.PoliticalMovement.interact('escapeTrail');
+  assert.equal(w.PoliticalMovement.points().length,2);
+  await w.PoliticalMovement.interact(order[0]);
+  assert.equal(w.PoliticalMovement.target().id,order[1]);
+  assert.equal(await w.PoliticalMovement.interact('freeBolgart'),false);
+  await w.PoliticalMovement.interact(order[1]);
+  assert(w.quest.escapeTrailLost);
+  assert(w.transcript.some(line=>line.text.includes('more than missing footprints')));
+  await w.PoliticalMovement.interact('freeBolgart');
+  assert(w.quest.bolgartReleased);
+  assert(!w.PoliticalMovement.npcs().some(actor=>actor.id==='bolgart'));
+  assert.equal(w.PoliticalMovement.target().id,'ordersRoad');
+ }
+});
 test('the standoff preserves injuries and the evening watch reveals the deputy before the jailbreak',async()=>{
  const w=world();
  w.scene='church_watch';
