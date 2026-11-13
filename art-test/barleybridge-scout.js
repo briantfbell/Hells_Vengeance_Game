@@ -4,7 +4,7 @@ window.BarleybridgeScout=(()=>{
  const temple='ilnius_inner_temple',approach='barleybridge_approach',image='barleybridge-approach-v1.png';
 
  function install(){
-  scenes[temple].points.push({id:'barleybridgeCutaway',x:328,y:344,label:'Follow El Guapo to Barleybridge'});
+  scenes[temple].points.push({id:'barleybridgeCutaway',x:328,y:344,marker:{x:328,y:377},label:'Follow El Guapo to Barleybridge'});
   scenes[approach]={
    name:'Barleybridge · River Approach',image,spawn:[328,344],blocks:[],
    walk:[{x:112,y:208,w:416,h:128},{x:112,y:192,w:64,h:16},{x:256,y:336,w:112,h:64}],lights:[[110,187],[161,168],[510,172]],

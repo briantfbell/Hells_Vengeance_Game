@@ -48,7 +48,7 @@ window.IlniusFountain=(()=>{
    points:[
     {id:'ilniusPaladin',speaker:paladin,x:328,y:248,label:'Confront Sylvestra Hanel'},
     {id:'ilniusRite',x:328,y:200,label:'Have Jason defile the basin'},
-    {id:'ilniusLibrary',speaker:'draymus',x:424,y:272,label:'Review the last Tathlum component'}
+    {id:'ilniusLibrary',x:328,y:200,label:'Ask Draymus about the last component'}
    ]
   };
   MAP_LAYERS[temple]={foreground:templeArt,contain:true,background:{type:'solid',color:'#20202b'}};
