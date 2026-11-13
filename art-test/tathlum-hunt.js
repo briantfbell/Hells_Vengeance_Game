@@ -160,7 +160,7 @@ window.TathlumHunt=(()=>{
  function beginFight(){
   const {x,y,dir}=units[0],max=STATS[giant].hp;
   save();
-  startBattle(0,false,{kind,enemies:[{id:giant,name:'Cave Giant '+(duels()+1),shortName:'Cave Giant',hp:max,max}],
+  startBattle(0,false,{kind,enemies:[{id:giant,name:'Cave Giant '+(duels()+1),shortName:'Giant',hp:max,max}],
    returnPosition:[x,y,dir],opening:'Freya takes the giant in single combat.'});
  }
  function isHuntBattle(value){return value===kind;}
