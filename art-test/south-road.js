@@ -103,7 +103,8 @@ window.SouthRoad = (() => {
   const max=STATS[id].hp;
   const injury=mounted?10:12;
   return {kind,enemies:Array.from({length:4},(_,i)=>({
-   id,name:(mounted?'Sword Knight':'Road Guard')+' '+(i+1),max,hp:max-injury,
+   id,name:(mounted?'Sword Knight':'Road Guard')+' '+(i+1),
+   shortName:(mounted?'Knight':'Guard')+' '+(i+1),max,hp:max-injury,
    shaken:!mounted&&marked&&i<2?1:0
   }))};
  }
