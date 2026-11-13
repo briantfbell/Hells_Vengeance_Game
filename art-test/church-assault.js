@@ -7,12 +7,12 @@ window.ChurchArc=(()=>{
  let breachBeat=null,ritualBeat=null;
  function nightEffects(g){
   const phase=currentRitual();
-  if(phase==='altar'||phase==='command'){
-   const x=phase==='altar'?325:410,y=phase==='altar'?135:162;
+  if(['altar','command','channel'].includes(phase)){
+   const x=phase==='altar'?325:phase==='channel'?371:410,y=phase==='altar'?135:162;
    const phaseOffset=reduce.matches?0:performance.now()/190;
    g.save();
    g.globalAlpha=.7;
-   g.fillStyle=phase==='altar'?'#ead8a3':'#a68cce';
+   g.fillStyle=phase==='command'?'#a68cce':'#ead8a3';
    for(let i=0;i<8;i++){
     const angle=i*Math.PI/4+phaseOffset;
     g.fillRect(Math.round(x+Math.cos(angle)*19),Math.round(y+Math.sin(angle)*9),3,2);
@@ -137,8 +137,9 @@ window.ChurchArc=(()=>{
  function sanctuaryActors(){
   const stage=currentRitual(),risen=quest.resurrectionBroken||stage==='ghast'||stage==='command';
   const actors=[];
-  if(!quest.allamarDefeated&&(!risen||quest.sanctuaryCleared))actors.push({id:'allamar',x:328,y:144});
-  if(!quest.ghastDestroyed)actors.push(risen?{id:'ghast_riley',x:stage==='ghast'?376:410,y:191,height:53}:{id:'riley',x:325,y:145,pose:'prone',height:41});
+  if(!quest.allamarDefeated&&(!risen||quest.sanctuaryCleared))actors.push({id:'allamar',x:stage==='channel'?328:quest.sanctuaryCleared?408:328,y:quest.sanctuaryCleared?164:144});
+  if(!quest.ghastDestroyed)actors.push(risen?{id:'ghast_riley',x:stage==='ghast'?376:stage==='retreat'?450:410,y:stage==='retreat'?249:191,height:53}:{id:'riley',x:325,y:145,pose:'prone',height:41});
+  if(stage==='channel'||stage==='retreat')actors.push({id:'celestial_wolf',x:377,y:192,height:45});
   if(!quest.sanctuaryCleared)actors.push({id:'twin2',x:368,y:168},{id:'kuribu',x:424,y:168});
   return actors;
  }
@@ -146,7 +147,7 @@ window.ChurchArc=(()=>{
   const stage=currentRitual();
   if(!stage)return unit;
   if(unit.id==='jamal')return {...unit,x:stage==='altar'?344:370,y:stage==='altar'?176:207,dir:'up',step:null};
-  if(unit.id==='draymus'&&stage==='command')return {...unit,x:401,y:222,dir:'up',step:null};
+  if(unit.id==='draymus'&&['command','channel','retreat'].includes(stage))return {...unit,x:stage==='retreat'?474:401,y:stage==='retreat'?252:222,dir:'up',step:null};
   return unit;
  }
  async function interruptRitual(){
@@ -166,8 +167,29 @@ window.ChurchArc=(()=>{
    quest.resurrectionBroken=true;
   }finally{ritualBeat=null;}
  }
+ async function faceAllamar(){
+  ritualBeat={phase:'channel',epoch};
+  try{
+   await say('allamar','You killed my sons and defiled this sanctuary. Now answer to Iomedae.');
+   await say('Chronicle','Allamar raises her shield. A celestial wolf takes its place at her side, and a spiritual sword hangs above the aisle.');
+   await say('Chronicle','She channels positive energy. The light closes her wounds and burns both Draymus and the ghast.');
+   ritualBeat.phase='retreat';
+   await say('draymus','I can keep Riley under control or stand in that light. I’m taking him out of reach.');
+  }finally{ritualBeat=null;}
+  fight('church_allamar',[enemy('allamar','Allamar'),enemy('celestial_wolf')]);
+ }
+ async function destroyGhast(){
+  await say('draymus','Hold still, Riley. One last command.');
+  await say('Chronicle','The ghast strains against Draymus’s command. Freya brings down her naginata, and the body goes still.');
+  quest.ghastDestroyed=true;
+ }
  function prepare(){seedParty(328,312);paintParty();save();}
  function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function dismissSummons(fight){
+  if(fight.kind!=='church_allamar'||!fight.enemies.some(enemy=>enemy.id==='allamar'&&enemy.hp<=0))return;
+  const wolf=fight.enemies.find(enemy=>enemy.id==='celestial_wolf'&&enemy.hp>0);
+  if(wolf){wolf.hp=0;log('Allamar falls. Her celestial wolf vanishes.');}
+ }
  function fight(kind,enemies){prepare();if(kind==='church_allamar')units=units.filter(u=>u.id!=='draymus');if(kind==='church_hall')units=units.filter(u=>u.id!=='jamal');startBattle(0,false,{kind,enemies});if(kind==='church_entry')battle.enemies.forEach(e=>e.shaken=2);if(kind==='church_sanctuary'){battle.paralyzed='jamal';if(units.filter(u=>hp[u.id]>0).every(u=>u.id==='jamal')){battle.paralyzed=null;battle.round=2;planEnemyRound();}}paintBattle();log(kind==='church_allamar'?'Draymus withdraws with the controlled ghast. Cimri holds the flank.':kind==='church_sanctuary'?'J’Mal is paralyzed for the opening round. Cimri supports the party.':'Cimri supports the flank · one strike each round.');}
  async function afterBattle(kind){prepare();if(kind==='church_entry'){quest.entryCleared=true;await say('Chronicle','The four acolytes fall. The party secures the vestibule and turns toward the barred double doors.');}if(kind==='church_hall'){quest.hallCleared=true;await say('Chronicle','The defenders give ground. Freya pushes into the sanctuary through splintering pews. Outside, J’Mal and the deputies are still fighting the iron seams of the second window.');await say('draymus','That winged archer is a Kuribu. A lesser angel.');}if(kind==='church_sanctuary'){quest.sanctuaryCleared=true;await say('Chronicle','The remaining acolytes and Lacall fall. The Kuribu’s mission has failed; it leaves the church. J’Mal finally shakes off the paralysis.');await say('Chronicle','Allamar emerges from her study carrying a sword and shield. Her sons are dead, and her attempt to restore Riley has made a monster. She will not yield.');}if(kind==='church_allamar'){quest.allamarDefeated=true;await say('Chronicle','Cimri and J’Mal close from opposite sides. Allamar falls. Her spiritual sword and celestial wolf vanish with her.');}save();paintParty();updateObjective();}
  async function support(){if(!battle?.kind.startsWith('church_'))return;if(battle.kind==='church_hall'){await kuribuVolley();if(!battle)return;}if(battle.kind==='church_sanctuary'&&battle.round===1){await animateAction({id:'kuribu'},{id:'cimri'},'attack',true);log('Kuribu’s arrows pin Cimri. Her flank attack is delayed.');return;}const e=livingEnemy();if(e){await animateAction({id:'cimri'},e,'attack',true,()=>{const value=Math.min(4,e.hp-1);e.hp-=value;flash(e,'−'+value);});log('Cimri attacks from the flank · a supporting cut against '+e.name+'.');}}
@@ -211,9 +233,9 @@ window.ChurchArc=(()=>{
  else if(id==='kantariaWindow'&&scene==='church_flank'&&quest.hallCleared)await breachFlank();
  else if(id==='interruptRitual'&&scene==='church_sanctuary'&&quest.hallCleared&&!quest.resurrectionBroken)await interruptRitual();
  else if(id==='sanctuaryFight'&&scene==='church_sanctuary'&&quest.resurrectionBroken&&!quest.sanctuaryCleared)fight('church_sanctuary',[enemy('twin2','Lacall'),enemy('church_acolyte','Sanctuary Acolyte 1'),enemy('church_acolyte','Sanctuary Acolyte 2')]);
- else if(id==='allamarFight'){await say('allamar','You have taken my sons. You will take nothing more.');await say('Chronicle','A spiritual sword hangs in the air and a celestial wolf answers her call. Her positive energy heals her and burns both Draymus and the ghast; Draymus retreats with Riley under his control.');fight('church_allamar',[enemy('allamar','Allamar'),enemy('celestial_wolf')]);}
- else if(id==='destroyGhast'){await say('Chronicle','Draymus forces Riley’s ghast to submit. Freya destroys it with her naginata, ending the failed resurrection.');quest.ghastDestroyed=true;}
- else if(id==='altarRoad'){await say('Chronicle','Jason and Draymus unravel the church’s consecration. Beneath it they sense a powerful presence trapped in the stone altar.');await travel('church_ruins',328,312);}
+ else if(id==='allamarFight'&&scene==='church_sanctuary'&&quest.sanctuaryCleared&&!quest.allamarDefeated)await faceAllamar();
+ else if(id==='destroyGhast'&&scene==='church_sanctuary'&&quest.allamarDefeated&&!quest.ghastDestroyed)await destroyGhast();
+ else if(id==='altarRoad'&&scene==='church_sanctuary'&&quest.ghastDestroyed){await say('Chronicle','Jason and Draymus unravel the church’s consecration. Beneath it they sense a powerful presence trapped in the stone altar.');await travel('church_ruins',328,312);}
  else if(id==='breakAltar'){await say('jason','Asmodeus, guide this blow.');await storyRoll('Jason · Shatter the altar',20,0,'Lucerne hammer · Stone breaks');await say('Chronicle','The altar splits under Jason’s hammer. Stone fragments scatter and dust rolls through the battered sanctuary.');quest.altarBroken=true;collapseStart=window.performance?.now?.()||0;await (typeof delay==='function'?delay(reduce.matches?0:1300):Promise.resolve());collapseStart=0;await say('Chronicle','A shadowy figure appears above the broken altar, finishing a two-sword strike that had been frozen in time. His blades cut empty air.');await say('mantis_master','What is the date? How long was I held here?');}
  else if(id==='assassinBoon'){await say('mantis_master','You freed me. I offer a boon: death, or knowledge. Name someone and I will kill them. Or let one worthy of Achaekek learn from me.');await say('Chronicle','The party considers a death, but those they most wanted dead are already gone. They choose knowledge for J’Mal.');await say('mantis_master','Then attend closely. Some I killed walk again. I must see to them when our lesson is done.');quest.assassinKnowledge=true;}
  else if(id==='trainingRoad')await travel('mantis_training',328,312);
@@ -223,5 +245,5 @@ window.ChurchArc=(()=>{
  else if(id==='churchArcComplete'){quest.chapter7Complete=true;await say('Chapter Seven complete','The missing remains led to Allamar’s last stand. Riley’s ghast is destroyed. J’Mal has trained with the freed assassin, Jason heads the converted church, and Cimri is sheriff.');}
  else return false;save();paintParty();updateObjective();return true;}
  function effects(g,t){nightEffects(g);if(!collapseStart||reduce.matches)return;const p=Math.min(1,(performance.now()-collapseStart)/1300);g.save();g.globalAlpha=(1-p)*.7;for(let i=0;i<28;i++){const x=328+Math.sin(i*2.1)*(12+p*110),y=144+p*65+Math.cos(i*1.7)*p*22;g.fillStyle=i%2?'#a39582':'#6c655f';g.fillRect(Math.round(x),Math.round(y),4+i%4,4+i%3);}g.globalAlpha=(1-p)*.25;g.fillStyle='#c3b295';g.fillRect(210,96,230,180);g.restore();}
- return {ritualPose,soloFlank:()=>scene==='church_flank',install,load,mapImage,effects,effect,enemyPreparation,goal,points,target,npcs,afterBattle,support,drawSupport,interact,chain};
+ return {ritualPose,soloFlank:()=>scene==='church_flank',install,load,mapImage,effects,effect,enemyPreparation,goal,points,target,npcs,afterBattle,support,drawSupport,dismissSummons,interact,chain};
 })();
