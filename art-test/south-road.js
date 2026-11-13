@@ -4,6 +4,8 @@ window.SouthRoad = (() => {
  const road='south_road',camp='south_road_camp';
  const escort=['freya','jason','draymus','reese'];
  const images={[road]:'south-road-ambush-v1.png',[camp]:'south-road-camp-v1.png'};
+ const openingDuration=850;
+ let opening=null;
  const atlas='south-road-cavalry-v1.png';
  const combatStats={south_road_knight:{hp:26,ac:14,atk:5,dmg:[1,8,1]}};
  const lanceProfile={name:'Lance',move:'Lance charge',die:8,chargeBonus:2};
@@ -16,23 +18,23 @@ window.SouthRoad = (() => {
   scenes.kantaria_council.points.push({id:'southRoadDeparture',x:328,y:344,label:'Take the South Road'});
   scenes[road]={
    name:'The South Road · Reclamation Roadblock',image:images[road],spawn:[328,344],blocks:[],
-   walk:[{x:144,y:160,w:304,h:128},{x:288,y:288,w:64,h:96},{x:272,y:112,w:112,h:48}],
+   walk:[{x:128,y:176,w:336,h:112},{x:288,y:272,w:64,h:128},{x:256,y:112,w:128,h:80}],
    lights:[[233,62],[409,62],[269,319],[368,319]],
    points:[
     {id:'southRoadScout',x:328,y:232,label:'Hear Reese’s warning'},
     {id:'southRoadInfantry',x:328,y:192,label:'Break the infantry line'},
     {id:'southRoadCavalry',x:328,y:160,label:'Meet the Sword Knights’ charge'},
     {id:'southRoadClerics',x:328,y:128,label:'Cover Reese’s shots'},
-    {id:'southRoadHeal',x:424,y:232,label:'Treat Draymus’s wounds'},
+    {id:'southRoadHeal',x:448,y:232,label:'Check Draymus by the carriage'},
     {id:'southRoadCamp',x:328,y:344,label:'Pull off the road for the night'}
    ]
   };
   scenes[camp]={
    name:'The South Road · Night Camp',image:images[camp],spawn:[328,344],blocks:[],
-   walk:[{x:192,y:160,w:192,h:128},{x:288,y:288,w:64,h:96}],
+   walk:[{x:208,y:144,w:176,h:160},{x:288,y:288,w:64,h:112}],
    lights:[[181,180],[245,102],[350,101],[433,179]],
    points:[
-    {id:'southRoadRest',x:232,y:200,label:'Take the night’s rest'},
+    {id:'southRoadRest',x:216,y:200,label:'Rest by the campfire'},
     {id:'southRoadDawn',x:328,y:344,label:'Set out for Egorian'}
    ]
   };
@@ -115,6 +117,7 @@ window.SouthRoad = (() => {
   quest[mounted?'roadKnightsCleared':'roadInfantryCleared']=true;
   seedParty(...position);
   save();
+  updateObjective();
   await say('Chronicle',mounted?
    'Freya rides down the last of the Sword Knights. The clerics still have the road in sight, and Reese is circling above them.' :
    'The last infantry fall. Four Sword Knights lower their lances and spur their horses forward.');
@@ -140,6 +143,50 @@ window.SouthRoad = (() => {
   g.restore();
   return true;
  }
+ async function showOpening(kind){
+  if(reduce.matches)return;
+  const token=epoch;
+  opening={kind,start:performance.now()};
+  try{
+   await delay(openingDuration);
+   if(token!==epoch)throw CANCEL;
+  }finally{
+   opening=null;
+  }
+ }
+
+ function effects(g){
+  if(scene!==road||!opening)return;
+  const progress=Math.min(1,(performance.now()-opening.start)/openingDuration);
+  const cavalry=opening.kind==='cavalry';
+  const sites=cavalry?[[234,188],[268,188],[302,188],[336,188],[370,188],[404,188]]:
+   [[200,168],[248,184],[408,168],[440,184]];
+  g.save();
+  sites.forEach(([x,y],index)=>{
+   const phase=Math.max(0,Math.min(1,progress*1.35-index*.045));
+   if(phase===0||phase===1)return;
+   if(!cavalry&&phase<.48){
+    const dy=Math.round((.48-phase)*142);
+    g.fillStyle='#df612e';
+    g.fillRect(x-3,y-dy-11,6,14);
+    g.fillStyle='#ffc665';
+    g.fillRect(x-2,y-dy-3,4,7);
+    return;
+   }
+   const swell=cavalry?Math.sin(phase*Math.PI):Math.sin((phase-.48)/.52*Math.PI);
+   const height=Math.round(24*swell);
+   if(height<2)return;
+   g.fillStyle='#812c24';
+   g.fillRect(x-17,y-height+4,34,height);
+   for(let j=0;j<7;j++){
+    const tip=Math.max(2,Math.round(height*(.55+((index+j*3)%7)/14)));
+    g.fillStyle=j%2?'#f17b32':'#ffae45';
+    g.fillRect(x-15+j*5,y-tip,4,tip);
+   }
+  });
+  g.restore();
+ }
+
  function recover(fraction){
   for(const id of CORE){
    hp[id]=Math.min(STATS[id].hp,hp[id]+Math.ceil(STATS[id].hp*fraction));
@@ -174,11 +221,14 @@ window.SouthRoad = (() => {
     break;
    }
    case 'southRoadInfantry':
-    await journeyCard('Fire on the Road','Jason and Draymus step out of the carriage. Fireballs rain down. Four soldiers fall in the opening blast, and the rest of the infantry scramble to hold their line.');
+    await showOpening('infantry');
+    await say('Chronicle','Fireballs rain down on the roadblock. Four infantry fall in the opening blast. The rest try to hold their line.');
     begin('south_road_infantry');
     return true;
    case 'southRoadCavalry':
-    await journeyCard('The Sword Knights Charge','Jason raises a wall of fire in their path. The four riders force their horses through it. Freya lowers her lance and meets them on Sleipnir.');
+    await say('jason','They’re charging. I’ll put fire across the road.');
+    await showOpening('cavalry');
+    await say('Chronicle','The four Sword Knights ride through Jason’s wall of fire. Freya meets them on Sleipnir, lance lowered.');
     begin('south_road_knights');
     return true;
    case 'southRoadClerics':
@@ -188,7 +238,7 @@ window.SouthRoad = (() => {
     quest.roadClericsCleared=true;
     break;
    case 'southRoadHeal':{
-    await say('draymus','Next time someone calls for a joust, I’d appreciate a little more warning.');
+    await say('draymus','I was standing a little too close to those lances.');
     const healed=await damage([2,8,3],'Treat Draymus');
     hp.draymus=Math.min(STATS.draymus.hp,hp.draymus+healed);
     quest.roadDraymusTreated=true;
@@ -212,5 +262,5 @@ window.SouthRoad = (() => {
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,lance,damageDice,points,target,goal,npcs,encounter,afterBattle,drawCombat,interact,recover,combatStats};
+ return {install,load,mapImage,roster,lance,damageDice,points,target,goal,npcs,encounter,afterBattle,drawCombat,effects,interact,recover,combatStats};
 })();
