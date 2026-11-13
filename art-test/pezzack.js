@@ -4,18 +4,19 @@ window.Pezzack=(()=>{
  const ruins='rachikan_ruins',manse='pezzack_manse',home='pezzack_egorian';
  const image='pezzack-manse-v1.png',burned='pezzack-manse-ruined-v1.png';
  const dragon='pezzack-blue-dragon-v1.png',strix='pezzack-strix-flight-v1.png';
- let attack=null;
+ const evacuationDuration=1800,prisonerStarts=[527,551,570];
+ let attack=null,evacuation=null;
 
  function install(){
   scenes[ruins].points.push({id:'pezzackDepartRachikan',x:320,y:376,label:'Continue to Pezzack with the company'});
   scenes[manse]={
    name:'Pezzack · Governor’s Manse',image,spawn:[328,344],blocks:[],
-   walk:[{x:80,y:176,w:496,h:128},{x:288,y:304,w:64,h:96}],lights:[[52,183],[43,253],[602,183],[607,254],[532,143],[573,143]],
+   walk:[{x:64,y:176,w:528,h:112},{x:80,y:288,w:480,h:16},{x:272,y:304,w:96,h:16},{x:288,y:320,w:64,h:80}],lights:[[52,183],[43,253],[602,183],[607,254],[532,143],[573,143]],
    points:[
     {id:'pezzackWatchDragon',x:328,y:264,label:'Look toward the manse'},
-    {id:'pezzackFreePrisoners',x:552,y:184,label:'Open the prisoners’ way out'},
+    {id:'pezzackFreePrisoners',x:552,y:166,label:'Open the prisoners’ way out'},
     {id:'pezzackWatchStrix',x:328,y:232,label:'Look up at the approaching wings'},
-    {id:'pezzackTeleport',x:328,y:344,label:'Gather the company for the teleport home'}
+    {id:'pezzackTeleport',x:320,y:368,label:'Gather the company for the teleport home'}
    ]
   };
   const hotel=scenes.egorian_hotel_barato;
@@ -56,7 +57,20 @@ window.Pezzack=(()=>{
    {id:'citizen-pezzack-2',x:432,y:290,dir:'up',variant:6}
   ];
   if(quest.pezzackPrisonersFreed)return [];
-  return [527,551,570].map((x,i)=>({id:'citizen-pezzack-prisoner-'+i,x,y:172+i%2*7,dir:'down',variant:i+1}));
+  const leaving=evacuation?.epoch===epoch;
+  const elapsed=leaving?performance.now()-evacuation.at:0;
+  return prisonerStarts.flatMap((x,i)=>{
+   const progress=Math.max(0,(elapsed-i*120)/evacuationDuration);
+   if(progress>=1)return [];
+   const startY=172+i%2*7;
+   const crossing=progress>=.2&&progress<.68;
+   const across=Math.max(0,Math.min(1,(progress-.2)/.48));
+   const down=Math.max(0,(progress-.68)/.32);
+   return [{id:'citizen-pezzack-prisoner-'+i,
+    x:x+(304+i*14-x)*across,
+    y:startY+(232-startY)*Math.min(1,progress/.2)+176*down,
+    dir:crossing?'left':'down',variant:i+1,step:progress>0,anim:elapsed/145}];
+  });
  }
  function drawFlyer(g,img,x,y,width,angle=0){
   if(!img)return;
@@ -96,7 +110,7 @@ window.Pezzack=(()=>{
    }
    g.restore();
   }
-  if(quest.pezzackPrisonersFreed){
+  if(quest.pezzackPrisonersFreed||evacuation?.epoch===epoch){
    g.save();
    g.fillStyle='#17161a';
    g.beginPath();
@@ -144,11 +158,19 @@ window.Pezzack=(()=>{
     await say('Chronicle','Bruce sweeps over the manse in the form of a blue dragon. Fire takes the building. The holding wing still stands.');
     break;
    }
-   case 'pezzackFreePrisoners':
+   case 'pezzackFreePrisoners':{
     await say('freya','Clear the passage. Get every prisoner out before the fire spreads.');
-    await say('Chronicle','The holding wing empties into the street. Every prisoner makes it out.');
+    const token=epoch;
+    if(!reduce.matches){
+     evacuation={epoch:token,at:performance.now()};
+     await delay(evacuationDuration+(prisonerStarts.length-1)*120);
+     if(token!==epoch)return false;
+    }
     quest.pezzackPrisonersFreed=true;
+    evacuation=null;
+    await say('Chronicle','The last prisoner crosses the bridge. The holding wing is empty.');
     break;
+   }
    case 'pezzackWatchStrix':
     quest.pezzackStrixSeen=true;
     save();
