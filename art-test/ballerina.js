@@ -8,16 +8,16 @@ window.Ballerina=(()=>{
   scenes[tavern].points.push({id:'ballerinaLeaveHinji',x:328,y:376,label:'Travel to Corentyn'});
   scenes[quay]={
    name:'Corentyn · Cargo Quay',image:quayImage,spawn:[328,344],
-   walk:[{x:80,y:144,w:448,h:192},{x:280,y:336,w:96,h:64}],blocks:[],
+   walk:[{x:80,y:144,w:464,h:176},{x:104,y:320,w:384,h:32},{x:256,y:352,w:112,h:48}],blocks:[],
    lights:[[82,86],[82,224],[445,94]],
-   points:[{id:'ballerinaSignOn',speaker:quarter,x:488,y:216,label:'Sign on as guards aboard the Ballerina'}]
+   points:[{id:'ballerinaSignOn',speaker:quarter,x:488,y:184,label:'Sign on as guards aboard the Ballerina'}]
   };
   scenes[deck]={
    name:'The Ballerina · Cargo Deck',image:deckImage,spawn:[328,232],
-   walk:[{x:128,y:144,w:368,h:128}],blocks:[{x:208,y:144,w:48,h:48},{x:384,y:144,w:48,h:48}],lights:[],
+   walk:[{x:128,y:144,w:384,h:128},{x:288,y:272,w:32,h:96}],blocks:[{x:216,y:144,w:32,h:32},{x:400,y:144,w:32,h:32}],lights:[],
    points:[
-    {id:'ballerinaInspectCargo',x:184,y:168,label:'Inspect the cargo lashings'},
-    {id:'ballerinaTakeWatch',speaker:quarter,x:456,y:200,label:'Take the coastal watch'}
+    {id:'ballerinaInspectCargo',x:184,y:143,label:'Inspect the cargo lashings'},
+    {id:'ballerinaTakeWatch',speaker:quarter,x:456,y:167,label:'Take the coastal watch'}
    ]
   };
   MAP_LAYERS[quay]={foreground:quayImage,contain:true,background:{type:'solid',color:'#21333c'}};

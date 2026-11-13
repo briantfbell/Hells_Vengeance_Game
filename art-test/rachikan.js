@@ -11,7 +11,7 @@ window.Rachikan=(()=>{
  const piratePositions=[[220,184],[286,168],[380,168],[446,184]];
 
  function install(){
-  scenes[deck].points.push({id:'rachikanLand',x:456,y:232,label:'Follow the pirate trail to Rachikan'});
+  scenes[deck].points.push({id:'rachikanLand',x:304,y:344,label:'Follow the pirate trail to Rachikan'});
   scenes[ruins]={
    name:'Rachikan · Coastal Ruins',image:map,spawn:[328,344],
    walk:[{x:160,y:144,w:320,h:160},{x:256,y:304,w:128,h:32},{x:288,y:336,w:64,h:64}],blocks:[],
