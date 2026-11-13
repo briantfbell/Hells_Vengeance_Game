@@ -2,25 +2,29 @@
 window.CovertArc=(()=>{
  const maps={},party=['freya','jamal','jason','draymus','guapo','reese'];
  const chain=['chapter13','covertBriefed','marketSurveyed','marketRiot','patrolAmbushed','falseBlame','guildEntered','guildRecordsTampered','manorObserved','manorArtifactsTaken','uskwoodReturned','uskwoodBurned','escapeOpened','cavesReached','caveRested','corrineAssigned','chapter13Complete'];
+ const patrol=[{id:'kantaria_guard',x:224,y:184},{id:'kantaria_guard',x:288,y:168},{id:'kantaria_guard',x:352,y:184}];
+ const marketCrowd=[{id:'market_trader',x:216,y:184},{id:'guild_clerk',x:440,y:216},{id:'market_trader',x:248,y:248},{id:'guild_clerk',x:376,y:248},{id:'market_trader',x:408,y:152}];
+ let crowdMovesAt=null;
  const r=(x,y,w,h)=>({x,y,w,h});
  function install(){
   for(const[id,name,image]of [['covert_briefing','The Uskwood · Quiet Knives','uskwood-inn-v1.png'],['kantaria_market','Kantaria · Market Unrest','kantaria-market-v1.png'],['kantaria_patrol_lane','Kantaria · The Patrol Route','kantaria-market-v1.png'],['kantaria_guild','Kantaria · Labor Guild','kantaria-guild-v1.png'],['kantaria_manor','Kantaria · Narikopolus Manor','kantaria-manor-v1.png'],['uskwood_last_night','The Uskwood · No Shelter Left','uskwood-inn-v1.png'],['fungus_shelter','Fungus Caves · A Cold Refuge','kantaria-caves-v1.png']]){
    const s=structuredClone(scenes.uskwood_inn);s.name=name;s.image=image;s.points=[];s.blocks=[];s.spawn=[328,344];s.walk=[r(144,160,352,144),r(288,304,80,80)];s.lights=id==='fungus_shelter'?[[520,152],[144,144],[464,264]]:[[136,112],[504,112],[264,328],[368,328]];
+   if(id==='kantaria_market'||id==='kantaria_patrol_lane')s.walk=[r(288,304,64,80),r(144,128,352,192)];
    maps[id]=scenes[id]=s;MAP_LAYERS[id]={foreground:image,background:{type:'solid',color:id==='fungus_shelter'?'#081313':'#11121b'}};
   }
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
   add('disruption_report','covertRoad',328,344,'Continue: Quiet Knives');
   for(const[map,entries]of [
    ['covert_briefing',[['covertBrief',328,200,'[Plan the covert operations]'],['marketRoad',328,344,'[Go to the market]']]],
-   ['kantaria_market',[['marketSurvey',232,200,'[Listen at the market stalls]'],['marketStir',328,216,'[Turn the crowd against the occupation]'],['patrolRoad',328,344,'[Intercept a militia patrol]']]],
-   ['kantaria_patrol_lane',[['covertPatrolFight',328,216,'[Ambush the militia patrol]'],['framePatrol',328,216,'[Leave a false account of the attack]'],['guildRoad',328,344,'[Go to the labor guild]']]],
+   ['kantaria_market',[['marketSurvey',200,200,'Listen at the market stalls'],['marketStir',328,200,'Address the gathered crowd'],['patrolRoad',328,344,'[Intercept a militia patrol]']]],
+   ['kantaria_patrol_lane',[['covertPatrolFight',288,216,'Ambush the militia patrol'],['framePatrol',288,184,'Plant a false account of the ambush'],['guildRoad',328,344,'[Go to the labor guild]']]],
    ['kantaria_guild',[['guildEntry',232,200,'[Get past the guild clerk]'],['alterGuildRecords',424,184,'[Tamper with the guild records]'],['manorRoad',328,344,'[Approach Narikopolus Manor]']]],
    ['kantaria_manor',[['manorSurvey',328,200,'[Observe the Reclamation agents]'],['takeManorArtifacts',424,200,'[Steal the displayed artifacts]'],['innReturn',328,344,'[Return to the Uskwood]']]],
    ['uskwood_last_night',[['uskwoodEscapeFight',328,216,'[Fight through the Uskwood]'],['cavesRoad',328,344,'[Escape to the caves]']]],
    ['fungus_shelter',[['caveRest',232,200,'[Rest in the shelter]'],['corrineArrival',328,200,'[Meet the assigned liaison]'],['covertEnd',328,344,'[Prepare the next operation]']]]
   ])for(const[id,x,y,label]of entries)add(map,id,x,y,label);
   Object.assign(NAMES,{market_trader:'Market Trader',guild_clerk:'Guild Clerk'});
-  Object.assign(JOURNEYS,{covert_briefing:'The docks and towers have been hit. The company turns to unrest, false reports and theft to undermine the occupation.',kantaria_market:'Trade continues despite the damaged docks. The company moves among Kantaria’s market stalls and listens to the crowd.',kantaria_patrol_lane:'Leave the market behind and find an isolated militia patrol. The company intends to conceal its responsibility for the attack.',kantaria_guild:'The labor guild keeps records that help the town function. The company enters to tamper with them.',kantaria_manor:'Narikopolus Manor is occupied by Glorious Reclamation agents. The company seeks the valuable artifacts inside.',uskwood_last_night:'The stolen artifacts are secured. The company returns to the Uskwood as its activities make Kantaria increasingly dangerous.',fungus_shelter:'Fire has destroyed the company’s shelter at the Uskwood. They withdraw, exhausted and wounded, into damp caves to recover.'});
+  Object.assign(JOURNEYS,{covert_briefing:'The docks and towers have been hit. The company turns to unrest, false reports and theft to undermine the occupation.',kantaria_market:'Trade continues despite the damaged docks. The company moves among Kantaria’s market stalls and listens to the crowd.',kantaria_patrol_lane:'After the crowd disperses, an isolated militia patrol passes through the empty market. The company circles back to intercept it.',kantaria_guild:'The labor guild keeps records that help the town function. The company enters to tamper with them.',kantaria_manor:'Narikopolus Manor is occupied by Glorious Reclamation agents. The company seeks the valuable artifacts inside.',uskwood_last_night:'The stolen artifacts are secured. The company returns to the Uskwood as its activities make Kantaria increasingly dangerous.',fungus_shelter:'Fire has destroyed the company’s shelter at the Uskwood. They withdraw, exhausted and wounded, into damp caves to recover.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter13?art[scene]:null;}
@@ -33,25 +37,41 @@ window.CovertArc=(()=>{
  function goal(){if(!quest.chapter12Complete)return null;if(!quest.chapter13)return 'Continue: Kantaria’s covert operations.';if(quest.chapter13Complete)return 'Quiet Knives complete · The cave refuge is established.';return ({covertRoad:'Continue the campaign.',covertBrief:'Plan the covert operations.',marketRoad:'Go to the market.',marketSurvey:'Listen at Kantaria’s market stalls.',marketStir:'Stir unrest against the occupation.',patrolRoad:'Find an isolated militia patrol.',covertPatrolFight:'Ambush the militia patrol.',framePatrol:'Plant a false account of the ambush.',guildRoad:'Enter the labor guild.',guildEntry:'Get past the clerk and reach the records.',alterGuildRecords:'Tamper with the labor guild records.',manorRoad:'Approach Narikopolus Manor.',manorSurvey:'Observe the manor’s Reclamation agents.',takeManorArtifacts:'Steal the manor artifacts.',innReturn:'Return to the Uskwood.',uskwoodEscapeFight:quest.uskwoodBurned?'Fight a path out of the burning Uskwood.':'Face the fight at the Uskwood.',cavesRoad:'Leave the burning inn for the caves.',caveRest:'Rest in the damp cave shelter.',corrineArrival:'Meet Corrine, the assigned liaison.',covertEnd:'Review the next targets.'})[target()?.id]||'Continue the operation.';}
  function npcs(){if(!quest.chapter13)return null;
   if(scene==='covert_briefing')return [{id:'loredana',x:280,y:168}];
-  if(scene==='kantaria_market')return [{id:'market_trader',x:216,y:184},{id:'guild_clerk',x:440,y:216},...[[264,248],[376,248],[408,184]].map(([x,y],i)=>({id:'market_trader',x,y}))];
-  if(scene==='kantaria_patrol_lane')return quest.patrolAmbushed?[]:[{id:'kantaria_guard',x:264,y:208},{id:'kantaria_guard',x:392,y:208}];
+  if(scene==='kantaria_market'){
+   if(quest.marketRiot)return [];
+   if(crowdMovesAt===null)return marketCrowd;
+   const progress=Math.min(1,(performance.now()-crowdMovesAt)/750);
+   return marketCrowd.map((actor,index)=>({...actor,x:Math.round(actor.x+(index%2?1:-1)*progress*48),y:Math.round(actor.y+progress*(index<2?12:30))}));
+  }
+  if(scene==='kantaria_patrol_lane')return quest.patrolAmbushed?[]:patrol;
   if(scene==='kantaria_guild')return quest.guildEntered?[]:[{id:'guild_clerk',x:216,y:176}];
   if(scene==='kantaria_manor')return quest.manorObserved?[]:[{id:'kantaria_guard',x:264,y:192},{id:'kantaria_guard',x:392,y:192}];
   if(scene==='fungus_shelter'&&quest.caveRested)return [{id:'corrine',x:328,y:168}];return [];
  }
  function drawNPC(u){if(u.id!=='corrine')return false;drawQuestgiver('corrine',u.x,u.y,62);return true;}
  function fight(kind,count){applyProgression();seedParty(...scenes[scene].spawn);save();startBattle(0,false,{kind,enemies:Array.from({length:count},(_,i)=>({id:'kantaria_guard',name:(kind==='covert_patrol'?'Militia':'Inn Foe')+' '+(i+1),hp:STATS.kantaria_guard.hp,max:STATS.kantaria_guard.hp}))});}
- async function afterBattle(kind){if(kind==='covert_patrol'){quest.patrolAmbushed=true;await say('Chronicle','The militia patrol is defeated. The company prepares to put the blame elsewhere.');}else if(kind==='covert_escape'){quest.escapeOpened=true;await say('freya','There is a way out. Everyone, move!');await say('Chronicle','The fight has opened a route out of the burning inn. The Uskwood can no longer shelter them.');}else return;save();paintParty();updateObjective();}
+ async function afterBattle(kind){if(kind==='covert_patrol'){quest.patrolAmbushed=true;seedParty(288,216);save();await say('Chronicle','The militia patrol is down. The square is still empty.');}else if(kind==='covert_escape'){quest.escapeOpened=true;await say('freya','There is a way out. Everyone, move!');await say('Chronicle','The fight has opened a route out of the burning inn. The Uskwood can no longer shelter them.');}else return;save();paintParty();updateObjective();}
  async function interact(id){
   if(id==='covertRoad'){if(!quest.chapter12Complete||quest.chapter13)return false;quest.chapter13=true;await travel('covert_briefing',328,344);}
   else if(!points()?.some(p=>p.id===id))return false;
-  else if(id==='covertBrief'){await say('freya','The docks and towers are only part of the occupation’s strength. Now we undermine its hold on the town.');await say('jason','The market, the guild’s records, and the manor. Trouble they cannot solve with another patrol.');quest.covertBriefed=true;}
+  else if(id==='covertBrief'){await say('freya','Word about the docks will have reached the market. Let’s hear what people are saying before we speak.');await say('jason','The guild’s records and the manor can wait until the patrols have their hands full.');quest.covertBriefed=true;}
   else if(id==='marketRoad')await travel('kantaria_market',328,344);
-  else if(id==='marketSurvey'){await say('market_trader','The docks are ruined and everyone has an opinion about what comes next. I still have a stall to keep open.');await say('freya','Then tell me what the occupation has done for your business.');await say('Chronicle','The company listens, watching where the crowd gathers.');quest.marketSurveyed=true;}
-  else if(id==='marketStir'){const choice=await say('Chronicle','Who will address the gathering crowd?',['[Let Freya speak]','[Let Jason speak]']);await say(choice===0?'freya':'jason',choice===0?'They promised you order. Look around you. Is this what that promise was worth?':'Their banners do not fill your cupboards. Ask who benefits while you struggle.');await say('Chronicle','The company fans the market’s anger into a riot. Shouts spread between the stalls as people turn against the occupation.');quest.marketRiot=true;await journeyCard('Kantaria Market · Unrest','The party has caused a riot at the market. They leave the crowd behind and turn their attention to the militia patrols.');}
+  else if(id==='marketSurvey'){await say('market_trader','The docks are ruined and everyone has an opinion about what comes next. I still have a stall to keep open.');await say('freya','What has the occupation done for your business?');await say('market_trader','Raised the fees and sent soldiers to collect them. Now look how many stalls have shut.');quest.marketSurveyed=true;}
+  else if(id==='marketStir'){
+   const choice=await say(null,'The traders turn to listen.', ['[Let Freya speak]','[Let Jason speak]']);
+   await say(choice===0?'freya':'jason',choice===0?'They promised you order. Look around you. Is this what that promise was worth?':'Their banners do not fill your cupboards. Ask who benefits while you struggle.');
+   if(!reduce.matches){
+    const token=epoch;
+    crowdMovesAt=performance.now();
+    try{await delay(750);if(token!==epoch)throw CANCEL;}finally{crowdMovesAt=null;}
+   }
+   quest.marketRiot=true;
+   save();
+   await say('Chronicle','Shouts spread between the stalls. The crowd surges out of the square as the riot spills into the neighboring streets.');
+  }
   else if(id==='patrolRoad')await travel('kantaria_patrol_lane',328,344);
-  else if(id==='covertPatrolFight'){await say('freya','An isolated patrol. Keep the attack away from the crowd.');fight('covert_patrol',3);log('Patrol ambush · Defeat the militia.');}
-  else if(id==='framePatrol'){await say('freya','The report will point away from us.');await say('Chronicle','The party frames Kantaria’s homeless freed slaves for the militia attacks. The accusation is false: the company carried out the ambush.');quest.falseBlame=true;}
+  else if(id==='covertPatrolFight'){await say('reese','Three militia. No other patrol in sight.');await say(null,'The patrol passes the empty stalls.', ['[Spring the ambush]']);fight('covert_patrol',patrol.length);log('Patrol ambush · Defeat the militia.');}
+  else if(id==='framePatrol'){await say(null,'[Leave the false account]', ['[Plant the forged report]']);await say('Chronicle','The planted account falsely blames Kantaria’s homeless freed slaves. Freya’s company carried out the ambush.');quest.falseBlame=true;}
   else if(id==='guildRoad')await travel('kantaria_guild',328,344);
   else if(id==='guildEntry'){await say('guild_clerk','The guild’s records are not open to casual visitors.');await say('jason','We have business to settle. You need not trouble yourself with every page.');await say('Chronicle','While the clerk is occupied, the company gains access to the records room.');quest.guildEntered=true;}
   else if(id==='alterGuildRecords'){await say('Chronicle','The company burglarizes the labor guild and tampers with its records. They leave the paperwork compromised.');await say('jamal','A quiet job. Paper hardly ever screams.');quest.guildRecordsTampered=true;}
