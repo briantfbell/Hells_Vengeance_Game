@@ -7,16 +7,16 @@ window.InfernoGate=(()=>{
  const devilArt='arego-bearded-devil-v1.png',visperthulArt='arego-visperthul-v1.png';
  const cellsSpawn=[328,344],gateSpawn=[328,344];
  const ashOrigin=[320,86];
- const lavaRuns=[[[171,149],[467,149]],[[467,149],[219,256]],[[219,256],[319,94]],[[319,94],[419,256]],[[419,256],[171,149]]];
+ const lavaRuns=[[[160,148],[480,148]],[[480,148],[210,265]],[[210,265],[320,92]],[[320,92],[430,265]],[[430,265],[160,148]]];
  function install(){
   scenes[yard].points.push({id:'aregoDescend',x:312,y:128,label:'Descend into Fort Arego'});
   scenes[cells]={
    name:'Fort Arego · Prison Cells',image:cellsArt,spawn:cellsSpawn,blocks:[],
-   walk:[{x:192,y:96,w:256,h:240},{x:272,y:336,w:96,h:64}],lights:[[177,55],[267,51],[373,51],[463,55],[177,121],[463,121],[177,188],[463,188],[177,257],[463,257],[177,325],[463,325],[252,373],[388,373]],
+   walk:[{x:272,y:80,w:96,h:16},{x:192,y:96,w:256,h:272},{x:272,y:368,w:96,h:32}],lights:[[177,55],[267,51],[373,51],[463,55],[177,121],[463,121],[177,188],[463,188],[177,257],[463,257],[177,325],[463,325],[252,373],[388,373]],
    points:[
     {id:'aregoCellFight',x:328,y:240,label:'Clear the devils from the cellblock'},
-    {id:'aregoDevilParley',speaker:envoy,x:400,y:176,label:'Parley with the devils by the stair'},
-    {id:'aregoLowerStair',x:328,y:144,label:'Take the lowest stair'}
+    {id:'aregoDevilParley',speaker:envoy,x:384,y:132,label:'Parley with the devil by the stair'},
+    {id:'aregoLowerStair',x:320,y:86,label:'Take the lowest stair'}
    ]
   };
   scenes[gate]={
@@ -65,7 +65,7 @@ window.InfernoGate=(()=>{
  function npcs(t=0){
   if(scene===cells){
    if(quest.aregoStairParley)return [];
-   if(quest.aregoCellDevilsDefeated)return [{id:envoy,x:400,y:160,height:62}];
+   if(quest.aregoCellDevilsDefeated)return [{id:envoy,x:384,y:132,height:62}];
    return [{id:bearded,x:264,y:200,height:64},{id:bearded,x:392,y:200,height:64}];
   }
   if(scene===gate&&quest.aregoGateSurveyed)return [{id:visperthul,x:472,y:232+(reduce.matches?0:Math.round(Math.sin(t*1.7)*2)),height:92}];
@@ -122,7 +122,7 @@ window.InfernoGate=(()=>{
     break;
    case 'aregoAcceptPact':
     await say(visperthul,'Defeat Fex and give me the talisman. I’ll help you close this gate, and Cheliax will hear nothing more from me this century.');
-    await say('freya','You help us close the gate, and you stay out of Cheliax.', ['[Accept Visperthul’s terms]']);
+    await say('freya','We’ll face Fex first. Until then, the talisman stays with us.', ['[Accept Visperthul’s terms]']);
     await say('freya','On those terms, we have a deal.');
     quest.aregoFirstPact=true;
     break;
