@@ -3,17 +3,19 @@
 window.BellflowerBarn=(()=>{
  const hide='egorian_migos_hideaway',yard='egorian_bellflower_barn',boarder='bellflower_boarder';
  const intact='bellflower-barn-v1.png',ruined='bellflower-barn-ruined-v1.png',elemental='bellflower-earth-elemental-v1.png';
+ const collapseAt=1.56;
+ const escapeRoutes=[{x:218,y:184,exitX:72},{x:495,y:184,exitX:576},{x:528,y:198,exitX:592}];
  let siege=null;
 
  function install(){
   scenes[hide].points.push({id:'bellflowerBarnLead',speaker:'jason',x:264,y:216,label:'Follow the lead to the Bellflower barn'});
   scenes[yard]={
    name:'Egorian · Bellflower Barn',image:intact,spawn:[328,344],blocks:[],
-   walk:[{x:112,y:176,w:416,h:144},{x:288,y:320,w:80,h:80}],lights:[[52,253],[595,265],[286,112],[446,112]],
+   walk:[{x:64,y:176,w:512,h:160},{x:272,y:336,w:112,h:64},{x:64,y:128,w:32,h:48},{x:560,y:128,w:32,h:48}],lights:[[52,253],[595,265],[286,112],[446,112]],
    points:[
     {id:'bellflowerBarnScout',x:328,y:264,label:'Scout the barn and its exits'},
-    {id:'bellflowerBarnSummon',x:328,y:232,label:'Summon the earth elementals'},
-    {id:'bellflowerBarnAftermath',x:328,y:200,label:'Search the ruins'}
+    {id:'bellflowerBarnSummon',x:360,y:204,label:'Summon the earth elementals'},
+    {id:'bellflowerBarnAftermath',x:360,y:176,label:'Search the ruins'}
    ]
   };
   MAP_LAYERS[yard]={foreground:intact,contain:true,background:{type:'solid',color:'#22252b'}};
@@ -43,19 +45,25 @@ window.BellflowerBarn=(()=>{
  function npcs(){
   if(scene!==yard)return null;
   const time=elapsed();
-  if(time>.85&&time<2.5||reduce.matches&&time<.97){
-   const pace=reduce.matches?76:(time-.85)*90;
-   return [
-    {id:boarder,x:224-pace,y:185-pace*.16,height:34},
-    {id:boarder,x:423+pace,y:191-pace*.15,height:34},
-    {id:boarder,x:456+pace*.8,y:209-pace*.26,height:34}
-   ];
-  }
-  return [];
+  if(reduce.matches||time<.85||time>=2.5)return [];
+  return escapeRoutes.flatMap(({x,y,exitX},index)=>{
+   const progress=(time-.85-index*.12)/1.4;
+   if(progress<0||progress>=1)return [];
+   const across=Math.min(1,progress/.64);
+   const away=Math.max(0,(progress-.64)/.36);
+   return [{id:boarder,x:x+(exitX-x)*across,y:y+16*Math.sin(across*Math.PI)-58*away,
+    height:34,opacity:Math.min(1,(1-progress)*6)}];
+  });
  }
  function effects(g,t){
   if(scene!==yard)return;
   const reduced=reduce.matches,time=elapsed(),im=art[elemental];
+  if(!reduced&&time>1.1&&time<collapseAt&&!quest.bellflowerBarnLeveled){
+   g.save();
+   g.globalAlpha=(time-1.1)/(collapseAt-1.1);
+   SceneLayers.foreground(g,art[ruined],{contain:true});
+   g.restore();
+  }
   if(im&&time<2.55){
    const lift=reduced?0:Math.max(0,1-time/.48)*34;
    const hit=!reduced&&time>.76?Math.sin((time-.76)*16)*Math.max(0,2.5-time)*3:0;
@@ -103,7 +111,7 @@ window.BellflowerBarn=(()=>{
     await say('Chronicle','The ground heaves as the company summons giant earth elementals.');
     const token=epoch;
     siege={epoch:token,at:performance.now()};
-    await delay(reduce.matches?850:1560);
+    await delay(reduce.matches?850:collapseAt*1000);
     if(token!==epoch)return false;
     quest.bellflowerBarnLeveled=true;
     save();
