@@ -134,7 +134,6 @@ window.EgorianArrival=(()=>{
     break;
    case 'egorianThorntown':
     await say('corrine','I was stationed in Egorian before I joined you. The Falco residence is in Thorntown. Let me get us through the gates.');
-    await say('corrine','The Falcos live beyond the Thorntown gates. Stay with me and we’ll find the residence.');
     await travel(manor,328,312);
     break;
    case 'egorianWelcome':
