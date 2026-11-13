@@ -14,12 +14,12 @@ window.Rachikan=(()=>{
   scenes[deck].points.push({id:'rachikanLand',x:304,y:344,label:'Follow the pirate trail to Rachikan'});
   scenes[ruins]={
    name:'Rachikan · Coastal Ruins',image:map,spawn:[328,344],
-   walk:[{x:160,y:144,w:320,h:160},{x:256,y:304,w:128,h:32},{x:288,y:336,w:64,h:64}],blocks:[],
+   walk:[{x:144,y:144,w:352,h:160},{x:160,y:304,w:320,h:16},{x:224,y:320,w:192,h:16},{x:288,y:336,w:64,h:48}],blocks:[],
    lights:[[122,143],[250,74],[468,83],[526,166],[272,317],[360,318]],
    points:[
-    {id:'rachikanSurvey',x:328,y:272,label:'Scout the pirate storehouse'},
-    {id:'rachikanRaid',x:328,y:216,label:'Break the pirate operation'},
-    {id:'rachikanCount',x:328,y:248,label:'Speak to Draymus about the dead'}
+    {id:'rachikanSurvey',x:328,y:248,label:'Scout the pirate storehouse'},
+    {id:'rachikanRaid',x:328,y:196,label:'Break the pirate operation'},
+    {id:'rachikanCount',x:328,y:232,label:'Speak to Draymus about the dead'}
    ]
   };
   MAP_LAYERS[ruins]={foreground:map,contain:true,background:{
@@ -71,7 +71,7 @@ window.Rachikan=(()=>{
   paintParty();
   save();
   updateObjective();
-  await say('Chronicle','The last defenders fall. The pirates’ operation at Rachikan is broken.');
+  await say('Chronicle','The courtyard is clear. The company takes the storehouse and secures the landing. The pirates have lost their shore base.');
  }
  async function interact(id){
   if(target()?.id!==id)return false;
@@ -90,9 +90,9 @@ window.Rachikan=(()=>{
     beginFight();
     return true;
    case 'rachikanCount':
-    await say('Chronicle','The fighting across the ruins leaves forty bodies.');
+    await say('Chronicle','By the time the fighting ends across the ruins, the company counts forty dead.');
     await say('draymus','Go on without me. I’ll stay with the dead.');
-    await journeyCard('Rachikan · Forty corpses','The company heads back to the ship. Draymus stays behind at the ruins with the forty dead.',()=>{
+    await journeyCard('Rachikan · Forty corpses','Draymus stays behind with the dead. The rest of the company heads for the landing to reboard the Ballerina.',()=>{
      quest.rachikanComplete=true;
      seedParty(328,248,'up');
     });

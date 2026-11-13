@@ -7,7 +7,7 @@ window.Pezzack=(()=>{
  let attack=null;
 
  function install(){
-  scenes[ruins].points.push({id:'pezzackDepartRachikan',x:328,y:344,label:'Continue to Pezzack with the company'});
+  scenes[ruins].points.push({id:'pezzackDepartRachikan',x:320,y:376,label:'Continue to Pezzack with the company'});
   scenes[manse]={
    name:'Pezzack · Governor’s Manse',image,spawn:[328,344],blocks:[],
    walk:[{x:80,y:176,w:496,h:128},{x:288,y:304,w:64,h:96}],lights:[[52,183],[43,253],[602,183],[607,254],[532,143],[573,143]],
