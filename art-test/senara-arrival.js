@@ -6,16 +6,16 @@ window.SenaraArrival=(()=>{
  const layouts={
   [waterfront]:{
    name:'Senara · River Road',image:'senara-waterfront-v1.png',spawn:[360,344],
-   walk:[{x:336,y:176,w:64,h:208},{x:272,y:112,w:320,h:64},{x:544,y:96,w:48,h:16}],
+   walk:[{x:336,y:176,w:64,h:224},{x:304,y:128,w:144,h:80},{x:280,y:112,w:320,h:48},{x:544,y:80,w:48,h:48}],
    lights:[],
    points:[{id:'senaraPatrols',x:360,y:168,label:'Observe the Reclamation garrison'},
-    {id:'senaraVilla',x:568,y:136,label:'Enter Fex’s residence'}]
+    {id:'senaraVilla',x:568,y:112,label:'Enter Fex’s residence'}]
   },
   [villa]:{
    name:'Senara · Fex’s Residence',image:'senara-fex-villa-v1.png',spawn:[328,344],
-   walk:[{x:112,y:208,w:448,h:96},{x:176,y:128,w:272,h:80},{x:272,y:304,w:96,h:80}],
+   walk:[{x:112,y:192,w:448,h:112},{x:176,y:144,w:272,h:64},{x:272,y:288,w:96,h:112}],
    lights:[[127,53],[515,53]],
-   points:[{id:'senaraCoffer',x:536,y:200,label:'Search for Fex’s talisman'}]
+   points:[{id:'senaraCoffer',x:536,y:184,label:'Inspect the open coffer'}]
   }
  };
 
@@ -73,16 +73,21 @@ window.SenaraArrival=(()=>{
     break;
    case 'senaraRuling':
     await say('Chronicle','In one night, the witnesses for the prosecution disappear or die in a fire.');
-    await say('egorian_magistrate','The panel denies the prosecutor’s motion for a mistrial.');
-    await say('Chronicle','The case comes to an end. J’Mal is still out of sight.');
+    await say('egorian_magistrate','The panel denies the prosecutor’s motion for a mistrial. The case is closed.');
     quest.egorianChargesDropped=true;
+    save();
+    updateObjective();
+    await say('Chronicle','J’Mal is still out of sight. Razelago is waiting by the benches.');
     break;
    case 'senaraBriefing':
     await say('razelago_revealed','Fex is sending you to Senara. The Glorious Reclamation has held the town for over a month. Their garrison is strong, so keep your purpose to yourselves.');
     await say('razelago_revealed','There’s a passage to Hell in the Whisperwood. Devils can cross without anyone’s leave. Fex needs ritual components to close it.');
     await say('razelago_revealed','His Infernal Talisman should be at his residence in Senara. Start there, then follow the list.');
-    await say('freya','We have the list. I would have liked a little more of the plan.');
+    await say(null,'Razelago hands over Fex’s ritual list.', ['[Take the ritual list]']);
     quest.senaraOrders=true;
+    save();
+    updateObjective();
+    await say('freya','We’ll start at the residence. Keep the list out of sight on the road.');
     break;
    case 'senaraRoad':
     await travel(waterfront,360,344);
@@ -96,9 +101,12 @@ window.SenaraArrival=(()=>{
     await travel(villa,328,344);
     break;
    case 'senaraCoffer':
-    await say('Chronicle','Fex’s residence was burgled about a week ago. The coffer stands open. The Infernal Talisman is gone.');
-    await say('draymus','Someone in town knows where stolen goods go. Let’s find out who.');
+    await say(null,'The coffer is open and papers are scattered across the floor.', ['[Check for the Infernal Talisman]']);
     quest.senaraTalismanMissing=true;
+    save();
+    updateObjective();
+    await say('Chronicle','The residence was burgled about a week ago. The Infernal Talisman is gone.');
+    await say('draymus','Someone in Senara knows where stolen goods go.');
     break;
   }
   save();
