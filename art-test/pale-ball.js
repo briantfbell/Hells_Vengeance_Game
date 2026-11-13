@@ -14,19 +14,19 @@ window.PaleBall=(()=>{
  let illusionEpoch=-1,armorFlash=null;
 
  function install(){
-  scenes[salon].points.push({id:'paleLeaveSalon',x:328,y:344,label:'Attend the Night of the Pale'});
+  scenes[salon].points.push({id:'paleLeaveSalon',x:328,y:392,label:'Attend the Night of the Pale'});
   scenes[yard]={
    name:'Egorian · Night of the Pale',image:map,spawn:[328,344],blocks:[],
    walk:[{x:144,y:144,w:352,h:176},{x:288,y:320,w:64,h:80}],lights:[[144,165],[237,118],[405,118],[499,165],[247,333],[393,333]],
    points:[
     {id:'paleMeetGuests',x:232,y:256,label:'Join the invited guests'},
-    {id:'paleMysterio',speaker:'draymus',x:328,y:184,label:'Watch the Great Mysterio'},
-    {id:'paleMeetQueen',speaker:queen,x:440,y:208,label:'Meet Queen Abrogail II'},
-    {id:'paleChallenge',speaker:vokadus,x:328,y:304,label:'Hear Vokadus Fex’s challenge'},
+    {id:'paleMysterio',speaker:'draymus',x:329,y:148,label:'Watch the Great Mysterio'},
+    {id:'paleMeetQueen',speaker:queen,x:440,y:184,label:'Meet Queen Abrogail II'},
+    {id:'paleChallenge',speaker:vokadus,x:376,y:304,label:'Hear Vokadus Fex’s challenge'},
     {id:'paleSummonArmor',x:328,y:272,label:'Summon Freya’s Hellknight plate'},
-    {id:'paleDuel',speaker:vokadus,x:328,y:272,label:'Duel Vokadus Fex'},
-    {id:'paleAftermath',speaker:'jamal',x:328,y:272,label:'See what J’Mal is doing'},
-    {id:'paleClose',x:328,y:344,label:'Leave the Night of the Pale'}
+    {id:'paleDuel',speaker:vokadus,x:328,y:248,label:'Duel Vokadus Fex'},
+    {id:'paleAftermath',speaker:'jamal',x:359,y:270,label:'See what J’Mal is doing'},
+    {id:'paleClose',x:328,y:392,label:'Leave the Night of the Pale'}
    ]
   };
   MAP_LAYERS[yard]={foreground:map,contain:true,background:{type:'solid',color:'#121522'}};
@@ -74,9 +74,10 @@ window.PaleBall=(()=>{
    {id:'jamal',x:quest.paleDuelWon?359:210,y:quest.paleDuelWon?270:262,dir:quest.paleDuelWon?'left':'right'}
   ];
   if(quest.paleShowSeen)actors.push({id:queen,x:440,y:184,height:58},{id:attendant,x:475,y:185,height:62});
-  if(quest.paleQueenMet)actors.push({id:vokadus,x:328,y:quest.paleChallenged?248:323,height:67,pose:quest.paleDuelWon?'prone':null});
+  if(quest.paleQueenMet)actors.push({id:vokadus,x:quest.paleChallenged?328:376,y:quest.paleChallenged?248:304,height:67,pose:quest.paleDuelWon?'prone':null});
   for(let i=0;i<12;i++){
    const left=i<6;
+   if(quest.paleShowSeen&&!left&&i%6<3)continue;
    actors.push({id:'citizen-pale-'+i,x:left?155+(i%3)*28:429+(i%3)*28,
     y:i%6<3?200:286,dir:quest.paleDuelWon?(left?'right':'left'):'up',variant:i%8});
   }
@@ -89,7 +90,7 @@ window.PaleBall=(()=>{
    g.save();
    g.imageSmoothingEnabled=false;
    g.globalAlpha=reduce.matches ? .88 : .82+.11*Math.sin(t*4);
-   g.drawImage(im,328-width/2,124-height,width,height);
+   g.drawImage(im,328-width/2,142-height,width,height);
    g.restore();
   }
   if(!reduce.matches&&armorFlash?.token===epoch){
@@ -153,7 +154,7 @@ window.PaleBall=(()=>{
     quest.paleQueenMet=true;
     break;
    case 'paleChallenge':
-    await say('Chronicle','A carriage stops outside the gates. A heavily armored Hellknight comes straight to Freya’s table.');
+    await say('Chronicle','A carriage stops outside the gates. A heavily armored Hellknight crosses the courtyard to Freya.');
     await say(vokadus,'Vokadus Fex. Darellus was my cousin and your liege lord. I’m here to answer his death.');
     await say('Chronicle','Vokadus turns to the Queen. She nods, and he draws his heavy mace.');
     quest.paleChallenged=true;
