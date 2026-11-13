@@ -134,21 +134,21 @@ window.FastnessArc = (() => {
   };
   scenes[hall] = {
    name:'Valor’s Fastness · Mustering Hall',image:images[hall],spawn:[328,344],blocks:[],
-   walk:[{x:144,y:176,w:352,h:80},{x:288,y:256,w:64,h:128},{x:304,y:144,w:48,h:32}],
+   walk:[{x:128,y:176,w:384,h:96},{x:288,y:256,w:64,h:144},{x:304,y:144,w:48,h:48}],
    lights:[[190,139],[227,139],[414,139],[450,139]],
    points:[
     {id:'fastnessHallFight',x:328,y:224,label:'Break the hall’s defense'},
-    {id:'fastnessChapelRoad',x:328,y:152,label:'Enter the inner chapel'}
+    {id:'fastnessChapelRoad',x:328,y:160,label:'Enter the inner chapel'}
    ]
   };
   scenes[chapel] = {
    name:'Valor’s Fastness · Inner Chapel',image:images[chapel],spawn:[328,344],blocks:[],
-   walk:[{x:160,y:176,w:320,h:80},{x:288,y:256,w:64,h:128},{x:432,y:144,w:32,h:32}],
+   walk:[{x:144,y:176,w:368,h:96},{x:288,y:256,w:64,h:144},{x:416,y:144,w:48,h:48}],
    lights:[[150,145],[227,113],[348,116],[411,115],[535,157]],
    points:[
     {id:'fastnessChapelFight',x:328,y:224,label:'Break the chapel’s defense'},
-    {id:'fastnessStairs',x:440,y:168,label:'Secure the tower stairs'},
-    {id:'fastnessStudyRoad',x:440,y:168,label:'Climb the tower stairs'}
+    {id:'fastnessStairs',x:440,y:160,label:'Secure the tower stairs'},
+    {id:'fastnessStudyRoad',x:440,y:160,label:'Climb the tower stairs'}
    ]
   };
   for (const [id,floor] of Object.entries(towerFloors)) {
@@ -298,10 +298,11 @@ window.FastnessArc = (() => {
   quest[fight.cleared] = true;
   seedParty(...returnPosition);
   save();
+  updateObjective();
   const aftermath = {
    [gate]:'The last exterior defenders fall. The company has a clear path into the fortress.',
-   [hall]:'The hall falls quiet. Beyond the far doorway, chapel bells still ring.',
-   [chapel]:'The last chapel defenders fall. The stair beside the altar leads into the tower.',
+   [hall]:'The hall falls quiet. Follow the central aisle to the arch at the far end.',
+   [chapel]:'The chapel defenders fall. The tower stair is to the right of the altar.',
    [study]:'The mage and the study guards fall. The company clears the stair beyond the shelves.',
    [landing]:'The warpriest falls. Beyond the landing, the stair turns toward the open gallery.',
    [gallery]:'Lencia Visserene falls on the gallery. The Angel Knight who escaped at the Court of Spears is dead.',
@@ -366,8 +367,11 @@ window.FastnessArc = (() => {
    case 'fastnessSummitRoad':
     await travel(summit,328,344);
     break;
-   case 'fastnessHallFight':
    case 'fastnessChapelFight':
+    await say('jason','The cleric can mend the paladins if we give him time. Press him before he gets a prayer off.');
+    beginEncounter(chapel);
+    return true;
+   case 'fastnessHallFight':
    case 'fastnessMageFight':
    case 'fastnessWarpriestFight':
     beginEncounter(scene);
