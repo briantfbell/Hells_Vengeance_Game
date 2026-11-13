@@ -5,6 +5,7 @@ window.SenaraGraveyard=(()=>{
  const angel='senara_balisse',speaker='senara_dagger_speaker',paladin='fastness_paladin',kind='senara_graveyard_angel';
  const map='senara-graveyard-v1.png',sprite='senara-balisse-v1.png';
  const barricade='senara_lockdown_barricade',barrierArt='senara-lockdown-barricade-v1.png';
+ const angelPosition={x:328,y:152};
  const guildSpawn=[328,344],graveSpawn=[328,344];
  function install(){
   scenes[quay].points.push({id:'senaraSlipToGuild',x:280,y:144,label:'Slip down to the Black Daggers'});
@@ -14,10 +15,10 @@ window.SenaraGraveyard=(()=>{
   ]};
   scenes[grave]={
    name:'Senara · The Graveyard',image:map,spawn:graveSpawn,blocks:[],
-   walk:[{x:208,y:144,w:224,h:96},{x:272,y:240,w:96,h:160}],lights:[[34,79],[116,66],[284,65],[355,65],[525,66],[606,79],[257,330],[382,330]],
+   walk:[{x:208,y:144,w:224,h:96},{x:288,y:112,w:64,h:64},{x:288,y:224,w:64,h:176}],lights:[[34,79],[116,66],[284,65],[355,65],[525,66],[606,79],[257,330],[382,330]],
    points:[
     {id:'senaraAngelFight',x:328,y:224,label:'Engage the graveyard angel'},
-    {id:'senaraAngelHeart',x:328,y:168,label:'Recover the angel’s heart'}
+    {id:'senaraAngelHeart',...angelPosition,label:'Recover the angel’s heart'}
    ]
   };
   scenes[locked]={...scenes[quay],name:'Senara · Under Lockdown',blocks:[{x:304,y:144,w:112,h:32}],points:[
@@ -56,7 +57,7 @@ window.SenaraGraveyard=(()=>{
  function goal(){return target()?.label||(scene===locked&&quest.senaraLockdownObserved?'Angel heart recovered · Senara is under lockdown.':null);}
  function npcs(){
   if(scene===guild)return [{id:speaker,x:328,y:184,height:54},{id:'orn',x:392,y:232,height:51}];
-  if(scene===grave)return [{id:angel,x:328,y:160,height:65,pose:quest.senaraBalisseDefeated?'prone':null}];
+  if(scene===grave)return [{id:angel,...angelPosition,height:65,pose:quest.senaraBalisseDefeated?'prone':null}];
   if(scene===locked)return [
    {id:'orn',x:392,y:240,height:51},
    {id:barricade,x:360,y:172,height:21},
@@ -90,8 +91,10 @@ window.SenaraGraveyard=(()=>{
    case 'senaraGuildBrief':
     await say('freya','You promised to keep us informed. What have the Reclamation brought into Senara?');
     await say(speaker,'An angel. Our scouts watched him land at the old graveyard. He’s still there, keeping watch among the graves.');
-    await say('freya','Then we go now. If the Reclamation learns we’re looking for him, they’ll close every gate.');
     quest.senaraGraveTip=true;
+    save();
+    updateObjective();
+    await say('freya','Then we go now. If the Reclamation learns we’re looking for him, they’ll close every gate.');
     break;
    case 'senaraGraveRoad':
     quest.senaraGraveReached=true;
@@ -103,7 +106,7 @@ window.SenaraGraveyard=(()=>{
     startAngelBattle();
     return true;
    case 'senaraAngelHeart':
-    await say('Chronicle','The company takes the fallen angel’s heart, another component for Fex’s ritual.');
+    await say(null,'The angel lies at the foot of the mausoleum steps.', ['[Take the angel’s heart]']);
     await journeyCard(scenes[locked].name,JOURNEYS[locked],()=>{
      quest.senaraAngelHeart=true;
      setScene(locked,360,344);
@@ -111,8 +114,10 @@ window.SenaraGraveyard=(()=>{
     break;
    case 'senaraConfirmLockdown':
     await say('reese','The river road is shut. There are guards at every way out I can see.');
-    await say('freya','We have the heart. Get out of sight. We’ll work out how to move once we’re clear of the patrols.');
     quest.senaraLockdownObserved=true;
+    save();
+    updateObjective();
+    await say('freya','We have the heart. Get out of sight. We’ll work out how to move once we’re clear of the patrols.');
     break;
   }
   save();
