@@ -72,7 +72,7 @@ window.SethicMansion=(()=>{
  function beginFight(kind){
   const {x,y,dir}=units[0],boss=kind===bossFight,id=boss?sethic:guard,max=STATS[id].hp;
   const names=boss?['Paracount Sethic']:['Manor Guard 1','Manor Guard 2'];
-  const enemies=names.map(name=>({id,name,shortName:boss?'Sethic':name,hp:max,max,resolve:boss}));
+  const enemies=names.map((name,index)=>({id,name,shortName:boss?'Sethic':'Guard '+(index+1),hp:max,max,resolve:boss}));
   save();
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],opening:boss?'Break Sethic’s resolve to subdue him alive.':undefined});
  }
