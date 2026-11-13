@@ -15,6 +15,9 @@ window.FastnessArc = (() => {
  const landing = 'fastness_landing';
  const gallery = 'fastness_gallery';
  const summit = 'fastness_summit';
+ const parapet = {x:472,y:152};
+ const fallDuration = 720;
+ let fallStarted = null;
  const towerBase = 'fastness_tower_base';
  const images = {
   [gate]:'valor-fastness-gate-v1.png',
@@ -167,16 +170,16 @@ window.FastnessArc = (() => {
   scenes[gallery].points.push({id:'fastnessSummitRoad',...ascentStairs,label:'Climb to the summit'});
   scenes[summit] = {
    name:'Valor’s Fastness · Summit',image:images[summit],spawn:[328,344],blocks:[],
-   walk:[{x:144,y:160,w:368,h:128},{x:288,y:288,w:64,h:96},{x:448,y:144,w:48,h:16}],
+   walk:[{x:112,y:160,w:416,h:144},{x:288,y:288,w:64,h:112},{x:448,y:144,w:48,h:32}],
    lights:[[121,119],[518,119],[78,293],[559,293]],
    points:[
     {id:'fastnessOppianFight',x:328,y:224,label:'Face Oppian and the Archon'},
-    {id:'fastnessOppianRescue',x:472,y:152,label:'Go after Oppian'}
+    {id:'fastnessOppianRescue',...parapet,label:'Go after Oppian'}
    ]
   };
   scenes[towerBase] = {
    name:'Valor’s Fastness · Tower Base',image:images[towerBase],spawn:[328,344],blocks:[],
-   walk:[{x:144,y:160,w:368,h:128},{x:288,y:288,w:64,h:96}],
+   walk:[{x:128,y:160,w:384,h:144},{x:288,y:288,w:64,h:112}],
    lights:[[258,96],[379,96],[253,324],[386,324]],
    points:[
     {id:'fastnessOppianCapture',x:328,y:208,label:'Take Oppian into custody'},
@@ -233,8 +236,12 @@ window.FastnessArc = (() => {
  }
 
  function npcs() {
-  if (scene === towerBase) return [{id:'oppian',x:328,y:192}];
-  if (scene === summit && quest.fastnessSummitWon) return [];
+  if (scene === towerBase) return [{id:'oppian',x:328,y:192,wounded:true}];
+  if (scene === summit && quest.fastnessSummitWon) {
+   const progress = fallStarted===null ? 0 : Math.min(1,(performance.now()-fallStarted)/fallDuration);
+   return [{id:'oppian',x:parapet.x+Math.round(progress*9),y:parapet.y-Math.round(progress*37),
+    tilt:progress*.7,opacity:1-progress}];
+  }
   const fight = encounters[scene];
   if (!fight) return null;
   const guards = fight.defenders.map(([id,,x,y]) => ({id,x,y,...(quest[fight.cleared] && {hp:0})}));
@@ -250,14 +257,20 @@ window.FastnessArc = (() => {
  }
 
  function drawNPC(unit) {
-  if (unit.id !== 'fastness_undead') return false;
-  const model = FUTURE_NPCS.kantaria_guard;
+  const undead = unit.id === 'fastness_undead';
+  if (!undead && unit.id!=='oppian' && unit.id!=='fastness_archon') return false;
+  const model = FUTURE_NPCS[undead?'kantaria_guard':unit.id];
+  const image = art[model.source];
+  if (!image) return false;
   const frame = model.frame;
   const height = 54;
   const width = frame.w * height / frame.h;
   ctx.save();
-  ctx.filter = 'grayscale(85%) sepia(45%) hue-rotate(78deg) brightness(82%)';
-  ctx.drawImage(art[model.source],frame.x,frame.y,frame.w,frame.h,unit.x-width/2,unit.y-height,width,height);
+  ctx.translate(unit.x,unit.y);
+  ctx.rotate(unit.tilt ?? (unit.wounded ? -.18 : 0));
+  ctx.globalAlpha *= unit.opacity ?? 1;
+  if (undead) ctx.filter = 'grayscale(85%) sepia(45%) hue-rotate(78deg) brightness(82%)';
+  ctx.drawImage(image,frame.x,frame.y,frame.w,frame.h,-width/2,-height,width,height);
   ctx.restore();
   return true;
  }
@@ -398,16 +411,25 @@ window.FastnessArc = (() => {
    case 'fastnessOppianFight':
     await say('oppian','This is my home. If Thrune wants it back, he can come for it himself.');
     await say('freya','He sent us. You’re coming down alive, Oppian.');
-    await say('Chronicle','A blow from the stolen hammer of Oppian’s closest friend drives him back. The Archon moves in front of him. Break their defense and take the knight alive.');
+    await say('Chronicle','The stolen hammer drives Oppian back. He recognizes the weapon of his closest friend. The Archon moves to shield him.');
     beginEncounter(summit);
     return true;
-   case 'fastnessOppianRescue':
-    await say('Chronicle','At the last, someone Oppian loves betrays him. Rather than be taken, he steps from the broken parapet.');
-    await say('freya','Over the edge. Catch him!');
-    await storyRoll('Catch Oppian',17,0,'The company catches him in the fall');
-    quest.fastnessOppianRescued = true;
-    await travel(towerBase,328,344);
+   case 'fastnessOppianRescue': {
+    await say('Chronicle','At the last, someone Oppian loves betrays him. At the broken parapet, he looks down.');
+    const token = epoch;
+    fallStarted = performance.now()-(reduce.matches?fallDuration:0);
+    try {
+     if (!reduce.matches) await delay(fallDuration);
+     if (token!==epoch) throw CANCEL;
+     await say('freya','He stepped off. Catch him!');
+     await storyRoll('Catch Oppian',17,0,'The company catches him in the fall');
+     quest.fastnessOppianRescued = true;
+     await travel(towerBase,328,344);
+    } finally {
+     fallStarted = null;
+    }
     break;
+   }
    case 'fastnessOppianCapture':
     await say('oppian','You could have let me fall.');
     await say('freya','You’re answering for Kantaria. Bind his hands and keep him alive.');
