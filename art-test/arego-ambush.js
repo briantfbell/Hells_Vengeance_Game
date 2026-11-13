@@ -2,6 +2,7 @@
 
 window.AregoAmbush=(()=>{
  const gate='arego_inferno_gate',hell='arego_malebolge_ledge';
+ const landing=[312,296];
  const artName='arego-malebolge-ledge-v1.png',devil='arego_bearded_devil',raz='razelago_revealed';
  const commands=[
   {label:'CAST',name:'Invisibility Purge',description:'Jason reveals Fex and Razelago.',title:'The unseen attackers'},
@@ -13,9 +14,9 @@ window.AregoAmbush=(()=>{
  function install(){
   scenes[gate].points.push({id:'aregoFexAmbush',x:472,y:272,label:'Face Fex at the Inferno Gate'});
   scenes[hell]={
-   name:'Malebolge · The Basalt Ledge',image:artName,spawn:[328,248],blocks:[],lights:[],
-   walk:[{x:224,y:224,w:224,h:48},{x:272,y:176,w:224,h:48},{x:352,y:128,w:176,h:48}],
-   points:[{id:'aregoReeseShelter',x:448,y:168,label:'Find shelter from the ash'}]
+   name:'Malebolge · The Basalt Ledge',image:artName,spawn:landing,blocks:[],lights:[],
+   walk:[{x:272,y:272,w:80,h:64},{x:224,y:224,w:208,h:48},{x:272,y:176,w:224,h:48},{x:352,y:128,w:176,h:48}],
+   points:[{id:'aregoReeseShelter',x:448,y:168,label:'Follow the ledge through the ash'}]
   };
   MAP_LAYERS[hell]={foreground:artName,contain:true,background:{type:'solid',color:'#191116'}};
   NAMES[raz]='Razelago';
@@ -113,7 +114,7 @@ window.AregoAmbush=(()=>{
     $('enemy-intents').hidden=true;
     run(()=>journeyCard('Through the Inferno Gate','Still bleeding, Reese jumps through the tear with the talisman. On the other side, the heat and ash hit him before he can find his footing.',()=>{
      quest.aregoReeseCrossed=true;
-     setScene(hell,328,248);
+     setScene(hell,...landing);
     }));
     break;
   }
@@ -136,8 +137,8 @@ window.AregoAmbush=(()=>{
     start();
     return true;
    case 'aregoReeseShelter':
-    await say('reese','Keep moving. Find him before this place gets into your head.');
-    await say('Chronicle','Reese presses on with the talisman. The fire and the weight of the plane are already wearing him down.');
+    await say('reese','Visperthul went this way. Keep moving, Reese.');
+    await say('Chronicle','Reese shields his face from the ash. Ahead, a familiar shape hangs above the rock: Visperthul’s iron throne.');
     quest.aregoReeseSheltered=true;
     break;
   }

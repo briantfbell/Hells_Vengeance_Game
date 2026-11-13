@@ -8,7 +8,7 @@ window.AregoReturn=(()=>{
   scenes[hell].points.push(
    {id:'aregoReeseBargain',speaker:'visperthul',x:488,y:160,label:'Bargain with Visperthul'},
    {id:'aregoRaiseBoneDevils',speaker:'visperthul',x:488,y:160,label:'Accept Visperthul’s aid'},
-   {id:'aregoReturnThroughGate',x:328,y:248,label:'Return through the Inferno Gate'}
+   {id:'aregoReturnThroughGate',x:312,y:312,label:'Return through the Inferno Gate'}
   );
   scenes[gate].points.push(
    {id:'aregoFreeCompany',x:280,y:328,label:'Free the fallen companions'},

@@ -1025,7 +1025,7 @@ function replaySections(){
  add('arego-first-pact','253 · Visperthul’s terms','arego_inferno_gate',[472,264],'aregoTalismanExposed');
  add('arego-fex-arrival','254 · Fex at the Inferno Gate','arego_inferno_gate',[472,264],'aregoFirstPact');
  add('arego-fex-ambush','255 · The unseen attackers','arego_inferno_gate',[472,264],'aregoFexArrived');
- add('arego-malebolge-landing','256 · Reese in Malebolge','arego_malebolge_ledge',[328,248],'aregoReeseCrossed');
+ add('arego-malebolge-landing','256 · Reese in Malebolge','arego_malebolge_ledge',[312,296],'aregoReeseCrossed');
  add('arego-reese-bargain','257 · Reese’s bargain','arego_malebolge_ledge',[448,168],'aregoReeseSheltered');
  add('arego-bone-devils','258 · Visperthul’s aid','arego_malebolge_ledge',[488,168],'aregoReeseContract');
  add('arego-return-crossing','259 · Back through the gate','arego_malebolge_ledge',[488,168],'aregoBoneDevilsSummoned');
