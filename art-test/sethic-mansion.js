@@ -12,24 +12,24 @@ window.SethicMansion=(()=>{
  ],maxHeight:710,cycle:[0,2],attackFrames:true};
 
  function install(){
-  scenes[barn].points.push({id:'sethicMansionOrders',x:328,y:344,label:'Answer the Crown’s summons'});
+  scenes[barn].points.push({id:'sethicMansionOrders',x:328,y:392,label:'Answer the Crown’s summons'});
   scenes[hall]={
    name:'Egorian · Sethic’s Mansion',image:manor,spawn:[328,344],blocks:[],
-   walk:[{x:80,y:128,w:496,h:192},{x:288,y:320,w:64,h:80}],lights:[[107,59],[258,52],[382,52],[533,59],[42,211],[601,211],[255,348],[388,348]],
+   walk:[{x:80,y:128,w:480,h:192},{x:272,y:320,w:96,h:80}],lights:[[107,59],[258,52],[382,52],[533,59],[42,211],[601,211],[255,348],[388,348]],
    points:[
     {id:'sethicMansionGuards',x:328,y:248,label:'Secure the mansion guards'},
-    {id:'sethicMansionCellar',x:568,y:216,label:'Descend into the cellar'},
-    {id:'sethicMansionDuel',speaker:sethic,x:328,y:216,label:'Confront Paracount Sethic'},
-    {id:'sethicMansionBind',x:328,y:216,label:'Stabilize and restrain Sethic'},
+    {id:'sethicMansionCellar',x:568,y:192,label:'Descend into the cellar'},
+    {id:'sethicMansionDuel',speaker:sethic,x:328,y:179,label:'Confront Paracount Sethic'},
+    {id:'sethicMansionBind',x:328,y:179,label:'Stabilize and restrain Sethic'},
     {id:'sethicMansionPack',x:328,y:312,label:'Prepare Sethic for transport'}
    ]
   };
   scenes[cellar]={
    name:'Sethic’s Mansion · Cellar',image:basement,spawn:[328,344],blocks:[],
-   walk:[{x:96,y:144,w:480,h:176},{x:288,y:320,w:64,h:80}],lights:[[108,51],[320,53],[537,51]],
+   walk:[{x:48,y:160,w:544,h:160},{x:128,y:320,w:400,h:32},{x:288,y:352,w:64,h:48}],lights:[[108,51],[320,53],[537,51]],
    points:[
-    {id:'sethicMansionFindBob',speaker:'bob',x:552,y:168,label:'Free Bob Applewood'},
-    {id:'sethicMansionWait',x:328,y:344,label:'Get Bob to safety and wait for Sethic'}
+    {id:'sethicMansionFindBob',speaker:'bob',x:552,y:152,label:'Free Bob Applewood'},
+    {id:'sethicMansionWait',x:328,y:392,label:'Get Bob to safety and wait for Sethic'}
    ]
   };
   MAP_LAYERS[hall]={foreground:manor,contain:true,background:{type:'solid',color:'#19161d'}};
@@ -63,7 +63,7 @@ window.SethicMansion=(()=>{
  function target(){return points()?.[0]||null;}
  function goal(){return target()?.label||(scene===hall&&quest.sethicMansionComplete?'Sethic is alive and in custody. Bob has been freed.':null);}
  function npcs(){
-  if(scene===cellar)return quest.sethicMansionBobFreed?[]:[{id:'bob',x:570,y:126,height:45,pose:'prone'}];
+  if(scene===cellar)return quest.sethicMansionBobFreed?[]:[{id:'bob',x:568,y:152,height:45,pose:'prone'}];
   if(scene!==hall)return null;
   if(!quest.sethicMansionGuardsDown)return [256,400].map(x=>({id:guard,x,y:203,height:58}));
   if(quest.sethicMansionWaited)return [{id:sethic,x:328,y:179,height:59,pose:quest.sethicMansionSethicDown?'prone':null}];
@@ -74,7 +74,7 @@ window.SethicMansion=(()=>{
   const names=boss?['Paracount Sethic']:['Manor Guard 1','Manor Guard 2'];
   const enemies=names.map(name=>({id,name,shortName:boss?'Sethic':name,hp:max,max,resolve:boss}));
   save();
-  startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],opening:boss?'Subdue Sethic. The Crown needs him alive.':undefined});
+  startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],opening:boss?'Break Sethic’s resolve to subdue him alive.':undefined});
  }
  function isMansionBattle(kind){return kind===guardFight||kind===bossFight;}
  async function afterBattle(kind,position){
@@ -110,7 +110,7 @@ window.SethicMansion=(()=>{
     quest.sethicMansionBobFreed=true;
     break;
    case 'sethicMansionWait':
-    await say('Chronicle','The company gets Bob out of the cellar and waits for Sethic to return.');
+    await say('Chronicle','The company carries Bob up the stairs. With Bob clear of the cellar, they wait for Sethic to return.');
     await journeyCard('Sethic’s Mansion · The paracount returns','Sethic enters the hall. Freya and Reese take positions on either side of his route back to the door.',()=>{
      quest.sethicMansionWaited=true;
      setScene(hall,328,296);
