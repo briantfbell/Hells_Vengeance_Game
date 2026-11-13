@@ -5,9 +5,9 @@ window.RemesianaMarket=(()=>{
  const image='remesiana-rival-market-v1.png',ruins='remesiana-rival-market-ruined-v1.png',portrait='remesiana-florio-v1.png';
  function install(){
   scenes[harbor].points.push(
-   {id:'remesianaMeetFlorio',speaker:'florio',x:424,y:184,label:'Speak to Florio Cento'},
+   {id:'remesianaMeetFlorio',speaker:'florio',x:405,y:162,label:'Speak to Florio Cento'},
    {id:'remesianaMarketRoad',x:104,y:232,label:'Go to the rival market'},
-   {id:'remesianaReportMarket',speaker:'florio',x:424,y:184,label:'Report to Florio Cento'}
+   {id:'remesianaReportMarket',speaker:'florio',x:405,y:162,label:'Report to Florio Cento'}
   );
   scenes[market]={
    name:'Remesiana · The Rival Market',image,spawn:[328,344],

@@ -22,7 +22,7 @@ window.EgorianFountain=(()=>{
     {id:'egorianObserveSchools',x:536,y:216,label:'Follow the route to the schools'},
     {id:'egorianTailorReport',x:328,y:344,label:'Bring the route back to Hotel Barato'},
     {id:'egorianSeeTailorAftermath',x:152,y:328,label:'See what happened on Dapper Street'},
-    {id:'egorianDepartForRemesiana',x:472,y:344,label:'Leave for Remesiana'}
+    {id:'egorianDepartForRemesiana',x:568,y:368,label:'Leave for Remesiana'}
    ]
   }
  };
@@ -32,10 +32,10 @@ window.EgorianFountain=(()=>{
    {id:'egorianCarryOutOrders',x:328,y:328,label:'Carry out the stranger’s assignment'}
   );
   scenes[harbor]={...scenes.remesiana,name:'Remesiana · Return to the Harbor',points:[
-   {id:'remesianaFindContact',x:424,y:184,label:'Make for the city to find Florio Cento'}
+   {id:'remesianaFindContact',x:424,y:200,label:'Look for Florio Cento in the harbor market'}
   ]};
   MAP_LAYERS[harbor]=MAP_LAYERS.remesiana;
-  JOURNEYS[harbor]='The company leaves Egorian behind. In Remesiana, their orders are to find Florio Cento.';
+  JOURNEYS[harbor]='The company leaves Egorian behind. In Remesiana, they head from the pier to the harbor market to find Florio Cento.';
   for(const [id,layout] of Object.entries(layouts)){
    scenes[id]={...layout,blocks:[],lights:[]};
    MAP_LAYERS[id]={foreground:layout.image,contain:true,background:{type:'solid',color:'#1b2028'}};
@@ -154,7 +154,7 @@ window.EgorianFountain=(()=>{
     await travel(harbor,520,280);
     break;
    case 'remesianaFindContact':
-    await say('reese','Florio Cento. That’s who the man at the fountain told us to find.');
+    await say('reese','That’s Florio Cento, by the stalls. The man at the fountain told us to report to him.');
     quest.remesianaFlorioLead=true;
     break;
   }
