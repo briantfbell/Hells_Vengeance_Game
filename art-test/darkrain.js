@@ -28,9 +28,9 @@ window.DarkRain=(()=>{
     {id:'darkrainCold',x:328,y:272,label:'Stop in the shelter of the rocks'},
     {id:'darkrainHunt',speaker:bear,x:440,y:240,label:'Hunt the dire polar bear as Reese'},
     {id:'darkrainMakeClothing',x:440,y:240,label:'Make winter clothing from the hide'},
-    {id:'darkrainReadGiant',x:136,y:200,label:'Inspect the storm giant skeleton'},
-    {id:'darkrainReadWights',x:504,y:200,label:'Inspect the frozen winter wights'},
-    {id:'darkrainReadSkull',speaker:'draymus',x:328,y:192,label:'Ask Draymus about the ward'},
+    {id:'darkrainReadGiant',x:136,y:200,marker:{x:79,y:106},label:'Inspect the storm giant skeleton'},
+    {id:'darkrainReadWights',x:504,y:200,marker:{x:577,y:111},label:'Inspect the frozen winter wights'},
+    {id:'darkrainReadSkull',speaker:'draymus',x:328,y:192,marker:{x:328,y:171},label:'Ask Draymus about the ward'},
     {id:'darkrainThroughSkull',x:328,y:152,label:'Enter the dragon’s jaws'}
    ]
   };
