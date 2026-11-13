@@ -368,7 +368,7 @@ function storyPointAvailable(p){
  if(p.id==='manorRoad')return !!quest.deputiesReported&&!!(quest.tavernNoticeTorn||quest.compactSworn);
  if(p.id==='manorGreeting')return !quest.manorWelcomed;
  if(p.id==='manorOffice')return !!quest.manorWelcomed;
- if(['rileyQuestion','hospiceRoad','hillRoad','bolgartStocks','lastReport'].includes(p.id))return !!quest.chapter4;
+ if(['jailCells','rileyQuestion','hospiceRoad','hillRoad','bolgartStocks','lastReport'].includes(p.id))return !!quest.chapter4;
  if(p.id==='lastStandRoad')return !!quest.chapter3Complete;
  return true;
 }
