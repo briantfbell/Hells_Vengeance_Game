@@ -18,13 +18,15 @@ window.TathlumHunt=(()=>{
   {x:1480,y:24,w:660,h:663,anchorX:1865,anchorY:680}
  ],maxHeight:670,cycle:[0,2],attackFrames:true};
  const duels=()=>quest.tathlumDuels??0;
+ const baitDuration=1200;
+ let baitRun=null;
 
  function install(){
   scenes[pass].points.push({id:'tathlumReturn',x:320,y:392,label:'Return to Egorian for new orders'});
   scenes[orders]={
    ...scenes.egorian_court,name:'Egorian · The Tathlum Orders',points:[
-    {id:'tathlumReceiveOrders',speaker:'corrine',x:328,y:272,label:'Receive the Tathlum assignment'},
-    {id:'tathlumDepartNidal',x:328,y:344,label:'Set out for Nidal'}
+    {id:'tathlumReceiveOrders',speaker:'corrine',x:328,y:240,label:'Receive the Tathlum assignment'},
+    {id:'tathlumDepartNidal',x:328,y:392,label:'Set out for Nidal'}
    ]
   };
   scenes[border]={
@@ -45,17 +47,17 @@ window.TathlumHunt=(()=>{
   };
   scenes[attackSite]={
    name:'Nidal · The Last Cave-Giant Attack',image:attackArt,spawn:[328,344],blocks:[],
-   walk:[{x:144,y:208,w:368,h:96},{x:208,y:304,w:208,h:32},{x:288,y:336,w:80,h:64},{x:432,y:144,w:80,h:64}],lights:[],
+   walk:[{x:144,y:208,w:368,h:96},{x:208,y:304,w:208,h:32},{x:288,y:336,w:80,h:64},{x:432,y:144,w:80,h:64},{x:448,y:112,w:48,h:32}],lights:[],
    points:[
     {id:'tathlumExamineAttack',x:216,y:248,label:'Inspect the damage'},
-    {id:'tathlumTrack',x:472,y:152,label:'Follow the tracks uphill'}
+    {id:'tathlumTrack',x:480,y:120,label:'Follow the tracks uphill'}
    ]
   };
   scenes[cave]={
    name:'Nidal · Cave-Giant Lair',image:caveArt,spawn:[328,344],blocks:[],
    walk:[{x:112,y:144,w:416,h:160},{x:208,y:304,w:224,h:32},{x:288,y:336,w:64,h:64}],lights:[[212,80],[239,96],[422,93],[453,73]],
    points:[
-    {id:'tathlumBait',x:328,y:248,label:'Send the thrall in as bait'},
+    {id:'tathlumBait',x:328,y:224,label:'Send the thrall in as bait'},
     {id:'tathlumDuel',x:328,y:216,label:'Challenge a cave giant'},
     {id:'tathlumRunes',x:328,y:216,label:'Inspect the belt’s new runes'}
    ]
@@ -119,10 +121,17 @@ window.TathlumHunt=(()=>{
   ];
   if(scene===attackSite)return [{id:'citizen-nidal-thrall',x:200,y:226,dir:'up',variant:6}];
   if(scene!==cave)return null;
-  if(!quest.tathlumBaitSet)return [{id:'citizen-nidal-thrall',x:328,y:224,dir:'up',variant:6}];
-  return [[270,168],[328,151],[385,173]].map(([x,y],i)=>({
+  const giants=[[270,168],[328,151],[385,173]].map(([x,y],i)=>({
    id:giant,x,y,height:75,pose:i<duels()?'prone':null
   }));
+  if(quest.tathlumBaitSet)return giants;
+  const progress=baitRun?.token===epoch?Math.min(1,(performance.now()-baitRun.at)/baitDuration):0;
+  const thrall={id:'citizen-nidal-thrall',x:328,y:224-104*progress,dir:'up',variant:6,
+   sermonOpacity:Math.min(1,(1-progress)*4)};
+  if(progress<.48)return [thrall];
+  const emergence=(progress-.48)/.52;
+  return [thrall,...giants.map(giant=>({...giant,
+   x:328+(giant.x-328)*emergence,y:112+(giant.y-112)*emergence}))];
  }
  function patrolPosition(index){
   const t=reduce.matches?0:Handheld.time(performance.now()/1000);
@@ -211,9 +220,16 @@ window.TathlumHunt=(()=>{
     break;
    case 'tathlumBait': {
     await say('draymus','Go in. Make enough noise that they all look your way.');
+    const token=epoch;
+    if(!reduce.matches){
+     baitRun={token,at:performance.now()};
+     await delay(baitDuration);
+     if(epoch!==token)throw CANCEL;
+    }
     await say('Chronicle','The thrall draws the cave giants out. Freya takes the opening and challenges them one at a time.');
     const {x,y,dir}=units[0];
     quest.tathlumBaitSet=true;
+    baitRun=null;
     seedParty(x,y,dir);
     break;
    }

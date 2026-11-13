@@ -1950,6 +1950,8 @@ test('the Nidal hunt counts three separate Freya duels and records the belt rune
  w.DIALOGUE_FACE_CROPS={};
  w.SouthRoad={recover:()=>{}};
  w.units=[{id:'freya',x:328,y:216,dir:'up'}];
+ w.epoch=0;
+ w.reduce={matches:true};
  vm.runInContext(read('tathlum-hunt.js'),w);
  w.TathlumHunt.install();
  const step=async id=>assert.equal(await w.TathlumHunt.interact(id),true,id);
