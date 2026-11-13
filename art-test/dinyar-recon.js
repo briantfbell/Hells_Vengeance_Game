@@ -39,8 +39,8 @@ window.DinyarRecon=(()=>{
     {id:'dinyarView',x:456,y:272,label:'Survey the two keeps'},
     {id:'dinyarPostern',x:184,y:248,label:'Search for the hidden entrance'},
     {id:'dinyarPlan',x:216,y:280,label:'Plan the approach through the lower works'},
-    {id:'dinyarOpenPostern',x:184,y:248,label:'Open the hidden entrance'},
-    {id:'dinyarDescend',x:184,y:248,label:'Enter the lower works'}
+    {id:'dinyarOpenPostern',x:184,y:248,marker:{x:186,y:205},label:'Open the hidden entrance'},
+    {id:'dinyarDescend',x:184,y:248,marker:{x:186,y:205},label:'Enter the lower works'}
    ]
   };
   scenes[lower]={
@@ -315,7 +315,8 @@ window.DinyarRecon=(()=>{
   switch(id){
    case 'dinyarSplit':
     await say('corrine','A young signifier survived the fall of Dinyar. His officers sent him to warn the capital. He told me how to reach a door hidden in the rock below the keep.');
-    await say('violetta','I’ll go with Draymus to Nidal. We need someone who understands what he’s asking of them.');
+    await say('violetta','Draymus, come to Nidal with me. I can ask about a physician when I report to my superiors.');
+    await say('corrine','I’ll go with you both. Freya, the signifier’s door is on the left below the nearer keep.');
     await say('freya','Then we split here. Jason, J’Mal, Reese, you’re with me. We’ll see if the signifier’s door still opens.');
     if(!await departForNidal())return false;
     break;
