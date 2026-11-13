@@ -1,6 +1,8 @@
 "use strict";
 window.FortArc=(()=>{
  const maps={},chain=['chapter9','fortScouted','scoutRetreated','fortPrepared','archerAmbushed','manticoreDefeated','fortSearched','forestMarked','patrolQuestioned','chapter9Complete'];
+ const tower={x:568,y:136},foot={x:568,y:232},lookout={x:520,y:264};
+ let scoutMotion=null;
  const party=['freya','jamal','jason','draymus'],r=(x,y,w,h)=>({x,y,w,h});
  function install(){
   for(const[id,name,image]of [['fort_scout','Fort Estazano · First Reconnaissance','fort-estazano-v1.png'],['fort_rest','Longacre · A Second Attempt','accuser-home-v1.png'],['fort_assault','Fort Estazano · The Return','fort-estazano-v1.png'],['fort_search','Fort Estazano · The Hidden Trail','fort-estazano-v1.png'],['whisperwood_trail','Whisperwood · Above the Forest Floor','whisperwood-trail-v1.png'],['fort_patrol','Fort Estazano · Returning Patrol','fort-estazano-v1.png']]){
@@ -10,7 +12,7 @@ window.FortArc=(()=>{
   }
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
   add('heist_aftermath','fortArcRoad',328,344,'Continue: Fort Estazano');
-  add('fort_scout','scoutFort',568,168,'[Levitate onto the wall]');add('fort_scout','retreatFort',328,344,'[Retreat to Longacre]');
+  add('fort_scout','scoutFort',foot.x,foot.y,'Levitate onto the wall');add('fort_scout','inspectParapet',tower.x,tower.y,'Scout the parapet');add('fort_scout','reachLookout',lookout.x,lookout.y,'Regroup with El Guapo');add('fort_scout','retreatFort',328,344,'Retreat to Longacre');
   add('fort_rest','planFort',328,200,'[Prepare the return]');add('fort_rest','returnFort',328,344,'[Return to Fort Estazano]');
   add('fort_assault','ambushArcher',568,168,'[Ambush the archer before her whistle]');add('fort_assault','manticoreFight',328,216,'[Hold the tower against the manticore]');
   add('fort_search','searchKeep',328,120,'[Search the keep and follow the tracks]');add('fort_search','forestRoad',328,344,'[Follow the hidden woodland trail]');
@@ -23,18 +25,70 @@ window.FortArc=(()=>{
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter9?art[scene]:null;}
  function roster(){if(!quest.chapter9)return null;return scene==='fort_scout'?['jamal','guapo']:party;}
- function goal(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return 'Investigate the supply-cache lead at Fort Estazano.';const text=['Scout the fort with J’Mal and El Guapo.','Retreat to Longacre.','Plan the second approach.','Ambush the archer before she signals.','Hold the tower against the manticore.','Search the keep for the rebels’ trail.','Mark the hidden woodland settlement.','Question the returning patrol.','Prepare for the Court of Spears.','Chapter complete · The Court of Spears awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
- function points(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return scene==='heist_aftermath'?[point('fortArcRoad')]:[];if(quest.chapter9Complete)return [];const id=({fort_scout:quest.fortScouted?'retreatFort':'scoutFort',fort_rest:quest.fortPrepared?'returnFort':'planFort',fort_assault:quest.archerAmbushed?'manticoreFight':'ambushArcher',fort_search:quest.fortSearched?'forestRoad':'searchKeep',whisperwood_trail:quest.forestMarked?'patrolRoad':'markCourt',fort_patrol:quest.patrolQuestioned?'fortArcComplete':'questionPatrol'})[scene];return [point(id)].filter(Boolean);}
+ function goal(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return 'Investigate the supply-cache lead at Fort Estazano.';if(scene==='fort_scout')return scoutPoint().label+'.';const text=['Scout the fort with J’Mal and El Guapo.','Retreat to Longacre.','Plan the second approach.','Ambush the archer before she signals.','Hold the tower against the manticore.','Search the keep for the rebels’ trail.','Mark the hidden woodland settlement.','Question the returning patrol.','Prepare for the Court of Spears.','Chapter complete · The Court of Spears awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
+ function points(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return scene==='heist_aftermath'?[point('fortArcRoad')]:[];if(quest.chapter9Complete)return [];const id=({fort_scout:scoutPoint()?.id,fort_rest:quest.fortPrepared?'returnFort':'planFort',fort_assault:quest.archerAmbushed?'manticoreFight':'ambushArcher',fort_search:quest.fortSearched?'forestRoad':'searchKeep',whisperwood_trail:quest.forestMarked?'patrolRoad':'markCourt',fort_patrol:quest.patrolQuestioned?'fortArcComplete':'questionPatrol'})[scene];return [point(id)].filter(Boolean);}
+ function scoutPoint(){
+  return point(quest.fortScouted?'retreatFort':quest.fortScoutWounded?'reachLookout':quest.fortWallReached?'inspectParapet':'scoutFort');
+ }
  const target=()=>points()?.[0]||null;
- function npcs(){if(!quest.chapter9)return null;if(scene==='fort_scout'&&quest.fortScouted)return [{id:'fort_archer',x:584,y:136},{id:'manticore',x:376,y:120}];if(scene==='fort_assault'&&quest.archerAmbushed)return [{id:'manticore',x:328,y:120}];if(scene==='fort_patrol'&&!quest.patrolQuestioned)return [{id:'heist_ranger',x:296,y:216},{id:'heist_ranger',x:360,y:216}];return [];}
+ function npcs(){if(!quest.chapter9)return null;if(scene==='fort_scout'&&quest.fortScoutWounded||scene==='fort_scout'&&quest.fortScouted){
+   const actors=[{id:'fort_archer',x:600,y:134,height:44}];
+   if(quest.fortScouted)actors.push({id:'manticore',x:536,y:136,height:86});
+   return actors;
+  }if(scene==='fort_assault'&&quest.archerAmbushed)return [{id:'manticore',x:328,y:120}];if(scene==='fort_patrol'&&!quest.patrolQuestioned)return [{id:'heist_ranger',x:296,y:216},{id:'heist_ranger',x:360,y:216}];return [];}
+ function scoutPose(unit){
+  if(scene!=='fort_scout')return unit;
+  if(unit.id==='guapo'&&((quest.fortWallReached&&!quest.fortScouted)||scoutMotion?.epoch===epoch))return {...unit,...lookout,dir:'up',step:null};
+  if(unit.id!=='jamal'||scoutMotion?.epoch!==epoch)return unit;
+  const p=Math.min(1,(performance.now()-scoutMotion.start)/scoutMotion.duration);
+  const {from,to}=scoutMotion;
+  return {...unit,x:from.x+(to.x-from.x)*p,y:from.y+(to.y-from.y)*p,dir:'up',step:null};
+ }
+ async function moveScout(from,to,duration){
+  const token=epoch;
+  if(!reduce.matches){
+   scoutMotion={from,to,duration,start:performance.now(),epoch:token};
+   try{
+    await delay(duration);
+    if(token!==epoch)throw CANCEL;
+   }finally{scoutMotion=null;}
+  }
+  seedParty(to.x,to.y,'up');
+ }
+ async function reachWall(){
+  await say('jamal','I’ll take the wall. Stay low and watch our way out.');
+  await say(null,'[Climb the watchtower]', ['[Drink the potion of Levitate]']);
+  await moveScout(foot,tower,780);
+  quest.fortWallReached=true;
+ }
+ async function surviveAmbush(){
+  quest.fortScoutWounded=true;
+  await say('Chronicle','A halfling with a shortbow appears out of thin air on the parapet. She looses before J’Mal can draw.');
+  await storyRoll('Halfling Archer · Surprise shot',20,0,'J’Mal is badly wounded');
+  hp.jamal=Math.max(1,Math.floor(STATS.jamal.hp*.25));
+  await say('jamal','Back over the wall. The potion’s still working.');
+  await moveScout(tower,foot,500);
+  await say('Chronicle','J’Mal lands on his feet. A second arrow strikes the ground as he runs for El Guapo.');
+ }
+ async function reachLookout(){
+  await say('guapo','That arrow looks expensive. Can you run?');
+  await say('jamal','I’m running now. What’s she doing with that whistle?');
+  quest.fortScouted=true;
+  seedParty(lookout.x,lookout.y,'left');
+  save();
+  await say('Chronicle','The archer blows. No whistle sounds. A growl rises from the keep, and a manticore spreads its wings beside her on the wall.');
+  await say('guapo','A silent whistle. Somehow I doubt that means a quiet afternoon.');
+ }
  function prepare(){applyProgression();seedParty(...scenes[scene].spawn);window.NextChapter?.syncRoster?.();paintParty();save();}
  function recover(){for(const id of party){hp[id]=STATS[id].hp;uses[id]=0;}mendUses=2;}
  async function afterBattle(kind){if(kind!=='fort_manticore')return;await say('Chronicle','The manticore crashes into Jason at the lower tower doorway, battering him with debris and destroying part of the wall. Freya rushes to his aid; together they drive it off.');await say('jason','One more throw.');await say('Chronicle','Before the monster can fly out of reach, Jason’s final hammer throw brings it down. The party holds the fort.');quest.manticoreDefeated=true;await travel('fort_search',328,344);prepare();updateObjective();}
  async function interact(id){
   if(id==='fortArcRoad'){if(!quest.chapter8Complete||quest.chapter9)return false;quest.chapter9=true;await say('freya','The prisoners named Fort Estazano. We need to see whether their cache is still there. J’Mal, take El Guapo and scout the walls.');await travel('fort_scout',328,344);}
   else if(!quest.chapter9)return false;
-  else if(id==='scoutFort'){await say('Chronicle','The fort has stood abandoned for decades. One watchtower is rubble; tall grass fills a clearing extending roughly six hundred feet from the walls. J’Mal and El Guapo crawl through it.');await say('jamal','I will take the wall. Watch the way back.');await say('Chronicle','J’Mal drinks a potion of Levitate and reaches the wall. A halfling woman suddenly appears before him with a shortbow. Her first arrow wounds him severely.');await storyRoll('Halfling Archer · Surprise shot',20,0,'Fixed story outcome · J’Mal is wounded');hp.jamal=Math.max(1,Math.floor(STATS.jamal.hp*.25));await say('Chronicle','J’Mal dives over the wall, using Levitate to land safely. A second arrow misses as he runs. El Guapo sees the woman raise a whistle—but hears nothing.');await say('guapo','A silent whistle. Somehow I doubt that means a quiet afternoon.');await say('Chronicle','A rumbling growl answers. A manticore rises from within the fort and perches beside the archer. The scouts withdraw, and the party retreats to town.');quest.fortScouted=true;}
-  else if(id==='retreatFort'){quest.scoutRetreated=true;await travel('fort_rest',328,344);recover();}
+  else if(id==='scoutFort'&&scene==='fort_scout'&&!quest.fortWallReached&&!quest.fortScouted)await reachWall();
+  else if(id==='inspectParapet'&&scene==='fort_scout'&&quest.fortWallReached&&!quest.fortScoutWounded&&!quest.fortScouted)await surviveAmbush();
+  else if(id==='reachLookout'&&scene==='fort_scout'&&quest.fortScoutWounded&&!quest.fortScouted)await reachLookout();
+  else if(id==='retreatFort'&&scene==='fort_scout'&&quest.fortScouted&&!quest.scoutRetreated){quest.scoutRetreated=true;await travel('fort_rest',328,344);recover();}
   else if(id==='planFort'){await say('freya','She cannot signal if we reach her first. J’Mal, go ahead invisible. Jason rides with me on Sleipnir. Draymus follows from the treeline.');await say('Chronicle','After healing and resting, the party settles on a coordinated attack. J’Mal brings a potion of Invisibility. El Guapo has departed again; four companions make the return.');await say('jamal','If he returns with another wedding cake, I am not helping carry it.');quest.fortPrepared=true;}
   else if(id==='returnFort')await travel('fort_assault',328,344);
   else if(id==='ambushArcher'){await say('Chronicle','Invisible on the wall, J’Mal ambushes the halfling before she can blow her whistle. Freya and Jason ride across the clearing on Sleipnir; Draymus sprints behind them.');await storyRoll('J’Mal · Ambush before the signal',20,0,'Fixed story outcome · The whistle is stopped');await say('Chronicle','The noise of horse and armored riders wakes the manticore anyway. It flings tail spines at Jason as the party runs for cover. J’Mal casts the archer’s body from the wall and makes sure she cannot rise.');await say('Chronicle','Manticore spines tear into J’Mal, knocking him unconscious. Freya drags him down the tower stairs and gives him a healing potion. Jason braces in the lower doorway, hammer ready.');quest.archerAmbushed=true;hp.jamal=Math.max(1,Math.floor(STATS.jamal.hp*.5));}
@@ -49,5 +103,5 @@ window.FortArc=(()=>{
  }
  function effects(g,t){if(!quest.chapter9||!scene.startsWith('fort_')||scene==='fort_rest')return;g.save();g.globalAlpha=.22;g.strokeStyle='#7b8053';g.lineWidth=1;const sway=reduce.matches?0:Math.round(Math.sin(t*1.6)*2);for(let i=0;i<90;i++){const x=(i*73)%640,y=18+(i*47)%370;if(x>145&&x<515)continue;g.beginPath();g.moveTo(x,y+5);g.lineTo(x+sway,y);g.stroke();}g.restore();}
  function effect(g,a){if(battle?.kind!=='fort_manticore'||a.actor.id!=='manticore')return false;const p=CombatArt.phase(a);if(!a.hit||p<.25)return true;const v=battlePosition(a.target),f=battlePosition(a.actor);g.save();g.globalAlpha=reduce.matches?.8:Math.sin(p*Math.PI);g.strokeStyle='#d9c49b';g.lineWidth=2;if(a.actor.intent?.move==='Diving claws'){for(let i=0;i<3;i++){g.beginPath();g.moveTo(v.x-16+i*10,v.y-v.height*.5-18);g.lineTo(v.x-4+i*10,v.y-v.height*.5+18);g.stroke();}g.restore();return true;}for(let i=-1;i<=1;i++){const k=Math.min(1,(p-.25)/.35),x=f.x+(v.x-f.x)*k,y=f.y-f.height*.5+(v.y-v.height*.5-f.y+f.height*.5)*k+i*6;g.beginPath();g.moveTo(x+10,y-5);g.lineTo(x-8,y+4);g.stroke();}g.restore();return true;}
- return {install,load,mapImage,roster,goal,points,target,npcs,interact,afterBattle,effects,effect,chain};
+ return {install,load,mapImage,roster,goal,points,target,npcs,scoutPose,interact,afterBattle,effects,effect,chain};
 })();
