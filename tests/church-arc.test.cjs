@@ -1339,7 +1339,7 @@ test('Sethic’s farm requires the hog encounter before the ruined map and retur
  const start=replay('sethic-farm-road');
  Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:224,dir:'up'}],
   setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
-  COMBAT_IDLES:{},GameAudio:{effect:()=>{}}});
+  COMBAT_IDLES:{},GameAudio:{effect:()=>{}},epoch:0,reduce:{matches:true}});
  w.scenes[start.scene].points=[];
  vm.runInContext(read('sethic-farm.js'),w);
  w.SethicFarm.install();

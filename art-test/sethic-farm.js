@@ -3,6 +3,8 @@
 window.SethicFarm=(()=>{
  const salon='egorian_feud_salon',farm='sethic_devil_hog_farm',hog='devil_hog',fight='sethic_hogs';
  const map='sethic-farm-v1.png',ruins='sethic-farm-ruins-v1.png',sprite='sethic-devil-hog-v1.png';
+ const burnDuration=950;
+ let burn=null;
  const model={
   src:sprite,frames:[
    {x:39,y:120,w:643,h:477,anchorX:365,anchorY:597},
@@ -14,12 +16,12 @@ window.SethicFarm=(()=>{
   scenes[salon].points.push({id:'farmLeaveSalon',x:328,y:392,label:'Go to Sethic’s devil-hog farm'});
   scenes[farm]={
    name:'Sethic’s Devil-Hog Farm',image:map,spawn:[328,344],blocks:[],
-   walk:[{x:96,y:160,w:448,h:192},{x:288,y:352,w:80,h:48}],lights:[[105,68],[279,102],[374,102],[536,69]],
+   walk:[{x:96,y:160,w:448,h:208},{x:288,y:368,w:64,h:32}],lights:[[105,68],[279,102],[374,102],[536,69]],
    points:[
-    {id:'farmSurveyPens',x:328,y:264,label:'Survey the pens'},
-    {id:'farmHogsFight',x:328,y:224,label:'Drive back the devil-hogs'},
-    {id:'farmDestroy',x:328,y:168,label:'Destroy the feed barn and pens'},
-    {id:'farmLeaveRuins',x:328,y:344,label:'Leave Sethic’s ruined farm'}
+    {id:'farmSurveyPens',x:312,y:224,label:'Survey the pens'},
+    {id:'farmHogsFight',x:312,y:208,label:'Drive back the devil-hogs'},
+    {id:'farmDestroy',x:320,y:152,label:'Destroy the feed barn and pens'},
+    {id:'farmLeaveRuins',x:320,y:392,label:'Leave Sethic’s ruined farm'}
    ]
   };
   MAP_LAYERS[farm]={foreground:map,contain:true,background:{type:'solid',color:'#1b211e'}};
@@ -54,7 +56,16 @@ window.SethicFarm=(()=>{
   return [[240,206],[328,190],[416,206]].map(([x,y])=>({id:hog,x,y,height:36}));
  }
  function effects(g,t){
-  if(scene!==farm||!quest.sethicFarmDestroyed||reduce.matches)return;
+  if(scene!==farm||reduce.matches)return;
+  const burning=burn?.token===epoch;
+  if(burning){
+   const progress=Math.min(1,(performance.now()-burn.at)/burnDuration);
+   g.save();
+   g.globalAlpha=progress;
+   SceneLayers.foreground(g,art[ruins],{contain:true});
+   g.restore();
+  }
+  if(!burning&&!quest.sethicFarmDestroyed)return;
   g.save();
   for(let i=0;i<12;i++){
    const drift=Math.floor(t*(8+i%3)+i*19)%60,x=265+i*11+Math.floor(drift/6),y=133-drift;
@@ -94,11 +105,19 @@ window.SethicFarm=(()=>{
    case 'farmHogsFight':
     beginFight();
     return true;
-   case 'farmDestroy':
-    await say('Chronicle','The company brings down the rails and sets the feed barn alight. Sethic’s devil-hog farm is finished.');
-    quest.sethicFarmDestroyed=true;
+   case 'farmDestroy':{
+    const token=epoch;
     GameAudio.effect('fire');
+    if(!reduce.matches){
+     burn={token,at:performance.now()};
+     await delay(burnDuration);
+     if(epoch!==token)throw CANCEL;
+    }
+    quest.sethicFarmDestroyed=true;
+    burn=null;
+    await say('Chronicle','The rails give way and the feed barn catches. Sethic’s devil-hog farm is finished.');
     break;
+   }
    case 'farmLeaveRuins':
     await journeyCard('Back in Egorian','The ruined farm is one less source of income for Sethic. The company returns to Egorian.',()=>{
      quest.sethicFarmComplete=true;
