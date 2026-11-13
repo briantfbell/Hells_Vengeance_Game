@@ -2,6 +2,7 @@
 
 window.BarleybridgeScout=(()=>{
  const temple='ilnius_inner_temple',approach='barleybridge_approach',image='barleybridge-approach-v1.png';
+ const boat='guapo_party_boat',boatArt='guapo-party-boat-v1.png';
 
  function install(){
   scenes[temple].points.push({id:'barleybridgeCutaway',x:328,y:344,marker:{x:328,y:377},label:'Follow El Guapo to Barleybridge'});
@@ -12,9 +13,22 @@ window.BarleybridgeScout=(()=>{
     {id:'barleybridgeBridge',x:168,y:216,label:'Scout the river crossing'},
     {id:'barleybridgeGate',x:456,y:224,label:'Observe the town gate'},
     {id:'barleybridgeReport',x:328,y:344,label:'Mark the route for the company'},
-    {id:'barleybridgePlan',x:328,y:344,label:'Review the Tathlum plan'}
+    {id:'barleybridgePlan',x:328,y:344,label:'Review the Tathlum plan'},
+    {id:'guapoInvite',x:328,y:344,marker:{x:328,y:374},label:'Call it a night with El Guapo'}
    ]
   };
+  scenes[boat]={
+   name:'Epilogue · El Guapo’s Party Boat',image:boatArt,spawn:[328,344],blocks:[],
+   walk:[{x:112,y:176,w:416,h:144},{x:288,y:320,w:64,h:80}],
+   lights:[[69,82],[56,153],[28,278],[568,82],[578,151],[612,276],[260,42],[380,42]],
+   points:[{id:'guapoBanquet',x:328,y:184,marker:{x:320,y:118},label:'Raise a glass at the banquet'}]
+  };
+  MAP_LAYERS[boat]={
+   foreground:boatArt,contain:true,background:{type:'solid',color:'#141622'},
+   waterChannels:[[[0,0],[50,0],[25,300],[0,400]],[[590,0],[640,0],[640,400],[615,300]]],
+   waterCurrent:{speed:4,palette:['#354262','#53607c']}
+  };
+  JOURNEYS[boat]='Epilogue. El Guapo has rented a boat for the night. There’s food on the table and, by his count, only one rule about the balloons.';
   MAP_LAYERS[approach]={
    foreground:image,contain:true,background:{type:'solid',color:'#222c37'},
    waterChannels:[
@@ -28,19 +42,28 @@ window.BarleybridgeScout=(()=>{
   };
   JOURNEYS[approach]='El Guapo has gone ahead to Barleybridge. The company expects limited paladin presence, and the scout is to find out what the approach looks like.';
  }
- async function load(loader){art[approach]=await loader(image);}
- function mapImage(){return scene===approach?art[approach]:null;}
- function roster(){return scene===approach?['guapo']:null;}
- function npcs(){return scene===approach?[]:null;}
+ async function load(loader){
+  await Promise.all([[approach,image],[boat,boatArt]].map(async ([id,source])=>{art[id]=await loader(source);}));
+ }
+ function mapImage(){return scene===approach||scene===boat?art[scene]:null;}
+ function roster(){
+  if(scene===boat)return ['guapo','freya','jamal','jason','draymus','reese'];
+  return scene===approach?['guapo']:null;
+ }
+ function npcs(){return scene===approach||scene===boat?[]:null;}
  function points(){
   if(scene===temple&&quest.ilniusTempleComplete)return [point('barleybridgeCutaway')];
+  if(scene===boat)return quest.guapoBanquetComplete?[]:[point('guapoBanquet')];
   if(scene!==approach)return null;
-  if(quest.barleybridgePlanReviewed)return [];
+  if(quest.barleybridgePlanReviewed)return [point('guapoInvite')];
   const id=!quest.barleybridgeCrossingSeen?'barleybridgeBridge':!quest.barleybridgeGateSeen?'barleybridgeGate':!quest.barleybridgeScoutComplete?'barleybridgeReport':'barleybridgePlan';
   return [point(id)];
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===approach&&quest.barleybridgePlanReviewed?'El Guapo waits outside Barleybridge. The company’s next move is pending.':null);}
+ function goal(){
+  if(scene===boat&&quest.guapoBanquetComplete)return 'To be continued… End of the recorded campaign.';
+  return target()?.label??null;
+ }
  async function interact(id){
   if(target()?.id!==id)return false;
   switch(id){
@@ -65,6 +88,15 @@ window.BarleybridgeScout=(()=>{
     await journeyCard('Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.',()=>{});
     await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.\n\nOpen Current quest and choose Planning maps. Start at the Barleybridge scout’s approach to trace the crossing.',()=>{});
     quest.barleybridgePlanReviewed=true;
+    break;
+   case 'guapoInvite':
+    await say('guapo','The plans will keep till morning. I’ve rented us a boat. It has a banquet, balloons, and a deposit I’d like to see again.');
+    await travel(boat,328,344);
+    break;
+   case 'guapoBanquet':
+    await say('guapo','To the company. If anyone asks, those balloons were already like that.');
+    await journeyCard('To be continued…','You’ve reached the end of the recorded campaign. The rest of the Tathlum plan is still in your journal and planning maps.');
+    quest.guapoBanquetComplete=true;
     break;
   }
   save();

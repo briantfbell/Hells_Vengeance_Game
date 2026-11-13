@@ -34,3 +34,11 @@ The river uses clipped water regions beneath the still bridge, banks, and shelte
 - Did Queen Abrogail receive the prepared head, and did she complete or use the Tathlum? What happened in Westcrown after Freya’s assignment?
 
 The river and planning handoff were checked in replay 464 at 640×480 with no browser errors. A renderer check confirmed that visible highlights change between frames inside the clipped river and that reduced motion draws zero current highlights. All 174 tests passed, and the structural audit checked 476 replays.
+
+## Party boat epilogue
+
+The invitation, banquet and toast are original epilogue material. Continue and export/import preserve the boat and banquet state.
+
+The built-in image generator produced `art-test/guapo-party-boat-v1.png` using the following prompt.
+
+> Create a single production-ready pixel art game map background for a dark fantasy RPG, wide landscape 8:5 for a 640 by 400 viewport. Orthographic overhead three-quarter game camera. El Guapo's rented pirate party boat, richly decorated, festive and inviting at dusk. Compose the aft banquet deck as a wide rectangular railed stage, dark oak planks running from a clearly recognizable boarding gangplank at bottom center to a raised stern cabin beyond the top. The deck occupies x 15–85 percent. A single long feast table across the UPPER THIRD, fully visible and loaded with roast, fruit, bread, goblets and bottles, table height and chairs believable beside 50 pixel tall sprites at final resolution. Keep the entire middle and bottom deck (x 20–80 percent, y 45–86 percent) absolutely empty and walkable. Several recognizable round festive balloons tied in small bunches by the cabin and rails, coral red, warm gold and plum. Warm lanterns and bunting, ornate aged brass, red fabric, quiet indigo sea around the hull, calm shoreline-free night. Crisp deliberately placed pixel clusters, highly detailed art like a late 16-bit dark fantasy RPG, rich yet restrained palette. No characters or creatures, words, signage, UI, grid, frame, modern party hardware, sails or ropes obstructing the view. Strict overhead three-quarter playable view with objects placed to leave large clear play space. PNG.
