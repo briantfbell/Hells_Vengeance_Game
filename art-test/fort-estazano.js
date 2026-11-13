@@ -1,6 +1,7 @@
 "use strict";
 window.FortArc=(()=>{
  const maps={},chain=['chapter9','fortScouted','scoutRetreated','fortPrepared','archerAmbushed','manticoreDefeated','fortSearched','forestMarked','patrolQuestioned','chapter9Complete'];
+ const keepTracks=[[324,132],[330,155],[322,178],[328,204]],roadTracks=[[328,320],[322,340],[306,352],[286,351],[266,344]];
  const tower={x:568,y:136},foot={x:568,y:232},lookout={x:520,y:264},airborne={x:520,y:105};
  let scoutMotion=null,hammerThrow=null;
  const party=['freya','jamal','jason','draymus'],r=(x,y,w,h)=>({x,y,w,h});
@@ -15,18 +16,18 @@ window.FortArc=(()=>{
   add('fort_scout','scoutFort',foot.x,foot.y,'Levitate onto the wall');add('fort_scout','inspectParapet',tower.x,tower.y,'Scout the parapet');add('fort_scout','reachLookout',lookout.x,lookout.y,'Regroup with El Guapo');add('fort_scout','retreatFort',328,344,'Retreat to Longacre');
   add('fort_rest','planFort',328,200,'[Prepare the return]');add('fort_rest','returnFort',328,344,'[Return to Fort Estazano]');
   add('fort_assault','drinkInvisibility',foot.x,foot.y,'Drink the potion of Invisibility');add('fort_assault','ambushArcher',tower.x,tower.y,'Ambush the archer before she signals');add('fort_assault','rallyAtTower',foot.x,foot.y,'Get J’Mal to cover');add('fort_assault','manticoreFight',foot.x,foot.y,'Hold the tower against the manticore');add('fort_assault','finishManticore',foot.x,foot.y,'Jason’s last throw');
-  add('fort_search','searchKeep',328,120,'[Search the keep and follow the tracks]');add('fort_search','forestRoad',328,344,'[Follow the hidden woodland trail]');
-  add('whisperwood_trail','markCourt',328,120,'[Observe and mark the hidden settlement]');add('whisperwood_trail','patrolRoad',328,344,'[Return to the fort and regain spells]');
-  add('fort_patrol','questionPatrol',328,216,'[Question the returning patrol]');add('fort_patrol','fortArcComplete',328,344,'[Prepare for the Court of Spears]');
+  add('fort_search','searchKeep',328,120,'Inspect the tracks at the keep');add('fort_search','findForestTrail',296,344,'Check where the trail leaves the road');add('fort_search','forestRoad',296,344,'Follow the hidden woodland trail');
+  add('whisperwood_trail','canopyLookout',344,216,'Study the canopy from cover');add('whisperwood_trail','markCourt',328,120,'Mark the settlement on the map');add('whisperwood_trail','patrolRoad',328,344,'Return to the fort to rest');
+  add('fort_patrol','questionPatrol',328,216,'Question the captured patrol');add('fort_patrol','raisePatrol',328,136,'Leave Jason’s undead in the cave');add('fort_patrol','fortArcComplete',328,344,'Prepare for the Court of Spears');
   Object.assign(NAMES,{fort_archer:'Halfling Archer',manticore:'Manticore'});
   Object.assign(STATS,{fort_archer:{hp:18,ac:14,atk:5,dmg:[1,6,2]},manticore:{hp:96,ac:14,atk:5,dmg:[1,8,2]}});
-  Object.assign(JOURNEYS,{fort_scout:'The prisoners have named Fort Estazano as a rebel supply cache. J’Mal scouts with El Guapo as backup. One watchtower has collapsed; tall grass covers the clearing around the apparently vacant fort.',fort_rest:'The hidden archer and her manticore have forced a retreat. Back in Longacre, the party heals and plans a coordinated return.',fort_assault:'J’Mal goes ahead with an Invisibility potion. Freya, Jason, and Draymus wait out of sight at the treeline. El Guapo has slipped away again.',fort_search:'The manticore is dead. The party holds Fort Estazano and searches for the weapons and supplies.',whisperwood_trail:'Freya finds the concealed trail leaving the road outside the fort. With J’Mal scouting ahead, the party follows it several miles into the Whisperwood.',fort_patrol:'The strange settlement has been marked on the map. The party returns to the fort to rest and regain spells. A rebel patrol arrives.'});
+  Object.assign(JOURNEYS,{fort_scout:'The prisoners have named Fort Estazano as a rebel supply cache. J’Mal scouts with El Guapo as backup. One watchtower has collapsed; tall grass covers the clearing around the apparently vacant fort.',fort_rest:'The hidden archer and her manticore have forced a retreat. Back in Longacre, the party heals and plans a coordinated return.',fort_assault:'J’Mal goes ahead with an Invisibility potion. Freya, Jason, and Draymus wait out of sight at the treeline. El Guapo has slipped away again.',fort_search:'The manticore is dead. The party holds Fort Estazano and searches for the weapons and supplies.',whisperwood_trail:'The concealed trail winds several miles into the Whisperwood. J’Mal leads the party under the trees.',fort_patrol:'The strange settlement has been marked on the map. The party returns to the fort to rest and regain spells. A rebel patrol arrives.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter9?art[scene]:null;}
  function roster(){if(!quest.chapter9)return null;if(scene==='fort_scout')return ['jamal','guapo'];return scene==='fort_assault'&&!quest.archerAmbushed?['jamal']:party;}
- function goal(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return 'Investigate the supply-cache lead at Fort Estazano.';if(scene==='fort_scout')return scoutPoint().label+'.';if(scene==='fort_assault')return assaultPoint().label+'.';const text=['Scout the fort with J’Mal and El Guapo.','Retreat to Longacre.','Plan the second approach.','Ambush the archer before she signals.','Hold the tower against the manticore.','Search the keep for the rebels’ trail.','Mark the hidden woodland settlement.','Question the returning patrol.','Prepare for the Court of Spears.','Chapter complete · The Court of Spears awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
- function points(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return scene==='heist_aftermath'?[point('fortArcRoad')]:[];if(quest.chapter9Complete)return [];const id=({fort_scout:scoutPoint()?.id,fort_rest:quest.fortPrepared?'returnFort':'planFort',fort_assault:assaultPoint()?.id,fort_search:quest.fortSearched?'forestRoad':'searchKeep',whisperwood_trail:quest.forestMarked?'patrolRoad':'markCourt',fort_patrol:quest.patrolQuestioned?'fortArcComplete':'questionPatrol'})[scene];return [point(id)].filter(Boolean);}
+ function goal(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return 'Investigate the supply-cache lead at Fort Estazano.';if(scene==='fort_scout')return scoutPoint().label+'.';if(scene==='fort_assault')return assaultPoint().label+'.';if(!quest.chapter9Complete&&['fort_search','whisperwood_trail','fort_patrol'].includes(scene))return target()?.label+'.';const text=['Scout the fort with J’Mal and El Guapo.','Retreat to Longacre.','Plan the second approach.','Ambush the archer before she signals.','Hold the tower against the manticore.','Search the keep for the rebels’ trail.','Mark the hidden woodland settlement.','Question the returning patrol.','Prepare for the Court of Spears.','Chapter complete · The Court of Spears awaits.'];const i=chain.findIndex(k=>!quest[k]);return text[i<0?9:Math.max(0,i-1)];}
+ function points(){if(!quest.chapter8Complete)return null;if(!quest.chapter9)return scene==='heist_aftermath'?[point('fortArcRoad')]:[];if(quest.chapter9Complete)return [];const id=({fort_scout:scoutPoint()?.id,fort_rest:quest.fortPrepared?'returnFort':'planFort',fort_assault:assaultPoint()?.id,fort_search:quest.fortSearched?'forestRoad':quest.fortKeepInspected?'findForestTrail':'searchKeep',whisperwood_trail:quest.forestMarked?'patrolRoad':quest.fortCanopySeen?'markCourt':'canopyLookout',fort_patrol:quest.patrolQuestioned?'fortArcComplete':quest.fortPatrolNamed?'raisePatrol':'questionPatrol'})[scene];return [point(id)].filter(Boolean);}
  function scoutPoint(){
   return point(quest.fortScouted?'retreatFort':quest.fortScoutWounded?'reachLookout':quest.fortWallReached?'inspectParapet':'scoutFort');
  }
@@ -45,7 +46,10 @@ window.FortArc=(()=>{
    }
    if(quest.fortArcherStopped||quest.archerAmbushed)return [{id:'manticore',x:504,y:147,height:92}];
    return [{id:'fort_archer',x:600,y:134,height:44}];
-  }if(scene==='fort_patrol'&&!quest.patrolQuestioned)return [{id:'heist_ranger',x:296,y:216},{id:'heist_ranger',x:360,y:216}];return [];}
+  }if(scene==='fort_patrol'&&!quest.patrolQuestioned){
+   if(quest.fortPatrolNamed)return [{id:'heist_ranger',x:312,y:132,pose:'prone'},{id:'heist_ranger',x:344,y:146,pose:'prone'}];
+   return [{id:'heist_ranger',x:296,y:216},{id:'heist_ranger',x:360,y:216}];
+  }return [];}
  function scoutPose(unit){
   if(!['fort_scout','fort_assault'].includes(scene))return unit;
   if(scene==='fort_assault'&&unit.id==='jamal'&&quest.fortInvisible&&!quest.fortArcherStopped)unit={...unit,opacity:.45};
@@ -146,12 +150,40 @@ window.FortArc=(()=>{
   }
   else if(id==='manticoreFight'&&scene==='fort_assault'&&quest.archerAmbushed&&!quest.manticoreDrivenOff&&!quest.manticoreDefeated){prepare();hp.jamal=Math.max(1,Math.min(hp.jamal,Math.floor(STATS.jamal.hp*.5)));startBattle(0,false,{kind:'fort_manticore',enemies:[{id:'manticore',name:'Manticore',hp:STATS.manticore.hp,max:STATS.manticore.hp}]});log('Hold the tower · Tail spines and diving claws alternate. Guard reduces damage.');}
   else if(id==='finishManticore'&&scene==='fort_assault'&&quest.manticoreDrivenOff&&!quest.manticoreDefeated)await finishManticore();
-  else if(id==='searchKeep'){await say('Chronicle','Freya searches the tracks carefully. They enter the keep, turn around, and leave again. The rebels are not using its rooms as their storehouse.');await say('freya','The fort is a waypoint. They tried to hide where the trail leaves the road outside. There—into the woods.');quest.fortSearched=true;}
-  else if(id==='forestRoad')await travel('whisperwood_trail',328,344);
-  else if(id==='markCourt'){await say('jamal','Stop. The canopy changes ahead. Those are platforms—and bridges. There is a settlement above us.');await say('Chronicle','Several miles into the Whisperwood, J’Mal spots tree-houses, platforms, and connecting bridges barely visible from the ground. The party marks the location and withdraws to regain spells. They do not yet know its name.');quest.forestMarked=true;}
-  else if(id==='patrolRoad'){await travel('fort_patrol',328,344);recover();}
-  else if(id==='questionPatrol'){await say('Chronicle','While resting at the fort, the party captures two rebels returning from a long patrol. The low-ranking rangers know little about the hidden settlement.');await say('Rebel Ranger','The Court of Spears. That is what they call it. I do not know more.');await say('Chronicle','The rangers are killed. Jason raises them as undead, and the party leaves them in the manticore’s cave.');quest.patrolQuestioned=true;}
-  else if(id==='fortArcComplete'){await journeyCard('Chapter Nine · The Court of Spears','The party rents another horse in town and bills it to Archbaron Fex. With the hidden settlement located, they prepare to ride out. The next operation is the Court of Spears.');quest.chapter9Complete=true;}
+  else if(id==='searchKeep'&&scene==='fort_search'&&quest.manticoreDefeated&&!quest.fortKeepInspected&&!quest.fortSearched){
+   await say('freya','See where the prints double back? They walked into the keep and straight back out. Check the road by the gate.');
+   quest.fortKeepInspected=true;
+  }
+  else if(id==='findForestTrail'&&scene==='fort_search'&&quest.fortKeepInspected&&!quest.fortSearched){
+   await say('Chronicle','The tracks leave the road just outside the fort. The rebels brushed over the turn, but scuffs in the dirt continue toward the woods.');
+   await say('freya','There. J’Mal, take point.');
+   quest.fortSearched=true;
+  }
+  else if(id==='forestRoad'&&scene==='fort_search'&&quest.fortSearched)await travel('whisperwood_trail',328,344);
+  else if(id==='canopyLookout'&&scene==='whisperwood_trail'&&!quest.fortCanopySeen&&!quest.forestMarked){
+   await say('jamal','Stop. Look where the trees grow closer together. There’s a bridge between those two trunks.');
+   quest.fortCanopySeen=true;
+  }
+  else if(id==='markCourt'&&scene==='whisperwood_trail'&&quest.fortCanopySeen&&!quest.forestMarked){
+   await say('Chronicle','Platforms and tree-houses join the bridges overhead. From below, the settlement is barely visible.');
+   await say(null,'[Record the location]', ['[Mark the settlement and withdraw]']);
+   quest.forestMarked=true;
+  }
+  else if(id==='patrolRoad'&&scene==='whisperwood_trail'&&quest.forestMarked){await travel('fort_patrol',328,344);recover();}
+  else if(id==='questionPatrol'&&scene==='fort_patrol'&&!quest.fortPatrolNamed&&!quest.patrolQuestioned){
+   await say('Chronicle','During the rest, two rangers return from a long patrol. The party takes them prisoner.');
+   await say('freya','The platforms in the Whisperwood. What’s the place called?');
+   await say('heist_ranger','The Court of Spears. That’s all I can tell you.');
+   await say('Chronicle','The rangers know little else. They are killed, and Jason takes their bodies to the manticore’s cave.');
+   quest.fortPatrolNamed=true;
+  }
+  else if(id==='raisePatrol'&&scene==='fort_patrol'&&quest.fortPatrolNamed&&!quest.patrolQuestioned){
+   await say('jason','Leave them here. I’ll see that they get back on their feet.');
+   await say(null,'[Leave the cave to Jason]', ['[Let Jason raise the two rangers]']);
+   await say('Chronicle','Jason raises the two rangers as undead. The party leaves them in the cave.');
+   quest.patrolQuestioned=true;
+  }
+  else if(id==='fortArcComplete'&&scene==='fort_patrol'&&quest.patrolQuestioned&&!quest.chapter9Complete){await journeyCard('Chapter Nine · The Court of Spears','The party rents another horse in town and bills it to Archbaron Fex. With the hidden settlement located, they prepare to ride out. The next operation is the Court of Spears.');quest.chapter9Complete=true;}
   else return false;save();paintParty();updateObjective();return true;
  }
  function drawHammer(g){
@@ -161,7 +193,14 @@ window.FortArc=(()=>{
   g.save();g.translate(foot.x-30+(airborne.x-foot.x+30)*p,foot.y-30+(airborne.y-49-foot.y+30)*p-Math.sin(p*Math.PI)*34);g.rotate(p*Math.PI*5);
   g.fillStyle='#ab865b';g.fillRect(-2,-5,4,17);g.fillStyle='#d4c9a9';g.fillRect(-8,-8,16,7);g.restore();
  }
- function effects(g,t){drawHammer(g);if(!quest.chapter9||!scene.startsWith('fort_')||scene==='fort_rest')return;g.save();g.globalAlpha=.22;g.strokeStyle='#7b8053';g.lineWidth=1;const sway=reduce.matches?0:Math.round(Math.sin(t*1.6)*2);for(let i=0;i<90;i++){const x=(i*73)%640,y=18+(i*47)%370;if(x>145&&x<515)continue;g.beginPath();g.moveTo(x,y+5);g.lineTo(x+sway,y);g.stroke();}g.restore();}
+ function drawTracks(g){
+  if(scene!=='fort_search')return;
+  g.save();g.fillStyle='#a18a65';g.globalAlpha=.55;
+  const tracks=quest.fortKeepInspected?roadTracks:keepTracks;
+  for(const [x,y] of tracks){g.fillRect(x-2,y,3,5);g.fillRect(x+3,y+6,3,5);}
+  g.restore();
+ }
+ function effects(g,t){drawHammer(g);drawTracks(g);if(!quest.chapter9||!scene.startsWith('fort_')||scene==='fort_rest')return;g.save();g.globalAlpha=.22;g.strokeStyle='#7b8053';g.lineWidth=1;const sway=reduce.matches?0:Math.round(Math.sin(t*1.6)*2);for(let i=0;i<90;i++){const x=(i*73)%640,y=18+(i*47)%370;if(x>145&&x<515)continue;g.beginPath();g.moveTo(x,y+5);g.lineTo(x+sway,y);g.stroke();}g.restore();}
  function effect(g,a){if(battle?.kind!=='fort_manticore'||a.actor.id!=='manticore')return false;const p=CombatArt.phase(a);if(!a.hit||p<.25)return true;const v=battlePosition(a.target),f=battlePosition(a.actor);g.save();g.globalAlpha=reduce.matches?.8:Math.sin(p*Math.PI);g.strokeStyle='#d9c49b';g.lineWidth=2;if(a.actor.intent?.move==='Diving claws'){for(let i=0;i<3;i++){g.beginPath();g.moveTo(v.x-16+i*10,v.y-v.height*.5-18);g.lineTo(v.x-4+i*10,v.y-v.height*.5+18);g.stroke();}g.restore();return true;}for(let i=-1;i<=1;i++){const k=Math.min(1,(p-.25)/.35),x=f.x+(v.x-f.x)*k,y=f.y-f.height*.5+(v.y-v.height*.5-f.y+f.height*.5)*k+i*6;g.beginPath();g.moveTo(x+10,y-5);g.lineTo(x-8,y+4);g.stroke();}g.restore();return true;}
  return {install,load,mapImage,roster,goal,points,target,npcs,scoutPose,interact,afterBattle,effects,effect,chain};
 })();
