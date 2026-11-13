@@ -17,7 +17,7 @@ window.DinyarRecon=(()=>{
  const fallenArt='parnoneryx-fallen-intact-v1.png',recoveredArt='parnoneryx-fallen-after-recovery-v2.png';
  const fallenFrame={x:0,y:0,w:1920,h:819};
  const guardPositions=[[280,168],[376,168]];
- const watchLabels={fastness_paladin:'Paladin',kantaria_guard:'Guard'};
+ const combatLabels={fastness_paladin:'Paladin',kantaria_guard:'Guard',[dragon]:'Dragon'};
  const lowerBattle='dinyar_watch',dragonBattle='dinyar_parnoneryx';
  const dragonFrames=[
   {x:18,y:90,w:670,h:557,anchorX:350,anchorY:647},
@@ -59,7 +59,7 @@ window.DinyarRecon=(()=>{
    points:[
     {id:'dinyarDragon',speaker:dragon,x:328,y:256,label:'Confront Parnoneryx'},
     {id:'dinyarTrophy',x:280,y:256,label:'Recover Parnoneryx’s head'},
-    {id:'dinyarReturn',x:328,y:344,label:'Return to Egorian'}
+    {id:'dinyarReturn',x:328,y:344,marker:{x:328,y:374},label:'Return to Egorian'}
    ]
   };
   scenes[court]={
@@ -151,7 +151,7 @@ window.DinyarRecon=(()=>{
  }
  function beginFight(kind,ids,opening){
   const {x,y,dir}=units[0];
-  const enemies=ids.map(id=>({id,name:NAMES[id],shortName:watchLabels[id],hp:STATS[id].hp,max:STATS[id].hp}));
+  const enemies=ids.map(id=>({id,name:NAMES[id],shortName:combatLabels[id],hp:STATS[id].hp,max:STATS[id].hp}));
   save();
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],opening});
  }
