@@ -81,7 +81,9 @@ window.FortArego=(()=>{
   const {x,y,dir}=units[0];
   const enemies=encounters[kind].enemies.map((id,i)=>{
    const max=STATS[id].hp;
-   return {id,name:id===paladin?'Reclamation Paladin '+i:NAMES[id],hp:max,max};
+   const name=id===paladin?'Reclamation Paladin '+i:NAMES[id];
+   const shortName=id===paladin?'Paladin '+i:id===viona?'Viona':'Champion';
+   return {id,name,shortName,hp:max,max};
   });
   save();
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir]});

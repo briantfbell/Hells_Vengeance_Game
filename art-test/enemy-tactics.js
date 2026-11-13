@@ -95,6 +95,6 @@ window.EnemyTactics=(()=>{
   return stats[target.id].ac+(covered?2:0);
  }
  const damage=(value,guard,armor=0)=>{const through=Math.max(0,value-armor);return guard&&through>0?Math.max(1,Math.floor(through/2)):through;};
- const preview=(enemy,names,compact=false)=>enemy.intent?((compact&&enemy.shortName)||enemy.name)+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.battlePrayer?(compact?'Prayer at half HP':'Battle prayer at half HP'):enemy.intent.move+' → '+names[enemy.intent.target])):'';
+ const preview=(enemy,names,compact=false)=>enemy.intent?((compact&&enemy.shortName)||enemy.name)+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.battlePrayer?(compact?'Prayer at half HP':'Battle prayer at half HP'):(compact&&enemy.intent.move==='Shield-led strike'?'Shield strike':enemy.intent.move)+' → '+names[enemy.intent.target])):'';
  return {plan,defense,damage,preview};
 })();

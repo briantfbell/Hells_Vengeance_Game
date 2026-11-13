@@ -76,7 +76,7 @@ window.InfernoGate=(()=>{
   save();
   startBattle(0,false,{
    kind,returnPosition:[x,y,dir],
-   enemies:[1,2].map(i=>({id:bearded,name:NAMES[bearded]+' '+i,hp:max,max}))
+   enemies:[1,2].map(i=>({id:bearded,name:NAMES[bearded]+' '+i,shortName:'Devil '+i,hp:max,max}))
   });
  }
  async function afterBattle(position){
