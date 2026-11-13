@@ -617,6 +617,7 @@ async function performActionImpl(action){
   return;
  }
  ChurchArc.dismissSummons(battle);
+ ArmoryArc.resolvePorchFlight(battle);
  if(!livingEnemy()&&window.NextChapter?.isAmbush?.(battle.kind)){
   const position=battle.returnPosition;
   battle=null;
