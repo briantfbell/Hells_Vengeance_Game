@@ -3,18 +3,19 @@
 window.VyreWish=(()=>{
  const mansion='egorian_sethic_mansion',room='vyre_wish_room',manticce='manticce';
  const image='vyre-wish-room-v1.png',portrait='vyre-manticce-v1.png';
- const bob=[566,152];
+ const cot=[562,170],bobStanding=[542,200];
+ const castDuration=1380;
  let cast=null;
 
  function install(){
-  scenes[mansion].points.push({id:'vyreWishDepart',x:328,y:344,label:'Follow El Guapo’s lead to Vyre'});
+  scenes[mansion].points.push({id:'vyreWishDepart',x:328,y:392,label:'Follow El Guapo’s lead to Vyre'});
   scenes[room]={
    name:'Vyre · Manticce’s Meeting Room',image,spawn:[328,344],blocks:[],
-   walk:[{x:128,y:160,w:352,h:192},{x:480,y:192,w:80,h:144},{x:288,y:352,w:64,h:48}],lights:[[115,86],[525,84],[56,172],[31,208],[609,208]],
+   walk:[{x:128,y:160,w:352,h:192},{x:480,y:192,w:96,h:96},{x:480,y:288,w:64,h:64},{x:288,y:352,w:64,h:48}],lights:[[115,86],[525,84],[56,172],[31,208],[609,208]],
    points:[
-    {id:'vyreWishRequest',speaker:manticce,x:264,y:200,label:'Ask Manticce for a Wish'},
-    {id:'vyreWishUse',x:536,y:200,label:'Use the Wish to heal Bob'},
-    {id:'vyreWishHearBob',speaker:'bob',x:536,y:200,label:'Speak to Bob Applewood'}
+    {id:'vyreWishRequest',speaker:manticce,x:264,y:169,label:'Ask Manticce for a Wish'},
+    {id:'vyreWishUse',x:cot[0],y:cot[1],label:'Use the Wish to heal Bob'},
+    {id:'vyreWishHearBob',speaker:'bob',x:bobStanding[0],y:bobStanding[1],label:'Speak to Bob Applewood'}
    ]
   };
   MAP_LAYERS[room]={foreground:image,contain:true,background:{type:'solid',color:'#181c24'}};
@@ -41,9 +42,12 @@ window.VyreWish=(()=>{
  function goal(){return target()?.label||(scene===room&&quest.vyreWishComplete?'Bob Applewood has recovered.':null);}
  function npcs(){
   if(scene!==room)return null;
+  const rising=cast?.epoch===epoch&&!reduce.matches?Math.max(0,Math.min(1,((performance.now()-cast.at)/castDuration-.55)/.45)):0;
+  const progress=quest.vyreBobHealed?1:rising;
   return [
    {id:manticce,x:264,y:169,height:59},
-   {id:'bob',x:quest.vyreBobHealed?552:bob[0],y:quest.vyreBobHealed?188:bob[1],height:46,pose:quest.vyreBobHealed?null:'prone'}
+   {id:'bob',x:cot[0]+(bobStanding[0]-cot[0])*progress,y:cot[1]+(bobStanding[1]-cot[1])*progress,
+    height:progress?Math.round(30+16*progress):46,pose:progress?null:'prone'}
   ];
  }
  function effects(g){
@@ -55,7 +59,7 @@ window.VyreWish=(()=>{
   g.globalAlpha=.75*(1-progress);
   for(let i=0;i<24;i++){
    const angle=i*2.39996+progress*2.4,radius=8+i%7*3+progress*8;
-   const x=bob[0]-12+Math.cos(angle)*radius,y=bob[1]-9+Math.sin(angle)*radius*.55-progress*(i%5)*6;
+   const x=cot[0]-12+Math.cos(angle)*radius,y=cot[1]-9+Math.sin(angle)*radius*.55-progress*(i%5)*6;
    g.fillStyle=i%3?'#e5cd8a':'#fff1c5';
    g.fillRect(Math.round(x),Math.round(y),i%4===0?3:2,i%3===0?3:2);
   }
@@ -81,7 +85,7 @@ window.VyreWish=(()=>{
     await say('guapo','I wish for Bob Applewood to be whole again.');
     const token=epoch;
     cast={epoch:token,at:performance.now()};
-    await delay(reduce.matches?650:1380);
+    await delay(reduce.matches?650:castDuration);
     if(token!==epoch)return false;
     cast=null;
     quest.vyreBobHealed=true;

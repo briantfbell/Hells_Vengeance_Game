@@ -18,7 +18,7 @@ window.BarrowTrail=(()=>{
  const tally=()=>quest.barrowStones??0;
 
  function install(){
-  scenes[vyre].points.push({id:'barrowDepart',x:328,y:344,label:'Rejoin the company for the Barrowood pilgrimage'});
+  scenes[vyre].points.push({id:'barrowDepart',x:320,y:392,label:'Rejoin the company for the Barrowood pilgrimage'});
   scenes[road]={
    name:'Barrowood · Pilgrim Road',image:roadArt,spawn:[328,344],blocks:stoneBlocks(0,6),
    walk:[{x:112,y:128,w:416,h:192},{x:288,y:320,w:80,h:80}],lights:[],
