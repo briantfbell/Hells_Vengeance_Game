@@ -10,21 +10,21 @@ window.SethicLedgers=(()=>{
  const layouts={
   [archive]:{
    name:'Egorian · Judicial Records',image:'sethic-judicial-records-v1.png',spawn:[328,344],
-   walk:[{x:64,y:160,w:512,h:192},{x:288,y:352,w:64,h:32}],lights:[[63,66],[169,66],[471,66],[519,66]],
+   walk:[{x:64,y:160,w:512,h:192},{x:288,y:352,w:64,h:48}],lights:[[63,66],[169,66],[471,66],[519,66]],
    points:[
-    {id:'ledgersFindPayments',x:88,y:168,label:'Inspect the payment ledger'},
-    {id:'ledgersMatchRegister',x:552,y:168,label:'Check the court register'},
+    {id:'ledgersFindPayments',x:88,y:128,label:'Inspect the payment ledger'},
+    {id:'ledgersMatchRegister',x:552,y:128,label:'Check the court register'},
     {id:'ledgersFileEvidence',x:328,y:240,label:'Submit the evidence'},
-    {id:'ledgersFollowLoan',x:328,y:344,label:'Follow Sethic’s foreign loan'}
+    {id:'ledgersFollowLoan',x:328,y:392,label:'Follow Sethic’s foreign loan'}
    ]
   },
   [bank]:{
    name:'Egorian · The Loan Strongroom',image:'sethic-loan-strongroom-v1.png',spawn:[328,344],
-   walk:[{x:64,y:160,w:512,h:192},{x:288,y:352,w:64,h:32}],lights:[[83,121],[160,74],[480,74]],
+   walk:[{x:32,y:192,w:576,h:160},{x:176,y:160,w:432,h:32},{x:288,y:352,w:64,h:48}],lights:[[83,121],[160,74],[480,74]],
    points:[
-    {id:'ledgersReadDispatch',x:104,y:200,label:'Trace the loan in the dispatch papers'},
-    {id:'ledgersTryVault',x:328,y:168,label:'Attempt to take Sethic’s loan'},
-    {id:'ledgersWithdraw',x:328,y:344,label:'Withdraw empty-handed'}
+    {id:'ledgersReadDispatch',x:104,y:168,label:'Trace the loan in the dispatch papers'},
+    {id:'ledgersTryVault',x:320,y:144,label:'Attempt to take Sethic’s loan'},
+    {id:'ledgersWithdraw',x:328,y:392,label:'Withdraw empty-handed'}
    ]
   }
  };
@@ -75,7 +75,7 @@ window.SethicLedgers=(()=>{
     quest.sethicRegisterMatched=true;
     break;
    case 'ledgersFileEvidence':
-    await say('freya','Put the register beside the payment records. They can see whose names keep turning up.');
+    await say('freya','The names in the payment ledger match the judges in the register. Submit both copies together.');
     await journeyCard('Egorian · The judges indicted','The company exposes several judges on Sethic’s payroll. The evidence is turned over, and the judges are indicted.',()=>{
      quest.sethicJudgesIndicted=true;
     });
@@ -89,8 +89,9 @@ window.SethicLedgers=(()=>{
     quest.sethicLoanTraced=true;
     break;
    case 'ledgersTryVault':
+    await say('jamal','The dispatch points here. Give me a moment at the vault.');
     await storyRoll('J’Mal · Secure the loan',3,0,'The attempt fails');
-    await say('jamal','No sign of the money. We’re walking out empty-handed.');
+    await say('jamal','I couldn’t get to the money. We’re walking out empty-handed.');
     quest.sethicLoanFailed=true;
     break;
    case 'ledgersWithdraw':
