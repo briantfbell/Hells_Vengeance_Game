@@ -2,17 +2,19 @@
 
 window.EgorianArrival=(()=>{
  const bridge='egorian_bridge',square='egorian_square',temple='egorian_temple',manor='egorian_manor';
+ const custodyWalkDuration=680;
+ let custodyWalkStarted=null;
  const layouts={
   [bridge]:{
    name:'Egorian · West Bridge',image:'egorian-west-bridge-v1.png',spawn:[328,360],
-   walk:[{x:224,y:128,w:192,h:256},{x:288,y:112,w:64,h:16}],
+   walk:[{x:240,y:128,w:160,h:144},{x:192,y:272,w:256,h:128},{x:288,y:112,w:64,h:32}],
    lights:[[250,90],[390,90]],
    points:[{id:'egorianSalute',x:328,y:280,label:'Meet the bridge escort'},
     {id:'egorianCross',x:328,y:136,label:'Cross into Egorian'}]
   },
   [square]:{
    name:'Egorian · Central Square',image:'egorian-central-square-v1.png',spawn:[328,360],
-   walk:[{x:80,y:160,w:480,h:144},{x:272,y:304,w:96,h:80},
+   walk:[{x:80,y:160,w:480,h:144},{x:256,y:288,w:128,h:112},
     {x:112,y:112,w:64,h:48},{x:464,y:112,w:64,h:48}],
    lights:[[118,90],[185,90],[325,111],[589,115]],
    points:[{id:'egorianHandover',x:152,y:144,label:'Deliver Oppian to the Dottari'},
@@ -21,17 +23,17 @@ window.EgorianArrival=(()=>{
   },
   [temple]:{
    name:'Egorian · Midnight Temple',image:'egorian-midnight-temple-v1.png',spawn:[328,360],
-   walk:[{x:144,y:128,w:352,h:160},{x:272,y:288,w:96,h:96}],
+   walk:[{x:144,y:128,w:352,h:160},{x:272,y:272,w:96,h:128}],
    lights:[[110,57],[221,52],[419,52],[590,173]],
    points:[{id:'egorianSupply',x:328,y:144,label:'Collect healing supplies'},
     {id:'egorianLeaveTemple',x:328,y:360,label:'Return to the square'}]
   },
   [manor]:{
    name:'Thorntown · Falco Residence',image:'egorian-falco-manor-v1.png',spawn:[328,312],
-   walk:[{x:80,y:240,w:480,h:80},{x:528,y:128,w:40,h:112}],
+   walk:[{x:80,y:240,w:480,h:96},{x:512,y:112,w:48,h:144}],
    lights:[[152,53],[262,53],[373,53],[571,179]],
    points:[{id:'egorianWelcome',x:328,y:264,label:'Meet Lady Tria Falco'},
-    {id:'egorianRooms',x:552,y:144,label:'Set the night watch'}]
+    {id:'egorianRooms',x:544,y:120,label:'Set the night watch'}]
   }
  };
 
@@ -74,7 +76,14 @@ window.EgorianArrival=(()=>{
  function goal(){return target()?.label||(scene===manor&&quest.egorianArrivalComplete?'The company settles in at Falco Manor.':null);}
  function npcs(){
   if(scene===bridge)return [160,208,256,304].flatMap(y=>[248,408].map(x=>({id:'south_road_knight',x,y,height:54})));
-  if(scene===square)return [{id:'guard',x:152,y:128},...(!quest.oppianDelivered?[{id:'oppian',x:176,y:152}]:[])];
+  if(scene===square){
+   if(custodyWalkStarted!==null){
+    const progress=Math.min(1,(performance.now()-custodyWalkStarted)/custodyWalkDuration);
+    return [{id:'guard',x:152,y:Math.round(128-22*progress)},
+     {id:'oppian',x:Math.round(176-24*progress),y:Math.round(152-39*progress)}];
+   }
+   return [{id:'guard',x:152,y:128},...(!quest.oppianDelivered?[{id:'oppian',x:176,y:152}]:[])];
+  }
   if(scene===temple)return [];
   if(scene===manor)return [{id:'tria',x:296,y:248}];
   return null;
@@ -97,13 +106,26 @@ window.EgorianArrival=(()=>{
    case 'egorianHandover':
     await say('Dottari Guard','Oppian Nevilindor. On behalf of the crown, we accept custody of the prisoner.');
     await say('freya','He was taken alive at Valor’s Fastness. See that he makes it to trial.');
+    await say(null,'The Dottari wait at the gate.', ['[Transfer Oppian into custody]']);
     quest.oppianDelivered=true;
+    save();
+    if(!reduce.matches){
+     const token=epoch;
+     custodyWalkStarted=performance.now();
+     try{
+      await delay(custodyWalkDuration);
+      if(token!==epoch)throw CANCEL;
+     }finally{
+      custodyWalkStarted=null;
+     }
+    }
     break;
    case 'egorianEnterTemple':
     await travel(temple,328,360);
     break;
    case 'egorianSupply':
     await say('jason','We’ve been stretching what we brought from Kantaria. The temple has enough to replenish our healing supplies.');
+    await say(null,'The temple has healing supplies ready at the counter.', ['[Refill the party’s potions]']);
     potions=2;
     quest.egorianTempleSupplied=true;
     break;
@@ -112,7 +134,7 @@ window.EgorianArrival=(()=>{
     break;
    case 'egorianThorntown':
     await say('corrine','I was stationed in Egorian before I joined you. The Falco residence is in Thorntown. Let me get us through the gates.');
-    await say('corrine','I heard the last heir married Lady Falco and died. She inherited the estate and gave it her name.');
+    await say('corrine','The Falcos live beyond the Thorntown gates. Stay with me and we’ll find the residence.');
     await travel(manor,328,312);
     break;
    case 'egorianWelcome':
