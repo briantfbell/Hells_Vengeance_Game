@@ -6,17 +6,17 @@ window.EgorianTrial=(()=>{
  const layouts={
   [court]:{
    name:'Egorian · Court of High Treason',image:'egorian-court-v1.png',spawn:[328,344],
-   walk:[{x:144,y:176,w:352,h:176},{x:304,y:352,w:48,h:32}],
+   walk:[{x:96,y:176,w:448,h:176},{x:288,y:336,w:64,h:64}],
    lights:[[109,108],[209,77],[260,80],[380,80],[431,77],[532,108]],
    points:[{id:'trialMeetZara',x:328,y:272,speaker:'zara',label:'Meet Zara at the court'},
-    {id:'trialFreya',x:168,y:184,label:'Give Freya’s testimony'},
-    {id:'trialJason',x:168,y:184,label:'Give Jason’s testimony'},
-    {id:'trialVerdict',x:328,y:184,label:'Hear the verdict'},
+    {id:'trialFreya',x:120,y:184,label:'Give Freya’s testimony'},
+    {id:'trialJason',x:120,y:184,label:'Give Jason’s testimony'},
+    {id:'trialVerdict',x:328,y:176,label:'Hear the verdict'},
     {id:'trialRide',x:328,y:344,label:'Leave with Zara'}]
   },
   [forge]:{
    name:'Thumbtown · The Smith’s Forge',image:'egorian-thumbtown-forge-v1.png',spawn:[328,344],
-   walk:[{x:160,y:192,w:336,h:128},{x:272,y:320,w:112,h:64}],
+   walk:[{x:112,y:192,w:416,h:128},{x:272,y:304,w:96,h:96}],
    lights:[[166,148],[505,104]],
    points:[{id:'trialSmith',x:248,y:224,speaker:'thumbtown_smith',label:'Meet the blacksmith'},
     {id:'trialPlate',x:328,y:200,speaker:'zara_geitta',label:'Try on Zara Geitta'},
@@ -64,7 +64,7 @@ window.EgorianTrial=(()=>{
    {id:'zara',x:quest.egorianVerdict?352:328,y:quest.egorianVerdict?328:256},
    ...(!quest.egorianVerdict?[
     {id:'egorian_magistrate',x:320,y:98,height:30},
-    {id:'oppian',x:456,y:176},{id:'guard',x:504,y:192}
+    {id:'oppian',x:520,y:176},{id:'guard',x:464,y:192}
    ]:[])
   ];
   if(scene===forge)return [
@@ -106,15 +106,17 @@ window.EgorianTrial=(()=>{
     quest.egorianZaraMet=true;
     break;
    case 'trialFreya':
+    await say('egorian_magistrate','Captain Kusanagi, tell the court how Nevilindor came into your custody.');
     await say('freya','At Valor’s Fastness, we faced Nevilindor on the summit. He went over the parapet. We broke his fall, brought him down alive, and kept him in our custody on the road.');
     quest.egorianFreyaTestified=true;
     break;
    case 'trialJason':
+    await say('egorian_magistrate','Jason, what happened on the way to Egorian?');
     await say('jason','Reclamation soldiers blocked the South Road. We broke through them and delivered Nevilindor alive to the Dottari in Egorian.');
     quest.egorianJasonTestified=true;
     break;
    case 'trialVerdict':
-    await journeyCard('The Verdict','Six hours pass in testimony. The court finds Oppian Nevilindor guilty of high treason and adjourns.',()=>{
+    await journeyCard('The Verdict','Six hours pass in testimony. The court finds Oppian Nevilindor guilty of high treason and adjourns. The Dottari take him from the courtroom.',()=>{
      quest.egorianVerdict=true;
      save();
     });
@@ -132,6 +134,7 @@ window.EgorianTrial=(()=>{
     await say('Chronicle','The fitted adamantine looks black in the forge’s shadow. Where sunlight touches the plate, it turns a deep crimson.');
     await say('thumbtown_smith','See the cot? Zara worked more than twenty hours a day for five days. We could barely get her to stop for food and water.');
     await say('thumbtown_smith','I call it Zara Geitta. In the old language of my people, that means “Zara watches over you.” Try it on.');
+    await say(null,'The last fitting is yours.', ['[Put on Zara Geitta]']);
     await journeyCard('Zara Geitta','Freya fits the last piece of the adamantine plate. It moves easily with her.\n\nZara Geitta equipped. +2 AC and up to 3 less physical damage per hit.',()=>{
      quest.zaraGeitta=true;
      applyProgression();
