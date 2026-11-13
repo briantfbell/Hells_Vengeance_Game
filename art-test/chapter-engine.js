@@ -157,7 +157,7 @@ function save(){if(battle||!ready||introOpen)return;try{localStorage.setItem(SAV
 function clearDialog(){const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();if(resolve)resolve(null);}
 function say(name,text,choices=null){const textLimit=choices?150:240;if(text.length>textLimit){const words=text.split(/\s+/),pages=[];let page='';for(const word of words){if((page+' '+word).length>textLimit){pages.push(page);page=word;}else page+=(page?' ':'')+word;}if(page)pages.push(page);return (async()=>{let result;for(let i=0;i<pages.length;i++)result=await say(name,pages[i],i===pages.length-1?choices:null);return result;})();}if(!journeyOpen)$('journey').hidden=true;if(!battle&&name!=='Intimidation')$('dice-panel').hidden=true;const token=epoch;dialogOpen=true;dialogOpenedAt=performance.now();keys.clear();path=[];$('speaker').textContent=name?NAMES[name]||name:'Chronicle';paintPortrait(name);if(typeof name==='string'&&name.startsWith('citizen-'))$('speaker').textContent=['Townsman','Townswoman','Laborer','Local Resident','Elderly Townsman','Market Woman','Young Laborer','Local Weaver'][townsfolk().find(u=>u.id===name)?.variant||0];$('line').textContent=text;$('dialog').classList.toggle('has-choices',!!choices);$('choices').replaceChildren();$('close').hidden=!!choices;$('dialog').hidden=false;$('prompt').hidden=true;
  if(choices)choices.forEach((text,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+text;b.onclick=()=>finishDialog(i);$('choices').append(b);});
- (choices?$('choices').firstChild:$('close')).focus();
+ (choices?$('choices').firstChild:$('close')).focus({preventScroll:true});
  return new Promise(r=>dialogResolve=r).then(v=>{if(token!==epoch)throw CANCEL;return v;});
 }
 function paintPortrait(name){
@@ -264,7 +264,7 @@ function renderBattle(t){
  for(const f of fx){ctx.font='16px FolkenPixel';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#111';ctx.fillStyle=f.color;ctx.strokeText(f.text,f.x,f.y-(.9-f.life)*15);ctx.fillText(f.text,f.x,f.y-(.9-f.life)*15);}
  $('prompt').hidden=true;
 }
-function finishDialog(value=0){if(!dialogOpen||performance.now()-dialogOpenedAt<180)return;GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus();if(resolve)resolve(value);}
+function finishDialog(value=0){if(!dialogOpen||performance.now()-dialogOpenedAt<180)return;GameAudio.effect('confirm');const resolve=dialogResolve;dialogResolve=null;dialogOpen=false;$('dialog').hidden=true;keys.clear();canvas.focus({preventScroll:true});if(resolve)resolve(value);}
 function run(fn){if(taskBusy||battle?.busy)return;taskBusy=true;const token=epoch;Promise.resolve().then(fn).catch(e=>{if(e!==CANCEL){console.error(e);$('status').textContent='The scene could not continue. Restart from the checkpoint.';}}).finally(()=>{if(token===epoch){taskBusy=false;if(battle?.pendingInit)beginInitiative();if(!journeyOpen)$('journey').hidden=true;updateObjective();}});}
 const ROSTER=[...CORE,'bruce'];
 const BIOS={
@@ -826,7 +826,7 @@ document.addEventListener('keydown',e=>{if(e.target.id==='section-search')return
  if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
  const menu=dialogOpen&&$('choices').children.length?$('choices'):battle&&!battle.busy?$('actions'):null;
  if(menu&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const buttons=Array.from(menu.querySelectorAll('button')).filter(b=>!b.disabled),index=buttons.indexOf(document.activeElement),delta={ArrowUp:-2,ArrowDown:2,ArrowLeft:-1,ArrowRight:1}[e.key];buttons[index<0?0:(index+delta+buttons.length*2)%buttons.length]?.focus();return;}
- if(dialogOpen){if(['Escape','Enter',' '].includes(e.key)&&!$('close').hidden){e.preventDefault();finishDialog();}if(/^[1-9]$/.test(e.key)){const b=$('choices').children[Number(e.key)-1];if(b){e.preventDefault();b.click();}}if(e.key==='Tab'){e.preventDefault();const focusable=Array.from($('dialog').querySelectorAll('button')).filter(b=>!b.hidden);const index=focusable.indexOf(document.activeElement),next=(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length;focusable[next]?.focus();}return;}
+ if(dialogOpen){if(['Escape','Enter',' '].includes(e.key)&&!$('close').hidden){e.preventDefault();finishDialog();}if(/^[1-9]$/.test(e.key)){const b=$('choices').children[Number(e.key)-1];if(b){e.preventDefault();b.click();}}if(e.key==='Tab'){e.preventDefault();const focusable=Array.from($('dialog').querySelectorAll('button')).filter(b=>!b.hidden);const index=focusable.indexOf(document.activeElement),next=(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length;focusable[next]?.focus({preventScroll:true});}return;}
  if(KEY[e.key]){e.preventDefault();if(!battle&&!taskBusy){keys.add(KEY[e.key]);if(!e.repeat)beginWalkTap(KEY[e.key]);}}
  else if(['e','E','Enter',' '].includes(e.key)&&e.target.tagName!=='BUTTON'){e.preventDefault();if(!e.repeat)interact();}
  else if(battle&&/^[1-9]$/.test(e.key)){const b=$('actions').children[Number(e.key)-1];if(b&&!b.disabled)b.click();}

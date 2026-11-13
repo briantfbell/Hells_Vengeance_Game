@@ -6,7 +6,7 @@ window.MolthuneCoffin=(()=>{
  const beastArt='molthune-remorhaz-v1.png',coffinArt='molthune-coffin-v1.png';
  const portrait='molthune-violetta-v1.png',undeadArt='molthune-wight-warrior-v1.png';
  const violet='violetta',unknown='pavel_unknown',wight='molthune_wight';
- const coffin=[430,185];
+ const coffin=[430,185],coffinWidth=54;
  const flightDuration=950,breachDuration=2200;
  const droppedCoffin=[347,305],hutCover=[456,200];
  const portals=[{x:172,y:144,foot:192,height:83},{x:544,y:157,foot:208,height:91}];
@@ -19,19 +19,19 @@ window.MolthuneCoffin=(()=>{
    name:'Molthune · The Remorhaz Slope',image:slopeArt,spawn:[328,344],blocks:[{x:464,y:160,w:64,h:32}],
    walk:[{x:112,y:160,w:416,h:160},{x:288,y:320,w:80,h:80}],lights:[],
    points:[
-    {id:'molthuneScout',x:408,y:248,label:'Scout the box as Reese'},
+    {id:'molthuneScout',x:408,y:248,marker:{x:430,y:145},label:'Scout the box as Reese'},
     {id:'molthuneBait',x:200,y:256,label:'Animate the bear and set the diversion'},
-    {id:'molthuneLift',x:432,y:216,label:'Lift the travel coffin'},
+    {id:'molthuneLift',x:432,y:216,marker:{x:430,y:145},label:'Lift the travel coffin'},
     {id:'molthuneBreach',x:328,y:336,label:'Carry the coffin beyond the dragon’s ward'},
     {id:'molthuneEscape',speaker:unknown,x:440,y:232,label:'Reach the woman by the shelter'},
-    {id:'molthuneFlyOut',x:328,y:376,label:'Fly clear of the lower pass'}
+    {id:'molthuneFlyOut',x:328,y:376,marker:{x:328,y:378},label:'Fly clear of the lower pass'}
    ]
   };
   scenes[shelter]={
    name:'Molthune · Mountain Wayside',image:shelterArt,spawn:[328,344],blocks:[],
    walk:[{x:112,y:176,w:416,h:160},{x:288,y:336,w:80,h:64}],lights:[],
    points:[
-    {id:'molthuneMeetVioletta',speaker:violet,x:456,y:224,label:'Meet Lady Violetta Pavel'},
+    {id:'molthuneMeetVioletta',speaker:unknown,x:456,y:224,label:'Speak to the woman from the coffin'},
     {id:'molthunePapers',speaker:violet,x:456,y:224,label:'Hear Violetta’s account and read her papers'}
    ]
   };
@@ -134,11 +134,11 @@ window.MolthuneCoffin=(()=>{
    }
   }
   const progress=ambushProgress(),drop=phase(progress,.23,.41);
-  if(!quest.molthuneCoffinLifted)drawProp(g,coffinArt,...coffin,37);
-  else if(drop===1)drawProp(g,coffinArt,...droppedCoffin,37);
+  if(!quest.molthuneCoffinLifted)drawProp(g,coffinArt,...coffin,coffinWidth);
+  else if(drop===1)drawProp(g,coffinArt,...droppedCoffin,coffinWidth);
   else if(units[0]){
-   const x=units[0].x+19,y=units[0].y-9;
-   drawProp(g,coffinArt,x+(droppedCoffin[0]-x)*drop,y+(droppedCoffin[1]-y)*drop,34+3*drop);
+   const carrier=units[0],x=carrier.x+(carrier.dir==='left'?-24:24),y=carrier.y-14;
+   drawProp(g,coffinArt,x+(droppedCoffin[0]-x)*drop,y+(droppedCoffin[1]-y)*drop,coffinWidth);
   }
   const aperture=phase(progress,0,.19);
   if(aperture===0)return;
