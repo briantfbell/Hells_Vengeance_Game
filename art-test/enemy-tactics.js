@@ -23,7 +23,7 @@ window.EnemyTactics=(()=>{
    else if(e.id==='fastness_paladin'){move=round%2?'Sword cut':'Shield-led strike';extra=round%2?0:2;}
    else if(e.id==='fastness_cleric'){move='Mace strike';}
    else if(e.id==='fastness_mage'){move=round%2?'Arcane bolt':'Charged bolt';extra=round%2?0:3;effect='arcaneBolt';physical=false;}
-   else if(e.id==='fastness_warpriest'){move=round%2?'Warhammer strike':'Overhead hammer';extra=round%2?0:2;}
+   else if(e.id==='fastness_warpriest'){move=round%2?'Hammer blow':'Heavy hammer';extra=round%2?0:2;}
    else if(e.id==='fex'){move=round%2?'Arcane bolt':'Ritual lightning';extra=round%2?0:3;effect='arcaneBolt';physical=false;}
    else if(e.id==='arego_bearded_devil'){move=round%2?'Raking claws':'Barbed lash';extra=round%2?0:2;}
    else if(e.id==='arego_viona'){move=round%2?'Shield-led cut':'Countering slash';extra=round%2?2:0;}
@@ -95,6 +95,6 @@ window.EnemyTactics=(()=>{
   return stats[target.id].ac+(covered?2:0);
  }
  const damage=(value,guard,armor=0)=>{const through=Math.max(0,value-armor);return guard&&through>0?Math.max(1,Math.floor(through/2)):through;};
- const preview=(enemy,names,compact=false)=>enemy.intent?((compact&&enemy.shortName)||enemy.name)+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.battlePrayer?'Battle prayer at half HP':enemy.intent.move+' → '+names[enemy.intent.target])):'';
+ const preview=(enemy,names,compact=false)=>enemy.intent?((compact&&enemy.shortName)||enemy.name)+' · '+(enemy.actedRound===enemy.intent.round?'Done this round':(enemy.intent.canMend?'Mend if an ally is wounded':enemy.intent.battlePrayer?(compact?'Prayer at half HP':'Battle prayer at half HP'):enemy.intent.move+' → '+names[enemy.intent.target])):'';
  return {plan,defense,damage,preview};
 })();

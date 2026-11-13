@@ -278,7 +278,8 @@ window.FastnessArc = (() => {
  function encounter(kind = gate) {
   return {kind,enemies:encounters[kind].defenders.map(([id,name,,,injury=0])=>{
    const max = STATS[id].hp;
-   return {id,name,max,hp:max-injury,...(id==='oppian' && {resolve:true})};
+   const shortName = name.replace(/^(Gate|Hall|Chapel|Study|Tower|Landing) /,'');
+   return {id,name,shortName,max,hp:max-injury,...(id==='oppian' && {resolve:true})};
   })};
  }
 
