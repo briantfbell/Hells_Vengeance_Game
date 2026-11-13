@@ -72,14 +72,14 @@ window.WhisperwoodGlade=(()=>{
    id:'whisper_unicorn',x,y,height:50,pose:quest.whisperwoodUnicornsDefeated?'prone':null
   }));
  }
- function enemy(id){
+ function enemy(id,number){
   const name=opponents[id].name,max=STATS[id].hp;
-  return {id,name,hp:max,max};
+  return {id,name:number?name+' '+number:name,hp:max,max};
  }
  function startAssault(){
   const {x,y,dir}=units[0];
   save();
-  startBattle(0,false,{kind:'whisperwood_unicorn_assault',enemies:[enemy('whisper_unicorn'),enemy('whisper_unicorn'),enemy('whisper_unicorn')],returnPosition:[x,y,dir]});
+  startBattle(0,false,{kind:'whisperwood_unicorn_assault',enemies:[1,2,3].map(number=>enemy('whisper_unicorn',number)),returnPosition:[x,y,dir]});
  }
  async function afterBattle(position){
   quest.whisperwoodUnicornsDefeated=true;

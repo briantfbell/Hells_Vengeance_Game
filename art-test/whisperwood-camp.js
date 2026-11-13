@@ -76,9 +76,10 @@ window.WhisperwoodCamp=(()=>{
 
  function begin(kind){
   const {x,y,dir}=units[0];
-  const enemies=encounters[kind].ids.map(id=>{
+  const enemies=encounters[kind].ids.map((id,index)=>{
    const {name,stats}=creatures[id];
-   return {id,name,hp:stats.hp,max:stats.hp};
+   const shortName={whisper_spider:'Spider '+(index+1),whisper_giant:'Giant',whisper_bear:'Bear'}[id];
+   return {id,name,shortName,hp:stats.hp,max:stats.hp};
   });
   save();
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir]});
