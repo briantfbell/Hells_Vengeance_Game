@@ -75,8 +75,8 @@ async function journeyCard(title,summary,commit=()=>{},illustration=null){
   ? `linear-gradient(transparent 42%, #100d14eb 68%, #100d14), url("art-test/${illustration}")`
   : '';
  $('journey-title').textContent=title;$('journey-summary').textContent=panel.classList.contains('decree-page')?summary:summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
- commit();button.disabled=false;button.focus();await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
- button.disabled=true;journeyOpen=false;keys.clear();canvas.focus();save();
+ commit();button.disabled=false;button.focus({preventScroll:true});await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
+ button.disabled=true;journeyOpen=false;keys.clear();canvas.focus({preventScroll:true});save();
  // Keep the black card covering the map until the next card, dialogue or end of the scene.
 }
 $('journey-continue').onclick=()=>{if(!journeyOpen||$('journey-continue').disabled||!journeyResolve)return;const resolve=journeyResolve;journeyResolve=null;$('journey-continue').disabled=true;resolve();};

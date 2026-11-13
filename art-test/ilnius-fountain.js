@@ -24,7 +24,7 @@ window.IlniusFountain=(()=>{
  ];
 
  function install(){
-  scenes[orders].points.push({id:'ilniusCutaway',x:328,y:344,label:'Follow the expedition to St. Ilnius'});
+  scenes[orders].points.push({id:'ilniusCutaway',x:328,y:344,marker:{x:328,y:374},label:'Follow the expedition to St. Ilnius'});
   scenes[forest]={
    name:'Nidal · St. Ilnius’s Forest',image:forestArt,spawn:[328,344],blocks:[],
    walk:[{x:144,y:192,w:352,h:128},{x:256,y:320,w:112,h:80},{x:288,y:144,w:80,h:48},{x:320,y:128,w:64,h:16}],lights:[],

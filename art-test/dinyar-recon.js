@@ -67,7 +67,7 @@ window.DinyarRecon=(()=>{
    points:[
     {id:'westcrownCommission',speaker:'corrine',x:328,y:264,label:'Receive Freya’s promotion'},
     {id:'dinyarDispatch',x:216,y:264,label:'Read the Dinyar dispatch'},
-    {id:'westcrownDeployment',x:328,y:344,label:'Depart for Westcrown'}
+    {id:'westcrownDeployment',x:328,y:344,marker:{x:328,y:374},label:'Depart for Westcrown'}
    ]
   };
   MAP_LAYERS[court]=MAP_LAYERS.egorian_court;
@@ -395,7 +395,7 @@ window.DinyarRecon=(()=>{
     quest.dinyarDispatchRead=true;
     break;
    case 'westcrownDeployment':
-    await journeyCard('Orders for Westcrown','16 Gozran, 4717. Field Marshal Freya sets out for Westcrown, still held by the Glorious Reclamation.',()=>{quest.westcrownDeployed=true;});
+    await journeyCard('Orders for Westcrown','16 Gozran, 4717. Field Marshal Freya sets out for Westcrown, still held by the Glorious Reclamation. Meanwhile, the expedition carrying Parnoneryx’s head approaches St. Ilnius in Nidal.',()=>{quest.westcrownDeployed=true;});
     break;
   }
   save();
