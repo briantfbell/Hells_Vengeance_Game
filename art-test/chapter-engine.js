@@ -778,7 +778,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  if(captivePoint&&!npcs.some(n=>n.id==='riley'))npcs=npcs.concat({id:'riley',x:captivePoint.x,y:captivePoint.y});
   const freyaMounted=PoliticalMovement.mountedVisible()||LastStand.mountedFinish();
   const partyDrawables=units.filter(u=>(!battle||hp[u.id]>0)&&!(freyaMounted&&u.id==='freya'));
-  const drawables=[...partyDrawables.map(u=>window.MolthuneCoffin?.scoutPose(u)||window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].map(u=>DebtsRumors.doorPose(LastStand.jailPose(LastStand.tavernPose(NextArc.compactPose(NextArc.sermonPose(u)))))).sort((a,b)=>a.y-b.y);
+  const drawables=[...partyDrawables.map(u=>window.MolthuneCoffin?.scoutPose(u)||window.IlniusFountain?.stagePose(u)||u),...npcs,...townsfolk()].map(u=>DebtsRumors.doorPose(LastStand.jailPose(LastStand.tavernPose(NextArc.compactPose(NextArc.sermonPose(PoliticalMovement.executionPose(u))))))).sort((a,b)=>a.y-b.y);
  for(const u of drawables){
   const pose=window.MolthuneCoffin?.flightPose(u)||window.DinyarRecon?.departurePose(u)||window.SkadiParley?.feastPose(u,t);
   if(pose){

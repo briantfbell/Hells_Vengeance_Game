@@ -1,5 +1,22 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'art-test',name),'utf8');
+test('the dusk checkpoint resumes combat without repeating Bo’s execution',async()=>{
+ const w=world();
+ w.scene='execution_square';
+ w.quest={chapter6:true,chapter5Complete:true,boCaptured:true,executionPrepared:true,boExecuted:true};
+ w.units=w.CORE.map(id=>({id}));
+ w.startBattle=(_count,_shaken,config)=>w.battle=config;
+ w.log=()=>{};
+ assert(!w.PoliticalMovement.npcs().some(actor=>actor.id==='bo_gramel'));
+ assert(w.PoliticalMovement.mountedVisible());
+ assert.equal(w.PoliticalMovement.target().id,'executionStart');
+ await w.PoliticalMovement.interact('executionStart');
+ assert.equal(w.battle.kind,'execution');
+ assert(w.transcript.some(line=>line.text.includes('already been executed')));
+ assert(!w.transcript.some(line=>line.text.includes('pulls the lever')));
+ assert(!w.units.some(unit=>unit.id==='freya'));
+ assert(w.units.some(unit=>unit.id==='reese'));
+});
 test('the execution order leaves the choice to the party and Bo’s arrest commits at the dusk transition',async()=>{
  const w=world();
  w.scene='escape_jail';
@@ -599,7 +616,7 @@ test('the hill can be searched in either order and returns older completed saves
   assert.equal(w.LastStand.target().id,'bolgartStocks');
  }
 });
-test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.quest={chapter6:true};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});
+test('the Angel Knight retains the disguise until the failed fear saving throw',async()=>{const w=world();w.scene='execution_square';w.quest={chapter6:true,executionPrepared:true};w.epoch=1;w.reduce={matches:false};w.delay=async()=>{};w.units=w.CORE.map(id=>({id}));w.startBattle=(_a,_b,c)=>w.encounter=c;w.log=()=>{};await w.PoliticalMovement.interact('executionStart');assert(w.units.some(u=>u.id==='reese'));assert.equal(w.encounter.enemies[0].name,'Angel Knight');assert(!w.transcript.some(x=>x.text.includes('apparent')));w.rollDice=async(...args)=>w.fearRoll=args;await w.PoliticalMovement.afterBattle('execution');assert.equal(w.fearRoll[0],'Angel Knight · Resist Cause Fear');assert.equal(w.fearRoll[4],'Failed save · Frightened · Story roll');assert.equal(w.fearRoll[5][0],1);});
 
 test('six-character battles start safely and stay within the fixed combat field',()=>{const w=world(),s=read('chapter-engine.js');w.units=w.CORE.map(id=>({id}));w.showCombatMessage=w.paintBattle=()=>{};vm.runInContext(s.slice(s.indexOf('function startBattle('),s.indexOf('function showCombatMessage(')),w);w.startBattle(0,false,{kind:'ovinnik',enemies:[{id:'ovinnik',name:'Ovinnik',hp:38,max:38}]});assert.equal(w.units.length,6);assert(w.units.some(u=>u.id==='reese'));w.battlefieldHeight=()=>368;w.activeUnit=()=>w.units[0];vm.runInContext(s.slice(s.indexOf('function battlePosition('),s.indexOf('function healthBadge(')),w);const places=w.units.map(u=>w.battlePosition(u));assert.equal(new Set(places.map(p=>p.x)).size,6);assert(places.every(p=>p.x-34>=0&&p.x+34<=640&&p.y+34<368));});
 
