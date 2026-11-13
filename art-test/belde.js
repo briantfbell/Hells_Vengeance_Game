@@ -22,19 +22,19 @@ window.Belde=(()=>{
  };
 
  function install(){
-  scenes[salon].points.push({id:'beldeLeaveEgorian',x:328,y:344,label:'Travel down the coast to Belde'});
+  scenes[salon].points.push({id:'beldeLeaveEgorian',x:328,y:392,label:'Travel down the coast to Belde'});
   scenes[square]={
    name:'Belde · The Town Square',image,spawn:[328,344],blocks:[],
-   walk:[{x:88,y:176,w:464,h:144},{x:272,y:320,w:96,h:80},{x:208,y:144,w:224,h:32}],
+   walk:[{x:96,y:176,w:480,h:144},{x:240,y:144,w:176,h:32},{x:288,y:320,w:64,h:80}],
    lights:[[291,83],[368,83],[489,128],[580,130]],
    points:[
     {id:'beldeSurveyWatch',x:328,y:264,label:'Survey the Reclamation watch'},
     {id:'beldeFightWatch',x:328,y:216,label:'Drive the Reclamation out of Belde'},
-    {id:'beldeMeetYunero',speaker:mage,x:520,y:216,label:'Meet Yunero'},
-    {id:'beldeQuestionOne',speaker:mage,x:520,y:216,label:'Answer the first trivia question'},
-    {id:'beldeQuestionTwo',speaker:mage,x:520,y:216,label:'Answer the second trivia question'},
-    {id:'beldeQuestionThree',speaker:mage,x:520,y:216,label:'Answer the final trivia question'},
-    {id:'beldeHearResult',speaker:mage,x:520,y:216,label:'Hear Yunero’s concession'}
+    {id:'beldeMeetYunero',speaker:mage,x:520,y:181,label:'Meet Yunero'},
+    {id:'beldeQuestionOne',speaker:mage,x:520,y:181,label:'Answer the first trivia question'},
+    {id:'beldeQuestionTwo',speaker:mage,x:520,y:181,label:'Answer the second trivia question'},
+    {id:'beldeQuestionThree',speaker:mage,x:520,y:181,label:'Answer the final trivia question'},
+    {id:'beldeHearResult',speaker:mage,x:520,y:181,label:'Hear Yunero’s concession'}
    ]
   };
   MAP_LAYERS[square]={foreground:image,contain:true,background:{type:'solid',color:'#1a2229'}};
@@ -63,7 +63,13 @@ window.Belde=(()=>{
   return [point(next?.[0]||'beldeHearResult')];
  }
  function target(){return points()?.[0]||null;}
- function goal(){return target()?.label||(scene===square&&quest.beldeComplete?'Belde is free of the Reclamation. Freya won the contest.':null);}
+ function goal(){
+  if(scene===square&&quest.beldeTriviaStarted&&!quest.beldeTriviaWon){
+   const correct=Object.values(rounds).filter(round=>quest[round.flag]).length;
+   return 'Chelaxian Noble Trivia ['+correct+'/3]';
+  }
+  return target()?.label||(scene===square&&quest.beldeComplete?'Belde is free of the Reclamation. Freya won the contest.':null);
+ }
  function npcs(){
   if(scene!==square)return null;
   if(!quest.beldeLiberated)return [240,328,416].map(x=>({id:guard,x,y:186,height:54}));

@@ -5,7 +5,7 @@ window.HinjiTavern=(()=>{
  const image='hinji-tavern-v1.png',disguise='hinji-titus-vel-v1.png';
 
  function install(){
-  scenes[square].points.push({id:'hinjiTavernDepart',x:328,y:344,label:'Leave for Hinji'});
+  scenes[square].points.push({id:'hinjiTavernDepart',x:328,y:392,label:'Leave for Hinji'});
   scenes[tavern]={
    name:'Hinji · Harbor Tavern',image,spawn:[328,328],
    walk:[{x:128,y:128,w:384,h:224},{x:256,y:352,w:128,h:48}],blocks:[],
