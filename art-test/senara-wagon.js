@@ -75,9 +75,9 @@ window.SenaraWagon=(()=>{
   return null;
  }
 
- function enemy(id,name){
+ function enemy(id,name,shortName){
   const max=STATS[id].hp;
-  return {id,name,hp:max,max};
+  return {id,name,shortName,hp:max,max};
  }
  function startEscort(){
   const {x,y,dir}=units[0];
@@ -85,7 +85,7 @@ window.SenaraWagon=(()=>{
   startBattle(0,false,{
    kind,scripted:true,scriptActor:'jason',returnPosition:[x,y,dir],
    script:{command:()=>command,act:dismiss,opening:'The hound archon stands between the company and the prison wagon.'},
-   enemies:[enemy(archon,NAMES[archon]),...Array.from({length:3},(_,i)=>enemy(paladin,'Escort Paladin '+(i+1)))]
+   enemies:[enemy(archon,NAMES[archon]),...Array.from({length:3},(_,i)=>enemy(paladin,'Escort Paladin '+(i+1),'Paladin '+(i+1)))]
   });
  }
  async function dismiss(action,actor){

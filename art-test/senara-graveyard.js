@@ -69,7 +69,7 @@ window.SenaraGraveyard=(()=>{
  function startAngelBattle(){
   const {x,y,dir}=units[0],max=STATS[angel].hp;
   save();
-  startBattle(0,false,{kind,returnPosition:[x,y,dir],enemies:[{id:angel,name:NAMES[angel],hp:max,max}]});
+  startBattle(0,false,{kind,returnPosition:[x,y,dir],enemies:[{id:angel,name:NAMES[angel],shortName:'Balisse',hp:max,max}]});
  }
  async function afterBattle(position){
   quest.senaraBalisseDefeated=true;
