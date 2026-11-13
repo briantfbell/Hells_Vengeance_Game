@@ -20,7 +20,7 @@ window.TathlumHunt=(()=>{
  const duels=()=>quest.tathlumDuels??0;
 
  function install(){
-  scenes[pass].points.push({id:'tathlumReturn',x:328,y:344,label:'Return to Egorian for new orders'});
+  scenes[pass].points.push({id:'tathlumReturn',x:320,y:392,label:'Return to Egorian for new orders'});
   scenes[orders]={
    ...scenes.egorian_court,name:'Egorian · The Tathlum Orders',points:[
     {id:'tathlumReceiveOrders',speaker:'corrine',x:328,y:272,label:'Receive the Tathlum assignment'},

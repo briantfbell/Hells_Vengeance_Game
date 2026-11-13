@@ -6,18 +6,18 @@ window.Menador=(()=>{
 
  function install(){
   scenes[glade].points.push(
-   {id:'menadorBrief',speaker:'corrine',x:216,y:232,label:'Hear Corrine’s report'},
-   {id:'menadorDepart',x:328,y:344,label:'Travel to Menador'}
+   {id:'menadorBrief',speaker:'corrine',x:216,y:208,label:'Hear Corrine’s report'},
+   {id:'menadorDepart',x:328,y:384,label:'Travel to Menador'}
   );
   scenes[pass]={
    name:'Menador · Mountain Pass',image,spawn:[328,344],blocks:[],
-   walk:[{x:288,y:64,w:64,h:64},{x:256,y:128,w:112,h:32},{x:192,y:160,w:240,h:112},
-    {x:240,y:272,w:160,h:48},{x:256,y:320,w:112,h:80}],lights:[],
-   points:[{id:'menadorMeeting',x:328,y:144,label:'Continue through the pass'},
-    {id:'menadorKeep',x:232,y:200,label:'Look toward Menador Keep'}]
+   walk:[{x:304,y:56,w:48,h:56},{x:288,y:112,w:64,h:32},{x:256,y:144,w:128,h:32},
+    {x:192,y:176,w:240,h:80},{x:224,y:256,w:192,h:32},{x:256,y:288,w:128,h:112}],lights:[],
+   points:[{id:'menadorMeeting',x:328,y:72,label:'Continue through the pass'},
+    {id:'menadorKeep',x:216,y:192,label:'Look toward Menador Keep'}]
   };
   MAP_LAYERS[pass]={foreground:image,contain:true,background:{type:'solid',color:'#22282e'}};
-  JOURNEYS[pass]='3 Gozran, 4717. The company travels to Menador after the Queen’s demand concerning the Silver Ravens.';
+  JOURNEYS[pass]='3 Gozran, 4717. The Queen has ordered the company to confront the Silver Ravens. Freya heads up the old road through Menador.';
  }
  async function load(loader){[art[pass]]=await Promise.all([loader(image),loader(backstoryArt)]);}
  function mapImage(){return scene===pass?art[scene]:null;}
