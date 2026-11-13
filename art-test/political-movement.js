@@ -1,7 +1,7 @@
 "use strict";
 window.PoliticalMovement=(()=>{
 
- const maps={};let mountedStart=0;
+ const maps={},gateRushDuration=640;let mountedStart=0,gateRush=null;
  function install(){
   for(const [id,base,name,spawn]of [['gate_watch','longacre_jail','Chapter Six · The Open Gate',[328,312]],['church_watch','longacre_square','Longacre · The Church Standoff',[328,296]],['escape_jail','longacre_jail','Longacre · The Broken Jail',[328,312]],['gramel_gate','longacre_jail','The Gramel Residence',[328,312]],['execution_manor','scarlet_manor','Scarlet Manor · The Execution Order',[328,312]],['execution_square','longacre_square','Longacre · Dusk in the Square',[328,296]]]){maps[id]={...structuredClone(scenes[base]),name,spawn,points:[]};scenes[id]=maps[id];MAP_LAYERS[id]={foreground:id==='execution_square'?'execution-square-v1.png':scenes[base].image,background:{type:'solid',color:'#111820'}};}
   for(const id of ['gate_watch','escape_jail','gramel_gate']){maps[id].image='longacre-jail-open-v1.png';MAP_LAYERS[id].foreground=maps[id].image;MAP_LAYERS[id].openGatePatch=true;}maps.execution_square.image='execution-square-v1.png';maps.execution_square.blocks.push({x:240,y:176,w:160,h:64});
@@ -18,14 +18,48 @@ window.PoliticalMovement=(()=>{
  function goal(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return 'Continue: Political Movement.';if(quest.chapter6Complete)return 'Chapter complete · Riley’s deception is exposed.';return !quest.gateOpened?'Investigate the open western gate.':!quest.ovinnikSubdued?'Subdue the gate’s guardian.':!quest.ovinnikReported?'Bring the living creature to Razelago.':!quest.churchStandoff?'Approach Allamar at the church.':!quest.jailbreakHeard?'Rest, then watch the church with J’Mal.':!quest.jailbreakInspected?'Check on Cimri at the jail.':!quest.escapeTrailLost?'Follow the rescuers’ trail.':!quest.bolgartReleased?'Release Bolgart from custody.':!quest.executionOrdered?'Hear Fex’s orders the next morning.':!quest.boCaptured?'Apprehend Bo at the gate.':!quest.executionPrepared?'Prepare the execution square.':!quest.executionResolved?'Defend the stage at dusk.':'Close the chapter.';}
  function points(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return scene==='ash_house'?[point('movementRoad')]:null;const byScene={ash_house:!quest.ovinnikReported?'feyReport':!quest.churchStandoff?'churchStandRoad':'watchRoad',gate_watch:quest.ovinnikSubdued?'gateReturn':'gateDisturbance',church_watch:!quest.churchStandoff?'churchConfront':!quest.watchStarted?'churchRestRoad':!quest.jailbreakHeard?'churchWatch':'escapeRoad',escape_jail:!quest.jailbreakInspected?'cimriAccount':!quest.escapeTrailLost?'escapeTrail':!quest.bolgartReleased?'freeBolgart':'ordersRoad',execution_manor:quest.executionOrdered?'gramelRoad':'executionOrders',gramel_gate:quest.boCaptured?'squareExecutionRoad':'arrestBo',execution_square:!quest.executionPrepared?'prepareExecution':!quest.executionResolved?'executionStart':'movementReport'};return byScene[scene]?[point(byScene[scene])]:[];}
  function target(){return points()?.[0]||null;}
- function npcs(){if(!quest.chapter6)return null;if(scene==='gate_watch'||scene==='gramel_gate')return [{id:'bo_gramel',x:200,y:200},{id:'dent_gramel',x:264,y:216},...(scene==='gate_watch'&&quest.gateOpened&&!quest.ovinnikSubdued?[{id:'ovinnik',x:328,y:240}]:[])];if(scene==='church_watch')return quest.watchStarted?[{id:'loyal_deputy',x:440,y:256}]:[{id:'allamar',x:328,y:160},{id:'twin1',x:280,y:176},{id:'twin2',x:376,y:176},{id:'acolyte1',x:232,y:192},{id:'acolyte2',x:424,y:192}];if(scene==='escape_jail')return [{id:'cimri',x:456,y:216},{id:'loyal_deputy',x:392,y:256},...(!quest.bolgartReleased?[{id:'bolgart',pose:'stocks',x:224,y:248}]:[])];if(scene==='execution_manor')return [{id:'fex',x:328,y:176}];if(scene==='execution_square'&&mountedStart)return [{id:'mounted_freya',x:328,y:264},{id:reduce.matches||performance.now()-mountedStart>=1300?'riley':'false_knight',x:424,y:248}];if(scene==='execution_square')return quest.executionResolved?[]:[{id:'bo_gramel',x:328,y:216},{id:'loyal_deputy',x:440,y:240}];return null;}
+ function npcs(){if(!quest.chapter6)return null;if(scene==='gate_watch')return gateActors();
+  if(scene==='gramel_gate')return [{id:'bo_gramel',x:200,y:200},{id:'dent_gramel',x:264,y:216}];
+  if(scene==='ash_house'&&quest.ovinnikSubdued&&!quest.ovinnikReported)return [...NextChapter.npcs(),{id:'ovinnik',x:366,y:196,pose:'prone',height:32}];
+  if(scene==='church_watch')return quest.watchStarted?[{id:'loyal_deputy',x:440,y:256}]:[{id:'allamar',x:328,y:160},{id:'twin1',x:280,y:176},{id:'twin2',x:376,y:176},{id:'acolyte1',x:232,y:192},{id:'acolyte2',x:424,y:192}];if(scene==='escape_jail')return [{id:'cimri',x:456,y:216},{id:'loyal_deputy',x:392,y:256},...(!quest.bolgartReleased?[{id:'bolgart',pose:'stocks',x:224,y:248}]:[])];if(scene==='execution_manor')return [{id:'fex',x:328,y:176}];if(scene==='execution_square'&&mountedStart)return [{id:'mounted_freya',x:328,y:264},{id:reduce.matches||performance.now()-mountedStart>=1300?'riley':'false_knight',x:424,y:248}];if(scene==='execution_square')return quest.executionResolved?[]:[{id:'bo_gramel',x:328,y:216},{id:'loyal_deputy',x:440,y:240}];return null;}
+ function gateActors(){
+  if(quest.ovinnikSubdued)return [{id:'ovinnik',x:250,y:254,pose:'prone',height:32}];
+  const actors=[{id:'bo_gramel',x:132,y:228},{id:'dent_gramel',x:161,y:239}];
+  if(!gateRush||gateRush.epoch!==epoch)return actors;
+  const progress=reduce.matches?1:Math.min(1,(performance.now()-gateRush.start)/gateRushDuration);
+  actors.push({id:'ovinnik',x:205+45*progress,y:164+90*progress,height:32});
+  return actors;
+ }
+ async function investigateGate(){
+  await say('Chronicle','The western gate stands open. Bo and Dent Gramel, the retired artillery veterans who used to tend it, watch from the side of the yard.');
+  await say('freya','The decree closed this gate. Who opened it?');
+  await say('bo_gramel','Go on, ghost of the gate! Show them what you think of their orders!');
+  const token=epoch;
+  gateRush={epoch:token,start:performance.now()};
+  await delay(reduce.matches?0:gateRushDuration);
+  if(token!==epoch)return;
+  await say('Chronicle','A tiny, catlike figure springs from the gateway and rushes J’Mal.');
+  await rollDice('Draymus · Identify the creature',20,1,0,'Recorded story result',[1]);
+  await say('draymus','I can’t place it. J’Mal, get back!');
+  await say('Chronicle','The creature’s claws tear into J’Mal before he can retreat. He collapses, bleeding.');
+  quest.gateOpened=true;
+  gateRush=null;
+  save();
+  hp.jamal=0;
+  paintParty();
+  startBattle(0,false,{kind:'ovinnik',opening:'J’Mal is down. Roll initiative and subdue the gate guardian.',enemies:[{id:'ovinnik',name:'Gate Guardian',hp:38,max:38}]});
+ }
  function crowd(){if(scene!=='execution_square'||quest.executionResolved)return [];const places=[[136,264],[184,280],[232,296],[280,312],[376,312],[424,296],[472,280],[520,264],[168,232],[488,232],[216,256],[440,264]];return places.map(([x,y],i)=>({id:'execution-citizen-'+i,x,y,dir:'up',variant:i%8,crowd:true,anim:0,step:null}));}
  async function afterBattle(kind){if(kind==='ovinnik'){quest.ovinnikSubdued=true;hp.jamal=Math.max(1,hp.jamal);seedParty(328,312);await say('Chronicle','Jason and Draymus’s magic helps bring the creature down. Bo and Dent retreat indoors in dismay. Though it appears dead at first, it is still breathing.');await say('jason','J’Mal is coming around. Keep the creature alive; Razelago may know what it is.');}else{quest.executionResolved=true;seedParty(328,296);await say('Chronicle','J’Mal’s cut across the knight’s back feels like leather beneath the shining armor. The disguise is coming apart.');await say('draymus','I cast Cause Fear. Let terror take hold of your heart.');await rollDice('Angel Knight · Resist Cause Fear',20,1,0,'Failed save · Frightened · Story roll',[1]);mountedStart=performance.now();await say('Chronicle','The knight fails to resist Draymus’s spell. Supernatural dread overwhelms the rider, who screams and struggles with a panicked mount. Freya charges on Sleipnir and strikes with her naginata. The false armor falls away: the rider is Riley Kels.');mountedStart=0;await say('Chronicle','Riley is killed in the charge. The rioters are crushed and the crowd flees. The party displays Bo and Riley’s heads on pikes as a warning.');}save();paintParty();updateObjective();}
  async function interact(id){if(id==='movementRoad'){if(!quest.chapter5Complete||quest.chapter6||scene!=='ash_house')return false;quest.chapter6=true;quest.guapoReturned=true;quest.guapoAway=false;quest.activeRoster=[...CORE];NextChapter.syncRoster();await journeyCard('Longacre · 21 Neth, 4716','El Guapo reaches Longacre destitute, riding a mule. Eleven days after separating at Remesiana, he rejoins the company.',()=>{seedParty(328,296);NextChapter.refresh();});await journeyCard('Chapter Six · Political Movement','Routine patrols give the party time to recover and resupply. Then a report arrives: the western gate is open despite the decree closing it.',()=>NextChapter.refresh());await travel('gate_watch',328,312);}
  else if(!quest.chapter6)return false;
- else if(id==='gateDisturbance'){await say('Chronicle','Bo and Dent Gramel tended this gate for decades before the party dismissed them. The gate stands open despite the decree. The party approaches to investigate.');await say('bo_gramel','The ghost of the gate has something to say about your orders!');quest.gateOpened=true;save();await say('Chronicle','A tiny feline humanoid springs from the gate’s shadows.');await rollDice('Draymus · Identify the creature',20,1,0,'Recorded story result',[1]);await say('draymus','I have studied stranger things, but I cannot place this one.');await say('Chronicle','Its claws tear into J’Mal, who collapses from the wounds. He lies unconscious. His companions must bring down the guardian and tend his wounds.');quest.gateOpened=true;save();hp.jamal=0;paintParty();startBattle(0,false,{kind:'ovinnik',enemies:[{id:'ovinnik',name:'Gate Guardian',hp:38,max:38}]});}
- else if(id==='gateReturn')await travel('ash_house',328,296);
- else if(id==='feyReport'){await say('razelago','An Ovinnik. Fey of this kind become attached to a place and defend it fiercely. The Archbaron will have the living specimen for research.');quest.ovinnikReported=true;}
+ else if(id==='gateDisturbance'&&scene==='gate_watch'&&!quest.ovinnikSubdued)await investigateGate();
+ else if(id==='gateReturn'&&scene==='gate_watch'&&quest.ovinnikSubdued)await travel('ash_house',328,296);
+ else if(id==='feyReport'&&scene==='ash_house'&&quest.ovinnikSubdued&&!quest.ovinnikReported){
+  await say('draymus','It came straight out of the gate. I’ve never seen one before. Do you know what it is?');
+  await say('razelago','An ovinnik. They attach themselves to a place and defend it fiercely. Keep this one alive. The Archbaron can have it taken away for study.');
+  quest.ovinnikReported=true;
+ }
  else if(id==='churchStandRoad')await travel('church_watch',328,296);
  else if(id==='churchConfront'){await say('Chronicle','Still carrying injuries from the gate, the party approaches the church. Allamar, her twin sons and several acolytes hold the doorway.');await say('allamar','You have made your authority clear enough. What business brings you to our doors now?');await say('freya','We know where you stand. This conversation can wait.');await say('Chronicle','Neither side yields. The party backs away and leaves the confrontation for another day.');quest.churchStandoff=true;}
  else if(id==='churchRestRoad')await travel('ash_house',328,296);
