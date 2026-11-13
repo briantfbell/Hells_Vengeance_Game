@@ -80,7 +80,7 @@ window.ArmoryArc=(()=>{
   await say('Chronicle','J’Mal lowers the body into the river. The current takes it out of sight.');
  }
  function prepare(x=scenes[scene].spawn[0],y=scenes[scene].spawn[1],dir='up'){applyProgression();seedParty(x,y,dir);window.NextChapter?.syncRoster?.();paintParty();save();}
- function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function enemy(id,name,shortName){return {id,name:name||NAMES[id],shortName,hp:STATS[id].hp,max:STATS[id].hp};}
  async function afterBattle(kind){
   if(kind==='armory_heist'){
    quest.armoryCleared=true;
@@ -170,7 +170,7 @@ window.ArmoryArc=(()=>{
    await say('porch_guard','Official town business. Move on.');
    await say('guapo','Then why can I hear swordplay inside?');
    prepare(408,232,'right');
-   startBattle(0,false,{kind:'armory_porch',enemies:[enemy('porch_guard','Porch Guard 1'),enemy('porch_guard','Porch Guard 2')]});
+   startBattle(0,false,{kind:'armory_porch',enemies:[enemy('porch_guard','Porch Guard 1','Guard 1'),enemy('porch_guard','Porch Guard 2','Guard 2')]});
    battle.enemies[1].hp=battle.enemies[1].max=8;
    log('El Guapo draws his rapier. The guards reach for their swords.');
   }
