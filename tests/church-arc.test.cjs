@@ -546,7 +546,7 @@ test('Senara reconnaissance allows both entrances and preserves the sewer lead',
  await step('orphanSearch');
  assert.equal(w.SenaraCover.npcs().length,3);
  await step('orphanWitnesses');
- assert.equal(w.SenaraCover.npcs().length,0);
+ assert.equal(w.SenaraCover.npcs().length,3);
  await step('orphanWithdraw');
  assert.equal(w.scene,'senara_fex_villa');
  assert.equal(w.SenaraCover.roster(),null);

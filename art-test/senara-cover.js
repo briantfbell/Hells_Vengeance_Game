@@ -6,17 +6,17 @@ window.SenaraCover=(()=>{
  const maps={
   [outside]:{
    name:'Senara · Orphanage Yard',image:'senara-orphan-yard-v1.png',spawn:[328,344],blocks:[],
-   walk:[{x:112,y:208,w:480,h:128},{x:272,y:336,w:96,h:64},{x:288,y:176,w:48,h:32},{x:544,y:160,w:48,h:48}],
+   walk:[{x:96,y:208,w:496,h:128},{x:272,y:320,w:80,h:80},{x:288,y:160,w:48,h:64},{x:544,y:160,w:48,h:64}],
    lights:[[273,109]],
-   points:[{id:'orphanFront',x:312,y:192,label:'Slip through the main door'},
-    {id:'orphanSide',x:568,y:184,label:'Try the side entrance'}]
+   points:[{id:'orphanFront',x:312,y:168,label:'Slip through the main door'},
+    {id:'orphanSide',x:568,y:168,label:'Try the side entrance'}]
   },
   [inside]:{
    name:'Senara · The Orphanage',image:'senara-orphanage-v1.png',spawn:[328,344],blocks:[],
-   walk:[{x:112,y:176,w:480,h:144},{x:272,y:320,w:96,h:64}],
+   walk:[{x:112,y:176,w:480,h:144},{x:208,y:144,w:240,h:48},{x:464,y:144,w:96,h:48},{x:272,y:304,w:64,h:96}],
    lights:[[127,89],[254,53],[427,53],[486,94]],
-   points:[{id:'orphanSearch',x:512,y:168,label:'Search the old guild records'},
-    {id:'orphanWitnesses',x:200,y:216,label:'Check the footsteps'},
+   points:[{id:'orphanSearch',x:512,y:152,label:'Search the records on the desk'},
+    {id:'orphanWitnesses',x:184,y:208,label:'See who is by the beds'},
     {id:'orphanWithdraw',x:328,y:344,label:'Leave with the sewer lead'}]
   }
  };
@@ -64,7 +64,7 @@ window.SenaraCover=(()=>{
    {id:'citizen-senara-guest-2',x:392,y:240,dir:'left',variant:2},
    {id:'citizen-senara-guest-3',x:480,y:240,dir:'left',variant:5}
   ];
-  if(scene===inside)return quest.senaraOrphanClue&&!quest.senaraWitnessesSeen?
+  if(scene===inside)return quest.senaraOrphanClue?
    [152,184,216].map((x,i)=>({id:'senara_witness_'+i,x,y:184,height:37})): [];
   return scene===outside?[]:null;
  }
@@ -102,8 +102,10 @@ window.SenaraCover=(()=>{
     if(toast===0)await say('guapo','To guests who arrive thirsty and leave before they ask whose house this is.');
     else await say('guapo','You have the river, the town and all those banners. Does anyone here ever get a night off?');
     await say('senara_officer','We have tonight. I’ll take a drink while it’s still mine.');
-    await say('Chronicle','El Guapo will later describe this as intelligence work. For now he keeps the drinks coming.');
     quest.senaraPartyPlayed=true;
+    save();
+    updateObjective();
+    await say('Chronicle','El Guapo keeps the drinks coming. While the garrison is occupied, Draymus and Jason can slip out.');
     break;
    }
    case 'senaraSlipOut':
@@ -115,9 +117,12 @@ window.SenaraCover=(()=>{
     await enterOrphanage(id==='orphanSide');
     break;
    case 'orphanSearch':
-    await say('draymus','These old guild marks run along the water lines. Look here. The sewer leads to a set of caves beneath the city.');
-    await say('jason','The Black Daggers. We can find them from below.');
+    await say('draymus','Look at the guild marks beside the water lines. The sewer leads to caves beneath the city.');
+    await say(null,'The old records mark a route under Senara.', ['[Copy the sewer route]']);
     quest.senaraOrphanClue=true;
+    save();
+    updateObjective();
+    await say('jason','That’ll get us to the Black Daggers. Wait. Did you hear footsteps by the beds?');
     break;
    case 'orphanWitnesses':
     await say('Chronicle','Three children have stopped near the beds. They see Draymus and Jason in the room.');
