@@ -526,7 +526,8 @@ function selectedCombatCommand(){
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
  if(c?.mode==='enemy'||c?.mode==='ally'){
-  const chosen=c.mode==='enemy'?battle.enemies[battle.target]?.name:NAMES[battle.ally];$('battle-title').textContent=chosen+' · ← → select · E: confirm · B: back';
+  const confirmLabel=document.documentElement.classList.contains('handheld-display')?'A':'E';
+  $('battle-title').textContent='← → Select · '+confirmLabel+' Confirm · B Back';
   canvas.focus({preventScroll:true});
  }
 }
