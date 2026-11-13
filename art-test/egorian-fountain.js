@@ -7,19 +7,19 @@ window.EgorianFountain=(()=>{
  const layouts={
   [fountain]:{
    name:'Egorian · The Fountain',image:'egorian-fountain-v1.png',spawn:[328,344],
-   walk:[{x:112,y:192,w:416,h:176}],
+   walk:[{x:64,y:208,w:496,h:192},{x:64,y:80,w:176,h:128},{x:384,y:80,w:176,h:128},{x:240,y:80,w:144,h:16}],
    points:[
-    {id:'egorianFountainMeeting',x:360,y:216,label:'Meet the stranger by the fountain'},
-    {id:'egorianScoutTailor',x:472,y:328,label:'Follow the tailor’s routine'}
+    {id:'egorianFountainMeeting',speaker:stranger,x:376,y:192,label:'Meet the stranger by the fountain'},
+    {id:'egorianScoutTailor',x:520,y:368,label:'Follow the tailor’s routine'}
    ]
   },
   [street]:{
    name:'Egorian · The Tailor’s Quarter',image:'egorian-tailor-street-v1.png',spawn:[328,344],
-   walk:[{x:64,y:272,w:512,h:112},{x:512,y:224,w:64,h:48}],
+   walk:[{x:32,y:272,w:576,h:128},{x:496,y:240,w:96,h:32},{x:512,y:192,w:64,h:48}],
    points:[
     {id:'egorianObserveShop',x:136,y:296,label:'Watch the tailor shop'},
     {id:'egorianObserveHome',x:376,y:296,label:'Find the family’s home'},
-    {id:'egorianObserveSchools',x:536,y:248,label:'Follow the route to the schools'},
+    {id:'egorianObserveSchools',x:536,y:216,label:'Follow the route to the schools'},
     {id:'egorianTailorReport',x:328,y:344,label:'Bring the route back to Hotel Barato'},
     {id:'egorianSeeTailorAftermath',x:152,y:328,label:'See what happened on Dapper Street'},
     {id:'egorianDepartForRemesiana',x:472,y:344,label:'Leave for Remesiana'}
@@ -163,5 +163,17 @@ window.EgorianFountain=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,points,target,goal,npcs,interact};
+ function drawWater(g,t){
+  if(scene!==fountain||reduce.matches)return;
+  g.save();
+  g.fillStyle='#b9d2d9';
+  for(let i=0;i<8;i++){
+   const age=(t*.75+i/8)%1;
+   const side=i%2?1:-1;
+   g.globalAlpha=Math.sin(age*Math.PI)*.38;
+   g.fillRect(Math.round(320+side*(7+age*19)),Math.round(145+age*14+i%3*3),2+i%2,1);
+  }
+  g.restore();
+ }
+ return {install,load,mapImage,roster,points,target,goal,npcs,interact,drawWater};
 })();
