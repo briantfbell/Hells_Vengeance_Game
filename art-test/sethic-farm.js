@@ -11,7 +11,7 @@ window.SethicFarm=(()=>{
   ],maxHeight:489,cycle:[0,2],attackFrames:true
  };
  function install(){
-  scenes[salon].points.push({id:'farmLeaveSalon',x:328,y:344,label:'Go to Sethic’s devil-hog farm'});
+  scenes[salon].points.push({id:'farmLeaveSalon',x:328,y:392,label:'Go to Sethic’s devil-hog farm'});
   scenes[farm]={
    name:'Sethic’s Devil-Hog Farm',image:map,spawn:[328,344],blocks:[],
    walk:[{x:96,y:160,w:448,h:192},{x:288,y:352,w:80,h:48}],lights:[[105,68],[279,102],[374,102],[536,69]],

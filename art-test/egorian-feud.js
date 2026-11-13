@@ -11,12 +11,12 @@ window.EgorianFeud=(()=>{
   scenes[debrief].points.push({id:'feudAttendReception',x:328,y:392,label:'Attend the first reception'});
   scenes[salon]={
    name:'Egorian · Noble Reception',image,spawn:[328,344],blocks:[],
-   walk:[{x:64,y:160,w:512,h:192},{x:288,y:352,w:64,h:32}],lights:[[69,92],[157,72],[274,100],[364,100],[484,72],[571,92]],
+   walk:[{x:64,y:176,w:512,h:176},{x:288,y:352,w:64,h:48}],lights:[[69,92],[157,72],[274,100],[364,100],[484,72],[571,92]],
    points:[
-    {id:'feudHearSethic',x:120,y:224,speaker:'sethic',label:'Hear Sethic’s offer'},
-    {id:'feudHearVasvion',x:520,y:224,speaker:'vasvion',label:'Hear Vasvion’s offer'},
-    {id:'feudHearPressure',x:328,y:272,speaker:'corrine',label:'Hear the message from the Crown'},
-    {id:'feudChooseVasvion',x:520,y:224,speaker:'vasvion',label:'Commit to Vasvion'}
+    {id:'feudHearSethic',x:120,y:200,speaker:'sethic',label:'Hear Sethic’s offer'},
+    {id:'feudHearVasvion',x:520,y:200,speaker:'vasvion',label:'Hear Vasvion’s offer'},
+    {id:'feudHearPressure',x:328,y:224,speaker:'corrine',label:'Hear the message from the Crown'},
+    {id:'feudChooseVasvion',x:520,y:200,speaker:'vasvion',label:'Commit to Vasvion'}
    ]
   };
   MAP_LAYERS[salon]={foreground:image,contain:true,background:{type:'solid',color:'#16131c'}};
@@ -54,9 +54,9 @@ window.EgorianFeud=(()=>{
   if(scene!==salon)return null;
   return [
    {id:'sethic',x:120,y:200,height:57},{id:'vasvion',x:520,y:200,height:58},
-   ...((quest.egorianSethicHeard&&quest.egorianVasvionHeard)?[{id:'corrine',x:328,y:248,height:58}]:[]),
-   {id:'citizen-feud-1',x:110,y:237,dir:'right',variant:2},
-   {id:'citizen-feud-2',x:536,y:267,dir:'left',variant:6},
+   ...((quest.egorianSethicHeard&&quest.egorianVasvionHeard)?[{id:'corrine',x:328,y:224,height:58}]:[]),
+   {id:'citizen-feud-1',x:166,y:258,dir:'right',variant:2},
+   {id:'citizen-feud-2',x:473,y:265,dir:'left',variant:6},
    {id:'citizen-feud-3',x:229,y:196,dir:'right',variant:1},
    {id:'citizen-feud-4',x:415,y:196,dir:'left',variant:3}
   ];
@@ -87,7 +87,7 @@ window.EgorianFeud=(()=>{
     break;
    case 'feudChooseVasvion':
     await say('freya','We’ve heard both sides. You have our support.', ['[Back Vasvion]']);
-    await say('vasvion','Then start with what keeps Sethic wealthy.');
+    await say('vasvion','Start with Sethic’s devil-hog farm outside Egorian. That’s one of the businesses keeping him wealthy.');
     quest.egorianVasvionChosen=true;
     break;
   }
