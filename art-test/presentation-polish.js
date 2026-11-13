@@ -51,5 +51,47 @@ window.PresentationPolish=(()=>{
  function world(g,t){if(scene==='ash_house'){const m=LORE_CREATURE_IDLES.krenshar,phase=reduce.matches?0:m.cycle[Math.floor(t/.8)%m.cycle.length],f=m.frames[phase],im=art[m.src];if(im){g.save();g.translate(240,280);g.scale(-1,1);const scale=35/m.maxHeight;draw(g,im,f,(f.x-f.anchorX)*scale,-f.h*scale,f.w*scale,f.h*scale);g.restore();}}if(scene==='execution_square'&&quest.executionResolved&&!quest.bodiesMissing){for(const[id,x]of [['bo_gramel',252],['riley',404]]){const m=FUTURE_NPCS[id],im=art[m.source];if(!im)continue;const f=m.frame,crop=DIALOGUE_FACE_CROPS[id]||{x:f.x+f.w*.25,y:f.y,w:f.w*.5,h:f.w*.5};g.fillStyle='#5a4231';g.fillRect(x-1,122,3,91);g.fillStyle='#a99b7e';g.fillRect(x,117,1,10);g.drawImage(im,crop.x,crop.y,crop.w,crop.h,x-7,123,15,17);}}
  }
  function smoke(g,a){const p=CombatArt.phase(a),from=battlePosition(a.actor),targets=battle.enemies.map(battlePosition);g.save();g.imageSmoothingEnabled=false;const flight=Math.min(1,p/.38),x=from.x+(455-from.x)*flight,y=from.y-45+(128-(from.y-45))*flight-Math.sin(flight*Math.PI)*60;if(p<.4){g.fillStyle='#665566';g.fillRect(Math.round(x)-4,Math.round(y)-4,8,8);g.fillStyle='#bca078';g.fillRect(Math.round(x)-1,Math.round(y)-6,2,3);}else{const q=(p-.38)/.62;for(let k=0;k<targets.length;k++)for(let i=0;i<8;i++){const v=targets[k],r=8+q*24,cx=Math.round(v.x+Math.sin(i*2.3+k)*r*1.4),cy=Math.round(v.y-v.height*.4-Math.cos(i*1.7)*r-q*24);g.globalAlpha=(1-q*.55)*(.4+i%3*.09);g.fillStyle=['#403648','#655b72','#9b90a1'][i%3];for(let j=0;j<5;j++){const ww=Math.round((j===0||j===4?.5:.9)*r);g.fillRect(cx-ww,cy+(j-2)*5,ww*2,5);}}}g.restore();}
- return {draw,paintDice,phase,install,load,citizenMeta,citizenPortrait,captive,captivePoints,banter,decree,hospiceLetter,world,smoke};
+ function worldFire(g,t,sites){
+  const time=reduce.matches?0:t;
+  g.save();
+  for(const [index,[x,y]] of sites.entries()){
+   const light=g.createRadialGradient(x,y,2,x,y,32);
+   light.addColorStop(0,'#f4833666');
+   light.addColorStop(1,'#f4833600');
+   g.fillStyle=light;
+   g.fillRect(x-32,y-32,64,64);
+   for(let i=0;i<5;i++){
+    const phase=(time*.36+i*.21+index*.13)%1;
+    const size=4+Math.floor(phase*10);
+    const dx=x+Math.floor(phase*21)+(i-2)*3;
+    const dy=y-21-Math.floor(phase*42);
+    g.globalAlpha=(1-phase)*.38;
+    g.fillStyle=i%2?'#67544f':'#403439';
+    g.fillRect(dx-size,dy,size*2,size);
+    g.fillRect(dx-size+3,dy-3,size*2-6,3);
+   }
+   g.globalAlpha=1;
+   for(let i=0;i<5;i++){
+    const fx=x-16+i*7;
+    const height=12+Math.round(11*Math.sin(i*Math.PI/4))+(Math.floor(time*8)*5+i*7+index)%9;
+    const lean=(i+Math.floor(time*5)+index)%3-1;
+    g.fillStyle='#9b321c';
+    g.fillRect(fx-2,y-7,12,7);
+    g.fillStyle='#e95d25';
+    for(let step=0;step<4;step++){
+     const width=10-step*2;
+     const rise=Math.floor(height*step/4);
+     const next=Math.floor(height*(step+1)/4);
+     g.fillRect(fx+step+lean*step,y-next,width,next-rise+1);
+    }
+    g.fillStyle='#ffbf59';
+    g.fillRect(fx+2,y-7,5,6);
+    g.fillRect(fx+3+lean,y-12,3,6);
+    g.fillStyle='#ffe2a1';
+    g.fillRect(fx+3,y-4,3,3);
+   }
+  }
+  g.restore();
+ }
+ return {worldFire,draw,paintDice,phase,install,load,citizenMeta,citizenPortrait,captive,captivePoints,banter,decree,hospiceLetter,world,smoke};
 })();

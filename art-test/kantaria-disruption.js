@@ -66,46 +66,7 @@ window.DisruptionArc=(()=>{
   const active=scene==='kantaria_docks'
    ?fires.filter(([id])=>quest[id]).map(([, , , , x,y])=>[x,y])
    :scene==='kantaria_west_tower'&&quest.westTowerBurned?[[104,145],[76,205]]:[];
-  const time=reduce.matches?0:t;
-  g.save();
-  for(const [index,[x,y]] of active.entries()){
-   const light=g.createRadialGradient(x,y,2,x,y,32);
-   light.addColorStop(0,'#f4833666');
-   light.addColorStop(1,'#f4833600');
-   g.fillStyle=light;
-   g.fillRect(x-32,y-32,64,64);
-   for(let i=0;i<5;i++){
-    const phase=(time*.36+i*.21+index*.13)%1;
-    const size=4+Math.floor(phase*10);
-    const dx=x+Math.floor(phase*21)+(i-2)*3;
-    const dy=y-21-Math.floor(phase*42);
-    g.globalAlpha=(1-phase)*.38;
-    g.fillStyle=i%2?'#67544f':'#403439';
-    g.fillRect(dx-size,dy,size*2,size);
-    g.fillRect(dx-size+3,dy-3,size*2-6,3);
-   }
-   g.globalAlpha=1;
-   for(let i=0;i<5;i++){
-    const fx=x-16+i*7;
-    const height=12+Math.round(11*Math.sin(i*Math.PI/4))+(Math.floor(time*8)*5+i*7+index)%9;
-    const lean=(i+Math.floor(time*5)+index)%3-1;
-    g.fillStyle='#9b321c';
-    g.fillRect(fx-2,y-7,12,7);
-    g.fillStyle='#e95d25';
-    for(let step=0;step<4;step++){
-     const width=10-step*2;
-     const rise=Math.floor(height*step/4);
-     const next=Math.floor(height*(step+1)/4);
-     g.fillRect(fx+step+lean*step,y-next,width,next-rise+1);
-    }
-    g.fillStyle='#ffbf59';
-    g.fillRect(fx+2,y-7,5,6);
-    g.fillRect(fx+3+lean,y-12,3,6);
-    g.fillStyle='#ffe2a1';
-    g.fillRect(fx+3,y-4,3,3);
-   }
-  }
-  g.restore();
+  if(active.length)PresentationPolish.worldFire(g,t,active);
  }
  return {install,load,mapImage,roster,goal,points,target,npcs,afterBattle,interact,effects,chain};
 })();

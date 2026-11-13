@@ -5,7 +5,7 @@ window.CovertArc=(()=>{
  const patrol=[{id:'kantaria_guard',x:224,y:184},{id:'kantaria_guard',x:288,y:168},{id:'kantaria_guard',x:352,y:184}];
  const marketCrowd=[{id:'market_trader',x:216,y:184},{id:'guild_clerk',x:440,y:216},{id:'market_trader',x:248,y:248},{id:'guild_clerk',x:376,y:248},{id:'market_trader',x:408,y:152}];
  const innAttackers=[{id:'kantaria_guard',x:240,y:184},{id:'kantaria_guard',x:328,y:176},{id:'kantaria_guard',x:416,y:184}];
- const innFireSites=[[148,142,18],[326,133,21],[484,158,16],[470,252,15]];
+ const innFireSites=[[146,146],[326,140],[515,141],[515,237]];
  let crowdMovesAt=null;
  const r=(x,y,w,h)=>({x,y,w,h});
  function install(){
@@ -60,7 +60,7 @@ window.CovertArc=(()=>{
   if(scene==='kantaria_manor')return quest.manorObserved
    ? [{id:'kantaria_guard',x:472,y:128},{id:'kantaria_guard',x:472,y:176}]
    : [{id:'kantaria_guard',x:248,y:184},{id:'kantaria_guard',x:392,y:184}];
-  if(scene==='uskwood_last_night')return quest.escapeOpened?[]:innAttackers;
+  if(scene==='uskwood_last_night')return quest.uskwoodBurned&&!quest.escapeOpened?innAttackers:[];
   if(scene==='fungus_shelter'&&quest.caveRested)return [{id:'corrine',x:328,y:168}];return [];
  }
  function drawNPC(u){if(u.id!=='corrine')return false;drawQuestgiver('corrine',u.x,u.y,62);return true;}
@@ -136,41 +136,14 @@ window.CovertArc=(()=>{
  }
  function effects(g,t){
   if(!quest.chapter13||scene!=='uskwood_last_night'||!quest.uskwoodBurned)return;
-  const time=reduce.matches?0:t;
   const glow=g.createRadialGradient(320,144,20,320,144,252);
   glow.addColorStop(0,'#ba411d52');
   glow.addColorStop(1,'#451a1600');
   g.save();
   g.fillStyle=glow;
   g.fillRect(64,32,512,310);
-  for(const [x,y,height] of innFireSites){
-   for(let i=0;i<5;i++){
-    const drift=(time*.24+i*.21)%1;
-    const size=6+Math.floor(drift*15);
-    const smokeX=x+Math.round((i-2)*4+drift*36);
-    const smokeY=y-height-Math.floor(drift*59);
-    g.globalAlpha=(1-drift)*.28;
-    g.fillStyle=i%2?'#32272b':'#483735';
-    g.fillRect(smokeX-size,smokeY,size*2,size);
-    g.fillRect(smokeX-size+4,smokeY-4,size*2-8,4);
-   }
-   g.globalAlpha=1;
-   for(let i=0;i<9;i++){
-    const fx=x-18+i*4;
-    const tip=Math.floor(height*(.45+.4*Math.sin(i/8*Math.PI)))+((Math.floor(time*9)*5+i*7)%8);
-    g.fillStyle='#8b281a';
-    g.fillRect(fx-2,y-tip+5,6,tip-4);
-    g.fillStyle='#e05225';
-    g.fillRect(fx,y-tip,4,tip);
-    g.fillStyle='#f4a63d';
-    g.fillRect(fx+1,y-Math.floor(tip*.55),2,Math.floor(tip*.55));
-    if(i%2===0){
-     g.fillStyle='#ffe39b';
-     g.fillRect(fx+1,y-6,2,5);
-    }
-   }
-  }
   g.restore();
+  PresentationPolish.worldFire(g,t,innFireSites);
  }
  return {install,load,mapImage,roster,points,target,goal,npcs,drawNPC,afterBattle,interact,effects,chain};
 })();

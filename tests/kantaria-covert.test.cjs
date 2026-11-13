@@ -11,8 +11,9 @@ test('covert chapter follows documented operations, fire and cave recovery witho
  assert.equal(w.CovertArc.npcs().length,3);
  assert(await w.CovertArc.interact('covertPatrolFight'));
  assert.equal(w.battles[0].enemies.length,3);assert.equal(await w.CovertArc.interact('framePatrol'),false);await w.CovertArc.afterBattle('covert_patrol');for(const id of ['framePatrol','guildRoad','guildEntry','alterGuildRecords','manorRoad','manorSurvey','takeManorArtifacts','innReturn'])assert(await w.CovertArc.interact(id),id);
- assert.equal(w.CovertArc.npcs().length,3);
+ assert.equal(w.CovertArc.npcs().length,0,'attackers remain concealed before the fireballs');
  assert(await w.CovertArc.interact('uskwoodEscapeFight'));
+ assert.equal(w.CovertArc.npcs().length,3,'attackers appear with the fire');
  assert(w.checkpoints.at(-1).uskwoodBurned);
  assert.equal(w.battles.length,1,'ignition leaves a playable checkpoint before combat');
  assert.equal(w.CovertArc.target().label,'[Fight through the burning inn]');
