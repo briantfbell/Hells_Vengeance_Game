@@ -32,7 +32,8 @@ window.DisruptionArc=(()=>{
  function points(){if(!quest.chapter11Complete)return null;if(!quest.chapter12)return scene==='uskwood_hideout'?[point('disruptionRoad')]:[];if(quest.chapter12Complete)return [];if(scene==='kantaria_docks'&&quest.dockDefendersCleared&&!quest.docksBurned)return fires.filter(([id])=>!quest[id]).map(([id])=>point(id));const id=({disruption_briefing:quest.disruptionBriefed?'dockRoad':'disruptionBrief',kantaria_docks:!quest.docksObserved?'dockObserve':!quest.dockDefendersCleared?'dockFight':'dockEscape',kantaria_north_tower:quest.northTowerCleared?'westRoad':'northFight',kantaria_west_tower:!quest.angelBroDefeated?'angelFight':!quest.westTowerBurned?'westBurn':'disruptionReturn',disruption_report:quest.disruptionReported?'disruptionEnd':'disruptionDebrief'})[scene];return [point(id)].filter(Boolean);}
  const target=()=>points()?.[0]||null;
  function npcs(){if(!quest.chapter12)return null;if(['disruption_briefing','disruption_report'].includes(scene))return [{id:'loredana',x:280,y:168},{id:'zara',x:376,y:168}];if(scene==='kantaria_docks')return quest.dockDefendersCleared?[]:[{id:'jonas',x:328,y:128},{id:'kantaria_guard',x:232,y:144},{id:'kantaria_guard',x:424,y:144}];if(scene==='kantaria_north_tower')return quest.northTowerCleared?[]:towerGuards;if(scene==='kantaria_west_tower')return quest.angelBroDefeated?[]:towerGuards.map((guard,index)=>index===1?{...guard,id:'angel_bro'}:guard);return [];}
- function foe(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function foe(id,name,shortName){return {id,name:name||NAMES[id],shortName,hp:STATS[id].hp,max:STATS[id].hp};}
+ function guards(post,count){return Array.from({length:count},(_,index)=>foe('kantaria_guard',post+' Guard '+(index+1),'Guard '+(index+1)));}
  function fight(kind,enemies){applyProgression();seedParty(...scenes[scene].spawn);save();startBattle(0,false,{kind,enemies});}
  async function afterBattle(kind){if(kind==='disruption_docks'){quest.dockDefendersCleared=true;seedParty(328,200);save();await say('Chronicle','Jonas breaks away from the quay, badly wounded. The guards are down, and the company holds the docks.');}else if(kind==='disruption_north'){quest.northTowerCleared=true;seedParty(328,200);save();await say('Chronicle','The north tower’s soldiers are killed in the assault. The company has opened the route to its next target.');}else if(kind==='disruption_angel'){quest.angelBroDefeated=true;seedParty(328,200);save();await say('Chronicle','The angel defender is defeated. The west tower lies exposed.');}else return;save();paintParty();updateObjective();}
  async function interact(id){if(id==='disruptionRoad'){if(!quest.chapter11Complete||quest.chapter12)return false;quest.chapter12=true;await travel('disruption_briefing',328,344);}else if(!points()?.some(p=>p.id===id))return false;
@@ -44,7 +45,7 @@ window.DisruptionArc=(()=>{
    await say('freya','The office is across the quay. Get the guards away from the stores first.');
    quest.docksObserved=true;
   }
-  else if(id==='dockFight'){await say('jonas','These docks answer to Oppian. You will not interfere.');await say('freya','Your collections end here.');await say(null,'Jonas signals the guards.', ['[Take the quay]']);fight('disruption_docks',[foe('jonas'),foe('kantaria_guard','Dock Guard 1'),foe('kantaria_guard','Dock Guard 2')]);log('Docks · Jonas and the occupation guards.');}
+  else if(id==='dockFight'){await say('jonas','These docks answer to Oppian. You will not interfere.');await say('freya','Your collections end here.');await say(null,'Jonas signals the guards.', ['[Take the quay]']);fight('disruption_docks',[foe('jonas',NAMES.jonas,'Jonas'),...guards('Dock',2)]);log('Docks · Jonas and the occupation guards.');}
   else if(fires.some(([key])=>key===id)){
    quest[id]=true;
    if(count()===fires.length)quest.docksBurned=true;
@@ -52,15 +53,59 @@ window.DisruptionArc=(()=>{
    await say('Chronicle',({dockPierBurned:'Fire catches along the outside pilings. The center boards still give the party a way out.',dockStoresBurned:'Flames spread through the dockside crates and stores.',dockOfficeBurned:'The fire takes hold inside the dock office.'})[id]);
   }
   else if(id==='dockEscape'){quest.jonasEscaped=true;quest.southTowerDamaged=true;await journeyCard('Two Targets · One Operation','The docks are ruined. Rebuilding is expected to take two months. Jonas Reikman escapes, severely injured. At the same time, the south guard tower is damaged. Its repairs are expected to take two weeks.');await travel('kantaria_north_tower',328,344);}
-  else if(id==='northFight'){await say('reese','Three soldiers at the stairs. The two out wide can see the whole room.');await say('freya','Stay together until we reach the foot of the stairs.');await say(null,'[Storm the north tower]', ['[Advance on the garrison]']);fight('disruption_north',[foe('kantaria_guard','North Guard 1'),foe('kantaria_guard','North Guard 2'),foe('kantaria_guard','North Guard 3')]);log('North tower · Clear the garrison.');}
+  else if(id==='northFight'){await say('reese','Three soldiers at the stairs. The two out wide can see the whole room.');await say('freya','Stay together until we reach the foot of the stairs.');await say(null,'[Storm the north tower]', ['[Advance on the garrison]']);fight('disruption_north',guards('North',3));log('North tower · Clear the garrison.');}
   else if(id==='westRoad'){quest.westTowerReached=true;await travel('kantaria_west_tower',328,344);}
-  else if(id==='angelFight'){await say('Chronicle','A winged defender stands at the foot of the stairs. A soldier steps out on either side.');await say('freya','Let them come off the stairs. Hold formation.');await say(null,'[Challenge the defenders]', ['[Advance into the west tower]']);fight('disruption_angel',[foe('angel_bro'),foe('kantaria_guard','West Guard 1'),foe('kantaria_guard','West Guard 2')]);log('West tower · An angel reinforces the defenders.');}
+  else if(id==='angelFight'){await say('Chronicle','A winged defender stands at the foot of the stairs. A soldier steps out on either side.');await say('freya','Let them come off the stairs. Hold formation.');await say(null,'[Challenge the defenders]', ['[Advance into the west tower]']);fight('disruption_angel',[foe('angel_bro',NAMES.angel_bro,'Angel'),...guards('West',2)]);log('West tower · An angel reinforces the defenders.');}
   else if(id==='westBurn'){await say('jason','Put the flame to the stores. Leave the middle of the room clear so we can get out.');await say(null,'[Burn the west tower]', ['[Light the stores by the west wall]']);quest.westTowerBurned=true;save();await say('Chronicle','Fire spreads from the stores along the wall. The entrance is still clear.');}
   else if(id==='disruptionReturn')await travel('disruption_report',328,344);
   else if(id==='disruptionDebrief'){await say('freya','The docks are destroyed. Jonas escaped wounded. The north tower’s soldiers are dead, the west tower burned, and the south tower damaged.');await say('loredana','The occupation still holds Kantaria. Keep your cover while you prepare your next move.');await say('Chronicle','The attacks have weakened the rebellion’s income and defenses. Valor’s Fastness and Narikopolus Manor remain in rebel hands.');quest.disruptionReported=true;}
   else if(id==='disruptionEnd'){await journeyCard('Chapter Twelve · Supply Lines Broken','The dock and tower operations are complete. The occupation is weakened, but Kantaria has not fallen. The company’s work continues.');quest.chapter12Complete=true;}
   else return false;save();paintParty();updateObjective();return true;
  }
- function effects(g,t){const active=scene==='kantaria_docks'?fires.filter(([id])=>quest[id]).map(([, , , , x,y])=>[x,y]):scene==='kantaria_west_tower'&&quest.westTowerBurned?[[104,145],[76,205]]:[];g.save();for(const[x,y]of active){for(let i=0;i<9;i++){const phase=reduce.matches?0:Math.floor(t*5+i*1.7)%3;g.fillStyle=i%2?'#e9752c':'#9c2b19';g.fillRect(x-18+i*4,y-9-phase*4,4,10+phase*4);g.fillStyle='#ffc269';g.fillRect(x-10+i*2,y-5-phase*3,3,5+phase*2);}}g.restore();}
+ function effects(g,t){
+  const active=scene==='kantaria_docks'
+   ?fires.filter(([id])=>quest[id]).map(([, , , , x,y])=>[x,y])
+   :scene==='kantaria_west_tower'&&quest.westTowerBurned?[[104,145],[76,205]]:[];
+  const time=reduce.matches?0:t;
+  g.save();
+  for(const [index,[x,y]] of active.entries()){
+   const light=g.createRadialGradient(x,y,2,x,y,32);
+   light.addColorStop(0,'#f4833666');
+   light.addColorStop(1,'#f4833600');
+   g.fillStyle=light;
+   g.fillRect(x-32,y-32,64,64);
+   for(let i=0;i<5;i++){
+    const phase=(time*.36+i*.21+index*.13)%1;
+    const size=4+Math.floor(phase*10);
+    const dx=x+Math.floor(phase*21)+(i-2)*3;
+    const dy=y-21-Math.floor(phase*42);
+    g.globalAlpha=(1-phase)*.38;
+    g.fillStyle=i%2?'#67544f':'#403439';
+    g.fillRect(dx-size,dy,size*2,size);
+    g.fillRect(dx-size+3,dy-3,size*2-6,3);
+   }
+   g.globalAlpha=1;
+   for(let i=0;i<5;i++){
+    const fx=x-16+i*7;
+    const height=12+Math.round(11*Math.sin(i*Math.PI/4))+(Math.floor(time*8)*5+i*7+index)%9;
+    const lean=(i+Math.floor(time*5)+index)%3-1;
+    g.fillStyle='#9b321c';
+    g.fillRect(fx-2,y-7,12,7);
+    g.fillStyle='#e95d25';
+    for(let step=0;step<4;step++){
+     const width=10-step*2;
+     const rise=Math.floor(height*step/4);
+     const next=Math.floor(height*(step+1)/4);
+     g.fillRect(fx+step+lean*step,y-next,width,next-rise+1);
+    }
+    g.fillStyle='#ffbf59';
+    g.fillRect(fx+2,y-7,5,6);
+    g.fillRect(fx+3+lean,y-12,3,6);
+    g.fillStyle='#ffe2a1';
+    g.fillRect(fx+3,y-4,3,3);
+   }
+  }
+  g.restore();
+ }
  return {install,load,mapImage,roster,goal,points,target,npcs,afterBattle,interact,effects,chain};
 })();
