@@ -2,6 +2,13 @@
 
 window.FastnessArc = (() => {
  const gate = 'fastness_gate';
+ const undeadFormation = [
+  {x:280,y:232,endX:248,endY:205},
+  {x:328,y:248,endX:296,endY:192},
+  {x:376,y:232,endX:360,endY:192}
+ ];
+ const chargeDuration = 820;
+ let chargeStarted = null;
  const hall = 'fastness_hall';
  const chapel = 'fastness_chapel';
  const study = 'fastness_study';
@@ -116,7 +123,7 @@ window.FastnessArc = (() => {
   scenes.supply_report.points.push({id:'fastnessRoad',x:328,y:344,label:'Continue to Valor’s Fastness'});
   scenes[gate] = {
    name:'Valor’s Fastness · Outer Gate', image:images[gate], spawn:[328,344], blocks:[],
-   walk:[{x:160,y:176,w:320,h:64},{x:288,y:240,w:64,h:144},{x:304,y:144,w:48,h:32}],
+   walk:[{x:144,y:176,w:352,h:80},{x:288,y:240,w:64,h:144},{x:304,y:144,w:48,h:48}],
    lights:[[228,137],[414,137],[251,339],[391,339]],
    points:[
     {id:'fastnessMuster',x:328,y:264,label:'Muster the reanimated soldiers'},
@@ -231,10 +238,14 @@ window.FastnessArc = (() => {
   if (!fight) return null;
   const guards = fight.defenders.map(([id,,x,y]) => ({id,x,y,...(quest[fight.cleared] && {hp:0})}));
   if (scene !== gate || !quest.fastnessMustered || quest.fastnessGateCleared) return guards;
-  return guards.concat([
-   {id:'fastness_undead',x:296,y:232}, {id:'fastness_undead',x:360,y:232},
-   {id:'fastness_undead',x:312,y:264}
-  ]);
+  const elapsed = chargeStarted===null ? 0 : performance.now()-chargeStarted;
+  const progress = Math.min(1,elapsed/chargeDuration);
+  const stride = progress>0 ? Math.round(Math.sin(elapsed/43)*2) : 0;
+  return guards.concat(undeadFormation.map(({x,y,endX,endY})=>({
+   id:'fastness_undead',
+   x:Math.round(x+(endX-x)*progress),
+   y:Math.round(y+(endY-y)*progress)+stride
+  })));
  }
 
  function drawNPC(unit) {
@@ -321,11 +332,20 @@ window.FastnessArc = (() => {
     quest.fastnessMustered = true;
     break;
    case 'fastnessCharge':
-    await journeyCard('The First Wave','The dead surge through the gate. They wound the front rank before the company closes with the defenders.');
+    if (!reduce.matches) {
+     const token = epoch;
+     chargeStarted = performance.now();
+     try {
+      await delay(chargeDuration);
+      if (token!==epoch) throw CANCEL;
+     } finally {
+      chargeStarted = null;
+     }
+    }
     beginEncounter(gate);
     return true;
    case 'fastnessThreshold':
-    await journeyCard('The Outer Gate Falls','The exterior guards have fallen. The company crosses the threshold into Valor’s Fastness. Beyond the gate, the defenders still hold the fortress.');
+    await journeyCard('The Outer Gate Falls','The exterior guards have fallen. The breach is secure. Beyond the arch, the defenders still hold the fortress.');
     quest.fastnessGateComplete = true;
     break;
    case 'fastnessHallRoad':
