@@ -6,6 +6,7 @@ window.ChurchArc=(()=>{
  const breachDuration=780;
  let breachBeat=null,ritualBeat=null;
  function nightEffects(g){
+  if(scene==='mantis_training'&&!quest.mantisTraining)drawTrainingPost(g);
   const phase=currentRitual();
   if(['altar','command','channel'].includes(phase)){
    const x=phase==='altar'?325:phase==='channel'?371:410,y=phase==='altar'?135:162;
@@ -61,6 +62,23 @@ window.ChurchArc=(()=>{
   }
   g.restore();
  }
+ function drawTrainingPost(g){
+  g.save();g.translate(408,226);
+  g.fillStyle='#231915';g.fillRect(-5,-27,10,40);g.fillRect(-15,11,30,4);
+  g.fillStyle='#805c3d';g.fillRect(-3,-25,5,36);g.fillRect(-13,-15,26,6);
+  g.fillStyle='#b0976e';g.fillRect(-5,-19,10,10);
+  const beat=breachBeat;
+  if(beat?.kind==='pairedStrike'&&beat.epoch===epoch&&!reduce.matches){
+   const progress=(performance.now()-beat.start)/breachDuration;
+   const swing=progress<.5?progress*2:(progress-.5)*2;
+   if(progress<1){
+    g.strokeStyle='#ead9ad';g.globalAlpha=Math.sin(swing*Math.PI);g.lineWidth=2;g.beginPath();
+    const side=progress<.5?-1:1;
+    g.moveTo(side*16,-25+swing*11);g.lineTo(-side*4,-15+swing*12);g.stroke();
+   }
+  }
+  g.restore();
+ }
  async function playBreach(kind){
   const token=epoch;
   breachBeat={kind,epoch:token,start:performance.now()};
@@ -72,7 +90,7 @@ window.ChurchArc=(()=>{
   const defs=[['church_night','escape_jail','Longacre Jail · The Missing Dead'],['church_approach','church_watch','Church of Iomedae · Before Dawn'],['church_flank','church_watch','Church of Iomedae · The Kantaria Window'],['church_entry','longacre_church','Church of Iomedae · Entry Vestibule'],['church_hall','longacre_church','Church of Iomedae · The Hallway'],['church_sanctuary','longacre_church','Church of Iomedae · The Sanctuary'],['church_ruins','longacre_church','Church of Iomedae · The Broken Altar'],['mantis_training','escape_jail','Longacre Jail · Twenty-four Hours'],['church_asmodeus','longacre_church','Longacre · The New Pastor']];
   for(const[id,base,name]of defs){const s=structuredClone(scenes[base]);s.name=name;s.points=[];s.spawn=[328,312];if(id.startsWith('church_')&&!['church_night','church_approach','church_flank'].includes(id)){s.walk=[r(288,112,64,272),r(176,192,288,48),r(256,112,128,64)];s.blocks=[];s.lights=[[248,120],[392,120],[248,264],[392,264]];}if(id==='church_entry'){s.image='church-entry-v2.png';s.walk.push(r(112,192,96,80));}if(id==='church_hall')s.image='church-hall-v2.png';if(id==='church_asmodeus')s.image='church-asmodeus-v2.png';maps[id]=scenes[id]=s;MAP_LAYERS[id]={foreground:s.image,background:{type:'solid',color:'#0c1018'}};}
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
-  add('execution_square','churchArcRoad',328,352,'Continue: The Missing Dead');add('church_night','missingRemains',328,248,'Hear the deputy’s report');add('church_night','followChurchTracks',200,208,'Follow the tracks');add('church_approach','breachChurch',328,232,'Scout the barred church');add('church_entry','entryFight',328,216,'Clear the entrance');add('church_entry','hallRoad',328,144,'Force the inner double doors');add('church_hall','hallFight',328,216,'Advance through the hallway');add('church_hall','sanctuaryRoad',328,144,'Switch to J’Mal outside');add('church_flank','kantariaWindow',392,176,'Break through the Kantaria window');add('church_sanctuary','interruptRitual',328,200,'Interrupt Allamar’s ritual');add('church_sanctuary','sanctuaryFight',328,216,'Defeat the sanctuary defenders');add('church_sanctuary','allamarFight',328,176,'Face Allamar');add('church_sanctuary','destroyGhast',328,200,'Put Riley’s remains to rest');add('church_sanctuary','altarRoad',328,144,'Examine the consecrated altar');add('church_ruins','breakAltar',328,144,'Break the stone altar');add('church_ruins','assassinBoon',328,160,'Hear the freed assassin’s offer');add('church_ruins','trainingRoad',328,312,'Accept the training');add('mantis_training','mantisLesson',328,248,'Train with the Red Mantis master');add('mantis_training','conversionRoad',328,352,'Return to the church');add('church_asmodeus','dedicateChurch',328,160,'Dedicate the church to Asmodeus');add('church_asmodeus','churchArcComplete',328,312,'Close the chapter');
+  add('execution_square','churchArcRoad',328,352,'Continue: The Missing Dead');add('church_night','missingRemains',328,248,'Hear the deputy’s report');add('church_night','followChurchTracks',200,208,'Follow the tracks');add('church_approach','breachChurch',328,232,'Scout the barred church');add('church_entry','entryFight',328,216,'Clear the entrance');add('church_entry','hallRoad',328,144,'Force the inner double doors');add('church_hall','hallFight',328,216,'Advance through the hallway');add('church_hall','sanctuaryRoad',328,144,'Switch to J’Mal outside');add('church_flank','kantariaWindow',392,176,'Break through the Kantaria window');add('church_sanctuary','interruptRitual',328,200,'Interrupt Allamar’s ritual');add('church_sanctuary','sanctuaryFight',328,216,'Defeat the sanctuary defenders');add('church_sanctuary','allamarFight',328,176,'Face Allamar');add('church_sanctuary','destroyGhast',328,200,'Put Riley’s remains to rest');add('church_sanctuary','altarRoad',328,144,'Examine the consecrated altar');add('church_ruins','breakAltar',328,144,'Break the stone altar');add('church_ruins','assassinBoon',328,160,'Hear the freed assassin’s offer');add('church_ruins','trainingRoad',328,312,'Accept the training');add('mantis_training','mantisLesson',328,248,'Begin the Red Mantis lesson');add('mantis_training','mantisDrill',408,240,'Practice the paired strike');add('mantis_training','mantisFinish',328,248,'Finish the lesson');add('mantis_training','conversionRoad',328,352,'Return to the church');add('church_asmodeus','dedicateChurch',328,160,'Dedicate the church to Asmodeus');add('church_asmodeus','churchArcComplete',328,312,'Close the chapter');
   Object.assign(NAMES,{church_acolyte:'Church Acolyte',kuribu:'Kuribu',ghast_riley:'Riley · Ghast',mantis_master:'Red Mantis Master',celestial_wolf:'Celestial Wolf',twin1:'Loran Allamar',twin2:'Lacall Allamar'});
   
   Object.assign(STATS,{church_acolyte:{hp:18,ac:12,atk:3,dmg:[1,6,1]},twin1:{hp:26,ac:14,atk:4,dmg:[1,6,2]},twin2:{hp:28,ac:14,atk:4,dmg:[1,6,2]},allamar:{hp:65,ac:15,atk:5,dmg:[1,8,2]},celestial_wolf:{hp:24,ac:13,atk:4,dmg:[1,6,1]}});
@@ -80,8 +98,8 @@ window.ChurchArc=(()=>{
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);art.churchBroken=await loader('church-ruins-v1.png');art[coffinArt]=await loader(coffinArt);}
  function mapImage(){return scene==='church_ruins'&&quest.altarBroken||scene==='church_asmodeus'&&!quest.churchConverted?art.churchBroken:art[scene];}
- function goal(){if(!quest.chapter6Complete)return null;if(scene==='church_flank')return 'Break through the Kantaria window.';if(!quest.chapter7)return 'Continue: The Missing Dead.';const goals=['Hear the deputy’s report.','Follow the fresh tracks to the church.','Scout the barred church.','Clear the entrance.','Force the doors and clear the hallway.','Interrupt Allamar’s resurrection.','Defeat the sanctuary defenders.','Face Allamar’s final stand.','Destroy Riley’s ghast.','Examine and break the stone altar.','Speak to the freed assassin.','Complete J’Mal’s twenty-four-hour training.','Dedicate the church to Asmodeus.','Close the chapter.','Chapter complete · Jason is the new pastor.'];const i=chain.findIndex(k=>!quest[k]);return i<0?goals.at(-1):goals[Math.max(0,i-1)];}
- function points(){if(!quest.chapter6Complete)return null;if(!quest.chapter7)return scene==='execution_square'?[point('churchArcRoad')]:[];const id=({church_night:quest.bodiesMissing?'followChurchTracks':'missingRemains',church_approach:'breachChurch',church_entry:quest.entryCleared?'hallRoad':'entryFight',church_hall:quest.hallCleared?'sanctuaryRoad':'hallFight',church_flank:'kantariaWindow',church_sanctuary:!quest.resurrectionBroken?'interruptRitual':!quest.sanctuaryCleared?'sanctuaryFight':!quest.allamarDefeated?'allamarFight':!quest.ghastDestroyed?'destroyGhast':'altarRoad',church_ruins:!quest.altarBroken?'breakAltar':!quest.assassinKnowledge?'assassinBoon':'trainingRoad',mantis_training:quest.mantisTraining?'conversionRoad':'mantisLesson',church_asmodeus:quest.churchConverted?'churchArcComplete':'dedicateChurch'})[scene];return quest.chapter7Complete?[]:[point(id)].filter(Boolean);}
+ function goal(){if(!quest.chapter6Complete)return null;if(scene==='church_flank')return 'Break through the Kantaria window.';if(scene==='mantis_training'&&!quest.mantisTraining)return quest.mantisDrillDone?'Return to the master.':quest.mantisLessonStarted?'Practice the paired strike.':'Begin the Red Mantis lesson.';if(!quest.chapter7)return 'Continue: The Missing Dead.';const goals=['Hear the deputy’s report.','Follow the fresh tracks to the church.','Scout the barred church.','Clear the entrance.','Force the doors and clear the hallway.','Interrupt Allamar’s resurrection.','Defeat the sanctuary defenders.','Face Allamar’s final stand.','Destroy Riley’s ghast.','Examine and break the stone altar.','Speak to the freed assassin.','Complete J’Mal’s twenty-four-hour training.','Dedicate the church to Asmodeus.','Close the chapter.','Chapter complete · Jason is the new pastor.'];const i=chain.findIndex(k=>!quest[k]);return i<0?goals.at(-1):goals[Math.max(0,i-1)];}
+ function points(){if(!quest.chapter6Complete)return null;if(!quest.chapter7)return scene==='execution_square'?[point('churchArcRoad')]:[];const id=({church_night:quest.bodiesMissing?'followChurchTracks':'missingRemains',church_approach:'breachChurch',church_entry:quest.entryCleared?'hallRoad':'entryFight',church_hall:quest.hallCleared?'sanctuaryRoad':'hallFight',church_flank:'kantariaWindow',church_sanctuary:!quest.resurrectionBroken?'interruptRitual':!quest.sanctuaryCleared?'sanctuaryFight':!quest.allamarDefeated?'allamarFight':!quest.ghastDestroyed?'destroyGhast':'altarRoad',church_ruins:!quest.altarBroken?'breakAltar':!quest.assassinKnowledge?'assassinBoon':'trainingRoad',mantis_training:quest.mantisTraining?'conversionRoad':quest.mantisDrillDone?'mantisFinish':quest.mantisLessonStarted?'mantisDrill':'mantisLesson',church_asmodeus:quest.churchConverted?'churchArcComplete':'dedicateChurch'})[scene];return quest.chapter7Complete?[]:[point(id)].filter(Boolean);}
  function target(){return points()?.[0]||null;}
  function npcs(){if(!quest.chapter7)return null;if(scene==='church_night')return [{id:'loyal_deputy',x:376,y:248}];if(scene==='church_approach')return approachActors();if(scene==='church_flank')return flankActors();if(scene==='church_entry')return quest.entryCleared?[]:[[282,192],[325,168],[368,192],[410,208]].map(([x,y])=>({id:'church_acolyte',x,y}));if(scene==='church_hall')return quest.hallCleared?[]:[{id:'twin1',x:280,y:152},{id:'twin2',x:376,y:152}];if(scene==='church_sanctuary')return sanctuaryActors();if(['church_ruins','mantis_training'].includes(scene))return quest.altarBroken&&!quest.mantisTraining?assassinActors():[];return [];}
  function approachActors(){
@@ -144,6 +162,10 @@ window.ChurchArc=(()=>{
   return actors;
  }
  function ritualPose(unit){
+  if(scene==='mantis_training'&&unit.id==='jamal'&&breachBeat?.kind==='pairedStrike'&&breachBeat.epoch===epoch){
+   const progress=reduce.matches?1:Math.min(1,(performance.now()-breachBeat.start)/breachDuration);
+   return {...unit,x:384+Math.round(progress*42),y:242+Math.round(Math.sin(progress*Math.PI)*12),dir:progress<.5?'right':'left',step:progress<1,anim:progress*.8};
+  }
   const stage=currentRitual();
   if(!stage)return unit;
   if(unit.id==='jamal')return {...unit,x:stage==='altar'?344:370,y:stage==='altar'?176:207,dir:'up',step:null};
@@ -185,6 +207,7 @@ window.ChurchArc=(()=>{
  }
  const collapseDuration=1000,strikeDuration=640;
  function assassinActors(){
+  if(scene==='mantis_training')return [{id:'mantis_master',x:328,y:224}];
   if(scene!=='church_ruins'||!collapseStart||collapseStart.epoch!==epoch){
    const progress=strikeProgress();
    return [{id:'mantis_master',x:Math.round(326+50*progress),y:Math.round(148+52*progress)}];
@@ -238,6 +261,17 @@ window.ChurchArc=(()=>{
   await say('jamal','Teach me.');
   await say('mantis_master','Then attend closely. Some I killed walk again. When we’re done, I must see to them.');
   quest.assassinKnowledge=true;
+ }
+ async function finishTraining(){
+  await journeyCard('Longacre · Red Mantis Training','J’Mal spends twenty-four hours training with the master. They drill footwork, timing, and the paired blades until his arms shake.');
+  await say('mantis_master','Take my sword belt and blades. Keep practicing. I have business to the southwest.');
+  await say('Chronicle','The master changes his appearance to that of a Chelish peasant, then limps down the road.');
+  quest.mantisTraining=true;
+  inventory=Inventory.equip(inventory,quest,'jamal','mantis_blades');
+  applyProgression();
+  NextChapter.refresh();
+  seedParty(328,248);
+  NextChapter.syncRoster?.();
  }
  function prepare(){seedParty(328,312);paintParty();save();}
  function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
@@ -294,12 +328,23 @@ window.ChurchArc=(()=>{
  else if(id==='altarRoad'&&scene==='church_sanctuary'&&quest.ghastDestroyed){await say('Chronicle','Jason and Draymus unravel the church’s consecration. Beneath it they sense a powerful presence trapped in the stone altar.');await travel('church_ruins',328,312);}
  else if(id==='breakAltar'&&scene==='church_ruins'&&quest.ghastDestroyed&&!quest.altarBroken)await breakAltar();
  else if(id==='assassinBoon'&&scene==='church_ruins'&&quest.altarBroken&&!quest.assassinKnowledge)await chooseBoon();
- else if(id==='trainingRoad')await travel('mantis_training',328,312);
- else if(id==='mantisLesson'){await journeyCard('Longacre · Twenty-four hours','J’Mal trains intensely with the freed assassin. The master disguises himself as a Chelish peasant. At the end he gives J’Mal a sword belt and blades, then limps away to the southwest.');quest.mantisTraining=true;inventory=Inventory.equip(inventory,quest,'jamal','mantis_blades');applyProgression();NextChapter.refresh();await say('jamal','Twenty-four hours. I am going to feel every one of them tomorrow.');await say('Chronicle','The master leaves his sword belt and blades with J’Mal. Disguised as a Chelish peasant, the master limps away toward the southwest.');}
+ else if(id==='trainingRoad'&&scene==='church_ruins'&&quest.assassinKnowledge)await travel('mantis_training',328,312);
+ else if(id==='mantisLesson'&&scene==='mantis_training'&&quest.assassinKnowledge&&!quest.mantisTraining&&!quest.mantisLessonStarted){
+  await say('mantis_master','First, your feet. Let one blade draw the eye. Step across his line before you bring the other through.');
+  await say('jamal','One to draw the guard, one to get past it. I’ll try it on the post.');
+  quest.mantisLessonStarted=true;
+ }
+ else if(id==='mantisDrill'&&scene==='mantis_training'&&quest.mantisLessonStarted&&!quest.mantisDrillDone){
+  await say('Chronicle','J’Mal steps around the practice post and follows his first cut with the second.');
+  await playBreach('pairedStrike');
+  await say('mantis_master','Again. Keep your feet moving when the first blade lands.');
+  quest.mantisDrillDone=true;
+ }
+ else if(id==='mantisFinish'&&scene==='mantis_training'&&quest.mantisDrillDone&&!quest.mantisTraining)await finishTraining();
  else if(id==='conversionRoad')await travel('church_asmodeus',328,312);
  else if(id==='dedicateChurch'){await say('razelago','The Archbaron has issued his decree. Jason is head pastor. The church is yours to remake.');await say('jason','Remove the stained glass. Destroy it. We will put this place to its proper use.');await say('Chronicle','The party pays more than four hundred gold pieces toward renovation. Workers replace broken fittings and work a blood-sealed symbol of Asmodeus into the floor beneath the pews.');quest.churchConverted=true;save();await journeyCard('Longacre · The Church Remade','The renovations are complete. Jason takes his place as head pastor beneath the sign of Asmodeus. Cimri becomes sheriff.');}
  else if(id==='churchArcComplete'){quest.chapter7Complete=true;await say('Chapter Seven complete','The missing remains led to Allamar’s last stand. Riley’s ghast is destroyed. J’Mal has trained with the freed assassin, Jason heads the converted church, and Cimri is sheriff.');}
  else return false;save();paintParty();updateObjective();return true;}
  function effects(g,t){nightEffects(g);if(scene!=='church_ruins'||!collapseStart||collapseStart.epoch!==epoch||reduce.matches)return;const p=Math.min(1,(performance.now()-collapseStart.at)/collapseDuration);g.save();g.globalAlpha=(1-p)*.7;for(let i=0;i<28;i++){const x=328+Math.sin(i*2.1)*(12+p*110),y=144+p*65+Math.cos(i*1.7)*p*22;g.fillStyle=i%2?'#a39582':'#6c655f';g.fillRect(Math.round(x),Math.round(y),4+i%4,4+i%3);}g.globalAlpha=(1-p)*.25;g.fillStyle='#c3b295';g.fillRect(210,96,230,180);g.restore();}
- return {ritualPose,soloFlank:()=>scene==='church_flank',install,load,mapImage,effects,effect,enemyPreparation,goal,points,target,npcs,afterBattle,support,drawSupport,drawAssassinStrike,dismissSummons,interact,chain};
+ return {ritualPose,soloFlank:()=>scene==='church_flank'||(scene==='mantis_training'&&!quest.mantisTraining),install,load,mapImage,effects,effect,enemyPreparation,goal,points,target,npcs,afterBattle,support,drawSupport,drawAssassinStrike,dismissSummons,interact,chain};
 })();
