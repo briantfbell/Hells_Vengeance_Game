@@ -739,7 +739,7 @@ function drawActor(g,u,height=55){
  const variant=u.id==='freya'?window.EgorianTrial?.movement():u.id==='draymus'?window.EgorianMort?.movement():null;
  const meta=variant?.meta||window.PARTY_FRAMES[u.id];let im=variant?.image||sheets[u.id];if(!im)return;
  const row=u.dir==='up'?2:u.dir==='down'?0:1,col=u.step?meta.walkCycle[Math.floor(u.anim*10)%4]:0,f=col===3?meta.oppositeStep.frames[row]:meta.frames[row*3+col],scale=height/(f.scaleBasis||meta.maxHeight);if(col===3)im=sheets[u.id+'-opposite'];
- const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);if(hp[u.id]===0)g.globalAlpha=.38;
+ const x=Math.round(u.x),y=Math.round(u.y);g.fillStyle='#02060c66';g.fillRect(x-8,y-2,16,4);g.save();g.translate(x,y+2-(u.lunge?Math.sin(u.lunge/.22*Math.PI)*5:0));if(u.dir==='left')g.scale(-1,1);g.globalAlpha*=u.opacity??(hp[u.id]===0?.38:1);
  g.drawImage(im,f.x,f.y,f.w,f.h,Math.round((f.x-f.anchorX)*scale),-Math.round(f.h*scale),Math.round(f.w*scale),Math.round(f.h*scale));g.restore();
 }
 function drawNPC(u){if(window.TathlumHunt?.drawPatrol(ctx,u))return;if(u.pose==='prone'||u.hp!==undefined&&u.hp<=0){ctx.save();ctx.globalAlpha*=u.opacity??(u.pose==='prone'?1:.65);ctx.translate(u.x,u.y);ctx.rotate(-Math.PI/2);const flat={...u,x:0,y:0,hp:undefined,pose:null};if(CORE.includes(u.id))drawActor(ctx,flat);else drawNPC(flat);ctx.restore();return;}if(u.id==='bruce'){drawActor(ctx,{...u,step:null,anim:0},55);return;}if(u.id==='reese'){drawActor(ctx,{...u,dir:'up',step:null,anim:0},55);return;}if(u.pose==='stocks'&&art.bolgartStocks){const im=art.bolgartStocks;ctx.drawImage(im,104,137,1046,1100,u.x-35,u.y-74,70,74);return;}
