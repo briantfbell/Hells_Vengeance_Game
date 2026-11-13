@@ -5,6 +5,8 @@ window.EgorianDischarge=(()=>{
  const map='egorian-discharge-square-v1.png',civilian='egorian-discharge-civilians-v1.png',helmet='egorian-zara-helmet-v1.png';
  const disguised='jason_disguised',zara='zara_helmeted',thrower='citizen-discharge-thrower';
  const freyaFront={x:146,y:23,w:314,h:848},freyaBack={x:711,y:22,w:303,h:852};
+ const zaraInLane={id:zara,x:356,y:254,height:63};
+ const throwerInLane={id:thrower,x:384,y:258,dir:'left',variant:3};
  let strike=null,throwsAt=null,helmetEpoch=-1;
  function install(){
   scenes[hotel].points.push(
@@ -15,11 +17,11 @@ window.EgorianDischarge=(()=>{
   );
   scenes[square]={
    name:'Egorian · The Keep Gates',image:map,spawn:[328,144],blocks:[],
-   walk:[{x:256,y:144,w:144,h:240}],lights:[[237,81],[405,81]],
+   walk:[{x:256,y:144,w:144,h:256}],lights:[[237,81],[405,81]],
    points:[
     {id:'egorianWalkShame',x:328,y:192,label:'Walk past the jeering crowd'},
     {id:'egorianZaraIntervenes',x:328,y:256,label:'Reach Zara in the crowd'},
-    {id:'egorianLeaveKeep',x:328,y:344,label:'Leave the square with Zara'}
+    {id:'egorianLeaveKeep',x:328,y:392,label:'Leave the square with Zara'}
    ]
   };
   MAP_LAYERS[square]={foreground:map,contain:true,background:{type:'solid',color:'#171a23'}};
@@ -67,13 +69,14 @@ window.EgorianDischarge=(()=>{
    crowd.push({id:'citizen-discharge-'+row+'-'+i,x,y,dir:left?'right':'left',variant:(i+row*3)%8});
   }
   const friends=[
-   {id:'guapo',x:410,y:216,dir:'left'},{id:'reese',x:448,y:225,dir:'left'},
-   {id:'draymus',x:191,y:226,dir:'right'},{id:'jamal',x:154,y:220,dir:'right'},
-   {id:disguised,x:187,y:257,height:52}
+   {id:'guapo',x:419,y:208,dir:'left'},{id:'reese',x:467,y:240,dir:'left'},
+   {id:'draymus',x:183,y:218,dir:'right'},{id:'jamal',x:130,y:232,dir:'right'},
+   {id:disguised,x:205,y:268,height:52}
   ];
-  const knight=quest.egorianZaraStoppedCrowd?{id:zara,x:280,y:302,height:63}:helmetEpoch===epoch?{id:zara,x:356,y:254,height:63}:{id:'zara',x:408,y:248,height:63};
-  const witness={id:thrower,x:384,y:258,dir:'left',variant:3,pose:quest.egorianZaraStoppedCrowd?'prone':null};
-  return [...crowd,...friends,knight,witness];
+  const knight=quest.egorianZaraStoppedCrowd?{...zaraInLane,x:280,y:302}:helmetEpoch===epoch?zaraInLane:{id:'zara',x:408,y:248,height:63};
+  const witness={...throwerInLane,pose:quest.egorianZaraStoppedCrowd?'prone':null};
+  const named=[...friends,knight,witness];
+  return [...crowd.filter(person=>!named.some(actor=>Math.abs(person.x-actor.x)<19&&Math.abs(person.y-actor.y)<28)),...named];
  }
 
  async function interact(id){
@@ -170,7 +173,9 @@ window.EgorianDischarge=(()=>{
   if(strike?.token===epoch&&!quest.egorianZaraStoppedCrowd){
    const p=Math.min(1,(performance.now()-strike.at)/580);
    g.save();g.globalAlpha=Math.sin(p*Math.PI)*.85;g.strokeStyle='#dcc8ac';g.lineWidth=2;
-   g.beginPath();g.moveTo(340+39*p,241-23*p);g.lineTo(389+9*p,248+9*p);g.stroke();
+   const handX=zaraInLane.x+8,handY=zaraInLane.y-29;
+   const hitX=throwerInLane.x,hitY=throwerInLane.y-24;
+   g.beginPath();g.moveTo(handX,handY+11*(1-p));g.lineTo(hitX+9*p,hitY-15*(1-p));g.stroke();
    g.restore();
   }
  }
