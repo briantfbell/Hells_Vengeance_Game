@@ -68,11 +68,17 @@ const JOURNEYS={
  scarlet_manor:'The household servant brings the party to Fex’s office. The Archbaron is waiting inside.'
 };
 function cancelJourney(){const resolve=journeyResolve;journeyResolve=null;journeyOpen=false;$('journey').hidden=true;$('journey').classList.remove('visible');$('journey-continue').disabled=true;if(resolve)resolve();}
-async function journeyCard(title,summary,commit=()=>{},illustration=null){
+async function journeyCard(title,summary,commit=()=>{},illustration=null,{outro=false}={}){
  const token=epoch,panel=$('journey'),button=$('journey-continue');journeyOpen=true;keys.clear();path=[];$('prompt').hidden=true;$('dice-panel').hidden=true;
  panel.classList.toggle('illustrated',!!illustration);
- panel.querySelector('.journey-card').style.backgroundImage=illustration
-  ? `linear-gradient(transparent 42%, #100d14eb 68%, #100d14), url("art-test/${illustration}")`
+ panel.classList.toggle('campaign-outro',outro);
+ panel.querySelector('.eyebrow').textContent=outro?'Folken Games presents':'HELL’S VENGEANCE · THE JOURNEY';
+ button.textContent=outro?'Return to main menu':'Continue ↵';
+ const gradient=outro?'transparent 72%, #100d14b0 81%, #100d14':'transparent 42%, #100d14eb 68%, #100d14';
+ const card=panel.querySelector('.journey-card');
+ PresentationPolish.setJourneyEffects(card,illustration);
+ card.style.backgroundImage=illustration
+  ? `linear-gradient(${gradient}), url("art-test/${illustration}")`
   : '';
  $('journey-title').textContent=title;$('journey-summary').textContent=panel.classList.contains('decree-page')?summary:summary.replace(/(?<!\bSt)([.!?])[ \t]+(?=[A-Z])/g,'$1\n');button.disabled=true;panel.hidden=false;panel.classList.add('visible');
  commit();button.disabled=false;panel.scrollIntoView({block:'start'});button.focus({preventScroll:true});await new Promise(resolve=>journeyResolve=resolve);if(token!==epoch)throw CANCEL;
@@ -80,6 +86,22 @@ async function journeyCard(title,summary,commit=()=>{},illustration=null){
  // Keep the black card covering the map until the next card, dialogue or end of the scene.
 }
 $('journey-continue').onclick=()=>{if(!journeyOpen||$('journey-continue').disabled||!journeyResolve)return;const resolve=journeyResolve;journeyResolve=null;$('journey-continue').disabled=true;resolve();};
+const JOURNEY_ART={
+ western_star:'transition-western-star-v1.png',
+ church_asmodeus:'church-ruins-v1.png',
+ court_lower:'court-platforms-v1.png',
+ fungus_shelter:'transition-uskwood-fire-v1.png',
+ fastness_hall:'transition-valors-fastness-v1.png',
+ egorian_bridge:'egorian-west-bridge-v1.png',
+ whisperwood_unicorn_glade:'whisperwood-unicorn-glade-v1.png',
+ arego_inferno_gate:'transition-inferno-gate-v1.png',
+ egorian_sting_hall:'transition-egorian-sting-v1.png',
+ egorian_pale_graveyard:'transition-night-of-the-pale-v1.png',
+ barrow_covenant:'transition-fourteenth-stone-v1.png',
+ darkrain_skull_slope:'darkrain-skull-v1.png',
+ nidal_arrival_court:'transition-split-missions-v1.png',
+ dinyar_bridge_ward:'dinyar-bridge-ward-v1.png'
+};
 async function travel(next,x,y,dir='up'){
  let summary=JOURNEYS[next];
  if(next==='western_star'&&quest.voyagePezzack)summary='The Western Star casts off from Pezzack. The crew keeps watch along the coast.';
@@ -92,7 +114,8 @@ async function travel(next,x,y,dir='up'){
  if(next==='ash_house'&&quest.chapter6)summary=!quest.ovinnikReported?'Bring the still-living gate guardian to Razelago. Learn what attacked the party.':'The party withdraws from the church standoff. Rest at Ash House before J’Mal’s evening watch.';
  if(next==='longacre_jail')summary=quest.chapter4?(quest.hillSearched?'Return with Riley after the unsuccessful hill search. Check on Bolgart in custody.':'Escort and question the prisoners at the jail.'):quest.rhonaDismissed?'Return to the jail, now staffed by retained deputies and replacement guards.':quest.decreesIssued?'Post the jail’s copy of the notices and deliver the party’s separate dismissal of Rhona.':'Visit the western gate and jail.';
  if(next==='longacre_square')summary=!quest.sermonDispersed?'The church square is gathering for Allamar’s sermon. Listen to her claims and counter the talk of rebellion.':quest.deputiesReported&&!quest.tavernNoticeTorn&&!quest.compactSworn?'After a quiet night at Ash House, the party crosses Longacre on its way to Scarlet Manor. Check the public notices along the way.':'Return to the square. '+QuestGuide.current().text;
- await journeyCard(scenes[next].name,summary,()=>setScene(next,x,y,dir));
+ const illustration=next==='arego_inferno_gate'&&quest.aregoGateSurveyed?null:JOURNEY_ART[next];
+ await journeyCard(scenes[next].name,summary,()=>setScene(next,x,y,dir),illustration);
 }
 function storySectionLabel(q,location){
  if(location==='guapo_party_boat')return 'Epilogue';
@@ -408,7 +431,7 @@ async function interact(requestedId=null){
 async function finishTempleEscape(){
  await journeyCard('The Silver Star · Fire and false evidence','The temple’s sacred protections are dismantled. After his warning about the fire, J’Mal is stabilized. His wounds are still too severe to walk; the party carries him out on a stretcher as the burning shop collapses part of the tunnels below.\n\nOn the way out, the party takes musical instruments from the shop above. They will fence the stolen goods far from Kintargo.');
  await journeyCard('Kintargo · Nox’s payment','Captain Freya returns with Dottari guards. Her military standing and family connections lend weight to her words. She makes a show of trying to fight the fire, and declares it an unfortunate accident.\n\nThe contractor, known to the party only as Nox, appears human: a woman carrying a fine glaive, with an unsettling power about her. She pays each member one hundred gold pieces and sends them to a safehouse.');
- await journeyCard('Kintargo · The safehouse','From a lavish safehouse balcony, the team watches three fires burn across the city. They lie low for nearly twenty-four hours.\n\nAfter resting, a covered wagon takes them to the docks, where The Western Star awaits.',()=>{for(const id of CORE)hp[id]=STATS[id].hp;setScene('street',600,184,'left');});
+ await journeyCard('Kintargo · The safehouse','From a lavish safehouse balcony, the team watches three fires burn across the city. They lie low for nearly twenty-four hours.\n\nAfter resting, a covered wagon takes them to the docks, where The Western Star awaits.',()=>{for(const id of CORE)hp[id]=STATS[id].hp;setScene('street',600,184,'left');},'transition-kintargo-safehouse-v1.png');
  await say('guapo','A pleasure cruiser? Now that is a proper escape.');quest.done=true;save();updateObjective();
 }
 async function templeStoryStrike(){

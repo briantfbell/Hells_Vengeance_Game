@@ -2505,7 +2505,26 @@ test('Barleybridge uses El Guapo’s solo roster and gates the scout report',asy
  const boatSave=()=>w.SaveFiles.decode(w.SaveFiles.encode(checkpoint(w,{...replay('guapo-banquet'),quest:w.quest})));
  assert(boatSave().quest.barleybridgePlanReviewed);
  assert.equal(w.BarleybridgeScout.target().id,'guapoBanquet');
+ const outroFlow=[];
+ w.journeyCard=async(name,text,_commit,art,options)=>{
+  w.transcript.push({name,text});
+  outroFlow.push([name,art,options?.outro]);
+ };
+ w.save=()=>{
+  assert(w.quest.guapoBanquetComplete);
+  outroFlow.push(['Saved']);
+ };
+ w.TitleScreen={show:menu=>{
+  assert(menu);
+  outroFlow.push(['Main menu']);
+ }};
  await step('guapoBanquet');
+ assert.deepEqual(outroFlow,[
+  ['To be continued…',undefined,undefined],
+  ['Hell’s Vengeance','guapo-banquet-outro-v1.png',true],
+  ['Saved'],
+  ['Main menu']
+ ]);
  w.quest=boatSave().quest;
  assert(w.quest.guapoBanquetComplete);
  assert.equal(w.BarleybridgeScout.target(),null);

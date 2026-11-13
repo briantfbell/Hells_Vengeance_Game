@@ -67,7 +67,8 @@ const TitleScreen=(()=>{
   if(!mode||!poster)return false;
   g.save();g.imageSmoothingEnabled=false;g.drawImage(plain,0,0,640,480);
   // Keep the printed logos fixed while the underlying light sources flicker.
-  g.drawImage(poster,0,0,poster.width,poster.height*.43,0,0,640,480*.43);
+  const logoBand=.46;
+  g.drawImage(poster,0,0,poster.width,poster.height*logoBand,0,0,640,480*logoBand);
   if(!reduce.matches){
    g.globalCompositeOperation='screen';masks.forEach((m,i)=>{g.globalAlpha=.10+.075*Math.sin(t*(1.4+i*.12)+i*2)+.025*Math.sin(t*4+i);g.drawImage(m,0,0);});
    g.globalCompositeOperation='source-over';

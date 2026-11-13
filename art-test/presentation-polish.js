@@ -93,5 +93,50 @@ window.PresentationPolish=(()=>{
   }
   g.restore();
  }
- return {worldFire,draw,paintDice,phase,install,load,citizenMeta,citizenPortrait,captive,captivePoints,banter,decree,hospiceLetter,world,smoke};
+
+ // Positions and radii are percentages of the source illustration.
+ const journeyEffects={
+  'transition-western-star-v1.png':{lights:[[5,12,5,11]]},
+  'church-ruins-v1.png':{aspect:1585/992,lights:[[17,46,3,7],[29,42,3,6],[57,43,3,6],[74,43,3,6],[86,48,3,6]]},
+  'court-platforms-v1.png':{aspect:1586/992,lights:[[29,33,2,5],[48,30,2,5],[56,31,2,5],[72,35,2,5]]},
+  'transition-uskwood-fire-v1.png':{lights:[[25,16,13,17],[46,24,15,16]]},
+  'transition-valors-fastness-v1.png':{lights:[[68,32,10,12]]},
+  'egorian-west-bridge-v1.png':{aspect:1586/992,lights:[[39,26,3,7],[61,26,3,7]]},
+  'whisperwood-unicorn-glade-v1.png':{aspect:1586/992,water:[[88,10,3,4],[82,24,4,5],[85,40,4,5],[79,58,4,5]]},
+  'transition-inferno-gate-v1.png':{lights:[[15,40,4,7],[49,40,19,19],[87,40,4,7]]},
+  'transition-egorian-sting-v1.png':{lights:[[11,14,4,8],[16,17,4,8],[20,15,3,7]]},
+  'transition-night-of-the-pale-v1.png':{lights:[[19,32,7,11],[38,38,4,7],[81,40,4,7]]},
+  'transition-fourteenth-stone-v1.png':{lights:[[40,46,3,5],[52,50,3,5],[66,46,3,5]]},
+  'transition-split-missions-v1.png':{lights:[[12,36,6,10,'violet'],[31,30,6,12,'violet']]},
+  'dinyar-bridge-ward-v1.png':{aspect:1585/992,lights:[[16,58,3,7],[43,47,3,6],[58,47,3,6],[86,61,3,7]]},
+  'transition-kintargo-safehouse-v1.png':{lights:[[31,33,7,8],[51,34,8,9],[73,40,6,8]]},
+  'transition-pezzack-manse-v1.png':{lights:[[27,42,9,12],[53,27,12,16],[74,16,15,16]]},
+  'transition-dusk-square-v1.png':{lights:[[11,39,4,8],[28,43,4,6],[79,44,4,7]]},
+  'menador-twins-v1.png':{lights:[[5,28,4,8]]}
+ };
+ function setJourneyEffects(card,illustration){
+  card.querySelector('.journey-effects')?.remove();
+  const effects=journeyEffects[illustration];
+  if(!effects)return;
+  const layer=document.createElement('div');
+  layer.className='journey-effects';
+  layer.setAttribute('aria-hidden','true');
+  layer.style.setProperty('--art-aspect',effects.aspect??4/3);
+  for(const kind of ['lights','water']){
+   for(const [index,[x,y,rx,ry,tint]] of (effects[kind]??[]).entries()){
+    const patch=document.createElement('span');
+    patch.className=kind==='lights'?'journey-light':'journey-water';
+    if(tint)patch.classList.add(tint);
+    patch.style.left=(x-rx)+'%';
+    patch.style.top=(y-ry)+'%';
+    patch.style.width=(rx*2)+'%';
+    patch.style.height=(ry*2)+'%';
+    patch.style.animationDelay=(-index*1.17)+'s';
+    patch.style.animationDuration=((kind==='lights'?3.9:6.4)+index*.43)+'s';
+    layer.append(patch);
+   }
+  }
+  card.prepend(layer);
+ }
+ return {setJourneyEffects,worldFire,draw,paintDice,phase,install,load,citizenMeta,citizenPortrait,captive,captivePoints,banter,decree,hospiceLetter,world,smoke};
 })();

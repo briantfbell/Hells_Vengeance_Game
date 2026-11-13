@@ -2,7 +2,7 @@
 
 window.BarleybridgeScout=(()=>{
  const temple='ilnius_inner_temple',approach='barleybridge_approach',image='barleybridge-approach-v1.png';
- const boat='guapo_party_boat',boatArt='guapo-party-boat-v1.png';
+ const boat='guapo_party_boat',boatArt='guapo-party-boat-v1.png',outroArt='guapo-banquet-outro-v1.png';
  const planNotes=[
   ['Tathlum Plan · Barleybridge','El Guapo has scouted the approach. The plan called for the blood of slain innocents to anoint Parnoneryx’s head. The outcome at Barleybridge remains unknown.'],
   ['Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.'],
@@ -48,7 +48,7 @@ window.BarleybridgeScout=(()=>{
   JOURNEYS[approach]='El Guapo has gone ahead to Barleybridge. The company expects limited paladin presence, and the scout is to find out what the approach looks like.';
  }
  async function load(loader){
-  await Promise.all([[approach,image],[boat,boatArt]].map(async ([id,source])=>{art[id]=await loader(source);}));
+  await Promise.all([loader(outroArt),...[[approach,image],[boat,boatArt]].map(async ([id,source])=>{art[id]=await loader(source);})]);
  }
  function mapImage(){return scene===approach||scene===boat?art[scene]:null;}
  function roster(){
@@ -89,7 +89,7 @@ window.BarleybridgeScout=(()=>{
     quest.barleybridgeScoutComplete=true;
     break;
    case 'barleybridgePlan':
-    for(const [title,summary] of planNotes)await journeyCard(title,summary,()=>{});
+    for(const [title,summary] of planNotes)await journeyCard(title,summary,undefined,'transition-tathlum-plans-v1.png');
     quest.barleybridgePlanReviewed=true;
     break;
    case 'guapoInvite':
@@ -98,9 +98,12 @@ window.BarleybridgeScout=(()=>{
     break;
    case 'guapoBanquet':
     await say('guapo','To the company. If anyone asks, those balloons were already like that.');
-    await journeyCard('To be continued…','You’ve reached the end of the recorded campaign. The rest of the Tathlum plan is still in your journal and planning maps.');
+    await journeyCard('To be continued…','You’ve reached the end of the recorded campaign for now. The rest of the Tathlum plan is still in your journal and planning maps. Tonight, El Guapo is buying.');
+    await journeyCard('Hell’s Vengeance','A Campaign Reborn',undefined,outroArt,{outro:true});
     quest.guapoBanquetComplete=true;
-    break;
+    save();
+    TitleScreen.show(true);
+    return true;
   }
   save();
   paintParty();

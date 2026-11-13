@@ -80,3 +80,108 @@ body.is-combat #dialog{z-index:14}
 #journey.illustrated .eyebrow{margin-bottom:1.25cqw}
 #journey.illustrated #journey-title{margin-bottom:1.6cqw}
 #journey.illustrated #journey-summary{margin-bottom:2cqw}
+
+#journey.campaign-outro .journey-card{
+ padding-bottom:2cqw;
+ text-shadow:0 2px 3px #100d14,0 0 6px #100d14;
+}
+#journey.campaign-outro .eyebrow,
+#journey.campaign-outro #journey-title,
+#journey.campaign-outro #journey-summary{
+ margin:0 0 .5cqw;
+}
+#journey.campaign-outro #journey-summary{margin-bottom:1.2cqw;text-align:center}
+
+/* Light overlays are aligned to the 4:3 banquet illustration. */
+#journey.campaign-outro .journey-card{position:relative;isolation:isolate}
+#journey.campaign-outro .journey-card::before,
+#journey.campaign-outro .journey-card::after{
+ content:"";
+ position:absolute;
+ pointer-events:none;
+ z-index:-1;
+}
+#journey.campaign-outro .journey-card::before{
+ inset:0;
+ background:
+  radial-gradient(ellipse 2.7% 4.2% at 10.3% 15.5%,#ffad42b0,transparent),
+  radial-gradient(ellipse 3% 4.3% at 17.3% 15.4%,#ffc164a0,transparent),
+  radial-gradient(ellipse 3% 4.5% at 79.1% 16%,#ffb454c0,transparent);
+ mix-blend-mode:screen;
+ animation:banquet-lanterns 4.7s linear infinite;
+}
+#journey.campaign-outro .journey-card::after{
+ left:88.5%;top:20.7%;width:7%;height:7.2%;
+ background:
+  radial-gradient(ellipse 38% 4% at 48% 16%,#fff1bd9c,transparent),
+  radial-gradient(ellipse 23% 4% at 55% 32%,#ffeab5b8,transparent),
+  radial-gradient(ellipse 35% 4% at 41% 51%,#fff1bd9c,transparent),
+  radial-gradient(ellipse 20% 4% at 57% 68%,#ffeab59c,transparent),
+  radial-gradient(ellipse 39% 4% at 49% 88%,#ffeab57d,transparent);
+ mix-blend-mode:screen;
+ animation:banquet-moonlight 5.8s ease-in-out infinite;
+}
+@keyframes banquet-lanterns{
+ 0%,100%{opacity:.12}
+ 18%{opacity:.29}
+ 31%{opacity:.17}
+ 44%{opacity:.33}
+ 58%{opacity:.20}
+ 64%{opacity:.26}
+ 82%{opacity:.14}
+}
+@keyframes banquet-moonlight{
+ 0%,100%{opacity:.14;transform:translateX(-5%)}
+ 38%{opacity:.52;transform:translateX(6%)}
+ 64%{opacity:.23;transform:translateX(2%)}
+}
+@media(prefers-reduced-motion:reduce){
+ #journey.campaign-outro .journey-card::before,
+ #journey.campaign-outro .journey-card::after{animation:none;opacity:0}
+}
+
+#journey.illustrated .journey-card{position:relative;isolation:isolate;overflow:hidden}
+.journey-effects{
+ position:absolute;
+ z-index:-1;
+ pointer-events:none;
+ top:50%;
+ left:50%;
+ height:100%;
+ aspect-ratio:var(--art-aspect);
+ transform:translate(-50%,-50%);
+ mask-image:linear-gradient(#000 42%,#0002 68%,transparent);
+ mix-blend-mode:screen;
+}
+.journey-effects span{position:absolute}
+.journey-light{
+ background:radial-gradient(ellipse,#ffb04da8,transparent 70%);
+ animation:journey-flicker 4s linear infinite;
+}
+.journey-light.violet{background:radial-gradient(ellipse,#bd78ffaa,transparent 70%)}
+.journey-water{
+ background:
+  radial-gradient(ellipse 35% 5% at 43% 24%,#cceaff85,transparent),
+  radial-gradient(ellipse 26% 4% at 62% 42%,#b9e1ff80,transparent),
+  radial-gradient(ellipse 35% 6% at 39% 62%,#c5edff7c,transparent),
+  radial-gradient(ellipse 19% 5% at 54% 79%,#d6edff91,transparent);
+ animation:journey-shimmer 6s ease-in-out infinite;
+}
+@keyframes journey-flicker{
+ 0%,100%{opacity:.09}
+ 19%{opacity:.29}
+ 31%{opacity:.16}
+ 47%{opacity:.36}
+ 58%{opacity:.22}
+ 69%{opacity:.32}
+ 85%{opacity:.14}
+}
+@keyframes journey-shimmer{
+ 0%,100%{opacity:.12;transform:translateX(-5%)}
+ 44%{opacity:.55;transform:translateX(6%)}
+ 69%{opacity:.25;transform:translateX(1%)}
+}
+@media(prefers-reduced-motion:reduce){
+ .journey-effects{display:none}
+ .journey-effects span{animation:none}
+}

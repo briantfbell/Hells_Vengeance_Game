@@ -155,7 +155,7 @@ window.Pezzack=(()=>{
     if(token!==epoch)return false;
     quest.pezzackManseBurned=true;
     save();
-    await say('Chronicle','Bruce sweeps over the manse in the form of a blue dragon. Fire takes the building. The holding wing still stands.');
+    await journeyCard('Pezzack · Fire over the manse','Bruce sweeps over the manse in the form of a blue dragon. Fire takes the building. The holding wing still stands.',()=>{},'transition-pezzack-manse-v1.png');
     break;
    }
    case 'pezzackFreePrisoners':{

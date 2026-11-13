@@ -235,7 +235,7 @@ window.PoliticalMovement=(()=>{
   await journeyCard('Longacre · Dusk in the Square','The party announces Bo Gramel’s execution for dusk. While the town gathers, workers raise a guillotine in the church square.',()=>{
    quest.boCaptured=true;
    setScene('execution_square',328,296);
-  });
+  },'transition-dusk-square-v1.png');
  }
  function drawArrest(g){
   if(scene!=='gramel_gate'||!arrestBeat||arrestBeat.epoch!==epoch||reduce.matches)return;
