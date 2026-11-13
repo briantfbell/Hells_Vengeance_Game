@@ -8,13 +8,13 @@ window.AregoExit=(()=>{
  function install(){
   scenes[gate].points.push(
    {id:'aregoIntervention',x:328,y:304,label:'Meet Corrine and the Queen’s envoy'},
-   {id:'aregoNegotiateExit',speaker:contessa,x:288,y:304,label:'Hear the terms for closing the gate'},
+   {id:'aregoNegotiateExit',speaker:contessa,x:280,y:352,label:'Hear the terms for closing the gate'},
    {id:'aregoSealPortal',x:328,y:288,label:'Watch the Inferno Gate close'},
-   {id:'aregoEscape',speaker:'corrine',x:232,y:320,label:'Gather for the teleport to Egorian'}
+   {id:'aregoEscape',speaker:'corrine',x:216,y:336,label:'Gather for the teleport to Egorian'}
   );
   scenes[hotel]={
    name:'Egorian · Hotel Barato',image:hotelArt,spawn:hotelSpawn,blocks:[],
-   walk:[{x:64,y:176,w:448,h:160},{x:192,y:128,w:288,h:48}],lights:[[82,103],[224,42],[422,42],[567,179]],
+   walk:[{x:32,y:160,w:480,h:176},{x:192,y:128,w:288,h:32},{x:288,y:112,w:64,h:16}],lights:[[82,103],[224,42],[422,42],[567,179]],
    points:[{id:'aregoHotelReports',x:328,y:280,label:'See Jason and Freya off to report'}]
   };
   MAP_LAYERS[hotel]={foreground:hotelArt,contain:true,background:{type:'solid',color:'#19151a'}};
@@ -51,8 +51,8 @@ window.AregoExit=(()=>{
   if(scene===hotel)return [];
   if(scene!==gate||!quest.aregoCorrineArrived)return null;
   return [...(AregoReturn.npcs(t)||[]),
-   {id:'corrine',x:232,y:304,height:57},
-   {id:contessa,x:288,y:288,height:68}
+   {id:'corrine',x:216,y:336,height:57},
+   {id:contessa,x:280,y:352,height:68}
   ];
  }
  async function seal(){
@@ -130,7 +130,7 @@ window.AregoExit=(()=>{
    for(let i=0;i<32;i++){
     const angle=i*Math.PI/16+p*2,r=17+p*(41+i%5*5);
     g.globalAlpha=(1-p)*.6;g.fillStyle=i%3?'#decde9':'#f4e6b0';
-    g.fillRect(Math.round(268+Math.cos(angle)*r),Math.round(309+Math.sin(angle)*r*.55),3,2);
+    g.fillRect(Math.round(248+Math.cos(angle)*r),Math.round(336+Math.sin(angle)*r*.55),3,2);
    }
    g.restore();
   }
