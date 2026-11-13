@@ -84,7 +84,7 @@ window.QuestGuide={current(){
  const daggers=window.SenaraDaggers?.goal();
  if(daggers)return {text:daggers,target:SenaraDaggers.target()};
  const cover=window.SenaraCover?.goal();
- if(cover)return {text:cover,target:SenaraCover.target()};
+ if(cover)return {text:cover,target:SenaraCover.target(),targets:SenaraCover.points()??[]};
  const senara=window.SenaraArrival?.goal();
  if(senara)return {text:senara,target:SenaraArrival.target()};
  const excruciation=window.EgorianExecution?.goal();
