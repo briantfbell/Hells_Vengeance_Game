@@ -58,8 +58,8 @@ window.AregoReturn=(()=>{
   const {x,y,dir}=units[0];
   save();
   const enemies=[
-   {id:'fex',name:'Archbaron Fex',hp:STATS.fex.hp,max:STATS.fex.hp},
-   ...[1,2].map(i=>({id:bearded,name:'Bearded Devil '+i,hp:22,max:STATS[bearded].hp}))
+   {id:'fex',name:'Archbaron Fex',shortName:'Fex',hp:STATS.fex.hp,max:STATS.fex.hp},
+   ...[1,2].map(i=>({id:bearded,name:'Bearded Devil '+i,shortName:'Devil '+i,hp:22,max:STATS[bearded].hp}))
   ];
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir]});
   log('Visperthul joins the battle\nTwo bone devils press the enemy line.');
