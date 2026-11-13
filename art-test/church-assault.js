@@ -14,7 +14,7 @@ window.ChurchArc=(()=>{
     for(const [i,[x,y]] of trackMarks.entries()){g.fillRect(x+(i%2)*4,y,4,3);g.fillRect(x-3,y+5,3,2);}
    }
   }
-  if(scene!=='church_approach'||!breachBeat||breachBeat.epoch!==epoch||reduce.matches)return;
+  if(!['church_approach','church_entry'].includes(scene)||!breachBeat||breachBeat.epoch!==epoch||reduce.matches)return;
   const progress=Math.min(1,(performance.now()-breachBeat.start)/breachDuration);
   if(progress>=1)return;
   g.save();
@@ -23,11 +23,26 @@ window.ChurchArc=(()=>{
     const flight=Math.max(0,Math.min(1,progress*1.55-i*.42));
     if(flight>0&&flight<1){g.fillStyle='#ddd6bd';g.fillRect(Math.round(296+34*flight),Math.round(194-35*flight),8,2);}
    }
-  }else{
+  }else if(breachBeat.kind==='glass'){
    g.globalAlpha=1-progress;
    for(let i=0;i<14;i++){
     g.fillStyle=['#cabd7c','#99734e','#778fb5'][i%3];
     g.fillRect(Math.round(365+(i-7)*progress*6),Math.round(130+(i%4)*6+progress*42),3,4);
+   }
+  }else if(breachBeat.kind==='grease'||breachBeat.kind==='fire'){
+   for(let i=0;i<14;i++){
+    const x=Math.round(270+i*9),y=Math.round(194+Math.sin(i*2)*11);
+    g.fillStyle=i%2?'#4d4450':'#655767';g.fillRect(x,y,10,4);
+    if(breachBeat.kind==='fire'&&progress>i*.025){
+     g.fillStyle=i%2?'#d77832':'#f4bf64';
+     g.fillRect(x+3,y-4-Math.round(Math.sin(i+progress*12)*3),4,9);
+    }
+   }
+  }else if(breachBeat.kind==='innerDoors'){
+   g.globalAlpha=1-progress;
+   for(let i=0;i<12;i++){
+    g.fillStyle=i%2?'#a17b4f':'#684a36';
+    g.fillRect(Math.round(320+(i-6)*(2+progress*5)),Math.round(133+(i%4)*7+progress*26),4,3);
    }
   }
   g.restore();
@@ -54,7 +69,7 @@ window.ChurchArc=(()=>{
  function goal(){if(!quest.chapter6Complete)return null;if(!quest.chapter7)return 'Continue: The Missing Dead.';const goals=['Hear the deputy’s report.','Follow the fresh tracks to the church.','Scout the barred church.','Clear the entrance.','Force the doors and clear the hallway.','Interrupt Allamar’s resurrection.','Defeat the sanctuary defenders.','Face Allamar’s final stand.','Destroy Riley’s ghast.','Examine and break the stone altar.','Speak to the freed assassin.','Complete J’Mal’s twenty-four-hour training.','Dedicate the church to Asmodeus.','Close the chapter.','Chapter complete · Jason is the new pastor.'];const i=chain.findIndex(k=>!quest[k]);return i<0?goals.at(-1):goals[Math.max(0,i-1)];}
  function points(){if(!quest.chapter6Complete)return null;if(!quest.chapter7)return scene==='execution_square'?[point('churchArcRoad')]:[];const id=({church_night:quest.bodiesMissing?'followChurchTracks':'missingRemains',church_approach:'breachChurch',church_entry:quest.entryCleared?'hallRoad':'entryFight',church_hall:quest.hallCleared?'sanctuaryRoad':'hallFight',church_sanctuary:!quest.resurrectionBroken?'interruptRitual':!quest.sanctuaryCleared?'sanctuaryFight':!quest.allamarDefeated?'allamarFight':!quest.ghastDestroyed?'destroyGhast':'altarRoad',church_ruins:!quest.altarBroken?'breakAltar':!quest.assassinKnowledge?'assassinBoon':'trainingRoad',mantis_training:quest.mantisTraining?'conversionRoad':'mantisLesson',church_asmodeus:quest.churchConverted?'churchArcComplete':'dedicateChurch'})[scene];return quest.chapter7Complete?[]:[point(id)].filter(Boolean);}
  function target(){return points()?.[0]||null;}
- function npcs(){if(!quest.chapter7)return null;if(scene==='church_night')return [{id:'loyal_deputy',x:376,y:248}];if(scene==='church_approach')return approachActors();if(scene==='church_entry')return quest.entryCleared?[]:[{id:'church_acolyte',x:376,y:200}];if(scene==='church_hall')return quest.hallCleared?[]:[{id:'twin1',x:280,y:152},{id:'twin2',x:376,y:152}];if(scene==='church_sanctuary')return [...(!quest.allamarDefeated?[{id:'allamar',x:328,y:144}]:[]),...(!quest.ghastDestroyed&&quest.resurrectionBroken?[{id:'ghast_riley',x:376,y:200}]:[]),...(quest.sanctuaryCleared?[]:[{id:'kuribu',x:424,y:168}])];if(['church_ruins','mantis_training'].includes(scene))return quest.altarBroken&&!quest.mantisTraining?[{id:'mantis_master',x:376,y:200}]:[];return [];}
+ function npcs(){if(!quest.chapter7)return null;if(scene==='church_night')return [{id:'loyal_deputy',x:376,y:248}];if(scene==='church_approach')return approachActors();if(scene==='church_entry')return quest.entryCleared?[]:[[282,192],[325,168],[368,192],[410,208]].map(([x,y])=>({id:'church_acolyte',x,y}));if(scene==='church_hall')return quest.hallCleared?[]:[{id:'twin1',x:280,y:152},{id:'twin2',x:376,y:152}];if(scene==='church_sanctuary')return [...(!quest.allamarDefeated?[{id:'allamar',x:328,y:144}]:[]),...(!quest.ghastDestroyed&&quest.resurrectionBroken?[{id:'ghast_riley',x:376,y:200}]:[]),...(quest.sanctuaryCleared?[]:[{id:'kuribu',x:424,y:168}])];if(['church_ruins','mantis_training'].includes(scene))return quest.altarBroken&&!quest.mantisTraining?[{id:'mantis_master',x:376,y:200}]:[];return [];}
  function approachActors(){
   const deputies=[{id:'loyal_deputy',x:218,y:284},{id:'loyal_deputy',x:254,y:280},{id:'loyal_deputy',x:395,y:280},{id:'loyal_deputy',x:431,y:284}];
   if(breachBeat?.kind==='daggers'&&breachBeat.epoch===epoch){
@@ -86,7 +101,7 @@ window.ChurchArc=(()=>{
  function prepare(){seedParty(328,312);paintParty();save();}
  function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
  function fight(kind,enemies){prepare();if(kind==='church_allamar')units=units.filter(u=>u.id!=='draymus');if(kind==='church_hall')units=units.filter(u=>u.id!=='jamal');startBattle(0,false,{kind,enemies});if(kind==='church_entry')battle.enemies.forEach(e=>e.shaken=2);if(kind==='church_sanctuary'){battle.paralyzed='jamal';if(units.filter(u=>hp[u.id]>0).every(u=>u.id==='jamal')){battle.paralyzed=null;battle.round=2;planEnemyRound();}}paintBattle();log(kind==='church_allamar'?'Draymus withdraws with the controlled ghast. Cimri holds the flank.':kind==='church_sanctuary'?'J’Mal is paralyzed for the opening round. Cimri supports the party.':'Cimri supports the flank · one strike each round.');}
- async function afterBattle(kind){prepare();if(kind==='church_entry'){quest.entryCleared=true;await say('Chronicle','Draymus’s Grease sends defenders sprawling. Jason sets the slick alight; Cimri and J’Mal close from the flanks. The entrance is secured.');}if(kind==='church_hall'){quest.hallCleared=true;await say('Chronicle','The defenders give ground. Freya pushes into the sanctuary through splintering pews. Outside, J’Mal and the deputies are still fighting the iron seams of the second window.');await say('draymus','That winged archer is a Kuribu. A lesser angel.');}if(kind==='church_sanctuary'){quest.sanctuaryCleared=true;await say('Chronicle','The remaining acolytes and Lacall fall. The Kuribu’s mission has failed; it leaves the church. J’Mal finally shakes off the paralysis.');await say('Chronicle','Allamar emerges from her study carrying a sword and shield. Her sons are dead, and her attempt to restore Riley has made a monster. She will not yield.');}if(kind==='church_allamar'){quest.allamarDefeated=true;await say('Chronicle','Cimri and J’Mal close from opposite sides. Allamar falls. Her spiritual sword and celestial wolf vanish with her.');}save();paintParty();updateObjective();}
+ async function afterBattle(kind){prepare();if(kind==='church_entry'){quest.entryCleared=true;await say('Chronicle','The four acolytes fall. The party secures the vestibule and turns toward the barred double doors.');}if(kind==='church_hall'){quest.hallCleared=true;await say('Chronicle','The defenders give ground. Freya pushes into the sanctuary through splintering pews. Outside, J’Mal and the deputies are still fighting the iron seams of the second window.');await say('draymus','That winged archer is a Kuribu. A lesser angel.');}if(kind==='church_sanctuary'){quest.sanctuaryCleared=true;await say('Chronicle','The remaining acolytes and Lacall fall. The Kuribu’s mission has failed; it leaves the church. J’Mal finally shakes off the paralysis.');await say('Chronicle','Allamar emerges from her study carrying a sword and shield. Her sons are dead, and her attempt to restore Riley has made a monster. She will not yield.');}if(kind==='church_allamar'){quest.allamarDefeated=true;await say('Chronicle','Cimri and J’Mal close from opposite sides. Allamar falls. Her spiritual sword and celestial wolf vanish with her.');}save();paintParty();updateObjective();}
  async function support(){if(!battle?.kind.startsWith('church_'))return;if(battle.kind==='church_sanctuary'&&battle.round===1){await animateAction({id:'kuribu'},{id:'cimri'},'attack',true);log('Kuribu’s arrows pin Cimri. Her flank attack is delayed.');return;}const e=livingEnemy();if(e){await animateAction({id:'cimri'},e,'attack',true,()=>{const value=Math.min(4,e.hp-1);e.hp-=value;flash(e,'−'+value);});log('Cimri attacks from the flank · a supporting cut against '+e.name+'.');}}
  async function enemyPreparation(enemy){if(enemy.id==='allamar'&&battle.round%2===0){await animateAction(enemy,enemy,'channel',true,()=>{enemy.hp=Math.min(enemy.max,enemy.hp+5);flash(enemy,'+5','#ead58d');});log('Allamar channels positive energy · 5 HP restored.');}}
  function effect(g,a){if(a.actor.id==='allamar'&&a.type==='channel'){const v=battlePosition(a.actor),p=CombatArt.phase(a);g.save();g.globalAlpha=Math.sin(p*Math.PI)*.8;g.fillStyle='#f0dfa0';for(let i=0;i<12;i++){const angle=i*Math.PI/6,r=16+p*25;g.fillRect(v.x+Math.cos(angle)*r,v.y-v.height*.5+Math.sin(angle)*r,4,4);}g.restore();return true;}if(a.actor.id!=='allamar'||a.actor.intent?.move!=='Spiritual sword')return false;const p=CombatArt.phase(a),v=battlePosition(a.target),x=v.x,y=v.y-v.height*.55;g.save();g.globalAlpha=Math.sin(p*Math.PI);g.fillStyle='#eee4b0';g.fillRect(x-2,y-29+Math.round(p*20),4,40);g.fillStyle='#c2a260';g.fillRect(x-12,y+4+Math.round(p*20),24,4);g.fillRect(x-2,y+8+Math.round(p*20),4,12);g.restore();return true;}
@@ -104,8 +119,22 @@ window.ChurchArc=(()=>{
   await travel('church_approach',328,312);
  }
  else if(id==='breachChurch'&&scene==='church_approach'&&quest.churchTrail&&!quest.churchBreach)await breachChurch();
- else if(id==='entryFight'){await say('Chronicle','Four acolytes rally inside. The wounded sentry pulls J’Mal’s daggers from his chest and heals his comrades. Draymus casts Grease beneath them; Jason prepares his fire.');fight('church_entry',Array.from({length:4},(_,i)=>({...enemy('church_acolyte','Acolyte '+(i+1)),shaken:2})));}
- else if(id==='hallRoad'){await say('Chronicle','The consecrated church presses painfully on Draymus’s dhampir nature. He enlarges Freya; she and Jason batter down the next doors. J’Mal and the deputies cannot fit through the crowded passage and circle outside to another window.');await say('freya','Jason, with me. Keep the passage open.');await travel('church_hall',328,312);}
+ else if(id==='entryFight'&&scene==='church_entry'&&quest.churchBreach&&!quest.entryCleared){
+  await say('Chronicle','The wounded sentry tears out J’Mal’s daggers and calls on Iomedae to heal himself and his fellow acolytes.');
+  await say('draymus','Stay off the center tiles. I’m casting Grease.');
+  await playBreach('grease');
+  await say('jason','Now, the Fire of Asmodeus.');
+  await playBreach('fire');
+  await say('cimri','They’re slipping. J’Mal, take the other side.');
+  fight('church_entry',Array.from({length:4},(_,i)=>({...enemy('church_acolyte','Acolyte '+(i+1)),shaken:2})));
+ }
+ else if(id==='hallRoad'&&scene==='church_entry'&&quest.entryCleared){
+  await say('draymus','The consecration is burning through me. Freya, hold still. I can still cast Enlarge Person.');
+  await say('Chronicle','Freya grows to twice her height. She and Jason strike the barred double doors until they splinter.');
+  await playBreach('innerDoors');
+  await say('jamal','No room to get past you two. I’ll take the deputies outside and find another window.');
+  await travel('church_hall',328,312);
+ }
  else if(id==='hallFight'){await say('Chronicle','Loran and Lacall hold the hallway with two acolytes. A small winged archer appears over their shoulders, fires, and slips away.');fight('church_hall',[enemy('twin1','Loran'),enemy('twin2','Lacall'),enemy('church_acolyte','Hall Acolyte 1'),enemy('church_acolyte','Hall Acolyte 2')]);}
  else if(id==='sanctuaryRoad'){await say('Chronicle','Outside, J’Mal and the deputies force a second window depicting Kantaria. Inside, pews shatter as Freya advances. Allamar is reading a resurrection scroll over Riley’s body.');await travel('church_sanctuary',328,312);await say('Chronicle','Loran moves to heal an acolyte. Jason’s lucerne hammer brings him down; Freya’s naginata kills him. His twin brother Lacall looks on in grief. At last, J’Mal and the deputies break through the second window.');}
  else if(id==='interruptRitual'){await say('Chronicle','J’Mal reaches Allamar through the fighting. Lacall’s heavy mace catches him, but he lands a shallow kukri cut. The distraction breaks her resurrection spell.');await storyRoll('J’Mal · Interrupt the ritual',20,0,'The resurrection is broken');quest.resurrectionBroken=true;await say('Chronicle','Riley’s body writhes with worms. Blue eyes open above a long, twitching tongue. The ghast leaps onto J’Mal, paralyzing him and exposing him to ghoul fever.');await say('draymus','Enough. You answer to me now.');await storyRoll('Draymus · Command Undead',20,0,'Riley submits · Story outcome');await say('Chronicle','Draymus wins the battle of wills. Riley releases J’Mal, who remains rigid. Cimri keeps the defenders from reaching him.');quest.resurrectionBroken=true;hp.jamal=Math.max(1,hp.jamal-6);}
