@@ -276,7 +276,7 @@ window.ChurchArc=(()=>{
   NextChapter.syncRoster?.();
  }
  function prepare(){seedParty(328,312);paintParty();save();}
- function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
+ function enemy(id,name,shortName){return {id,name:name||NAMES[id],shortName,hp:STATS[id].hp,max:STATS[id].hp};}
  function dismissSummons(fight){
   if(fight.kind!=='church_allamar'||!fight.enemies.some(enemy=>enemy.id==='allamar'&&enemy.hp<=0))return;
   const wolf=fight.enemies.find(enemy=>enemy.id==='celestial_wolf'&&enemy.hp>0);
@@ -339,14 +339,14 @@ window.ChurchArc=(()=>{
   await say('jamal','No room to get past you two. I’ll take the deputies outside and find another window.');
   await travel('church_hall',328,312);
  }
- else if(id==='hallFight'){await say('Chronicle','Loran and Lacall hold the hallway with two acolytes. A small winged archer appears over their shoulders, fires, and slips away.');fight('church_hall',[enemy('twin1','Loran'),enemy('twin2','Lacall'),enemy('church_acolyte','Hall Acolyte 1'),enemy('church_acolyte','Hall Acolyte 2')]);}
+ else if(id==='hallFight'){await say('Chronicle','Loran and Lacall hold the hallway with two acolytes. A small winged archer appears over their shoulders, fires, and slips away.');fight('church_hall',[enemy('twin1','Loran'),enemy('twin2','Lacall'),enemy('church_acolyte','Hall Acolyte 1','Acolyte 1'),enemy('church_acolyte','Hall Acolyte 2','Acolyte 2')]);}
  else if(id==='sanctuaryRoad'&&scene==='church_hall'&&quest.hallCleared){
   await say('Chronicle','Loran moves up to heal an acolyte. Jason’s lucerne hammer brings him down. Freya kills him with her naginata as Lacall looks on.');
   await travel('church_flank',504,248,'left');
  }
  else if(id==='kantariaWindow'&&scene==='church_flank'&&quest.hallCleared)await breachFlank();
  else if(id==='interruptRitual'&&scene==='church_sanctuary'&&quest.hallCleared&&!quest.resurrectionBroken)await interruptRitual();
- else if(id==='sanctuaryFight'&&scene==='church_sanctuary'&&quest.resurrectionBroken&&!quest.sanctuaryCleared)fight('church_sanctuary',[enemy('twin2','Lacall'),enemy('church_acolyte','Sanctuary Acolyte 1'),enemy('church_acolyte','Sanctuary Acolyte 2')]);
+ else if(id==='sanctuaryFight'&&scene==='church_sanctuary'&&quest.resurrectionBroken&&!quest.sanctuaryCleared)fight('church_sanctuary',[enemy('twin2','Lacall'),enemy('church_acolyte','Sanctuary Acolyte 1','Acolyte 1'),enemy('church_acolyte','Sanctuary Acolyte 2','Acolyte 2')]);
  else if(id==='allamarFight'&&scene==='church_sanctuary'&&quest.sanctuaryCleared&&!quest.allamarDefeated)await faceAllamar();
  else if(id==='destroyGhast'&&scene==='church_sanctuary'&&quest.allamarDefeated&&!quest.ghastDestroyed)await destroyGhast();
  else if(id==='altarRoad'&&scene==='church_sanctuary'&&quest.ghastDestroyed){await say('Chronicle','Jason and Draymus unravel the church’s consecration. Beneath it they sense a powerful presence trapped in the stone altar.');await travel('church_ruins',328,312);}
