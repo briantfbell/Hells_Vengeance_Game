@@ -3,6 +3,12 @@ window.SupplyArc=(()=>{
  const maps={},party=['freya','jamal','jason','draymus','guapo','reese'];
  const chain=['chapter14','supplyBriefed','mineObserved','mineDefendersCleared','minesSecured','cultLocated','cultDefeated','cultDestroyed','tradeObserved','merchantStruck','captainStruck','fortObserved','fortIsolated','perimeterCleared','supplyReported','chapter14Complete'];
  const mineGuards=[{id:'kantaria_guard',x:248,y:176},{id:'kantaria_guard',x:328,y:144},{id:'kantaria_guard',x:408,y:176}];
+ const fortGuards=[
+  {id:'kantaria_guard',x:208,y:184},
+  {id:'kantaria_guard',x:280,y:160},
+  {id:'kantaria_guard',x:376,y:160},
+  {id:'kantaria_guard',x:448,y:184}
+ ];
  const shrineDefenders=[
   {id:'lamashtu_sentry',x:232,y:176},
   {id:'lamashtu_sentry',x:424,y:176},
@@ -10,7 +16,7 @@ window.SupplyArc=(()=>{
  ];
  const altarDebris=[[292,124,12,5],[306,132,8,5],[316,126,15,8],[333,135,9,4],[344,127,13,6],[362,120,7,5],[374,129,10,4]];
  let altarBrokenAt=-Infinity;
- const steps={supply_caves:[['supplyBrief','supplyBriefed',328,200,'Plan the remaining targets'],['mineRoad',null,328,344,'Approach the mines']],kantaria_mines:[['mineSurvey','mineObserved',152,184,'Scout from the ore crates'],['mineFight','mineDefendersCleared',328,216,'Defeat the mine defenders'],['secureMines','minesSecured',328,120,'Secure the main tunnel'],['cultRoad',null,328,344,'Seek the Lamashtu cult']],lamashtu_grotto:[['locateCult','cultLocated',200,224,'Inspect the shrine from the cavern edge'],['cultFight','cultDefeated',328,216,'Defeat the cult defenders'],['destroyCult','cultDestroyed',328,120,'Break the cult altar'],['tradeRoad',null,328,344,'Track the rebel suppliers']],kantaria_supply_wharf:[['observeTrade','tradeObserved',328,232,'Watch the wharf from the pier'],['strikeMerchant','merchantStruck',152,152,'Intercept the merchant suppliers'],['strikeCaptain','captainStruck',488,152,'Intercept the shipping contacts'],['perimeterRoad',null,328,344,'Approach the perimeter forts']],kantaria_perimeter:[['observeFort','fortObserved',232,200,'Scout the perimeter'],['isolateFort','fortIsolated',424,200,'Isolate the defenders'],['perimeterFight','perimeterCleared',328,216,'Attack the isolated garrison'],['supplyReportRoad',null,328,344,'Return to the cave refuge']],supply_report:[['supplyReport','supplyReported',328,200,'Review the operation with Corrine'],['supplyEnd','chapter14Complete',328,344,'Prepare for Valor’s Fastness']]};
+ const steps={supply_caves:[['supplyBrief','supplyBriefed',328,200,'Plan the remaining targets'],['mineRoad',null,328,344,'Approach the mines']],kantaria_mines:[['mineSurvey','mineObserved',152,184,'Scout from the ore crates'],['mineFight','mineDefendersCleared',328,216,'Defeat the mine defenders'],['secureMines','minesSecured',328,120,'Secure the main tunnel'],['cultRoad',null,328,344,'Seek the Lamashtu cult']],lamashtu_grotto:[['locateCult','cultLocated',200,224,'Inspect the shrine from the cavern edge'],['cultFight','cultDefeated',328,216,'Defeat the cult defenders'],['destroyCult','cultDestroyed',328,120,'Break the cult altar'],['tradeRoad',null,328,344,'Track the rebel suppliers']],kantaria_supply_wharf:[['observeTrade','tradeObserved',328,232,'Watch the wharf from the pier'],['strikeMerchant','merchantStruck',152,152,'Intercept the merchant suppliers'],['strikeCaptain','captainStruck',488,152,'Intercept the shipping contacts'],['perimeterRoad',null,328,344,'Approach the perimeter forts']],kantaria_perimeter:[['observeFort','fortObserved',176,232,'Scout from the broken wall'],['isolateFort','fortIsolated',472,224,'Signal the road watchers'],['perimeterFight','perimeterCleared',328,200,'Attack the isolated garrison'],['supplyReportRoad',null,328,344,'Return to the cave refuge']],supply_report:[['supplyReport','supplyReported',328,200,'Review the operation with Corrine'],['supplyEnd','chapter14Complete',328,344,'Prepare for Valor’s Fastness']]};
  function install(){
   const defs=[['supply_caves','Fungus Caves · Stranglehold','kantaria-caves-v1.png'],['kantaria_mines','Kantaria · The Ore Workings','kantaria-mines-v1.png'],['lamashtu_grotto','Kantaria · The Hidden Cult','lamashtu-grotto-v1.png'],['kantaria_supply_wharf','Kantaria · The Supply Network','kantaria-docks-v1.png'],['kantaria_perimeter','Kantaria · The Perimeter Forts','fort-estazano-v1.png'],['supply_report','Fungus Caves · The Remaining Stronghold','kantaria-caves-v1.png']];
   for(const[id,name,image]of defs){const s=structuredClone(scenes.fungus_shelter);Object.assign(s,{name,image,points:[],blocks:[],spawn:[328,344],walk:[{x:144,y:160,w:352,h:144},{x:288,y:304,w:80,h:80}],lights:[[144,144],[496,144]]});maps[id]=scenes[id]=s;MAP_LAYERS[id]={foreground:image,background:{type:'solid',color:id==='lamashtu_grotto'?'#10130d':'#0b1015'}};if(id==='kantaria_supply_wharf')MAP_LAYERS[id].background={type:'ocean',palette:['#13252b','#25434b','#35545b','#1b343d'],speed:3};for(const[p,flag,x,y,label]of steps[id])s.points.push({id:p,x,y,label:'['+label+']'});}
@@ -26,10 +32,14 @@ window.SupplyArc=(()=>{
    walk:[{x:272,y:176,w:96,h:208},{x:96,y:144,w:448,h:48},{x:192,y:112,w:256,h:48}],
    lights:[[288,80],[352,80]]
   });
+  Object.assign(scenes.kantaria_perimeter,{
+   walk:[{x:288,y:256,w:64,h:144},{x:144,y:160,w:368,h:112},{x:288,y:112,w:64,h:64}],
+   lights:[]
+  });
   scenes.fungus_shelter.points.push({id:'supplyRoad',x:328,y:344,label:'Continue: Stranglehold'});
   Object.assign(NAMES,{lamashtu_sentry:'Cult Sentry',lamashtu_adept:'Cult Adept'});
   Object.assign(STATS,{lamashtu_sentry:{hp:24,ac:14,atk:5,dmg:[1,6,2]},lamashtu_adept:{hp:30,ac:13,atk:5,dmg:[1,8,2]}});
-  Object.assign(JOURNEYS,{supply_caves:'The company has recovered in the caves. Corrine is now its liaison. The rebellion still draws income, equipment and patrol support from the country around Kantaria.',kantaria_mines:'Ore and equipment help sustain the rebellion. The company approaches the mine workings to sever that support.',lamashtu_grotto:'The company turns to a hidden cult of Lamashtu. They intend to root it out and destroy its stronghold.',kantaria_supply_wharf:'Cargo still moves through surviving berths around Kantaria. The company watches for the merchants and ship captains who supply the rebellion.',kantaria_perimeter:'Forts beyond the town extend the rebellion’s patrol range. The company prepares to isolate their defenders and attack.',supply_report:'The mines are secured, the cult destroyed, and the supply network struck. The party returns to the caves to review the perimeter operation.'});
+  Object.assign(JOURNEYS,{supply_caves:'The company has recovered in the caves. Corrine is now its liaison. The rebellion still draws income, equipment and patrol support from the country around Kantaria.',kantaria_mines:'Ore and equipment help sustain the rebellion. The company approaches the mine workings to sever that support.',lamashtu_grotto:'The company turns to a hidden cult of Lamashtu. They intend to root it out and destroy its stronghold.',kantaria_supply_wharf:'Cargo still moves through surviving berths around Kantaria. The company watches for the merchants and ship captains who supply the rebellion.',kantaria_perimeter:'The rebellion uses its outlying forts to extend its patrols. The company approaches one garrison while lookouts take position along the connecting roads.',supply_report:'The mines are secured, the cult destroyed, and the supply network struck. The party returns to the caves to review the perimeter operation.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter14?art[scene]:null;}
@@ -37,7 +47,7 @@ window.SupplyArc=(()=>{
  function points(){if(!quest.chapter13Complete)return null;if(!quest.chapter14)return scene==='fungus_shelter'?[point('supplyRoad')]:[];if(quest.chapter14Complete)return [];const entries=steps[scene];if(!entries)return [];const next=entries.find(([,flag])=>!flag||!quest[flag]);return [point(next?.[0])].filter(Boolean);}
  const target=()=>points()?.[0]||null;
  function goal(){if(!quest.chapter13Complete)return null;if(quest.chapter14Complete)return 'Stranglehold complete · Valor’s Fastness remains.';if(!quest.chapter14)return 'Continue: Stranglehold.';const p=target();return p?p.label.replace(/^\[|\]$/g,'')+'.':'Continue the operation.';}
- function npcs(){if(!quest.chapter14)return null;if(['supply_caves','supply_report'].includes(scene))return [{id:'corrine',x:328,y:168}];if(scene==='kantaria_mines')return quest.mineDefendersCleared?[]:mineGuards;if(scene==='lamashtu_grotto')return quest.cultDefeated?[]:shrineDefenders;if(scene==='kantaria_supply_wharf')return [...(!quest.merchantStruck?[{id:'market_trader',x:128,y:152}]:[]),...(!quest.captainStruck?[{id:'guild_clerk',x:520,y:168}]:[])];if(scene==='kantaria_perimeter')return quest.perimeterCleared?[]:[{id:'kantaria_guard',x:264,y:200},{id:'kantaria_guard',x:392,y:200}];return [];}
+ function npcs(){if(!quest.chapter14)return null;if(['supply_caves','supply_report'].includes(scene))return [{id:'corrine',x:328,y:168}];if(scene==='kantaria_mines')return quest.mineDefendersCleared?[]:mineGuards;if(scene==='lamashtu_grotto')return quest.cultDefeated?[]:shrineDefenders;if(scene==='kantaria_supply_wharf')return [...(!quest.merchantStruck?[{id:'market_trader',x:128,y:152}]:[]),...(!quest.captainStruck?[{id:'guild_clerk',x:520,y:168}]:[])];if(scene==='kantaria_perimeter')return quest.perimeterCleared?[]:fortGuards;return [];}
  function drawNPC(u){if(u.id!=='corrine')return false;drawQuestgiver('corrine',u.x,u.y,62);return true;}
  function fight(kind,ids){applyProgression();seedParty(...scenes[scene].spawn);save();startBattle(0,false,{kind,enemies:ids.map((id,i)=>({id,name:(id==='kantaria_guard'?(kind==='supply_mines'?'Mine Guard':'Fort Guard'):NAMES[id])+' '+(i+1),hp:STATS[id].hp,max:STATS[id].hp}))});}
  async function afterBattle(kind){const flag=({supply_mines:'mineDefendersCleared',supply_cult:'cultDefeated',supply_fort:'perimeterCleared'})[kind];if(!flag)return;quest[flag]=true;save();await say('Chronicle',kind==='supply_mines'?'The defenders fall. The company can now secure the workings and their supplies.':kind==='supply_cult'?'The cult’s defenders are defeated. Its stronghold lies open to the company.':'The isolated garrison is defeated. The perimeter operation cuts back the rebellion’s reach.');paintParty();updateObjective();}
@@ -85,11 +95,26 @@ window.SupplyArc=(()=>{
    await journeyCard('Kantaria · Shipping Contacts','The company assassinates ship captains dealing with the rebellion.\nWith the supply routes disrupted, the company turns to the perimeter forts.');
   }
   else if(id==='perimeterRoad')await travel('kantaria_perimeter',328,344);
-  else if(id==='observeFort'){await say('reese','The forts give their patrols somewhere to return to. They can range farther while those positions hold.');await say('freya','Then we isolate them before they can support one another.');quest.fortObserved=true;}
-  else if(id==='isolateFort'){await say('Chronicle','The company isolates the perimeter forts that extend the rebellion’s patrol range. They prepare to attack the defenders without nearby support.');await say('freya','No help is coming for them. Now we strike.');quest.fortIsolated=true;}
-  else if(id==='perimeterFight')fight('supply_fort',['kantaria_guard','kantaria_guard','kantaria_guard','kantaria_guard']);
+  else if(id==='observeFort'){
+   await say('reese','Four in the yard. Their patrols use the road beyond that arch to move between forts.');
+   await say('freya','Get the road watchers in place. We’ll strike when they give the signal.');
+   quest.fortObserved=true;
+  }
+  else if(id==='isolateFort'){
+   await say('reese','The watchers are in place. They can stop a runner before he reaches the next fort.');
+   await say(null,'The road watchers are waiting.', ['[Signal them to close the road]']);
+   quest.fortIsolated=true;
+   save();
+  }
+  else if(id==='perimeterFight'){
+   fight('supply_fort',fortGuards.map(guard=>guard.id));
+  }
   else if(id==='supplyReportRoad')await travel('supply_report',328,344);
-  else if(id==='supplyReport'){await say('corrine','You have struck their income, their equipment, their suppliers, and their patrol positions.');await say('freya','Their stronghold still stands. We prepare for that next.');quest.supplyReported=true;}
+  else if(id==='supplyReport'){
+   await say('corrine','The rebellion has lost its ore, the suppliers we tracked, and the forts its patrols relied on. Where do you go next?');
+   await say('freya','Valor’s Fastness. The road there is open. We’ll move when we’re ready.');
+   quest.supplyReported=true;
+  }
   else if(id==='supplyEnd'){await journeyCard('Chapter Fourteen · Stranglehold','The mines are secured.\nThe Lamashtu cult is destroyed.\nMerchant and shipping suppliers have been struck.\nThe perimeter forts have been isolated and attacked.\nValor’s Fastness remains ahead.');quest.chapter14Complete=true;}
   else return false;save();paintParty();updateObjective();return true;
  }
