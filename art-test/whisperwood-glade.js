@@ -9,17 +9,24 @@ window.WhisperwoodGlade=(()=>{
   whisper_owlbear:{name:'Owlbear',src:allies,box:[10,20,1046,864],height:85,stats:{hp:40,ac:14,atk:6,dmg:[1,10,2]}},
   whisper_swan:{name:'Swan Maiden',src:allies,box:[1140,0,616,875],height:96,stats:{hp:28,ac:15,atk:6,dmg:[1,8,2]}}
  };
+ const creekDefenders=[
+  {id:'whisper_unicorn',x:392,y:160,height:49},
+  {id:'whisper_stone_giant',x:424,y:136,height:69},
+  {id:'whisper_unicorn',x:432,y:216,height:49},
+  {id:'whisper_owlbear',x:384,y:232,height:53},
+  {id:'whisper_swan',x:448,y:184,height:52}
+ ];
  const targets=[
   {id:'gladeAssault',x:328,y:224,label:'Advance on the Blessing of Unicorns'},
-  {id:'gladeCollect',x:328,y:168,label:'Recover the first three horns'},
-  {id:'gladeCamp',x:264,y:264,label:'Make camp in the glade'},
-  {id:'gladeCounterattack',x:328,y:248,label:'Face the defenders at the creek'}
+  {id:'gladeCollect',x:344,y:176,label:'Recover the first three horns'},
+  {id:'gladeCamp',x:384,y:264,label:'Make camp near the creek'},
+  {id:'gladeCounterattack',x:408,y:248,label:'Face the defenders at the creek'}
  ];
  function install(){
   scenes[camp].points.push({id:'gladeTrail',x:328,y:152,label:'Follow the unicorn trail'});
   scenes[glade]={
    name:'Whisperwood · The Unicorn Glade',image,spawn:[328,344],blocks:[],
-   walk:[{x:192,y:128,w:240,h:64},{x:144,y:192,w:304,h:112},{x:176,y:304,w:256,h:80}],lights:[],points:targets
+   walk:[{x:224,y:112,w:224,h:80},{x:176,y:176,w:272,h:128},{x:176,y:288,w:256,h:96}],lights:[],points:targets
   };
   MAP_LAYERS[glade]={foreground:image,contain:true,background:{type:'solid',color:'#17201b'}};
   MAP_LAYERS[glade].waterChannels=[[
@@ -60,12 +67,7 @@ window.WhisperwoodGlade=(()=>{
  }
  function npcs(){
   if(scene!==glade)return null;
-  if(quest.whisperwoodGladeCamped)return [
-   {id:'whisper_unicorn',x:264,y:152,height:49},
-   {id:'whisper_stone_giant',x:360,y:152,height:69},
-   {id:'whisper_owlbear',x:392,y:184,height:53},
-   {id:'whisper_swan',x:216,y:176,height:52}
-  ];
+  if(quest.whisperwoodGladeCamped)return creekDefenders;
   return [[240,160],[320,144],[376,176]].map(([x,y])=>({
    id:'whisper_unicorn',x,y,height:50,pose:quest.whisperwoodUnicornsDefeated?'prone':null
   }));
@@ -99,8 +101,11 @@ window.WhisperwoodGlade=(()=>{
     startAssault();
     return true;
    case 'gladeCollect':
-    await say('Chronicle','The company cuts the horns from the three fallen unicorns. They still need one more for Fex.');
+    await say(null,'Three unicorns lie dead by the creek.', ['[Collect the three horns]']);
     quest.whisperwoodThreeHorns=true;
+    save();
+    updateObjective();
+    await say('freya','That’s three. Fex needs one more.');
     break;
    case 'gladeCamp':
     await say('freya','We’ll camp here. Stay close to the creek and keep watch on the woods.');
@@ -108,12 +113,12 @@ window.WhisperwoodGlade=(()=>{
     quest.whisperwoodGladeCamped=true;
     break;
    case 'gladeCounterattack':
-    await say('reese','Unicorns coming back across the creek. Giants with them. Look at the owlbears. And there are wings above the trees.');
+    await say('reese','They’re coming back across the creek. A giant, an owlbear, and something winged. They’ve cut off the bank.');
     await say('freya','We’re being driven off the bank. Cover the retreat. J’Mal, keep an eye out for that last horn.');
     save();
     startBattle(0,false,{
      kind:'whisperwood_glade_retreat',scripted:true,script:{command,act,opening:'The glade’s defenders drive the company back.'},scriptActor:'freya',
-     enemies:[enemy('whisper_unicorn'),enemy('whisper_stone_giant'),enemy('whisper_unicorn'),enemy('whisper_owlbear'),enemy('whisper_swan')]
+     enemies:creekDefenders.map(({id})=>enemy(id))
     });
     return true;
   }
