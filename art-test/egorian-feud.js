@@ -8,7 +8,7 @@ window.EgorianFeud=(()=>{
   ['feudHearVasvion','egorianVasvionHeard']
  ];
  function install(){
-  scenes[debrief].points.push({id:'feudAttendReception',x:328,y:344,label:'Attend the first reception'});
+  scenes[debrief].points.push({id:'feudAttendReception',x:328,y:392,label:'Attend the first reception'});
   scenes[salon]={
    name:'Egorian · Noble Reception',image,spawn:[328,344],blocks:[],
    walk:[{x:64,y:160,w:512,h:192},{x:288,y:352,w:64,h:32}],lights:[[69,92],[157,72],[274,100],[364,100],[484,72],[571,92]],

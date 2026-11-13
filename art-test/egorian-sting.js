@@ -2,15 +2,16 @@
 
 window.EgorianSting=(()=>{
  const street='egorian_efisio_street',court='egorian_court',hall='egorian_sting_hall';
+ const corrine={id:'corrine',x:280,y:248,height:58};
  function install(){
-  scenes[street].points.push({id:'stingGoToCorrine',x:328,y:344,label:'Go to Corrine’s debrief'});
+  scenes[street].points.push({id:'stingGoToCorrine',x:328,y:392,label:'Go to Corrine’s debrief'});
   scenes[hall]={
    ...scenes[court],name:'Egorian · The Crown’s Debrief',
    points:[
-    {id:'stingBriefing',speaker:'corrine',x:328,y:272,label:'Hear Corrine’s plan'},
-    {id:'stingReports',x:328,y:200,label:'Review the reports from the cities'},
-    {id:'stingStanding',speaker:'corrine',x:328,y:272,label:'Receive the Crown’s decision'},
-    {id:'stingNewOrders',speaker:'corrine',x:328,y:272,label:'Hear the Queen’s next assignment'}
+    {id:'stingBriefing',speaker:corrine.id,x:corrine.x,y:corrine.y,label:'Hear Corrine’s plan'},
+    {id:'stingReports',x:328,y:176,label:'Review the reports from the cities'},
+    {id:'stingStanding',speaker:corrine.id,x:corrine.x,y:corrine.y,label:'Receive the Crown’s decision'},
+    {id:'stingNewOrders',speaker:corrine.id,x:corrine.x,y:corrine.y,label:'Hear the Queen’s next assignment'}
    ]
   };
   MAP_LAYERS[hall]=MAP_LAYERS[court];
@@ -33,7 +34,7 @@ window.EgorianSting=(()=>{
  }
  function npcs(){
   if(scene!==hall)return null;
-  return [{id:'corrine',x:328,y:250,height:58},{id:'guard',x:474,y:200,height:54}];
+  return [corrine,{id:'guard',x:474,y:200,height:54}];
  }
  async function interact(id){
   if(target()?.id!==id)return false;
@@ -44,11 +45,11 @@ window.EgorianSting=(()=>{
     break;
    case 'stingBriefing':
     await say('corrine','Efisio was one part of it. I’ve arranged for the rest of the operation to move today, across several cities at once.');
-    await say('corrine','We’re waiting on the reports. Once they arrive, we’ll know whether the network is finished.');
+    await say('corrine','The reports will come in from each city. Check them at the front of the hall, then come back to me.');
     quest.egorianStingBriefed=true;
     break;
    case 'stingReports':
-    await journeyCard('Reports across Cheliax','The operations take place on the same day.\nVisperthul’s four leading agents in Cheliax are captured or killed. His criminal network in Cheliax collapses.',()=>{
+    await journeyCard('Reports across Cheliax','The reports confirm the raids took place on the same day.\nVisperthul’s four leading agents in Cheliax were captured or killed. His criminal network in Cheliax collapsed.',()=>{
      quest.egorianStingComplete=true;
     });
     break;
