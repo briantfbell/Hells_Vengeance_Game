@@ -3,16 +3,20 @@
 window.HinjiTavern=(()=>{
  const square='belde_square',tavern='hinji_tavern',vel='titus_vel',watch='guard';
  const image='hinji-tavern-v1.png',disguise='hinji-titus-vel-v1.png';
+ const barGuest={id:vel,x:328,y:154,height:62};
+ const watchman={id:watch,x:360,y:280,height:56};
+ const escortDuration=1250;
+ let escort=null;
 
  function install(){
   scenes[square].points.push({id:'hinjiTavernDepart',x:328,y:392,label:'Leave for Hinji'});
   scenes[tavern]={
    name:'Hinji · Harbor Tavern',image,spawn:[328,328],
-   walk:[{x:128,y:128,w:384,h:224},{x:256,y:352,w:128,h:48}],blocks:[],
+   walk:[{x:128,y:128,w:384,h:224},{x:240,y:352,w:160,h:48}],blocks:[],
    lights:[[85,132],[249,68],[399,68],[582,113],[559,181],[75,289]],
    points:[
-    {id:'hinjiTavernToast',speaker:vel,x:328,y:184,label:'Join El Guapo at the bar'},
-    {id:'hinjiTavernArrest',speaker:watch,x:328,y:248,label:'Speak to the watch'}
+    {id:'hinjiTavernToast',speaker:vel,x:barGuest.x,y:barGuest.y,label:'Join El Guapo at the bar'},
+    {id:'hinjiTavernArrest',speaker:watch,x:watchman.x,y:watchman.y,label:'Speak to the watch'}
    ]
   };
   MAP_LAYERS[tavern]={foreground:image,contain:true,background:{type:'solid',color:'#201713'}};
@@ -47,8 +51,15 @@ window.HinjiTavern=(()=>{
    {id:'citizen-hinji-tavern-2',x:510,y:219,dir:'left',variant:6}
   ];
   if(quest.hinjiTavernArrested)return patrons;
-  patrons.push({id:vel,x:328,y:154,height:62});
-  if(quest.hinjiTavernToast)patrons.push({id:watch,x:328,y:280,height:56});
+  if(escort?.token===epoch){
+   const progress=Math.min(1,(performance.now()-escort.at)/escortDuration);
+   for(const actor of [barGuest,watchman]){
+    patrons.push({...actor,x:actor.x+(328-actor.x)*progress,y:actor.y+(408-actor.y)*progress});
+   }
+   return patrons;
+  }
+  patrons.push(barGuest);
+  if(quest.hinjiTavernToast)patrons.push(watchman);
   return patrons;
  }
  async function interact(id){
@@ -70,14 +81,22 @@ window.HinjiTavern=(()=>{
     quest.hinjiTavernToast=true;
     break;
    }
-   case 'hinjiTavernArrest':
+   case 'hinjiTavernArrest':{
     await say(watch,'Name?');
     await say(vel,'Titus Vel. I can spell it, if you bring me another drink.');
     await say(watch,'Public drunkenness, Master Vel. On your feet.');
     await say(vel,'I was hoping you wouldn’t ask me to demonstrate.');
-    await say('Chronicle','The watch leads El Guapo out under the name Titus Vel. The company’s next stop is Corentyn.');
+    const token=epoch;
+    if(!reduce.matches){
+     escort={token,at:performance.now()};
+     await delay(escortDuration);
+     if(epoch!==token)throw CANCEL;
+    }
     quest.hinjiTavernArrested=true;
+    escort=null;
+    await say('Chronicle','The watch takes El Guapo away under the name Titus Vel. The company’s next stop is Corentyn.');
     break;
+   }
   }
   save();
   paintParty();

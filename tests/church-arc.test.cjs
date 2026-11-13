@@ -1520,6 +1520,8 @@ test('Hinji keeps El Guapo in disguise and preserves the recorded arrest across 
   w.scenes.belde_square.points=[];
   w.DIALOGUE_FACE_CROPS={};
   w.say=async(name,text,choices)=>{w.transcript.push({name,text});if(choices)return choice;};
+  w.epoch=0;
+  w.reduce={matches:true};
   vm.runInContext(read('hinji-tavern.js'),w);
   w.HinjiTavern.install();
   const step=async id=>assert.equal(await w.HinjiTavern.interact(id),true,id);
