@@ -16,15 +16,15 @@ window.BellflowerBarge=(()=>{
  ],maxHeight:555,cycle:[0,2],attackFrames:true};
 
  function install(){
-  scenes[home].points.push({id:'bellflowerBrief',speaker:'corrine',x:328,y:248,label:'Hear Corrine’s orders'});
+  scenes[home].points.push({id:'bellflowerBrief',speaker:'corrine',x:328,y:231,label:'Hear Corrine’s orders'});
   scenes[barge]={
    name:'Egorian · Party Barge',image:deck,spawn:[328,248],blocks:[],
-   walk:[{x:80,y:176,w:480,h:80}],lights:[[181,80],[294,78],[414,79],[64,257],[573,256]],
+   walk:[{x:64,y:176,w:512,h:80},{x:288,y:256,w:48,h:88}],lights:[[181,80],[294,78],[414,79],[64,257],[573,256]],
    points:[
-    {id:'bellflowerPrepare',x:328,y:184,label:'Check the fighting ring'},
+    {id:'bellflowerPrepare',x:328,y:168,label:'Check the fighting ring'},
     {id:'bellflowerHost',x:328,y:232,label:'Give Draymus the signal'},
     {id:'bellflowerBoarders',x:248,y:216,label:'Hold off the Bellflower boarders'},
-    {id:'bellflowerRecall',x:328,y:248,label:'Get the company out with Jason'}
+    {id:'bellflowerRecall',x:312,y:264,label:'Get the company out with Jason'}
    ]
   };
   scenes[hide]={
@@ -74,8 +74,8 @@ window.BellflowerBarge=(()=>{
    return captives.flatMap((captive,index)=>{
     const pace=Math.max(0,Math.min(1,(time-index*.12)/.82));
     if(pace>=1)return [];
-    const gather=Math.min(1,pace/.38);
-    const x=captive.x+(316-captive.x)*gather,y=captive.y+(344-captive.y)*pace;
+    const gather=Math.max(0,Math.min(1,(pace-.2)/.22));
+    const x=captive.x+(316-captive.x)*gather,y=captive.y+(352-captive.y)*pace;
     return [{...captive,x,y,step:pace>0,anim:time*cutaway.duration/1000}];
    });
   }
@@ -129,7 +129,7 @@ window.BellflowerBarge=(()=>{
   save();
   hp.draymus=Math.min(Math.max(1,hp.draymus),5);
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir],
-   opening:'Draymus is badly wounded. Hold for one round to make room for Jason’s recall.'});
+   opening:'Draymus is badly wounded. Hold for one round. Guard to buy Jason time.'});
  }
  function retreatReady(current){return current.kind===kind&&current.round>=1;}
  async function afterBattle(position){
@@ -143,7 +143,7 @@ window.BellflowerBarge=(()=>{
   await playCutaway('rescue',1750);
   await say('Chronicle','While the company holds the deck, the Bellflower rescuers get many of the captives clear.');
   if(jasonDown)await say('Chronicle','Jason comes round as Freya pulls him clear of the fighting.');
-  await say('jason','Stay close. I can get us back to Migos Street.');
+  await say('jason','Gather by the gangway. I can get us back to Migos Street.');
  }
  async function interact(id){
   if(target()?.id!==id)return false;
