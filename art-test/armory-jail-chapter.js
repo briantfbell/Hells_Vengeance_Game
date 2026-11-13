@@ -2,34 +2,70 @@
 window.ArmoryArc=(()=>{
  const maps={},chain=['chapter8','smearHeard','accuserSilenced','bodyDisposed','heistTip','ambushPrepared','armoryCleared','jailReached','porchCleared','cimriRecovered','prisonersQuestioned','chapter8Complete'];
  const r=(x,y,w,h)=>({x,y,w,h});
+ const riverEdge={x:328,y:376},releaseDuration=1000;
+ let release=null;
  function install(){
   const defs=[['smear_docks','longacre_north_docks','Longacre · An Accusation'],['accuser_home','ash_house','Longacre · The Accuser’s Home'],['river_disposal','longacre_north_docks','Longacre · The Riverbank'],['heist_church','church_asmodeus','Longacre · A Midnight Warning'],['longacre_armory','longacre_church','Longacre Armory · The Ambush'],['burning_jail','escape_jail','Longacre Jail · Smoke and Steel'],['heist_aftermath','ash_house','Ash House · The Prisoners']];
   for(const[id,base,name]of defs){const s=structuredClone(scenes[base]);s.name=name;s.points=[];s.spawn=[328,312];if(id==='accuser_home'){s.image='accuser-home-v1.png';s.walk=[r(272,112,96,256),r(176,192,288,64)];s.blocks=[];}if(id==='longacre_armory'){s.image='longacre-armory-v1.png';s.spawn=[264,312];s.walk=[r(232,152,80,216),r(192,64,144,40),r(192,96,40,88),r(304,96,32,88)];s.blocks=[r(234,80,58,64)];s.lights=[[232,312],[296,312]];}if(id==='burning_jail'){s.image='longacre-jail-fire-v1.png';s.lights=[[456,160],[496,224]];}maps[id]=scenes[id]=s;MAP_LAYERS[id]={foreground:s.image,background:['smear_docks','river_disposal'].includes(id)?{type:'ocean',palette:['#13252b','#25434b','#35545b','#1b343d'],speed:3}:{type:'solid',color:'#111820'}};}
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
-  add('church_asmodeus','armoryArcRoad',328,352,'Continue: Rumors and the Armory');add('smear_docks','smearReport',248,168,'Hear Ingoe’s warning');add('smear_docks','accuserRoad',328,344,'Send J’Mal to the accuser');add('accuser_home','visitAccuser',328,200,'Question the accuser');add('accuser_home','riverRoad',328,344,'Leave under cover');add('river_disposal','disposeBody',248,200,'Finish J’Mal’s river journey');add('river_disposal','heistChurchRoad',328,344,'Return to the church');add('heist_church','heistWarning',328,200,'Speak to Doctor Rohalendi');add('heist_church','armoryRoad',328,344,'Prepare the armory ambush');add('longacre_armory','prepareAmbush',264,232,'Set the trap and take cover');add('longacre_armory','armoryFight',264,200,'Wait for the thieves');add('longacre_armory','jailFireRoad',264,344,'Investigate the smoke');add('burning_jail','porchFight',440,264,'Challenge the men on the porch');add('burning_jail','rescueCimri',456,224,'Look inside the burning jail');add('burning_jail','aftermathRoad',328,344,'Take Cimri to Ash House');add('heist_aftermath','questionPrisoners',328,200,'Question the armory prisoners');add('heist_aftermath','armoryArcComplete',328,344,'Close the chapter');
+  add('church_asmodeus','armoryArcRoad',328,352,'Continue: Rumors and the Armory');add('smear_docks','smearReport',248,168,'Hear Ingoe’s warning');add('smear_docks','accuserRoad',328,344,'Send J’Mal to the accuser');add('accuser_home','visitAccuser',328,200,'Question the accuser');add('accuser_home','riverRoad',328,344,'Leave under cover');add('river_disposal','disposeBody',riverEdge.x,riverEdge.y,'Lower the body into the river');add('river_disposal','heistChurchRoad',328,280,'Return to the church');add('heist_church','heistWarning',328,200,'Speak to Doctor Rohalendi');add('heist_church','armoryRoad',328,344,'Prepare the armory ambush');add('longacre_armory','prepareAmbush',264,232,'Set the trap and take cover');add('longacre_armory','armoryFight',264,200,'Wait for the thieves');add('longacre_armory','jailFireRoad',264,344,'Investigate the smoke');add('burning_jail','porchFight',440,264,'Challenge the men on the porch');add('burning_jail','rescueCimri',456,224,'Look inside the burning jail');add('burning_jail','aftermathRoad',328,344,'Take Cimri to Ash House');add('heist_aftermath','questionPrisoners',328,200,'Question the armory prisoners');add('heist_aftermath','armoryArcComplete',328,344,'Close the chapter');
   Object.assign(NAMES,{armory_bo:'Bo Gramel',armory_dent:'Dent Gramel',heist_ranger:'Rebel Ranger',porch_guard:'Armed Man',accuser:'The Accuser'});
   Object.assign(STATS,{armory_bo:{hp:32,ac:14,atk:4,dmg:[1,6,1]},armory_dent:{hp:26,ac:14,atk:4,dmg:[1,6,1]},heist_ranger:{hp:14,ac:12,atk:3,dmg:[1,6,0]},porch_guard:{hp:12,ac:12,atk:2,dmg:[1,4,0]}});
   FUTURE_NPCS.porch_guard=structuredClone(FUTURE_NPCS.masked_human);COMBAT_IDLES.porch_guard={...MOVEMENT_FRAMES['political-cast-v1.png'][3],frames:MOVEMENT_FRAMES['political-cast-v1.png'][3].frames.slice(0,2),cycle:[0,1,0,1]};
-  Object.assign(JOURNEYS,{smear_docks:'Cimri is now sheriff. Ingoe has heard of evidence linking her to the tannery robbery. Hear his warning.',accuser_home:'J’Mal has completed his training. He goes alone to the accuser’s home to deal with the threat to Cimri.',river_disposal:'The visit has ended in an accidental killing. J’Mal spends two hours carefully moving the body to the river.',heist_church:'Back at the converted church, Doctor Rohalendi arrives under a black hood. She asks to speak privately with Jason.',longacre_armory:'Rohalendi’s warning points to an overnight theft. The armory is a museum of retired soldiers’ donated weapons. Prepare an ambush well before midnight.',burning_jail:'Smoke rises from the jail as the armory prisoners are secured. El Guapo reaches the porch first; Draymus remains with the prisoners.',heist_aftermath:'Rhona has escaped, leaving Cimri injured. The party helps put out the fire and carries the new sheriff back to Ash House.'});
+  Object.assign(JOURNEYS,{smear_docks:'Cimri is now sheriff. Ingoe has word from the docks and asks to speak in private.',accuser_home:'J’Mal has completed his training. He goes alone to the accuser’s home to deal with the threat to Cimri.',river_disposal:'For two hours, J’Mal takes back lanes and waits for footsteps to pass. He reaches the river with the accuser’s body.',heist_church:'Back at the converted church, Doctor Rohalendi arrives under a black hood. She asks to speak privately with Jason.',longacre_armory:'Rohalendi’s warning points to an overnight theft. The armory is a museum of retired soldiers’ donated weapons. Prepare an ambush well before midnight.',burning_jail:'Smoke rises from the jail as the armory prisoners are secured. El Guapo reaches the porch first; Draymus remains with the prisoners.',heist_aftermath:'Rhona has escaped, leaving Cimri injured. The party helps put out the fire and carries the new sheriff back to Ash House.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);}
  function mapImage(){return quest.chapter8?(scene==='burning_jail'&&quest.cimriRecovered?art.escape_jail:art[scene]):null;}
  function roster(){if(!quest.chapter8)return null;if(['accuser_home','river_disposal'].includes(scene))return ['jamal'];if(scene==='longacre_armory')return ['freya','jamal','jason','draymus'];if(scene==='burning_jail')return quest.cimriRecovered?['freya','jamal','jason','guapo']:['guapo'];return null;}
- function goal(){if(!quest.chapter7Complete)return null;if(!quest.chapter8)return 'Continue: Rumors and the Armory.';const goals=['Hear Ingoe’s warning.','Visit the accuser with J’Mal.','Finish the river journey.','Hear Doctor Rohalendi’s warning.','Prepare the armory ambush.','Thwart the armory heist.','Investigate the jail fire.','Challenge the porch guards as El Guapo.','Recover Cimri from the burning jail.','Question the prisoners at Ash House.','Close the chapter.','Chapter complete · Fort Estazano is the next lead.'];const i=chain.findIndex(k=>!quest[k]);return i<0?goals.at(-1):goals[Math.max(0,i-1)];}
+ function goal(){if(!quest.chapter7Complete)return null;if(!quest.chapter8)return 'Continue: Rumors and the Armory.';if(scene==='accuser_home'&&quest.accuserSilenced)return 'Carry the body to the river.';if(scene==='river_disposal')return quest.bodyDisposed?'Return to the church.':'Take the body to the end of the pier.';const goals=['Hear Ingoe’s warning.','Visit the accuser with J’Mal.','Finish the river journey.','Hear Doctor Rohalendi’s warning.','Prepare the armory ambush.','Thwart the armory heist.','Investigate the jail fire.','Challenge the porch guards as El Guapo.','Recover Cimri from the burning jail.','Question the prisoners at Ash House.','Close the chapter.','Chapter complete · Fort Estazano is the next lead.'];const i=chain.findIndex(k=>!quest[k]);return i<0?goals.at(-1):goals[Math.max(0,i-1)];}
  function points(){if(!quest.chapter7Complete)return null;if(!quest.chapter8)return scene==='church_asmodeus'?[point('armoryArcRoad')]:[];const id=({smear_docks:quest.smearHeard?'accuserRoad':'smearReport',accuser_home:quest.accuserSilenced?'riverRoad':'visitAccuser',river_disposal:quest.bodyDisposed?'heistChurchRoad':'disposeBody',heist_church:quest.heistTip?'armoryRoad':'heistWarning',longacre_armory:!quest.ambushPrepared?'prepareAmbush':!quest.armoryCleared?'armoryFight':'jailFireRoad',burning_jail:!quest.porchCleared?'porchFight':!quest.cimriRecovered?'rescueCimri':'aftermathRoad',heist_aftermath:quest.prisonersQuestioned?'armoryArcComplete':'questionPrisoners'})[scene];return quest.chapter8Complete?[]:[point(id)].filter(Boolean);}
  const target=()=>points()?.[0]||null;
- function npcs(){if(!quest.chapter8)return null;if(scene==='smear_docks')return [{id:'ingoe',x:248,y:168}];if(scene==='accuser_home')return [{id:'accuser',x:328,y:200,...(quest.accuserSilenced?{hp:0}:{})}];if(scene==='heist_church')return [{id:'gerya',x:328,y:200},{id:'cimri',x:392,y:216}];if(scene==='longacre_armory')return [];
+ function npcs(){if(!quest.chapter8)return null;if(scene==='smear_docks')return [{id:'ingoe',x:248,y:168}];if(scene==='accuser_home')return [{id:'accuser',x:328,y:200,...(quest.accuserSilenced?{pose:'prone'}:{})}];if(scene==='river_disposal')return riverBody();if(scene==='heist_church')return [{id:'gerya',x:328,y:200},{id:'cimri',x:392,y:216}];if(scene==='longacre_armory')return [];
   if(scene==='burning_jail')return quest.cimriRecovered?[{id:'cimri',x:456,y:224}]:quest.porchCleared?[{id:'rhona',x:456,y:216},{id:'cimri',x:488,y:224}]:[{id:'porch_guard',x:440,y:224},{id:'porch_guard',x:488,y:224}];if(scene==='heist_aftermath')return [{id:'cimri',x:392,y:216}];return [];}
+ function riverBody(){
+  if(quest.bodyDisposed)return [];
+  if(release?.epoch===epoch){
+   const p=Math.min(1,(performance.now()-release.at)/releaseDuration);
+   return [{id:'accuser',x:riverEdge.x-24,y:riverEdge.y-7+p*35,pose:'prone',height:46,opacity:1-p}];
+  }
+  const jamal=units.find(u=>u.id==='jamal');
+  return jamal?[{id:'accuser',x:jamal.x-23,y:jamal.y+4,pose:'prone',height:46}]:[];
+ }
+ async function releaseBody(){
+  if(!reduce.matches){
+   const token=epoch;
+   release={epoch:token,at:performance.now()};
+   try{
+    await delay(releaseDuration);
+    if(token!==epoch)throw CANCEL;
+   }finally{release=null;}
+  }
+  quest.bodyDisposed=true;
+  save();
+  await say('Chronicle','J’Mal lowers the body into the river. The current takes it out of sight.');
+ }
  function prepare(){applyProgression();seedParty(...scenes[scene].spawn);window.NextChapter?.syncRoster?.();paintParty();save();}
  function enemy(id,name){return {id,name:name||NAMES[id],hp:STATS[id].hp,max:STATS[id].hp};}
  async function afterBattle(kind){if(kind==='armory_heist'){quest.armoryCleared=true;save();await say('Chronicle','The rangers and Dent fall. J’Mal forces Bo onto the defensive; Draymus strikes through a Spectral Hand with Shocking Grasp until she falls unconscious. The armory theft is thwarted.');await say('freya','Secure the prisoners. This time we have evidence of their rebellion.');}if(kind==='armory_porch'){quest.porchCleared=true;save();await say('Chronicle','El Guapo’s rapier brings one attacker down. The other breaks away and flees. He begins packing his pipe while steel still rings inside the jail.');}prepare();updateObjective();}
  async function interact(id){if(id==='armoryArcRoad'){if(!quest.chapter7Complete||quest.chapter8)return false;quest.chapter8=true;await journeyCard('Longacre · Between assignments','Jason takes charge of the rededicated church, and Cimri settles in at the jail. The party rests before visiting Ingoe at the docks.');hp=Object.fromEntries(CORE.map(id=>[id,STATS[id].hp]));uses=Object.fromEntries(CORE.map(id=>[id,0]));mendUses=2;await travel('smear_docks',328,312);}else if(!quest.chapter8)return false;
-  else if(id==='smearReport'){await say('ingoe','Someone has evidence placing your new sheriff at Louslik Tannery—the night before they announced they were bankrupt. Word like that will travel.');await say('Chronicle','The accusation concerns the payroll robbery the party carried out with Cimri. With J’Mal’s training complete, they tell him what Ingoe has learned.');quest.smearHeard=true;}
-  else if(id==='accuserRoad')await travel('accuser_home',328,312);
-  else if(id==='visitAccuser'){await say('jamal','I hear you have been asking questions about Cimri and the tannery. Let us talk.');await say('Chronicle','J’Mal confronts the accuser in his home. The encounter goes too far: he accidentally kills the man.');await storyRoll('J’Mal · The confrontation',20,0,'Fixed story outcome · The accuser dies');quest.accuserSilenced=true;}
-  else if(id==='riverRoad')await travel('river_disposal',328,312);
-  else if(id==='disposeBody'){await journeyCard('Longacre · Two careful hours','J’Mal slowly moves the body through town under cover. He disposes of it in the nearby river. The threat to Cimri’s reputation has been silenced.');quest.bodyDisposed=true;}
-  else if(id==='heistChurchRoad')await travel('heist_church',328,312);
+  else if(id==='smearReport'&&scene==='smear_docks'&&!quest.smearHeard){
+   await say('ingoe','Someone says he can put your new sheriff at Louslik Tannery the night before they announced they were bankrupt. Says he has proof, too.');
+   await say('freya','If he can place Cimri there, he can tie her to the missing payroll. That puts all of us at risk.');
+   await say('jamal','I’ll pay him a visit. One of us at his door is plenty.');
+   quest.smearHeard=true;
+  }
+  else if(id==='accuserRoad'&&scene==='smear_docks'&&quest.smearHeard)await travel('accuser_home',328,312);
+  else if(id==='visitAccuser'&&scene==='accuser_home'&&quest.smearHeard&&!quest.accuserSilenced){
+   await say('jamal','I hear you’ve been telling people the sheriff was at the tannery. What are you claiming you saw?');
+   await say(null,'[Confront the accuser]', ['[Press him about the tannery]']);
+   quest.accuserSilenced=true;
+   save();
+   await say('Chronicle','The confrontation turns violent. J’Mal accidentally kills the man.');
+   await say('jamal','That wasn’t the idea. I’ll have to get him out of here before anyone comes by.');
+  }
+  else if(id==='riverRoad'&&scene==='accuser_home'&&quest.accuserSilenced)await travel('river_disposal',328,312,'down');
+  else if(id==='disposeBody'&&scene==='river_disposal'&&quest.accuserSilenced&&!quest.bodyDisposed)await releaseBody();
+  else if(id==='heistChurchRoad'&&scene==='river_disposal'&&quest.bodyDisposed)await travel('heist_church',328,312);
   else if(id==='heistWarning'){await say('gerya','Some strangers offered me money to store things for a few hours tonight. They wanted secrecy. I thought you should know.');await say('jason','When are they bringing these things, and when will they collect them?');await say('gerya','After midnight. Before four in the morning. They would not say where the goods were coming from.');await say('cimri','Weapons. The rebellion may be planning to rob the armory.');await say('Chronicle','This is Cimri’s deduction, not something the doctor witnessed. The armory displays gear donated by retired Chelish soldiers, including a carefully maintained ballista.');quest.heistTip=true;}
   else if(id==='armoryRoad')await travel('longacre_armory',264,312);
   else if(id==='prepareAmbush'){await say('Chronicle','Almost eleven hours before the expected theft, Freya and Jason leave their armor behind to approach quietly. Inside the museum they borrow scale mail. Freya, Jason, and Draymus wait in a side room.');await say('jamal','The ballista is loaded. Front door opens, the tripwire fires. I will watch from outside.');await say('Chronicle','J’Mal hides in a bush outside. The trap, the front door, and his position will matter if the thieves arrive by another entrance.');quest.ambushPrepared=true;}
@@ -51,6 +87,15 @@ window.ArmoryArc=(()=>{
   else{const t=Math.max(0,Math.min(1,(p-.28)/.34)),sx=from.x,sy=from.y-from.height*.55;g.translate(sx+(x-sx)*t,sy+(y-sy)*t);g.rotate(Math.atan2(y-sy,x-sx));g.fillStyle='#d8c39b';g.fillRect(-12,-1,24,2);g.fillStyle='#bac9d5';g.fillRect(10,-2,4,4);}
   g.restore();return true;
  }
- function effects(g,t){if(scene!=='burning_jail'||quest.cimriRecovered)return;g.save();g.globalAlpha=.12+(reduce.matches?0:.04*Math.sin(t*4));g.fillStyle='#ec8236';g.fillRect(420,112,160,140);g.restore();}
+ function effects(g,t){
+  if(scene==='river_disposal'&&release?.epoch===epoch){
+   const p=Math.min(1,(performance.now()-release.at)/releaseDuration);
+   if(p>.45){
+    const spread=(p-.45)*2;
+    g.save();g.globalAlpha=(1-spread)*.6;g.strokeStyle='#a2c4cc';
+    g.beginPath();g.ellipse(riverEdge.x,399,4+spread*22,1+spread*5,0,0,Math.PI*2);g.stroke();g.restore();
+   }
+  }
+  if(scene!=='burning_jail'||quest.cimriRecovered)return;g.save();g.globalAlpha=.12+(reduce.matches?0:.04*Math.sin(t*4));g.fillStyle='#ec8236';g.fillRect(420,112,160,140);g.restore();}
  return {install,load,mapImage,roster,goal,points,target,npcs,interact,afterBattle,effect,effects,chain};
 })();
