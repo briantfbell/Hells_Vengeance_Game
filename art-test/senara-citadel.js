@@ -10,17 +10,17 @@ window.SenaraCitadel=(()=>{
  const maps={
   [citadel]:{
    name:'Senara · The Hellknight Citadel',image:'senara-hellknight-citadel-v1.png',spawn:[328,264],blocks:[],
-   walk:[{x:64,y:144,w:512,h:128},{x:160,y:112,w:320,h:32},{x:512,y:112,w:96,h:48}],lights:[[39,82],[62,95],[261,62],[380,62],[586,55],[197,348],[443,348]],
+   walk:[{x:64,y:160,w:512,h:112},{x:176,y:128,w:304,h:48},{x:512,y:112,w:80,h:64}],lights:[[39,82],[62,95],[261,62],[380,62],[586,55],[197,348],[443,348]],
    points:[
-    {id:'citadelRespect',speaker:officer,x:104,y:152,label:'Pay respects to the local chapter'},
-    {id:'citadelTrail',speaker:officer,x:104,y:152,label:'Ask about the Whisperwood'},
-    {id:'citadelStudy',x:536,y:120,label:'Study the spell with Draymus'},
-    {id:'citadelDepart',x:328,y:264,label:'Take the carriage southwest'}
+    {id:'citadelRespect',speaker:officer,x:104,y:160,label:'Pay respects at the watch desk'},
+    {id:'citadelTrail',speaker:officer,x:104,y:160,label:'Read the Whisperwood patrol reports'},
+    {id:'citadelStudy',x:536,y:128,label:'Study the spell at the lectern'},
+    {id:'citadelDepart',x:328,y:280,label:'Leave through the gate for the carriage'}
    ]
   },
   [road]:{
    name:'Whisperwood · Southwest Road',image:'whisperwood-carriage-road-v1.png',spawn:[296,344],blocks:[],
-   walk:[{x:256,y:64,w:112,h:32},{x:224,y:96,w:176,h:80},{x:192,y:176,w:256,h:64},{x:160,y:240,w:320,h:144}],lights:[[549,284],[623,284]],
+   walk:[{x:256,y:64,w:112,h:48},{x:224,y:96,w:176,h:96},{x:192,y:176,w:240,h:80},{x:160,y:240,w:320,h:160}],lights:[[549,284],[623,284]],
    points:[{id:'whisperwoodBob',speaker:coachman,x:456,y:280,label:'Speak to Bob before entering the woods'}]
   }
  };
@@ -81,14 +81,16 @@ window.SenaraCitadel=(()=>{
      '[Transcribe the spell first]','[Rehearse the casting first]'
     ]);
     await say('draymus',choice===0?'Now that I’ve written it out, I can rehearse the casting. Give me room.':'The casting holds. I’ll write it out now, while I still have every part of it in my head.');
-    await say('Chronicle','Draymus learns a new spell at the citadel.');
     quest.senaraDraymusTrained=true;
+    save();
+    updateObjective();
+    await say('Chronicle','Draymus records the spell in his notes. The officer is back at the watch desk with the patrol reports.');
     break;
    }
    case 'citadelTrail':
     await say(officer,'Before the Reclamation came, we drove criminals and dangerous beasts out of these woods. Now we have enough hands to hold the citadel and little more.');
     await say(officer,'Our old patrol reports put the unicorns southwest of Senara. The farther you go, the less you can count on a cleared road.');
-    await say('freya','Then we’ll take the unicorns next. Fex asked for four horns. Bob can get us to the woods in the carriage.');
+    await say('freya','Mark the southwest road for Bob. Fex asked for four horns, and we’ll need room for the carriage.');
     quest.senaraForestIntel=true;
     break;
    case 'citadelDepart':
@@ -96,7 +98,7 @@ window.SenaraCitadel=(()=>{
     await travel(road,296,344);
     break;
    case 'whisperwoodBob':
-    await say(coachman,'Four warhorses make a fine team, but I can only take them where there’s room for the carriage. Tell me where we’re stopping before it gets dark.');
+    await say(coachman,'That’s as far as four horses and a carriage will get you. I’ll keep them here while you find a campsite.');
     await say('freya','Stay with the carriage, Bob. We’ll find a place to make camp before we go looking for the herd.');
     quest.senaraWhisperwoodReady=true;
     break;
