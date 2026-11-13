@@ -172,6 +172,8 @@ window.SkadiParley=(()=>{
     await say(skadi,'The north slope leads to Molthune. An ancient remorhaz down there has killed three of mine. Leave the creature alive. It keeps trespassers off the ridge.');
     await say('freya','What do you want us to take away?');
     await say(skadi,'There’s a box near its ground. Remove it. You have your passage, and you may take the old things my people recovered. We have no use for them.');
+    await say('reese','The Wight Mother let us through because we promised to remove the giants.');
+    await say('freya','I know what we promised. We have Skadi’s permission to pass. Leave her people alone and take the box.');
     quest.skadiComplete=true;
     break;
   }

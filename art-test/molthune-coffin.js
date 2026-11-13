@@ -14,7 +14,7 @@ window.MolthuneCoffin=(()=>{
  let scout=null,chase=null,breach=null,flight=null;
 
  function install(){
-  scenes[hall].points.push({id:'molthuneDepart',x:328,y:344,label:'Descend toward Molthune'});
+  scenes[hall].points.push({id:'molthuneDepart',x:328,y:344,marker:{x:328,y:376},label:'Descend toward Molthune'});
   scenes[slope]={
    name:'Molthune · The Remorhaz Slope',image:slopeArt,spawn:[328,344],blocks:[{x:464,y:160,w:64,h:32}],
    walk:[{x:112,y:160,w:416,h:160},{x:288,y:320,w:80,h:80}],lights:[],
