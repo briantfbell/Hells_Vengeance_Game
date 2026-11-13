@@ -1,6 +1,7 @@
 'use strict';
 window.Handheld=(()=>{
  let open=false,view='home',slotMode='save',member=0,frozen=0,page=0,itemId=null,itemBusy=false,historyPage=0;
+ let planNoteIndex=0;
  let planId=null,planImage=null,planCast={},planPaths=false;
  const planningMaps={
   'barleybridge-approach-v1':'Barleybridge · Scout’s approach',
@@ -30,6 +31,20 @@ window.Handheld=(()=>{
  function paint(){ $('pause-plan-map').hidden=true;$('pause-panel').dataset.view=view;$('pause-panel').hidden=false;$('pause-title').textContent='Pause';message('Arrows / WASD: select · E / Enter: confirm · B: back');if(view==='character'){paintCharacter();return;}if(view==='inventory'){paintInventory();return;}if(view==='item'){paintItem();return;}
  if(view==='plan-map'){paintPlanMap();return;}
  if(view==='planning-maps'){paintPlanningMaps();return;}
+ if(view==='plan-notes'){
+  $('pause-title').textContent='Tathlum journal';
+  entries([...BarleybridgeScout.planNotes.map(([title],index)=>[title,()=>{planNoteIndex=index;view='plan-note';paint();}]),
+   ['Back',()=>{view='quest';paint();}]]);
+  details(['Briefings on the remaining components and the company’s plan for Westcrown.']);
+  return;
+ }
+ if(view==='plan-note'){
+  const [title,summary]=BarleybridgeScout.planNotes[planNoteIndex];
+  $('pause-title').textContent=title;
+  entries([['Back',()=>{view='plan-notes';paint();}]]);
+  details(summary.split('\n\n'));
+  return;
+ }
  if(view==='home'){entries([['Resume',close],['Party & equipment',()=>{view='character';member=Math.max(0,CORE.indexOf(lead));paint();}],['Inventory',()=>{view='inventory';page=0;paint();}],[battle?'Combat help':'Current quest',()=>{view=battle?'combat-help':'quest';paint();}],['Progression',()=>{view='progression';historyPage=0;paint();}],['Save game',()=>{slotMode='save';view='slots';paint();},!!battle],['Load game',()=>{slotMode='load';view='slots';paint();},!!battle],['Export save',()=>{save();$('save-export').click();message('Save exported.');},!!battle],['Import save',()=>{close();$('save-import').click();},!!battle],['Audio',()=>{view='audio';paint();}],['Controls',()=>{view='controls';paint();}],['Title screen',()=>{save();close();reset();TitleScreen.show();},!!battle]]);}
  else if(view==='progression'){
  const rows=Progression.history(quest,progression),pages=Math.max(1,Math.ceil(rows.length/4));historyPage=Math.max(0,Math.min(historyPage,pages-1));
@@ -48,7 +63,7 @@ window.Handheld=(()=>{
  }
  else if(view==='quest'||view==='combat-help'){
  const combat=view==='combat-help';$('pause-title').textContent=combat?'Combat help':'Current quest';const options=combat?[['Selected command',()=>{view='combat-command';paint();}]]:[];
- if(!combat&&quest.barleybridgePlanReviewed)options.push(['Planning maps',()=>{view='planning-maps';paint();}]);
+ if(!combat&&quest.barleybridgePlanReviewed)options.push(['Planning maps',()=>{view='planning-maps';paint();}],['Tathlum journal',()=>{view='plan-notes';paint();}]);
  options.push(['Back',()=>{view='home';paint();}]);entries(options);
  if(combat)details(['D-pad selects a command. A confirms, then selects a target. B cancels targeting.', 'Initiative rolls once; Now / Next shows the fixed turn order.', 'Skill spends a limited use, even on a miss.', 'Guard adds +4 AC and halves damage until your next turn.', 'Select / F1 shows details for the selected command. X / Y inspect gear and party.']);
  else{
@@ -136,7 +151,7 @@ window.Handheld=(()=>{
    if(hasPlanStops())inspectPlanStop();else togglePlanPaths();
   }else if(!e.repeat&&e.key.toLowerCase()==='i')togglePlanPaths();
  }
- function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=({item:'inventory','plan-map':'planning-maps','planning-maps':'quest'})[view]||'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='plan-map'){handlePlanKey(e,d);return true;}if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
+ function key(e){if(!open)return false;e.preventDefault();if(itemBusy)return true;if(e.key.toLowerCase()==='p'||view==='combat-command'&&e.key==='F1'){if(!e.repeat)close();return true;}if(e.repeat&&back(e.key))return true;if(back(e.key)){if(view==='home'||view==='combat-command')close();else{view=({item:'inventory','plan-map':'planning-maps','planning-maps':'quest','plan-notes':'quest','plan-note':'plan-notes'})[view]||'home';paint();}return true;}if(e.repeat&&confirm(e.key))return true;const d=KEY[e.key];if(view==='plan-map'){handlePlanKey(e,d);return true;}if(view==='character'){if(['left','right'].includes(d)){member=(member+(d==='left'?-1:1)+CORE.length)%CORE.length;paintCharacter();}else if(confirm(e.key)){view='home';paint();}return true;}if(d)navigate([...$('pause-options').querySelectorAll('button')],view==='progression'?(d==='left'||d==='up'?'up':'down'):d,view==='progression'?1:2);else if(confirm(e.key))document.activeElement?.click();return true;}
  function dialogKey(e){if(!dialogOpen)return false;const d=KEY[e.key],buttons=[...$('choices').querySelectorAll('button')];if(d){e.preventDefault();const columns=buttons.length<=2&&(d==='up'||d==='down')?1:2;navigate(buttons,d,columns);return true;}if(confirm(e.key)){e.preventDefault();if(!e.repeat){if(buttons.length){(buttons.includes(document.activeElement)?document.activeElement:buttons[0])?.click();}else $('close').click();}return true;}if(back(e.key)){e.preventDefault();if(!buttons.length)$('close').click();return true;}return false;}
  function importKey(e){if(!$('save-import-dialog').open)return false;const d=KEY[e.key];if(d){e.preventDefault();navigate([$ ('import-confirm'),$('import-cancel')],d);}else if(confirm(e.key)){e.preventDefault();if(!e.repeat)(['import-confirm','import-cancel'].includes(document.activeElement.id)?document.activeElement:$('import-confirm')).click();}else if(back(e.key)){e.preventDefault();$('import-cancel').click();}return true;}
  function install(){ $('pause-toggle').onclick=show;}

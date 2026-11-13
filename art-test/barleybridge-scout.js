@@ -3,6 +3,11 @@
 window.BarleybridgeScout=(()=>{
  const temple='ilnius_inner_temple',approach='barleybridge_approach',image='barleybridge-approach-v1.png';
  const boat='guapo_party_boat',boatArt='guapo-party-boat-v1.png';
+ const planNotes=[
+  ['Tathlum Plan · Barleybridge','El Guapo has scouted the approach. The plan called for the blood of slain innocents to anoint Parnoneryx’s head. The outcome at Barleybridge remains unknown.'],
+  ['Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.'],
+  ['Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.\n\nOpen Current quest and choose Planning maps. Start at the Barleybridge scout’s approach to trace the crossing.']
+ ];
 
  function install(){
   scenes[temple].points.push({id:'barleybridgeCutaway',x:328,y:344,marker:{x:328,y:377},label:'Follow El Guapo to Barleybridge'});
@@ -84,9 +89,7 @@ window.BarleybridgeScout=(()=>{
     quest.barleybridgeScoutComplete=true;
     break;
    case 'barleybridgePlan':
-    await journeyCard('Tathlum Plan · Barleybridge','El Guapo has scouted the approach. The plan called for the blood of slain innocents to anoint Parnoneryx’s head. The outcome at Barleybridge remains unknown.',()=>{});
-    await journeyCard('Tathlum Plan · Warlock Island','After St. Ilnius, an ancient library is named as the last component. The target is the Archive of Redacted Histories. The company intends to burn it and apply its ashes to the dragon’s head.',()=>{});
-    await journeyCard('Tathlum Plan · Egorian','The company intends to bring the prepared head to Queen Abrogail. The plan calls for the completed Tathlum to be used against Westcrown.\n\nOpen Current quest and choose Planning maps. Start at the Barleybridge scout’s approach to trace the crossing.',()=>{});
+    for(const [title,summary] of planNotes)await journeyCard(title,summary,()=>{});
     quest.barleybridgePlanReviewed=true;
     break;
    case 'guapoInvite':
@@ -104,5 +107,5 @@ window.BarleybridgeScout=(()=>{
   updateObjective();
   return true;
  }
- return {install,load,mapImage,roster,npcs,points,target,goal,interact};
+ return {install,load,mapImage,roster,npcs,points,target,goal,interact,planNotes};
 })();
