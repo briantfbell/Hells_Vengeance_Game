@@ -81,6 +81,7 @@ window.RemesianaMarket=(()=>{
    g.save();
    g.globalAlpha=progress;
    SceneLayers.foreground(g,art[ruins],{contain:true});
+   PresentationPolish.worldFire(g,t,[[337,132],[390,138]]);
    g.restore();
   }
   if(!quest.remesianaMarketDestroyed&&ignition?.token!==epoch)return;
