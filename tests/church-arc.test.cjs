@@ -979,7 +979,9 @@ test('Reese’s pact transfers the talisman and restores the company before the 
  w.battle=null;
  await w.AregoReturn.afterBattle(position);
  assert.equal(w.AregoReturn.roster(),null);
+ w.hp.jason=0;
  await step('aregoConsiderContract');
+ assert.equal(w.hp.jason,1);
  const arrival=sections.find(s=>s.id==='arego-fex-aftermath');
  const saved=checkpoint(w,{...arrival,quest:w.quest});
  const back=w.SaveFiles.decode(w.SaveFiles.encode(saved));

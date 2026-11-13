@@ -3,7 +3,7 @@
 window.AregoReturn=(()=>{
  const hell='arego_malebolge_ledge',gate='arego_inferno_gate',kind='arego_fex_rematch';
  const bone='arego_bone_devil',bearded='arego_bearded_devil',boneArt='arego-bone-devil-v1.png';
- const reinforcements=[{x:134,y:218,height:67},{x:218,y:237,height:68}];
+ const reinforcements=[{x:139,y:230,height:46},{x:203,y:228,height:48}];
  function install(){
   scenes[hell].points.push(
    {id:'aregoReeseBargain',speaker:'visperthul',x:488,y:160,label:'Bargain with Visperthul'},
@@ -39,17 +39,17 @@ window.AregoReturn=(()=>{
  function npcs(t=0){
   if(scene===hell&&quest.aregoReeseSheltered){
    const allies=[{id:'visperthul',x:488,y:145,height:90}];
-   if(quest.aregoBoneDevilsSummoned)allies.push({id:bone,x:432,y:148,height:63},{id:bone,x:520,y:128,height:63});
+   if(quest.aregoBoneDevilsSummoned)allies.push({id:bone,x:412,y:149,height:59},{id:bone,x:539,y:125,height:58});
    return allies;
   }
   if(scene!==gate||!quest.aregoReeseReturned)return null;
   const allies=[{id:'visperthul',x:472,y:232+(reduce.matches?0:Math.round(Math.sin(t*1.7)*2)),height:91}];
   if(quest.aregoFexSlain)return [...allies,{id:'fex',x:360,y:296,height:61,pose:'prone'}];
-  allies.push({id:bone,x:216,y:300,height:62},{id:bone,x:424,y:296,height:62},{id:'fex',x:328,y:276,height:64});
+  allies.push({id:bone,x:174,y:304,height:62},{id:bone,x:462,y:307,height:62},{id:'fex',x:328,y:276,height:64});
   if(!quest.aregoCompanyFreed)allies.push(
-   {id:'jason',x:240,y:320,height:49,pose:'prone'},
-   {id:'draymus',x:272,y:320,height:48,pose:'prone'},
-   {id:'jamal',x:304,y:320,height:45,pose:'prone'}
+   {id:'jason',x:208,y:315,height:49,pose:'prone'},
+   {id:'draymus',x:226,y:337,height:48,pose:'prone'},
+   {id:'jamal',x:252,y:359,height:45,pose:'prone'}
   );
   return allies;
  }
@@ -104,15 +104,22 @@ window.AregoReturn=(()=>{
    }
    case 'aregoFexRematch':
     await say('fex','You handed him what I made. Do you understand what you have done?');
-    await say('reese','I came back for my company. That’s all you need to understand.');
+    await say('reese','I came back for my company.');
+    await say('freya','Guapo’s still under Fex’s spell. Keep him out of the fight. Visperthul, send your devils in.');
     beginFight();
     return true;
-   case 'aregoConsiderContract':
+   case 'aregoConsiderContract':{
+    const fallen=['freya','jason','draymus'].filter(id=>hp[id]===0);
+    if(fallen.length){
+     await say('Chronicle','The company takes a moment to bind wounds and bring the fallen around.');
+     for(const id of fallen)hp[id]=1;
+    }
     await say('draymus','We could turn on Visperthul while we have the chance.');
     await say('jason','Reese signed a contract. Think about what it might cost him before you reach for a weapon.');
     await say('reese','I brought us back alive. We still have to decide what that promise means.');
     quest.aregoFexAftermath=true;
     break;
+   }
   }
   save();
   paintParty();
@@ -131,7 +138,7 @@ window.AregoReturn=(()=>{
  }
  function drawSupport(g,t){
   if(battle?.kind!==kind||!art[boneArt])return;
-  const models=[{id:'visperthul',x:61,y:204,height:72},...reinforcements.map(p=>({...p,id:bone}))];
+  const models=[{id:'visperthul',x:66,y:231,height:55},...reinforcements.map(p=>({...p,id:bone}))];
   g.save();
   g.imageSmoothingEnabled=false;
   for(const [index,{id,x,y,height}] of models.entries()){
