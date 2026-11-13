@@ -633,7 +633,7 @@ test('combat intentions use compact names while retaining full target details',(
  const order=enemies.map(({name},index)=>({name,index,side:'enemy'}));
  Object.assign(w,{$:()=>nodes,NAMES:{freya:'Freya'},Initiative:{next:()=>order[1]},battle:{round:1,turn:0,enemies,order},
   document:{createElement:()=>({})}});
- vm.runInContext(s.slice(s.indexOf('function paintEnemyIntent('),s.indexOf('function startBattle(')),w);
+ vm.runInContext(s.slice(s.indexOf('function fitCombatLine('),s.indexOf('function startBattle(')),w);
  w.paintEnemyIntent();
  assert.deepEqual(children.map(node=>node.textContent),[
   'R1 · NOW Paladin','NEXT Guard','Paladin · Sword cut → Freya','Guard · Sword strike → Freya'

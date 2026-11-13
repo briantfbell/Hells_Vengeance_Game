@@ -219,17 +219,13 @@ function healthBadge(x,y,w,name,value,max,selected=false,enemy=false,status=''){
  ctx.save();ctx.fillStyle='#131922ed';ctx.strokeStyle=selected?'#e4c581':'#766343';ctx.lineWidth=selected?2:1;ctx.beginPath();ctx.moveTo(x-w/2+5,y);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w/2,y+27);ctx.lineTo(x-w/2,y+27);ctx.lineTo(x-w/2,y+5);ctx.closePath();ctx.fill();ctx.stroke();
  ctx.textAlign='left';ctx.font='10px FolkenPixel';ctx.fillStyle=selected?'#f4d795':'#e4d5b9';
  const label=name.replace(/^(Sanctuary |Church |Porch )/,'').replace('El Guapo','Guapo').replace('Celestial Wolf','Cel. Wolf').replace(/^(Loran|Lacall) Allamar$/,'$1');
- let shown=label;
- if(ctx.measureText(label).width>w-12){
-  const suffix=label.endsWith(' (R)')?' (R)':'';
-  if(suffix)ctx.font='9px FolkenPixel';
-  if(ctx.measureText(label).width>w-12){
-   let stem=suffix?label.slice(0,-suffix.length):label;
-   while(stem.length>1&&ctx.measureText(stem+'…'+suffix).width>w-12)stem=stem.slice(0,-1);
-   shown=stem+'…'+suffix;
-  }
+ const available=w-12;
+ let fontSize=10;
+ while(fontSize>8&&ctx.measureText(label).width>available){
+  fontSize--;
+  ctx.font=fontSize+'px FolkenPixel';
  }
- ctx.fillText(shown,x-w/2+6,y+10);
+ ctx.fillText(label,x-w/2+6,y+10,available);
  if(status){ctx.font='9px FolkenPixel';ctx.fillStyle='#bcb8ab';ctx.fillText(status,x-w/2+6,y+21);ctx.restore();return;}
  ctx.font='9px FolkenPixel';ctx.fillStyle='#bcb8ab';ctx.fillStyle=value===0?'#dc9a87':'#bcb8ab';ctx.fillText(value===0?'DOWN':value+'/'+max,x-w/2+6,y+21);
  const barX=x-w/2+38,barW=w-44;rect(barX,y+16,barW,5,'#35333a');rect(barX,y+16,barW*Math.max(0,value/max),5,enemy?'#b86454':'#9dab77');if(selected){ctx.fillStyle='#e4c581';ctx.beginPath();ctx.moveTo(x-4,y-5);ctx.lineTo(x+4,y-5);ctx.lineTo(x,y-1);ctx.fill();}ctx.restore();
@@ -459,6 +455,12 @@ async function encounter(){
  startBattle(count,shaken);await templeStoryStrike();if(surprise){battle.busy=true;await enemyStrike(battle.enemies[0],epoch);if(battle){battle.busy=false;paintBattle();}}
 }
 function planEnemyRound(){if(battle)EnemyTactics.plan(battle.enemies,units,hp,STATS,battle.round);}
+function fitCombatLine(element, baseSize, minimumSize){
+ const width=element.clientWidth;
+ if(!width)return;
+ const required=element.scrollWidth;
+ if(required>width)element.style.fontSize=Math.max(minimumSize,baseSize*width/(required+1))+'cqw';
+}
 function paintEnemyIntent(){
  const panel=$('enemy-intents');
  panel.hidden=!battle||!!battle.scripted;
@@ -484,6 +486,7 @@ function paintEnemyIntent(){
   row.title=EnemyTactics.preview(enemy,NAMES);
   row.className=enemy.intent?.heavy?'heavy':'';
   panel.append(row);
+  fitCombatLine(row,1.25,1.05);
  }
 }
 function startBattle(count,shaken,config=null){
@@ -494,7 +497,7 @@ function startBattle(count,shaken,config=null){
  battle={kind:config?.kind||'temple',returnPosition:config?.returnPosition,round:1,turn:0,target:0,ally:units.some(u=>u.id===lead)?lead:units[0].id,enemies,busy:false,smoke:0,pendingInit:!config?.scripted,scripted:!!config?.scripted,script:config?.script,scriptActor:config?.scriptActor};$('battle').hidden=false;$('character').disabled=true;$('combat-log').replaceChildren();battle.recent=[];battle.current='';showCombatMessage(battle.script?.opening||config?.opening||'Choose a command. Guard lasts until your next turn.');if(!battle.scripted)planEnemyRound();paintBattle();updateObjective();
 }
 function showCombatMessage(text){$('battle-message').textContent=text;}
-function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';const lines=text.split('\n');e.textContent=lines.length>1?lines[0].split(/ · | casts /)[0]+' → '+lines[1]:text;e.title=text;panel.append(e);}}
+function paintCombatHistory(){if(!battle)return;const panel=$('combat-log');panel.replaceChildren();for(const text of battle.recent.slice(0,2)){const e=document.createElement('div');e.className='combat-entry';const lines=text.split('\n');e.textContent=lines.length>1?lines[0].split(/ · | casts /)[0]+' → '+lines[1]:text;e.title=text;panel.append(e);fitCombatLine(e,1.40625,1.125);}}
 function log(text){if(!battle)return;$('battle-message').classList.remove('command-preview');if(battle.current)battle.recent.unshift(battle.current);battle.recent=battle.recent.slice(0,2);battle.current=text;showCombatMessage(text);paintCombatHistory();}
 function activeUnit(){if(!battle)return null;if(battle.scripted)return units.find(u=>u.id===battle.scriptActor);if(!battle.order)return units[battle.turn];const entry=battle.order[battle.turn];return entry?.side==='party'?Initiative.actor(entry,units,battle.enemies):null;}
 function livingEnemy(){return battle?.enemies.find(e=>e.hp>0);}
@@ -546,11 +549,22 @@ function selectedCombatCommand(){
  if(target)rows.push('Selected target · '+target);
  return {heading:heading+' · '+NAMES[actor.id],rows};
 }
+function setCombatHeading(text, compactText = text){
+ const heading=$('battle-title');
+ heading.textContent=text;
+ heading.style.fontSize='';
+ fitCombatLine(heading,1.72,1.35);
+ if(heading.scrollWidth>heading.clientWidth && compactText!==text){
+  heading.textContent=compactText;
+  heading.style.fontSize='';
+  fitCombatLine(heading,1.72,1.35);
+ }
+}
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
  if(c?.mode==='enemy'||c?.mode==='ally'){
   const confirmLabel=document.documentElement.classList.contains('handheld-display')?'A':'E';
-  $('battle-title').textContent='← → Select · '+confirmLabel+' Confirm · B Back';
+  setCombatHeading('← → Select · '+confirmLabel+' Confirm · B Back');
   canvas.focus({preventScroll:true});
  }
 }
@@ -585,9 +599,9 @@ function handleCombatKey(e){
 }
 function paintBattle(){
  if(!battle)return;paintEnemyIntent();const acting=activeUnit();
- if(!acting||battle.reveal){$('actions').replaceChildren();$('heal-target').disabled=true;$('combat-target').disabled=true;$('battle-title').textContent=battle.reveal?'Initiative · Battle order':'R'+battle.round+' · '+(battle.order?.[battle.turn]?.name||'Resolving turn');paintParty();return;}
+ if(!acting||battle.reveal){$('actions').replaceChildren();$('heal-target').disabled=true;$('combat-target').disabled=true;setCombatHeading(battle.reveal?'Initiative · Battle order':'R'+battle.round+' · '+(battle.order?.[battle.turn]?.name||'Resolving turn'));paintParty();return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
- const actor=activeUnit(),script=battle.script?.command();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy||!!script;$('battle-title').textContent=(script?.title||'R'+battle.round)+' · '+NAMES[actor.id]+' · E: select';$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name+' '+e.hp+'/'+e.max+(e.resolve?' resolve':'');o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy||!!script;
+ const actor=activeUnit(),script=battle.script?.command();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy||!!script;const turnHeading=(script?.title||'R'+battle.round)+' · '+NAMES[actor.id];const confirmLabel=document.documentElement.classList.contains('handheld-display')?'A':'E';setCombatHeading(turnHeading+' · '+confirmLabel+': select',turnHeading);$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(e.shortName||e.name)+' '+e.hp+'/'+e.max+(e.resolve?' resolve':'');o.title=e.name;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy||!!script;
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',SPECIAL[actor.id].name+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(script)commands.splice(0,commands.length,['special',script.name]);
  else if(unarmedWeapon(actor.id)||(actor.id==='jason'&&quest.egorianJasonBack))commands.splice(1,1);
@@ -622,8 +636,8 @@ async function performActionImpl(action){
  if(action==='special'&&unarmedWeapon(actor.id))return;
  const refusal=action==='potion'?potionRefusal(battle.ally||actor.id):'';if(refusal){battle.control.mode='commands';battle.control.action=null;log(refusal);paintBattle();return;}
  battle.control.mode='commands';battle.control.action=null;battle.busy=true;$('battle-message').classList.remove('command-preview');paintBattle();
- if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards. AC +4 and incoming damage halved until their next turn.');}
- else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action,true,()=>{hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');});log(NAMES[actor.id]+(action==='potion'?' uncorks a healing potion':' invokes Infernal Mending')+' for '+NAMES[id]+': '+(hp[id]-before)+' HP restored. ['+(action==='potion'?potions:mendUses)+'/2 remaining]');}
+ if(action==='guard'){await animateAction(actor,actor,'guard');actor.guard=true;log(NAMES[actor.id]+' guards · AC +4, half damage.');}
+ else if(action==='potion'||action==='mend'){const id=battle.ally||actor.id,value=await damage(action==='mend'?[2,8,3]:[2,4,2],NAMES[actor.id]+' · '+(action==='mend'?'Infernal Mending':'Healing potion')),before=hp[id];await animateAction(actor,units.find(u=>u.id===id),action,true,()=>{hp[id]=Math.min(STATS[id].hp,hp[id]+value);if(action==='potion')potions--;else mendUses--;flash(units.find(u=>u.id===id),'+'+(hp[id]-before),'#a8d8a0');});log(NAMES[actor.id]+' · '+(action==='potion'?'Healing potion':'Infernal Mending')+'\n'+NAMES[id]+' +'+(hp[id]-before)+' HP ['+(action==='potion'?potions:mendUses)+'/2]');}
  else if(action==='phase'){await animateAction(actor,actor,'guard');actor.ethereal=true;quest.mosswaterSpent=(quest.mosswaterSpent||0)+1;log('J’Mal phases until his next turn. ['+Inventory.giftCharges(quest,actor.id)+'/5].');}
  else if(action==='smoke'){await animateAction(actor,target,'smoke');quest.smokeUsed=true;battle.smoke=2;log('Jamal throws a smoke bomb. Enemies take −4 to hit for two rounds. [0/1 remaining]');}
  else{
@@ -688,7 +702,7 @@ async function advanceInitiative(increment,token){
    await ChurchArc.support();if(!battle||token!==epoch)return;
    window.AregoReturn?.support();window.NicoloArc?.support();
    battle.round++;battle.turn=0;battle.smoke=Math.max(0,battle.smoke-1);battle.enemies.forEach(e=>e.shaken=Math.max(0,(e.shaken||0)-1));
-   if(battle.paralyzed&&battle.round===2){battle.paralyzed=null;log('J’Mal shakes off the paralysis and rejoins the fight.');}planEnemyRound();
+   if(battle.paralyzed&&battle.round===2){battle.paralyzed=null;log('J’Mal shakes off paralysis.');}planEnemyRound();
   }
   const entry=battle.order[battle.turn];if(!Initiative.eligible(entry,units,battle.enemies,hp,battle.round,battle.paralyzed)){battle.turn++;continue;}
   const actor=Initiative.actor(entry,units,battle.enemies);
@@ -706,7 +720,7 @@ async function enemyStrike(enemy,token){
  if(token!==epoch||!battle)return;
  const intent=enemy.intent,target=units.find(u=>u.id===intent?.target);
  // Keep the announced target: a fallen target costs the enemy this action.
- if(!target||hp[target.id]<=0){log(enemy.name+' loses the opening; the intended target is down.');return;}
+ if(!target||hp[target.id]<=0){log(enemy.name+' · Target down.');return;}
  if(target.ethereal){log(enemy.name+' cannot strike J’Mal while he is phased.');return;}
  await window.ChurchArc?.enemyPreparation?.(enemy);if(token!==epoch||!battle)return;
  const penalty=(battle.smoke?4:0)+(enemy.shaken?2:0),bonus=STATS[enemy.id].atk-penalty,ac=combatAC(target.id)+(target.guard?4:0),total=await rollDice(enemy.name+' · '+intent.move+' → '+NAMES[target.id],20,1,bonus,'AC '+ac),roll=total-bonus;

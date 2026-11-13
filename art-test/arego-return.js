@@ -62,7 +62,7 @@ window.AregoReturn=(()=>{
    ...[1,2].map(i=>({id:bearded,name:'Bearded Devil '+i,shortName:'Devil '+i,hp:22,max:STATS[bearded].hp}))
   ];
   startBattle(0,false,{kind,enemies,returnPosition:[x,y,dir]});
-  log('Visperthul joins the battle\nTwo bone devils press the enemy line.');
+  log('Visperthul joins with two bone devils.');
  }
  async function afterBattle(position){
   quest.aregoFexSlain=true;
@@ -134,7 +134,7 @@ window.AregoReturn=(()=>{
   target.hp-=damage;
   battle.boneStrikeAt=performance.now();
   flash(target,'−'+damage,'#d3b7e6');
-  log('The bone devils strike\n'+target.name+' takes '+damage+' damage.');
+  log('Bone devils strike\n'+target.name+' −'+damage+' HP');
  }
  function drawSupport(g,t){
   if(battle?.kind!==kind||!art[boneArt])return;

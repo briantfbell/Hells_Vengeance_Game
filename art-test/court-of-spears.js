@@ -116,7 +116,7 @@ window.CourtArc=(()=>{
    await say(null,'[Face Lencia on the upper deck]', ['[Advance on the Angel of Longacre]']);
    prepare();
    startBattle(0,false,{kind:'court_lencia',enemies:[foe('lencia',NAMES.lencia,'Lencia'),foe('court_ranger','Court Defender 1','Guard 1'),foe('court_ranger','Court Defender 2','Guard 2')]});
-   log('Lencia raises her shield. The defenders close in.');
+   log('Lencia · Shield up. Defenders close in.');
   }
   else if(id==='courtEscape'&&scene==='court_upper'&&quest.lenciaDefeated&&!quest.lenciaEscaped)await escapeLencia();
   else if(id==='secureCourt'&&scene==='court_upper'&&quest.lenciaEscaped&&!quest.courtSecured){

@@ -130,8 +130,8 @@ window.WhisperwoodGlade=(()=>{
 
  const commands=[
   {label:'COVER',name:'Hold the line',description:'Freya shields the company’s withdrawal.',title:'Counterattack'},
-  {label:'RECOVER',name:'Take the horn',description:'J’Mal cuts the fourth horn free.',title:'Retreat · Horns [3/4]'},
-  {label:'RETREAT',name:'Leave the glade',description:'Fall back with all four horns.',title:'Retreat · Horns [4/4]'}
+  {label:'RECOVER',name:'Take the horn',description:'J’Mal cuts the fourth horn free.',title:'Horns [3/4]'},
+  {label:'RETREAT',name:'Leave the glade',description:'Fall back with all four horns.',title:'Horns [4/4]'}
  ];
  function command(){return commands[battle.gladeStage||0];}
  async function act(action,actor){
@@ -142,12 +142,12 @@ window.WhisperwoodGlade=(()=>{
   if(stage===0){
    await animateAction(current.enemies[1],actor,'attack',true);
    await animateAction(actor,actor,'guard',true,()=>{current.enemies[2].hp=0;});
-   log('Freya covers the retreat\nThe giant drives the company back. A unicorn falls in the fighting.');
+   log('Freya covers the retreat. A unicorn falls.');
    current.scriptActor='jamal';
   }else if(stage===1){
    await storyRoll('J’Mal · Reach the fallen unicorn',17,0,'Recover the fourth horn under attack');
    $('dice-panel').hidden=true;
-   log('J’Mal recovers the fourth horn\nFour of four horns secured. Fall back.');
+   log('J’Mal secures the fourth horn.');
   }else{
    log('The company retreats\nJ’Mal carries the fourth horn clear.');
    await delay(reduce.matches?180:600);

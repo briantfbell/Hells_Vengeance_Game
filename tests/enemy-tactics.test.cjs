@@ -17,7 +17,7 @@ test('enemy execution honors the announced target and applies Guard after heavy 
  await h.enemyStrike(enemy,1);
  assert.equal(h.hp.freya,30);
  assert(!h.last.includes('Zara Geitta'));
- h.battle.round++;h.hp.freya=0;h.rollDice=async()=>{throw Error('Do not retarget a fallen intended target');};await h.enemyStrike(enemy,1);assert(h.last.includes('intended target is down'));});
+ h.battle.round++;h.hp.freya=0;h.rollDice=async()=>{throw Error('Do not retarget a fallen intended target');};await h.enemyStrike(enemy,1);assert.equal(h.last,'Guardian · Target down.');});
 
 test('guard pairs announce the same target, and completed responses are visibly marked',()=>{
  const enemies=[{id:'kantaria_guard',name:'Guard 1',hp:24},{id:'kantaria_guard',name:'Guard 2',hp:24}],hp={freya:44,jason:37,jamal:35};

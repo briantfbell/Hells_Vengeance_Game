@@ -303,8 +303,10 @@ window.FastnessArc = (() => {
    ally.hp+=restored;
    flash(ally,'+'+restored,'#ead58d');
   });
-  const action = enemy===ally ? ' invokes a battle prayer' : ' mends '+ally.name;
-  log(enemy.name+action+' · '+restored+' HP restored.');
+  const actorName = enemy.shortName || enemy.name;
+  const allyName = ally.shortName || ally.name;
+  const action = enemy===ally ? ' prays' : ' mends '+allyName;
+  log(actorName+action+' · +'+restored+' HP');
  }
 
  async function afterBattle(kind,returnPosition) {

@@ -77,7 +77,7 @@ window.NicoloArc=(()=>{
   battle.nicoloStrikeAt=performance.now();
   GameAudio.effect('hit');
   flash(target,'−'+damage,'#e8ce9b');
-  log('Nicolo strikes from the flank\n'+target.name+' takes '+damage+' damage.');
+  log('Nicolo flanks\n'+target.name+': −'+damage+' HP');
  }
  function drawSupport(g){
   if(battle?.kind!==kind||!art[allyArt])return;

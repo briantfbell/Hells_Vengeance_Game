@@ -88,7 +88,7 @@ window.AregoAmbush=(()=>{
     await animateAction(fex,ally('guapo'),'arego_domination',true,()=>{current.guapoDominated=true;});
     log('Fex dominates El Guapo\nGuapo turns against the company.');
     await animateAction(accuser,ally('jamal'),'arego_confusion',true,()=>{current.jamalConfused=true;});
-    log('Razelago confuses J’Mal\nJ’Mal can no longer act with the company.');
+    log('Razelago · J’Mal is confused.');
     await animateAction(fex,ally('jason'),'arego_chain',true,()=>{
      hp.jason=0;
      hp.draymus=0;
@@ -99,7 +99,7 @@ window.AregoAmbush=(()=>{
      hp.reese-=harm;
      if(harm)flash(ally('reese'),'−'+harm,'#ee9a88');
     });
-    log('The bearded devils wound Reese\nThe talisman is within reach.');
+    log('Devils wound Reese. The talisman is near.');
     proceed(current,3,'reese');
     break;
    case 3:

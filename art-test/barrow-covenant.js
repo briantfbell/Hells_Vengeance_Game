@@ -172,7 +172,7 @@ window.BarrowCovenant=(()=>{
    current.covenantJasonKilled=true;
    flash(jason,'FALLEN','#ee9a88');
   });
-  if(token===epoch&&battle===current)log('Malix’s spell kills Jason. The company has to hold the stone.');
+  if(token===epoch&&battle===current)log('Malix kills Jason. Hold the stone.');
  }
  async function afterBattle(position){
   quest.covenantBattleWon=true;

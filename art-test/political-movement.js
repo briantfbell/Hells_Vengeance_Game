@@ -201,7 +201,7 @@ window.PoliticalMovement=(()=>{
  function startExecutionBattle(){
   units=units.filter(unit=>unit.id!=='freya');
   startBattle(0,false,{kind:'execution',enemies:[{id:'false_knight',name:'Angel Knight',hp:30,max:30},{id:'rioter1',name:NAMES.rioter1,hp:16,max:16},{id:'rioter2',name:NAMES.rioter2,hp:16,max:16}]});
-  log('Jason casts Shield of Faith · AC +2 for this confrontation.');
+  log('Jason · Shield of Faith · AC +2');
  }
  async function startExecution(){
   if(!quest.boExecuted){

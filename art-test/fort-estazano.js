@@ -148,7 +148,7 @@ window.FortArc=(()=>{
    seedParty(foot.x,foot.y,'up');
    await say('jason','Get behind me. I’ll hold the lower door.');
   }
-  else if(id==='manticoreFight'&&scene==='fort_assault'&&quest.archerAmbushed&&!quest.manticoreDrivenOff&&!quest.manticoreDefeated){prepare();hp.jamal=Math.max(1,Math.min(hp.jamal,Math.floor(STATS.jamal.hp*.5)));startBattle(0,false,{kind:'fort_manticore',enemies:[{id:'manticore',name:'Manticore',hp:STATS.manticore.hp,max:STATS.manticore.hp}]});log('Hold the tower · Tail spines and diving claws alternate. Guard reduces damage.');}
+  else if(id==='manticoreFight'&&scene==='fort_assault'&&quest.archerAmbushed&&!quest.manticoreDrivenOff&&!quest.manticoreDefeated){prepare();hp.jamal=Math.max(1,Math.min(hp.jamal,Math.floor(STATS.jamal.hp*.5)));startBattle(0,false,{kind:'fort_manticore',enemies:[{id:'manticore',name:'Manticore',hp:STATS.manticore.hp,max:STATS.manticore.hp}]});log('Spines, then claws · Guard cuts damage.');}
   else if(id==='finishManticore'&&scene==='fort_assault'&&quest.manticoreDrivenOff&&!quest.manticoreDefeated)await finishManticore();
   else if(id==='searchKeep'&&scene==='fort_search'&&quest.manticoreDefeated&&!quest.fortKeepInspected&&!quest.fortSearched){
    await say('freya','See where the prints double back? They walked into the keep and straight back out. Check the road by the gate.');

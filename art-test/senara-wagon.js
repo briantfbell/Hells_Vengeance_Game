@@ -103,7 +103,7 @@ window.SenaraWagon=(()=>{
   current.script=null;
   current.scriptActor=null;
   current.control=null;
-  log('Jason casts Dismissal\nThe hound archon vanishes into Abaddon.');
+  log('Jason casts Dismissal\nHound archon sent to Abaddon.');
   planEnemyRound();
   current.pendingInit=true;
   beginInitiative();

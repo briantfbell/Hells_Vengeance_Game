@@ -172,7 +172,7 @@ window.ArmoryArc=(()=>{
    prepare(408,232,'right');
    startBattle(0,false,{kind:'armory_porch',enemies:[enemy('porch_guard','Porch Guard 1','Guard 1'),enemy('porch_guard','Porch Guard 2','Guard 2')]});
    battle.enemies[1].hp=battle.enemies[1].max=8;
-   log('El Guapo draws his rapier. The guards reach for their swords.');
+   log('El Guapo · Rapier drawn');
   }
   else if(id==='watchJailDuel'&&scene==='burning_jail'&&quest.porchCleared&&!quest.jailDuelSeen&&!quest.cimriRecovered)await watchJailDuel();
   else if(id==='rescueCimri'&&scene==='burning_jail'&&quest.jailDuelSeen&&!quest.rhonaFledJail&&!quest.cimriRecovered){
