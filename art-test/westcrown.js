@@ -16,11 +16,11 @@ window.Westcrown=(()=>{
    name:'Westcrown · Canal Quay',image,spawn:[328,264],
    walk:[{x:48,y:160,w:560,h:128},{x:544,y:288,w:64,h:96}],blocks:[],lights:[[111,121],[394,91]],
    points:[
-    {id:'westcrownMeetBrado',speaker:'brado',x:280,y:232,label:'Meet Brado Pachia'},
-    {id:'westcrownCheckManifest',x:72,y:184,label:'Check the freight ledger'},
-    {id:'westcrownDeliverNote',x:368,y:184,label:'Deliver the sealed note'},
-    {id:'westcrownCheckBerth',x:576,y:344,label:'Check the canal berth'},
-    {id:'westcrownReport',speaker:'brado',x:280,y:232,label:'Report to Brado Pachia'}
+    {id:'westcrownMeetBrado',speaker:'brado',x:280,y:208,label:'Meet Brado Pachia'},
+    {id:'westcrownCheckManifest',x:72,y:168,label:'Check the freight ledger'},
+    {id:'westcrownDeliverNote',x:368,y:152,label:'Deliver the sealed note'},
+    {id:'westcrownCheckBerth',x:576,y:376,label:'Check the canal berth'},
+    {id:'westcrownReport',speaker:'brado',x:280,y:208,label:'Report to Brado Pachia'}
    ]
   };
   MAP_LAYERS[quay]={foreground:image,contain:true,background:{
@@ -74,7 +74,8 @@ window.Westcrown=(()=>{
    case 'westcrownMeetBrado':
     await say('brado','I’m Brado Pachia. I have three small jobs on this quay, if you want the work.');
     await say('freya','Tell us what you need.');
-    await say('brado','Check whether today’s freight made it into the ledger. Leave this sealed note at the side door, and tell me whether the canal berth is clear.');
+    await say('brado','The freight booth’s by the west stairs. Check its ledger for today’s delivery.');
+    await say('brado','Leave this sealed note at the small door beside the warehouse. Then check whether the pier at the east end is clear.');
     quest.westcrownHired=true;
     break;
    case 'westcrownCheckManifest':
