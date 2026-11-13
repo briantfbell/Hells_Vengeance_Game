@@ -8,7 +8,8 @@ window.BarrowCovenant=(()=>{
   reveal:{x:328,y:151,radius:76,duration:1100,light:'#ffad62',spark:'#ffd3a2'},
   raise:{x:276,y:234,radius:54,duration:1200,light:'#e6cd91',spark:'#fff0b0'}
  };
- let royalArrival=null,ritualEffect=null;
+ const jasonAtStone={id:'jason',x:276,y:246,dir:'down'};
+ let royalArrival=null,ritualEffect=null,jasonRisingEpoch=null;
  const model={src:sheet,deferred:true,frames:[
   {x:119,y:1,w:359,h:714,anchorX:315,anchorY:713},
   {x:731,y:6,w:618,h:709,anchorX:1087,anchorY:713},
@@ -21,13 +22,13 @@ window.BarrowCovenant=(()=>{
    name:'Barrowood · The Fourteenth Stone',image:altar,spawn:[328,344],blocks:[{x:288,y:133,w:64,h:32}],
    walk:[{x:112,y:160,w:416,h:160},{x:288,y:320,w:80,h:80}],lights:[[261,147],[368,101],[381,147]],
    points:[
-    {id:'covenantParley',speaker:malix,x:328,y:240,label:'Hear Archmage Malix'},
-    {id:'covenantBattle',speaker:malix,x:328,y:224,label:'Face the rogue Asmodeans'},
-    {id:'covenantSacrifice',x:328,y:208,label:'Mark the fourteenth stone and offer Sethic'},
-    {id:'covenantFiend',speaker:human,x:328,y:224,label:'Witness Gorthoklekk’s claim'},
-    {id:'covenantAudience',x:408,y:224,label:'Meet the Queen at the stone'},
-    {id:'covenantRaiseJason',x:264,y:264,label:'Witness Jason’s return'},
-    {id:'covenantPromotion',speaker:'abrogail',x:408,y:224,label:'Receive the Queen’s judgment'}
+    {id:'covenantParley',speaker:malix,x:328,y:190,label:'Hear Archmage Malix'},
+    {id:'covenantBattle',speaker:malix,x:328,y:190,label:'Face the rogue Asmodeans'},
+    {id:'covenantSacrifice',x:328,y:173,label:'Mark the fourteenth stone and offer Sethic'},
+    {id:'covenantFiend',speaker:human,x:328,y:175,label:'Witness Gorthoklekk’s claim'},
+    {id:'covenantAudience',x:408,y:191,label:'Meet the Queen at the stone'},
+    {id:'covenantRaiseJason',x:jasonAtStone.x,y:jasonAtStone.y,label:'Witness Jason’s return'},
+    {id:'covenantPromotion',speaker:'abrogail',x:408,y:191,label:'Receive the Queen’s judgment'}
    ]
   };
   MAP_LAYERS[glade]={foreground:altar,contain:true,background:{type:'solid',color:'#141819'}};
@@ -72,7 +73,8 @@ window.BarrowCovenant=(()=>{
    {id:malix,x:328,y:190,height:61},{id:cleric,x:274,y:202,height:54},{id:cleric,x:382,y:202,height:54}
   ];
   const actors=[];
-  if(!quest.covenantJasonRaised)actors.push({id:'jason',x:276,y:246,pose:'prone'});
+  if(!quest.covenantJasonRaised)actors.push({...jasonAtStone,pose:'prone'});
+  else if(jasonRisingEpoch===epoch)actors.push(jasonAtStone);
   if(!quest.covenantClaimed)actors.push({id:'sethic',x:328,y:186,pose:'prone',height:54});
   if(quest.covenantSacrificeMade){
    actors.push({id:quest.covenantTrueForm?fiend:human,x:328,y:175,height:quest.covenantTrueForm?111:64});
@@ -221,10 +223,12 @@ window.BarrowCovenant=(()=>{
     await showRitual('raise',()=>{
      hp.jason=Math.max(1,Math.ceil(STATS.jason.hp/2));
      quest.covenantJasonRaised=true;
-     seedParty(328,264,'up');
-     paintParty();
+     jasonRisingEpoch=epoch;
     });
     await say('Chronicle','Gorthoklekk casts Raise Dead. Jason draws a breath.');
+    const {x,y,dir}=units[0];
+    jasonRisingEpoch=null;
+    seedParty(x,y,dir);
     break;
    case 'covenantPromotion':
     await say('abrogail','Freya, Jason, J’Mal, Draymus, Reese. You are Bound Agents of Thrune. While you serve me, you answer to the Crown.');
