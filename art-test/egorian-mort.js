@@ -3,7 +3,8 @@
 window.EgorianMort=(()=>{
  const manor='egorian_manor',alley='egorian_lower_lane';
  const map='egorian-lower-lane-v1.png',solo=['draymus'];
- const assailant={x:360,y:208};
+ const assailant={x:360,y:272};
+ const dealerDoor={x:488,y:168};
  const disguise={
   src:'draymus-chair-walk-v1.png',maxHeight:341,walkCycle:[1,0,2,0],
   frames:[
@@ -26,13 +27,13 @@ window.EgorianMort=(()=>{
   scenes[manor].points.push({id:'mortLeave',x:328,y:312,label:'Slip out as Draymus'});
   scenes[alley]={
    name:'Egorian · Lower Lane',image:map,spawn:[328,344],blocks:[],
-   walk:[{x:128,y:240,w:384,h:80},{x:192,y:192,w:320,h:48},
-    {x:272,y:320,w:96,h:64},{x:272,y:144,w:96,h:48},{x:448,y:160,w:48,h:32}],
-   lights:[[429,102],[318,365]],
+   walk:[{x:128,y:240,w:400,h:96},{x:176,y:192,w:352,h:64},
+    {x:224,y:320,w:192,h:80},{x:288,y:144,w:80,h:64},{x:448,y:160,w:64,h:48}],
+   lights:[[456,101],[318,365]],
    points:[
     {id:'mortAmbush',x:328,y:248,label:'Search the dark lane'},
-    {id:'mortPuppet',x:328,y:216,label:'Cast Flesh Puppet'},
-    {id:'mortChair',x:472,y:168,speaker:'egorian_antique_chair',label:'Buy the antique wheelchair'},
+    {id:'mortPuppet',x:assailant.x-24,y:assailant.y,label:'Cast Flesh Puppet'},
+    {id:'mortChair',...dealerDoor,label:'Buy the antique wheelchair'},
     {id:'mortDisguise',x:456,y:200,label:'Put on the disguise'},
     {id:'mortDawn',x:328,y:344,label:'Leave before dawn'}
    ]
@@ -60,12 +61,12 @@ window.EgorianMort=(()=>{
    const active=spell?.kind===0&&spell.token===epoch&&!reduce.matches;
    const run=active?Math.max(0,(spellProgress()-.35)/.65):0;
    return [{id:'egorian_assailant',...assailant},
-    {id:'citizen-egorian-lookout',x:296+run*32,y:232-run*112,dir:run?'up':'down',variant:2}];
+    ...(run>.85?[]:[{id:'citizen-egorian-lookout',x:296+run*32,y:216-run*132,dir:run?'up':'down',variant:2}])];
   }
   const props=[];
   if(!quest.egorianJoeRaised)props.push({id:'egorian_assailant',...assailant,hp:0});
   else if(!quest.egorianDisguiseReady)props.push({id:'joe_kek',...(quest.egorianChairBought?{x:440,y:200}:assailant)});
-  if(quest.egorianJoeRaised&&!quest.egorianDisguiseReady)props.push({id:'egorian_antique_chair',x:488,y:176,height:37});
+  if(quest.egorianChairBought&&!quest.egorianDisguiseReady)props.push({id:'egorian_antique_chair',x:472,y:192,height:37});
   return props;
  }
  function target(){
@@ -116,23 +117,29 @@ window.EgorianMort=(()=>{
     await storyRoll('Assailant · Resist the phantasm',3,0,'Fails to resist');
     await showSpell(0);
     quest.egorianAmbushResolved=true;
+    save();
+    updateObjective();
     await say('Chronicle','The knife falls. The man drops to his knees, screaming at something only he can see. He dies of fright. The second assailant runs.');
     break;
    case 'mortPuppet':
     await say('draymus','Flesh Puppet. Stand up.');
     await showSpell(1);
     quest.egorianJoeRaised=true;
+    save();
+    updateObjective();
     await say('Chronicle','The dead man stands. He looks as he did in life, and when Draymus speaks to him, he answers.');
     break;
    case 'mortChair':
-    await say('Chronicle','Draymus purchases an antique wheelchair from a second-hand dealer.');
+    await say(null,'The second-hand dealer has an antique wheelchair.', ['[Buy the wheelchair]']);
     quest.egorianChairBought=true;
     break;
    case 'mortDisguise':
     await say('Chronicle','Draymus disguises himself as an elderly man and settles into the chair.');
     await say('draymus','Joe Kek. I’ll tell you where we’re going. You push.');
-    await say('joe_kek','Where to?');
     quest.egorianDisguiseReady=true;
+    save();
+    updateObjective();
+    await say('joe_kek','Where to?');
     break;
    case 'mortDawn':
     await journeyCard('Egorian · The Next Morning','The city wakes for the public excruciation. The company will join the crowd. Draymus can reach the square in his disguise, with Joe Kek behind the chair.',()=>{
