@@ -1406,7 +1406,11 @@ test('Nicolo opens the ambush, supports the party in combat, and survives the sa
  const start=replay('nicolo-road'),rolls=[];
  Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:216,dir:'up'}],
   setScene:id=>{w.scene=id;},journeyCard:async(_title,_summary,commit)=>commit(),
-  storyRoll:async(...args)=>{rolls.push(args);return args[1];},COMBAT_IDLES:{},
+  epoch:0,storyRoll:async(...args)=>{
+   assert.equal(w.NicoloArc.npcs().filter(actor=>actor.id==='gray_man').length,3);
+   rolls.push(args);
+   return args[1];
+  },COMBAT_IDLES:{},
   DIALOGUE_FACE_CROPS:{},flash:()=>{},GameAudio:{effect:()=>{}}});
  w.scenes[start.scene].points=[];
  vm.runInContext(read('nicolo-arc.js'),w);

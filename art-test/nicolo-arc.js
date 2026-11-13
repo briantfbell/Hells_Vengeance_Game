@@ -4,6 +4,7 @@ window.NicoloArc=(()=>{
  const salon='egorian_feud_salon',lane='egorian_nicolo_lane',kind='nicolo_gray_men';
  const map='egorian-nicolo-lane-v1.png',allyArt='egorian-nicolo-v1.png',enemyArt='egorian-gray-man-v1.png';
  const nicolo='nicolo',gray='gray_man';
+ let ambushRevealEpoch=null;
  const ready={x:104,y:12,w:468,h:766,anchorX:387},strike={x:946,y:136,w:984,h:632,anchorX:1376};
  const model={
   src:enemyArt,frames:[
@@ -14,15 +15,15 @@ window.NicoloArc=(()=>{
  };
 
  function install(){
-  scenes[salon].points.push({id:'nicoloLeaveSalon',x:328,y:344,label:'Go to meet Nicolo Alazario'});
+  scenes[salon].points.push({id:'nicoloLeaveSalon',x:328,y:392,label:'Go to meet Nicolo Alazario'});
   scenes[lane]={
    name:'Egorian · Townhouse Lane',image:map,spawn:[328,344],blocks:[],
-   walk:[{x:80,y:192,w:480,h:160},{x:288,y:352,w:64,h:48}],lights:[[155,125],[501,125]],
+   walk:[{x:48,y:192,w:544,h:160},{x:288,y:352,w:64,h:48}],lights:[[155,125],[501,125]],
    points:[
-    {id:'nicoloMeet',speaker:nicolo,x:328,y:232,label:'Speak to Nicolo Alazario'},
+    {id:'nicoloMeet',speaker:nicolo,x:328,y:203,label:'Speak to Nicolo Alazario'},
     {id:'nicoloFight',x:328,y:216,label:'Fight the Gray Men'},
-    {id:'nicoloAftermath',speaker:nicolo,x:328,y:232,label:'Check on Nicolo'},
-    {id:'nicoloLeaveLane',x:328,y:344,label:'Leave the lane with Nicolo'}
+    {id:'nicoloAftermath',speaker:nicolo,x:328,y:203,label:'Check on Nicolo'},
+    {id:'nicoloLeaveLane',x:328,y:392,label:'Leave the lane with Nicolo'}
    ]
   };
   MAP_LAYERS[lane]={foreground:map,contain:true,background:{type:'solid',color:'#121722'}};
@@ -57,7 +58,7 @@ window.NicoloArc=(()=>{
  function npcs(){
   if(scene!==lane)return null;
   const actors=[{id:nicolo,x:328,y:203,height:57}];
-  if(quest.nicoloAmbushed&&!quest.nicoloGrayMenDriven)
+  if(!quest.nicoloGrayMenDriven&&(quest.nicoloAmbushed||ambushRevealEpoch===epoch))
    actors.push(...[[232,198],[390,185],[445,222]].map(([x,y])=>({id:gray,x,y,height:53})));
   return actors;
  }
@@ -102,13 +103,16 @@ window.NicoloArc=(()=>{
     quest.nicoloLaneReached=true;
     await travel(lane,328,344);
     break;
-   case 'nicoloMeet':
+   case 'nicoloMeet':{
     await say(nicolo,'Levisvia said you might come. I take it this is about Sethic.');
+    ambushRevealEpoch=epoch;
     await say('Chronicle','Three gray-clad figures break from the shadows and close on Nicolo. He draws before the nearest reaches him.');
     await storyRoll('Nicolo · Opening strike',17,0,'Nicolo wounds the lead assassin');
     await say('freya','He can handle a blade. Keep the others off his flank.');
     quest.nicoloAmbushed=true;
+    ambushRevealEpoch=null;
     break;
+   }
    case 'nicoloFight':
     beginFight();
     return true;
