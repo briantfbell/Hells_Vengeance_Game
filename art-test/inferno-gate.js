@@ -9,7 +9,7 @@ window.InfernoGate=(()=>{
  const ashOrigin=[320,86];
  const lavaRuns=[[[171,149],[467,149]],[[467,149],[219,256]],[[219,256],[319,94]],[[319,94],[419,256]],[[419,256],[171,149]]];
  function install(){
-  scenes[yard].points.push({id:'aregoDescend',x:328,y:128,label:'Descend into Fort Arego'});
+  scenes[yard].points.push({id:'aregoDescend',x:312,y:128,label:'Descend into Fort Arego'});
   scenes[cells]={
    name:'Fort Arego · Prison Cells',image:cellsArt,spawn:cellsSpawn,blocks:[],
    walk:[{x:192,y:96,w:256,h:240},{x:272,y:336,w:96,h:64}],lights:[[177,55],[267,51],[373,51],[463,55],[177,121],[463,121],[177,188],[463,188],[177,257],[463,257],[177,325],[463,325],[252,373],[388,373]],

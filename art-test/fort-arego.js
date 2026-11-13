@@ -32,7 +32,7 @@ window.FortArego=(()=>{
    points:[
     {id:'aregoFirstLine',speaker:viona,x:328,y:232,label:'Break Viona’s line'},
     {id:'aregoSecondLine',speaker:champion,x:328,y:168,label:'Take the prison doorway'},
-    {id:'aregoSecureYard',x:328,y:128,label:'Secure the way into Fort Arego'}
+    {id:'aregoSecureYard',x:312,y:128,label:'Open the prison doors'}
    ]
   };
   MAP_LAYERS[trail]={foreground:trailArt,contain:true,background:{type:'solid',color:'#15171a'}};
@@ -131,7 +131,7 @@ window.FortArego=(()=>{
     startFight('arego_prison_door');
     return true;
    case 'aregoSecureYard':
-    await say('freya','The way down is clear. Stay together. The Reclamation were the guards outside, and now we know what came through below.');
+    await say('freya','Get those doors open. Stay together on the stairs. We don’t know what Fex has let through down there.');
     quest.aregoExteriorSecured=true;
     break;
   }
@@ -144,7 +144,7 @@ window.FortArego=(()=>{
   if(scene===yard&&quest.aregoExteriorSecured){
    g.save();
    g.beginPath();
-   g.rect(262,28,116,108);
+   g.rect(273,34,94,96);
    g.clip();
    SceneLayers.foreground(g,art[openYard],{contain:true});
    g.restore();
