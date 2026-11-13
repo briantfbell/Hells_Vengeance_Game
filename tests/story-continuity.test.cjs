@@ -1,5 +1,35 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,'art-test',name),'utf8');
+test('the standoff preserves injuries and the evening watch reveals the deputy before the jailbreak',async()=>{
+ const w=world();
+ w.scene='church_watch';
+ w.quest={chapter6:true,chapter5Complete:true,ovinnikReported:true};
+ w.hp.jamal=1;
+ w.epoch=1;
+ w.reduce={matches:false};
+ let time=0;
+ w.performance.now=()=>time;
+ w.NextChapter.refresh=()=>{w.hp.jamal=20;};
+ w.setScene=(scene,x,y,dir)=>{w.scene=scene;w.units=(w.PoliticalMovement.soloWatch()?['jamal']:w.CORE).map(id=>({id,x,y,dir}));};
+ await w.PoliticalMovement.interact('churchConfront');
+ assert.equal(w.hp.jamal,1);
+ assert.equal(w.PoliticalMovement.target().id,'churchRestRoad');
+ await w.PoliticalMovement.interact('churchRestRoad');
+ await w.PoliticalMovement.interact('watchRoad');
+ assert.deepEqual(w.units.map(unit=>unit.id),['jamal']);
+ assert.equal(w.units[0].x,168);
+ assert.equal(w.hp.jamal,20);
+ assert.equal(w.PoliticalMovement.npcs().length,0);
+ assert.equal(await w.PoliticalMovement.interact('churchWatch'),false);
+ w.delay=async duration=>{const start=w.PoliticalMovement.npcs()[0].x;time+=duration;assert(w.PoliticalMovement.npcs()[0].x<start);};
+ await w.PoliticalMovement.interact('watchPost');
+ assert.equal(w.PoliticalMovement.target().id,'churchWatch');
+ await w.PoliticalMovement.interact('churchWatch');
+ assert(w.quest.jailbreakHeard);
+ assert.equal(w.scene,'escape_jail');
+ assert(w.units.length>1);
+ assert.equal(w.PoliticalMovement.target().id,'cimriAccount');
+});
 test('Bo’s call reveals the guardian and the captured ovinnik reaches Razelago alive',async()=>{
  const w=world();
  w.scene='gate_watch';

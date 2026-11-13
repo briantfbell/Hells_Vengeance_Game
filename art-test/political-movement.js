@@ -1,12 +1,12 @@
 "use strict";
 window.PoliticalMovement=(()=>{
 
- const maps={},gateRushDuration=640;let mountedStart=0,gateRush=null;
+ const maps={},gateRushDuration=640;let mountedStart=0,gateRush=null,deputyArrival=null;
  function install(){
   for(const [id,base,name,spawn]of [['gate_watch','longacre_jail','Chapter Six · The Open Gate',[328,312]],['church_watch','longacre_square','Longacre · The Church Standoff',[328,296]],['escape_jail','longacre_jail','Longacre · The Broken Jail',[328,312]],['gramel_gate','longacre_jail','The Gramel Residence',[328,312]],['execution_manor','scarlet_manor','Scarlet Manor · The Execution Order',[328,312]],['execution_square','longacre_square','Longacre · Dusk in the Square',[328,296]]]){maps[id]={...structuredClone(scenes[base]),name,spawn,points:[]};scenes[id]=maps[id];MAP_LAYERS[id]={foreground:id==='execution_square'?'execution-square-v1.png':scenes[base].image,background:{type:'solid',color:'#111820'}};}
   for(const id of ['gate_watch','escape_jail','gramel_gate']){maps[id].image='longacre-jail-open-v1.png';MAP_LAYERS[id].foreground=maps[id].image;MAP_LAYERS[id].openGatePatch=true;}maps.execution_square.image='execution-square-v1.png';maps.execution_square.blocks.push({x:240,y:176,w:160,h:64});
   const add=(map,id,x,y,label)=>scenes[map].points.push({id,x,y,label});
-  add('ash_house','movementRoad',328,328,'Continue: Political Movement');add('gate_watch','gateDisturbance',200,208,'Investigate the open gate');add('gate_watch','gateReturn',328,352,'Bring the creature to Razelago');add('ash_house','feyReport',328,160,'Ask Razelago about the creature');add('ash_house','churchStandRoad',328,352,'Approach the church');add('church_watch','churchConfront',328,184,'Approach Allamar');add('church_watch','churchRestRoad',328,352,'Return to Ash House');add('ash_house','watchRoad',328,352,'Rest, then watch the church');add('church_watch','churchWatch',440,264,'Keep watch with J’Mal');add('church_watch','escapeRoad',104,304,'Hurry to the jail');add('escape_jail','cimriAccount',456,224,'Check on Cimri');add('escape_jail','escapeTrail',200,208,'Follow the escape trail');add('escape_jail','freeBolgart',224,256,'Release Bolgart');add('escape_jail','ordersRoad',328,352,'Meet Fex the next morning');add('execution_manor','executionOrders',328,208,'Hear the Archbaron’s orders');add('execution_manor','gramelRoad',328,352,'Go to the Gramel residence');add('gramel_gate','arrestBo',200,208,'Apprehend Bo Gramel');add('gramel_gate','squareExecutionRoad',328,352,'Prepare the square');add('execution_square','prepareExecution',328,264,'Arrange the dusk gathering');add('execution_square','executionStart',328,264,'Begin the dusk confrontation');add('execution_square','movementReport',328,352,'Close the chapter');
+  add('ash_house','movementRoad',328,328,'Continue: Political Movement');add('gate_watch','gateDisturbance',200,208,'Investigate the open gate');add('gate_watch','gateReturn',328,352,'Bring the creature to Razelago');add('ash_house','feyReport',328,160,'Ask Razelago about the creature');add('ash_house','churchStandRoad',328,352,'Approach the church');add('church_watch','churchConfront',328,184,'Approach Allamar');add('church_watch','churchRestRoad',328,352,'Return to Ash House');add('ash_house','watchRoad',328,352,'Rest, then watch the church');add('church_watch','watchPost',216,264,'Watch the church');add('church_watch','churchWatch',440,264,'Stop the injured deputy');add('church_watch','escapeRoad',104,304,'Hurry to the jail');add('escape_jail','cimriAccount',456,224,'Check on Cimri');add('escape_jail','escapeTrail',200,208,'Follow the escape trail');add('escape_jail','freeBolgart',224,256,'Release Bolgart');add('escape_jail','ordersRoad',328,352,'Meet Fex the next morning');add('execution_manor','executionOrders',328,208,'Hear the Archbaron’s orders');add('execution_manor','gramelRoad',328,352,'Go to the Gramel residence');add('gramel_gate','arrestBo',200,208,'Apprehend Bo Gramel');add('gramel_gate','squareExecutionRoad',328,352,'Prepare the square');add('execution_square','prepareExecution',328,264,'Arrange the dusk gathering');add('execution_square','executionStart',328,264,'Begin the dusk confrontation');add('execution_square','movementReport',328,352,'Close the chapter');
   Object.assign(NAMES,{ovinnik:'Ovinnik',bo_gramel:'Bo Gramel',dent_gramel:'Dent Gramel',false_knight:'Angel Knight',rioter1:'Rioter',rioter2:'Rioter',loyal_deputy:'Injured Deputy',acolyte1:'Church Acolyte',acolyte2:'Church Acolyte'});
   // Encounter tuning, not exported or reconstructed historical sheet totals.
   STATS.ovinnik={hp:38,ac:14,atk:5,dmg:[2,4,1]};STATS.false_knight={hp:30,ac:13,atk:3,dmg:[1,6,1]};for(const id of ['rioter1','rioter2'])STATS[id]={hp:16,ac:12,atk:3,dmg:[1,6,1]};
@@ -15,13 +15,34 @@ window.PoliticalMovement=(()=>{
   Object.assign(JOURNEYS,{gate_watch:'The western gate has been opened despite the party’s decree. Investigate the gate kept by retired artillery veterans Bo and Dent Gramel.',church_watch:'The church doors are watched by Allamar and her sons. Approach carefully; the party has not fully recovered from the gate encounter.',escape_jail:'An injured deputy reports a jailbreak. Find Cimri, establish who escaped, and inspect the trail.',gramel_gate:'Fex demands a public execution after the jailbreak. The party has chosen Bo Gramel and goes to her home by the gate.',execution_manor:'The next morning, Fex demands a public execution after the jailbreak. Hear his orders and decide how the party proceeds.',execution_square:'A guillotine is raised in the church square. Prepare for the announced execution at dusk as townsfolk gather.'});
  }
  async function load(loader){for(const[id,s]of Object.entries(maps))art[id]=await loader(s.image);art.movementCast=await loader('political-cast-v1.png');art.ovinnik=await loader('ovinnik-idle-v1.png');art['ovinnik-idle-v1.png']=art.ovinnik;art['political-cast-v1.png']=art.movementCast;art.mounted=await loader('mounted-freya-v1.png');}
- function goal(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return 'Continue: Political Movement.';if(quest.chapter6Complete)return 'Chapter complete · Riley’s deception is exposed.';return !quest.gateOpened?'Investigate the open western gate.':!quest.ovinnikSubdued?'Subdue the gate’s guardian.':!quest.ovinnikReported?'Bring the living creature to Razelago.':!quest.churchStandoff?'Approach Allamar at the church.':!quest.jailbreakHeard?'Rest, then watch the church with J’Mal.':!quest.jailbreakInspected?'Check on Cimri at the jail.':!quest.escapeTrailLost?'Follow the rescuers’ trail.':!quest.bolgartReleased?'Release Bolgart from custody.':!quest.executionOrdered?'Hear Fex’s orders the next morning.':!quest.boCaptured?'Apprehend Bo at the gate.':!quest.executionPrepared?'Prepare the execution square.':!quest.executionResolved?'Defend the stage at dusk.':'Close the chapter.';}
- function points(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return scene==='ash_house'?[point('movementRoad')]:null;const byScene={ash_house:!quest.ovinnikReported?'feyReport':!quest.churchStandoff?'churchStandRoad':'watchRoad',gate_watch:quest.ovinnikSubdued?'gateReturn':'gateDisturbance',church_watch:!quest.churchStandoff?'churchConfront':!quest.watchStarted?'churchRestRoad':!quest.jailbreakHeard?'churchWatch':'escapeRoad',escape_jail:!quest.jailbreakInspected?'cimriAccount':!quest.escapeTrailLost?'escapeTrail':!quest.bolgartReleased?'freeBolgart':'ordersRoad',execution_manor:quest.executionOrdered?'gramelRoad':'executionOrders',gramel_gate:quest.boCaptured?'squareExecutionRoad':'arrestBo',execution_square:!quest.executionPrepared?'prepareExecution':!quest.executionResolved?'executionStart':'movementReport'};return byScene[scene]?[point(byScene[scene])]:[];}
+ function goal(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return 'Continue: Political Movement.';if(quest.chapter6Complete)return 'Chapter complete · Riley’s deception is exposed.';return !quest.gateOpened?'Investigate the open western gate.':!quest.ovinnikSubdued?'Subdue the gate’s guardian.':!quest.ovinnikReported?'Bring the living creature to Razelago.':!quest.churchStandoff?'Approach Allamar at the church.':!quest.jailbreakHeard?(scene==='church_watch'?(!quest.watchStarted?'Return to Ash House.':quest.watchHoursPassed?'Stop the injured deputy.':'Take up the watch outside the church.'):'Rest, then watch the church with J’Mal.'):!quest.jailbreakInspected?'Check on Cimri at the jail.':!quest.escapeTrailLost?'Follow the rescuers’ trail.':!quest.bolgartReleased?'Release Bolgart from custody.':!quest.executionOrdered?'Hear Fex’s orders the next morning.':!quest.boCaptured?'Apprehend Bo at the gate.':!quest.executionPrepared?'Prepare the execution square.':!quest.executionResolved?'Defend the stage at dusk.':'Close the chapter.';}
+ function points(){if(!quest.chapter5Complete)return null;if(!quest.chapter6)return scene==='ash_house'?[point('movementRoad')]:null;const byScene={ash_house:!quest.ovinnikReported?'feyReport':!quest.churchStandoff?'churchStandRoad':'watchRoad',gate_watch:quest.ovinnikSubdued?'gateReturn':'gateDisturbance',church_watch:!quest.churchStandoff?'churchConfront':!quest.watchStarted?'churchRestRoad':!quest.jailbreakHeard?(quest.watchHoursPassed?'churchWatch':'watchPost'):'escapeRoad',escape_jail:!quest.jailbreakInspected?'cimriAccount':!quest.escapeTrailLost?'escapeTrail':!quest.bolgartReleased?'freeBolgart':'ordersRoad',execution_manor:quest.executionOrdered?'gramelRoad':'executionOrders',gramel_gate:quest.boCaptured?'squareExecutionRoad':'arrestBo',execution_square:!quest.executionPrepared?'prepareExecution':!quest.executionResolved?'executionStart':'movementReport'};return byScene[scene]?[point(byScene[scene])]:[];}
  function target(){return points()?.[0]||null;}
  function npcs(){if(!quest.chapter6)return null;if(scene==='gate_watch')return gateActors();
   if(scene==='gramel_gate')return [{id:'bo_gramel',x:200,y:200},{id:'dent_gramel',x:264,y:216}];
   if(scene==='ash_house'&&quest.ovinnikSubdued&&!quest.ovinnikReported)return [...NextChapter.npcs(),{id:'ovinnik',x:366,y:196,pose:'prone',height:32}];
-  if(scene==='church_watch')return quest.watchStarted?[{id:'loyal_deputy',x:440,y:256}]:[{id:'allamar',x:328,y:160},{id:'twin1',x:280,y:176},{id:'twin2',x:376,y:176},{id:'acolyte1',x:232,y:192},{id:'acolyte2',x:424,y:192}];if(scene==='escape_jail')return [{id:'cimri',x:456,y:216},{id:'loyal_deputy',x:392,y:256},...(!quest.bolgartReleased?[{id:'bolgart',pose:'stocks',x:224,y:248}]:[])];if(scene==='execution_manor')return [{id:'fex',x:328,y:176}];if(scene==='execution_square'&&mountedStart)return [{id:'mounted_freya',x:328,y:264},{id:reduce.matches||performance.now()-mountedStart>=1300?'riley':'false_knight',x:424,y:248}];if(scene==='execution_square')return quest.executionResolved?[]:[{id:'bo_gramel',x:328,y:216},{id:'loyal_deputy',x:440,y:240}];return null;}
+  if(scene==='church_watch')return quest.watchStarted?watchActors():quest.churchStandoff?[]:[{id:'allamar',x:328,y:160},{id:'twin1',x:280,y:176},{id:'twin2',x:376,y:176},{id:'acolyte1',x:232,y:192},{id:'acolyte2',x:424,y:192}];if(scene==='escape_jail')return [{id:'cimri',x:456,y:216},{id:'loyal_deputy',x:392,y:256},...(!quest.bolgartReleased?[{id:'bolgart',pose:'stocks',x:224,y:248}]:[])];if(scene==='execution_manor')return [{id:'fex',x:328,y:176}];if(scene==='execution_square'&&mountedStart)return [{id:'mounted_freya',x:328,y:264},{id:reduce.matches||performance.now()-mountedStart>=1300?'riley':'false_knight',x:424,y:248}];if(scene==='execution_square')return quest.executionResolved?[]:[{id:'bo_gramel',x:328,y:216},{id:'loyal_deputy',x:440,y:240}];return null;}
+ function watchActors(){
+  if(!quest.watchHoursPassed)return [];
+  if(deputyArrival?.epoch!==epoch)return [{id:'loyal_deputy',x:440,y:256}];
+  const progress=reduce.matches?1:Math.min(1,(performance.now()-deputyArrival.start)/900);
+  const stumble=progress===1?0:Math.sin(progress*24)*3;
+  return [{id:'loyal_deputy',x:520-80*progress,y:280-24*progress+stumble}];
+ }
+ async function waitAtChurch(){
+  await journeyCard('Longacre · Hours after dusk','The square empties. J’Mal watches the doors for hours. Nobody enters or leaves.',()=>{});
+  const token=epoch;
+  deputyArrival={epoch:token,start:performance.now()};
+  quest.watchHoursPassed=true;
+  await delay(reduce.matches?0:900);
+  if(token!==epoch)return;
+  deputyArrival=null;
+  await say('Chronicle','A deputy from the jail staggers across the far side of the square. He is barely on his feet.');
+ }
+ function drawWatch(g){
+  if(!soloWatch())return;
+  g.save();g.fillStyle='rgba(10,16,31,.26)';g.fillRect(0,0,640,400);g.restore();
+ }
  function gateActors(){
   if(quest.ovinnikSubdued)return [{id:'ovinnik',x:250,y:254,pose:'prone',height:32}];
   const actors=[{id:'bo_gramel',x:132,y:228},{id:'dent_gramel',x:161,y:239}];
@@ -61,11 +82,35 @@ window.PoliticalMovement=(()=>{
   quest.ovinnikReported=true;
  }
  else if(id==='churchStandRoad')await travel('church_watch',328,296);
- else if(id==='churchConfront'){await say('Chronicle','Still carrying injuries from the gate, the party approaches the church. Allamar, her twin sons and several acolytes hold the doorway.');await say('allamar','You have made your authority clear enough. What business brings you to our doors now?');await say('freya','We know where you stand. This conversation can wait.');await say('Chronicle','Neither side yields. The party backs away and leaves the confrontation for another day.');quest.churchStandoff=true;}
- else if(id==='churchRestRoad')await travel('ash_house',328,296);
- else if(id==='watchRoad'){await journeyCard('Ash House · Evening watch','The party rests after the standoff. J’Mal takes up a watch outside the church. Nothing enters or leaves for hours.',()=>{NextChapter.refresh();quest.watchStarted=true;save();});await travel('church_watch',168,280);seedParty(168,280);paintParty();}
- else if(id==='churchWatch'){await say('Chronicle','One of the deputies who remained at the jail runs past the church toward Ash House, injured and struggling to keep moving. J’Mal stops him.');await say('loyal_deputy','They stormed the jail. Riley is gone. Cimri fought them—she was nearly killed. I was knocked out.');await say('jamal','I will gather the others. Stay on your feet. We are going to the jail.');quest.jailbreakHeard=true;seedParty(440,280);}
- else if(id==='escapeRoad')await travel('escape_jail',328,312);
+ else if(id==='churchConfront'&&scene==='church_watch'&&quest.ovinnikReported&&!quest.churchStandoff){
+  await say('Chronicle','The party approaches the church before its wounds from the gate have healed. Allamar comes to the doors with her sons and several acolytes.');
+  await say('allamar','Last time you came to these doors, a carpenter had to put them back. What business brings you here today?');
+  await say('freya','We know where you stand. Keep your people off the street, and we’ll leave it there for today.');
+  await say('Chronicle','The two groups hold their ground. Nobody draws a weapon. Freya finally turns the party away from the steps.');
+  quest.churchStandoff=true;
+ }
+ else if(id==='churchRestRoad'&&scene==='church_watch'&&quest.churchStandoff&&!quest.watchStarted)await travel('ash_house',328,296);
+ else if(id==='watchRoad'&&scene==='ash_house'&&quest.churchStandoff&&!quest.watchStarted){
+  await say('freya','We need time to dress these wounds. J’Mal, watch the church while we rest. Tell us if anyone comes or goes.');
+  await journeyCard('Ash House · Evening watch','The others rest at Ash House. J’Mal heads back to the square alone.',()=>{
+   NextChapter.refresh();
+   quest.watchStarted=true;
+   setScene('church_watch',168,280,'right');
+  });
+ }
+ else if(id==='watchPost'&&soloWatch()&&!quest.watchHoursPassed)await waitAtChurch();
+ else if(id==='churchWatch'&&soloWatch()&&quest.watchHoursPassed){
+  await say('jamal','Hold up. You’re bleeding. What happened?');
+  await say('loyal_deputy','I was coming to Ash House. They stormed the jail and knocked me out. Cimri fought them. I think they nearly killed her.');
+  await say('jamal','Who did they take?');
+  await say('loyal_deputy','Riley Kels. Bolgart’s still there.');
+  await say('jamal','Sit down before you fall down. I’ll get the others.');
+  await journeyCard('Longacre · The alarm','J’Mal gathers the party at Ash House. They hurry straight to the jail to find Cimri.',()=>{
+   quest.jailbreakHeard=true;
+   setScene('escape_jail',328,312);
+  });
+ }
+ else if(id==='escapeRoad'&&quest.jailbreakHeard)await travel('escape_jail',328,312);
  else if(id==='cimriAccount'){await say('Chronicle','Riley’s cell is empty. Cimri is badly wounded, but someone bandaged her after she fell, preventing her death. Bolgart remains in custody.');await say('cimri','Four of them. Three humans and a halfling. All masked. I fought until I could not stand.');await say('Chronicle','This is Cimri’s account; the attackers’ identities remain unknown. Someone kept her from bleeding to death, but the bandages do not reveal who helped her or why.');quest.jailbreakInspected=true;}
  else if(id==='escapeTrail'){await say('Chronicle','Freya follows the footprints for a distance. They vanish both into town streets and toward the forest, as if concealed by Pass Without Trace. No caster or spell is confirmed.');quest.escapeTrailLost=true;}
  else if(id==='freeBolgart'){await say('freya','Bolgart, you are free to leave.');await say('bolgart','You are letting me go? Then I will not waste your time asking why.');await say('Chronicle','Bolgart walks into the night. Riley has escaped, and the party has released its remaining named prisoner.');quest.bolgartReleased=true;}
@@ -80,5 +125,5 @@ window.PoliticalMovement=(()=>{
  else return false;save();updateObjective();return true;}
  function soloWatch(){return scene==='church_watch'&&quest.watchStarted&&!quest.jailbreakHeard;}
  function drawNPC(u){if(u.id!=='mounted_freya')return false;const m=MOVEMENT_FRAMES['mounted-freya-v1.png'][0],phase=reduce.matches?1:Math.min(2,Math.floor((performance.now()-mountedStart)/650)),f=m.frames[phase],scale=100/m.maxHeight;ctx.drawImage(art.mounted,f.x,f.y,f.w,f.h,u.x-f.w*scale/2,u.y-f.h*scale,f.w*scale,f.h*scale);return true;}
- return {install,load,goal,points,target,npcs,crowd,afterBattle,interact,soloWatch,drawNPC,mountedVisible:()=>!!mountedStart};
+ return {drawWatch,install,load,goal,points,target,npcs,crowd,afterBattle,interact,soloWatch,drawNPC,mountedVisible:()=>!!mountedStart};
 })();
