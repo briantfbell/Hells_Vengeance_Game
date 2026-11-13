@@ -740,6 +740,7 @@ test('the Unicorn Glade preserves the first three horns and awards the fourth on
 
 test('the Senara prison wagon sends the archon away before initiative and saves Orn’s recruitment',async()=>{
  const w=world(),sections=w.replaySections(),start=sections.find(s=>s.id==='senara-wagon-depart');
+ w.$=()=>({});
  Object.assign(w,{scene:start.scene,quest:structuredClone(start.quest),units:[{x:328,y:224,dir:'up'}],
   DIALOGUE_FACE_CROPS:{},animateAction:async(actor,target,type)=>w.events.push([actor.id,target.id,type]),
   storyRoll:async(label,face,_mod,outcome)=>w.events.push([label,face,outcome]),

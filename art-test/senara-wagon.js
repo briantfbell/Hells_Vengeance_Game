@@ -5,18 +5,19 @@ window.SenaraWagon=(()=>{
  const archon='senara_hound_archon',orn='orn',paladin='fastness_paladin',kind='senara_wagon_escort';
  const roadArt='senara-prison-road-v1.png',archonArt='senara-hound-archon-v1.png',ornArt='senara-orn-v1.png';
  const openRoad='senara-prison-road-open-v1.png';
- const wagonPoint={x:552,y:152};
+ const wagonPoint={x:544,y:144};
+ const wagonStep={x:544,y:176};
  const command={label:'CAST',name:'Dismissal',description:'Jason attempts to send the hound archon back to its plane.',title:'The prison escort'};
  function install(){
   scenes[camp].points.push({id:'senaraWagonRoad',x:328,y:152,label:'Return to Senara'});
   scenes[road]={
    name:'Senara · The Main Road',image:roadArt,spawn:[328,344],blocks:[],lights:[],
-   walk:[{x:208,y:144,w:224,h:176},{x:416,y:144,w:160,h:64},{x:192,y:320,w:256,h:64}],
+   walk:[{x:240,y:144,w:176,h:176},{x:400,y:144,w:176,h:64},{x:208,y:304,w:224,h:96}],
    points:[
     {id:'senaraWagonStop',x:328,y:216,label:'Answer the prison escort'},
     {id:'senaraWagonFight',x:328,y:208,label:'Defend the company’s carriage'},
     {id:'senaraWagonFree',...wagonPoint,label:'Open the prison wagon'},
-    {id:'senaraOrnRecruit',speaker:orn,x:536,y:176,label:'Speak to the freed prisoner'},
+    {id:'senaraOrnRecruit',speaker:orn,...wagonStep,label:'Speak to the freed prisoner'},
     {id:'senaraWagonQuay',x:328,y:152,label:'Continue to Senara'}
    ]
   };
@@ -60,7 +61,7 @@ window.SenaraWagon=(()=>{
  function goal(){return target()?.label||(scene===quay&&quest.senaraReturnPatrolsSeen?'Find the Black Daggers beneath Senara.':null);}
  function npcs(){
   if(scene===road){
-   if(quest.senaraPrisonerFreed)return [{id:orn,x:536,y:176,height:52}];
+   if(quest.senaraPrisonerFreed)return [{id:orn,...wagonStep,height:52}];
    if(quest.senaraEscortDefeated)return [];
    return [
     {id:archon,x:328,y:176,height:65},
@@ -94,6 +95,8 @@ window.SenaraWagon=(()=>{
   paintBattle();
   await animateAction(actor,target,'dismissal');
   await storyRoll('Dismissal · Destination',5,0,'Spell misfires · Abaddon');
+  if(battle!==current)return;
+  $('dice-panel').hidden=true;
   current.enemies.shift();
   current.target=0;
   current.scripted=false;
@@ -133,14 +136,19 @@ window.SenaraWagon=(()=>{
     return true;
    case 'senaraWagonFree':
     await say('guapo','Paladins or no, they have to keep their keys somewhere. Here we go.');
-    await say('Chronicle','The prison wagon opens. Its prisoner steps out into the road.');
+    await say(null,'The barred door is locked.', ['[Unlock the wagon]']);
     quest.senaraPrisonerFreed=true;
+    save();
+    updateObjective();
+    await say('Chronicle','The door swings open. A prisoner steps down into the road.');
     break;
    case 'senaraOrnRecruit':
     await say(orn,'Orn. I’m a magus, from Nidal. You have my thanks for opening that door.');
     await say('freya','We’re going to Senara. We could use a magus who already knows what the Reclamation does with its prisoners.');
-    await say(orn,'I’ll come with you. Lead on.');
     quest.senaraOrnRecruited=true;
+    save();
+    updateObjective();
+    await say(orn,'I’ll come with you. Lead on.');
     break;
    case 'senaraWagonQuay':
     quest.senaraWagonReturned=true;
