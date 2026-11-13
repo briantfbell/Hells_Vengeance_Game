@@ -123,7 +123,7 @@ window.LastStand=(()=>{
   await say('Chronicle','The frying pan rings against Freya’s helmet. Across the tavern, Riley stops playing and looks toward the rear exit.');
   tavernBeat=null;
   units=units.filter(unit=>unit.id!=='jamal');
-  startBattle(0,false,{kind:'bolgart',opening:'Roll initiative. Subdue Bolgart while J’Mal holds the rear door.',enemies:[{id:'bolgart',name:'Bolgart Caggan',hp:46,max:46}]});
+  startBattle(0,false,{kind:'bolgart',opening:'Roll initiative. Subdue Bolgart while J’Mal holds the rear door.',enemies:[{id:'bolgart',name:'Bolgart Caggan',shortName:'Bolgart',hp:46,max:46}]});
  }
  async function afterBattle(kind){
   if(kind==='bolgart'){
@@ -187,7 +187,7 @@ window.LastStand=(()=>{
   await say('Chronicle','Tusks tear through Bolgart’s face as he wrenches the pillory apart. He charges straight at J’Mal and catches him with a tusk.');
   await say('freya','Keep him off J’Mal. I’m getting Sleipnir.');
   jailBeat=null;
-  startBattle(0,false,{kind:'wereboar',opening:'Roll initiative. Bolgart charges J’Mal. Subdue him alive.',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',hp:64,max:64}]});
+  startBattle(0,false,{kind:'wereboar',opening:'Roll initiative. Bolgart charges J’Mal. Subdue him alive.',enemies:[{id:'bolgart_wereboar',name:'Bolgart · Wereboar',shortName:'Wereboar',hp:64,max:64}]});
  }
  async function interact(id){if(id==='lastStandRoad'){await begin();return true;}if(!quest.chapter4)return false;
  if(id==='lastDecree'&&!quest.bolgartSubdued)await confrontBolgart();
