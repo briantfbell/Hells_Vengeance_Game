@@ -1,7 +1,7 @@
 /* Background -> foreground floor -> actors -> optional occluders. */
 window.SceneLayers=(()=>{const tiles=new Map();
-function oceanTile(palette){const key=palette.join(',');if(tiles.has(key))return tiles.get(key);const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');g.fillStyle=palette[0];g.fillRect(0,0,256,256);for(let i=0;i<110;i++){const x=(i*73+19)%256,y=(i*47+11)%256,w=7+(i*17)%27;g.fillStyle=palette[1+i%3];g.globalAlpha=.35+(i%4)*.1;g.fillRect(x,y,w,1+i%2);if(x+w>256)g.fillRect(x-256,y,w,1+i%2);}g.globalAlpha=1;tiles.set(key,c);return c;}
-function background(g,map,t,{width=640,height=400,top=0,bottom=height,reduced=false}={}){const b=map.background||{type:'solid',color:'#0b1018'};g.save();g.imageSmoothingEnabled=false;if(b.type==='ocean'){const tile=oceanTile(b.palette),phase=reduced?0:Math.floor(t*(b.speed||5))%256;const vertical=reduced?0:Math.floor(t*(b.speed||5)/3)%256;for(let y=Math.floor((top-vertical)/256)*256+vertical;y<bottom;y+=256)for(let x=-256+phase;x<width;x+=256)g.drawImage(tile,x,y);if(b.waterline!==undefined){g.fillStyle=b.landColor||'#18252c';g.fillRect(0,top,width,b.waterline*height/400-top);}}else if(b.type==='sky'){
+function oceanTile(palette){const key=palette.join(',');if(tiles.has(key))return tiles.get(key);const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');g.fillStyle=palette[0];g.fillRect(0,0,256,256);for(let i=0;i<110;i++){const x=(i*73+19)%256,y=(i*47+11)%256,w=7+(i*17)%27;g.fillStyle=palette[1+i%3];g.globalAlpha=.24+(i%4)*.075;g.fillRect(x,y,w,1+i%2);if(x+w>256)g.fillRect(x-256,y,w,1+i%2);}g.globalAlpha=1;tiles.set(key,c);return c;}
+function background(g,map,t,{width=640,height=400,top=0,bottom=height,reduced=false}={}){const b=map.background||{type:'solid',color:'#0b1018'};g.save();g.imageSmoothingEnabled=false;if(b.type==='ocean'){const tile=oceanTile(b.palette),phase=reduced?0:Math.floor(t*(b.speed||5)*.8)%256;const vertical=reduced?0:Math.floor(t*(b.speed||5)*.2)%256;for(let y=Math.floor((top-vertical)/256)*256+vertical;y<bottom;y+=256)for(let x=-256+phase;x<width;x+=256)g.drawImage(tile,x,y);if(b.waterline!==undefined){g.fillStyle=b.landColor||'#18252c';g.fillRect(0,top,width,b.waterline*height/400-top);}}else if(b.type==='sky'){
  const dusk=g.createLinearGradient(0,top,0,bottom);
  dusk.addColorStop(0,'#121826');
  dusk.addColorStop(.55,'#32384d');
@@ -24,37 +24,36 @@ function channelPath(g,channels,width,height){
  }
 }
 function drawWaterChannels(g,map,image,t,options){
- const {width=640,height=400,reduced=false}=options,layer={...options,contain:map.contain};
+ const {width=640,height=400,reduced=false}=options;
+ foreground(g,image,{...options,contain:map.contain});
+ if(reduced)return;
+ const {speed=5,palette=['#8bbca5','#b6d8ba'],direction='down'}=map.waterCurrent||{};
+ const flowsDown=direction==='down';
  g.save();
- g.beginPath();
- channelPath(g,map.waterChannels,width,height);
- g.clip();
- foreground(g,image,layer);
- if(!reduced){
-  g.scale(width/640,height/400);
-  if(map.waterCurrent){
-   const {speed,palette}=map.waterCurrent;
-   const travel=Math.floor(t*speed);
-   for(let i=0;i<126;i++){
-    const x=(i*109+travel)%640,y=145+i*37%114;
-    g.globalAlpha=(.07+.055*(i%4)/3)*(.65+.35*Math.sin(t*1.3+i));
-    g.fillStyle=palette[i%palette.length];
-    g.fillRect(x,y,3+i%7,1);
-   }
-  }else for(let i=0;i<42;i++){
-   const x=45+(i*97)%550,y=90+(i*29+Math.floor(t*12))%260;
-   g.globalAlpha=(.07+.1*(i%4)/3)*(.6+.4*Math.sin(t*1.8+i));
-   g.fillStyle=i%3?'#8bbca5':'#b6d8ba';
-   g.fillRect(x,y,4+i%8,1);
+ g.scale(width/640,height/400);
+ map.waterChannels.forEach((channel,channelIndex)=>{
+  const xs=channel.map(([x])=>x),ys=channel.map(([,y])=>y);
+  const left=Math.min(...xs),top=Math.min(...ys);
+  const w=Math.max(...xs)-left,h=Math.max(...ys)-top;
+  const count=Math.max(8,Math.min(44,Math.round(w*h/1800)));
+  g.save();
+  g.beginPath();
+  channelPath(g,[channel],640,400);
+  g.clip();
+  for(let i=0;i<count;i++){
+   const offset=i+channelIndex*19;
+   const distance=flowsDown?h:w;
+   const phase=(offset*.381966+t*speed/(distance+14))%1;
+   const cross=offset*.618034%1;
+   const x=Math.floor(left+w*(flowsDown?cross:phase));
+   const y=Math.floor(top+h*(flowsDown?phase:cross));
+   const strength=.045+.04*(.5+.5*Math.sin(t*1.4+offset*2.4));
+   g.globalAlpha=strength*Math.min(1,phase*10,(1-phase)*10);
+   g.fillStyle=palette[i%palette.length];
+   g.fillRect(x,y,4+offset%8,1);
   }
- }
- g.restore();
- g.save();
- g.beginPath();
- g.rect(0,0,width,height);
- channelPath(g,map.waterChannels,width,height);
- g.clip('evenodd');
- foreground(g,image,layer);
+  g.restore();
+ });
  g.restore();
 }
 function draw(g,map,image,t,options={}){background(g,map,t,options);map.drawUnderlay?.(g,t,options);if(map.waterChannels){drawWaterChannels(g,map,image,t,options);return;}if(map.openGatePatch&&art.longacre_jail){

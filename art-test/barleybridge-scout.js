@@ -13,7 +13,7 @@ window.BarleybridgeScout=(()=>{
   scenes[temple].points.push({id:'barleybridgeCutaway',x:328,y:344,marker:{x:328,y:377},label:'Follow El Guapo to Barleybridge'});
   scenes[approach]={
    name:'Barleybridge · River Approach',image,spawn:[328,344],blocks:[],
-   walk:[{x:112,y:208,w:416,h:128},{x:112,y:192,w:64,h:16},{x:256,y:336,w:112,h:64}],lights:[[110,187],[161,168],[510,172]],
+   walk:[{x:112,y:208,w:416,h:128},{x:112,y:192,w:64,h:16},{x:256,y:336,w:112,h:64}],lights:[[43,148],[112,181],[491,91],[564,90],[512,170]],
    points:[
     {id:'barleybridgeBridge',x:168,y:216,label:'Scout the river crossing'},
     {id:'barleybridgeGate',x:456,y:224,label:'Observe the town gate'},
@@ -31,7 +31,7 @@ window.BarleybridgeScout=(()=>{
   MAP_LAYERS[boat]={
    foreground:boatArt,contain:true,background:{type:'solid',color:'#141622'},
    waterChannels:[[[0,0],[50,0],[25,300],[0,400]],[[590,0],[640,0],[640,400],[615,300]]],
-   waterCurrent:{speed:4,palette:['#354262','#53607c']}
+   waterCurrent:{direction:'right',speed:4,palette:['#354262','#53607c']}
   };
   JOURNEYS[boat]='Epilogue. El Guapo has rented a boat for the night. There’s food on the table and, by his count, only one rule about the balloons.';
   MAP_LAYERS[approach]={
@@ -43,7 +43,7 @@ window.BarleybridgeScout=(()=>{
     [[9,208],[47,204],[68,198],[79,204],[70,225],[49,235],[37,248],[20,259],[7,257]],
     [[580,169],[602,165],[629,168],[627,180],[610,182],[596,194],[581,196]]
    ],
-   waterCurrent:{speed:5,palette:['#668eaf','#8ba8c2']}
+   waterCurrent:{direction:'right',speed:5,palette:['#668eaf','#8ba8c2']}
   };
   JOURNEYS[approach]='El Guapo has gone ahead to Barleybridge. The company expects limited paladin presence, and the scout is to find out what the approach looks like.';
  }

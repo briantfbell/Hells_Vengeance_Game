@@ -797,7 +797,45 @@ function drawNPC(u){if(window.TathlumHunt?.drawPatrol(ctx,u))return;if(u.pose===
  if(battle&&u.hp>0){rect(u.x-16,u.y-64,32,3,'#151522');rect(u.x-16,u.y-64,Math.max(0,32*u.hp/u.max),3,'#c46652');}
 }
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-function buildFlicker(){if(!art[scene])return;const a=document.createElement('canvas');a.width=640;a.height=400;const g=a.getContext('2d',{willReadFrequently:true});g.imageSmoothingEnabled=false;SceneLayers.foreground(g,art[scene],{contain:MAP_LAYERS[scene]?.contain});let pixels;try{pixels=g.getImageData(0,0,640,400).data;}catch{}flicker=scenes[scene].lights.map(([x,y],index)=>{const mask=document.createElement('canvas');mask.width=33;mask.height=49;const mg=mask.getContext('2d'),d=mg.createImageData(33,49);for(let yy=0;yy<49;yy++)for(let xx=0;xx<33;xx++){const wx=x-16+xx,wy=y-24+yy,dist=((xx-16)/16)**2+((yy-24)/24)**2,i=(wy*640+wx)*4;if(dist>=1||wx<0||wy<0||wx>=640||wy>=400)continue;const r=pixels?pixels[i]:200,green=pixels?pixels[i+1]:130,b=pixels?pixels[i+2]:65;if(r>125&&green>65&&r>green*1.12&&green>b*1.2)d.data[(yy*33+xx)*4+3]=Math.round(255*Math.min(1,(r-110)/120)*(pixels?Math.sqrt(1-dist):(1-dist)**2*.55));}mg.putImageData(d,0,0);return {mask,x:x-16,y:y-24,index};});}
+function buildFlicker(){
+ flicker=[];
+ const image=art[scene],lights=scenes[scene].lights;
+ if(!image||!lights?.length)return;
+ const sample=document.createElement('canvas');
+ sample.width=640;sample.height=400;
+ const g=sample.getContext('2d',{willReadFrequently:true});
+ SceneLayers.foreground(g,image,{contain:MAP_LAYERS[scene]?.contain});
+ let pixels;
+ try{pixels=g.getImageData(0,0,640,400).data;}catch{return;}
+ flicker=lights.map(([x,y],index)=>{
+  const mask=document.createElement('canvas');
+  mask.width=33;mask.height=49;
+  const mg=mask.getContext('2d'),data=mg.createImageData(mask.width,mask.height);
+  for(let yy=0;yy<mask.height;yy++)for(let xx=0;xx<mask.width;xx++){
+   const wx=x-16+xx,wy=y-24+yy;
+   const distance=((xx-16)/16)**2+((yy-24)/24)**2;
+   if(distance>=1||wx<0||wy<0||wx>=640||wy>=400)continue;
+   const pixel=(wy*640+wx)*4;
+   const [r,green,b,alpha]=pixels.subarray(pixel,pixel+4);
+   if(alpha===0||r<=125||green<=65||r<=green*1.12||green<=b*1.2)continue;
+   const offset=(yy*mask.width+xx)*4;
+   data.data.set([r,green,b,Math.round(alpha*Math.min(1,(r-110)/120)*(1-distance))],offset);
+  }
+  mg.putImageData(data,0,0);
+  return {mask,x:x-16,y:y-24,index};
+ });
+}
+function drawMapLights(t){
+ if(reduce.matches||!flicker.length)return;
+ ctx.save();
+ ctx.globalCompositeOperation='screen';
+ for(const {mask,x,y,index} of flicker){
+  const phase=t+index*1.31;
+  ctx.globalAlpha=.085+.04*Math.sin(phase*1.9)+.025*Math.sin(phase*3.7);
+  ctx.drawImage(mask,x,y);
+ }
+ ctx.restore();
+}
 function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio.tick();t=Handheld.time(t);$('pause-toggle').hidden=!ready||introOpen||dialogOpen||journeyOpen||levelOpen||briefingOpen||taskBusy;
  $('quest-task').hidden=!ready||introOpen||briefingOpen||journeyOpen||levelOpen||!!battle;
  rect(0,0,640,canvas.height,'#0b1018');if(ready&&TitleScreen.draw(ctx,t))return;if(!ready||introOpen)return;if(battle){renderBattle(t);return;}ctx.save();ctx.translate(0,SCREEN.mapTop);try{if(briefingOpen){renderBriefing(t);return;}window.SceneLayers.draw(ctx,window.MAP_LAYERS[scene],window.BarleybridgeScout?.mapImage()||window.IlniusFountain?.mapImage()||window.DinyarRecon?.mapImage()||window.MolthuneCoffin?.mapImage()||window.SkadiParley?.mapImage()||window.DarkRain?.mapImage()||window.TathlumHunt?.mapImage()||window.Menador?.mapImage()||window.BarrowCovenant?.mapImage()||window.BarrowTrail?.mapImage()||window.VyreWish?.mapImage()||window.SethicMansion?.mapImage()||window.BellflowerBarn?.mapImage()||window.BellflowerBarge?.mapImage()||window.Pezzack?.mapImage()||window.Rachikan?.mapImage()||window.Ballerina?.mapImage()||window.HinjiTavern?.mapImage()||window.Belde?.mapImage()||window.PaleBall?.mapImage()||window.NicoloArc?.mapImage()||window.SethicLedgers?.mapImage()||window.SethicFarm?.mapImage()||window.EgorianFeud?.mapImage()||window.EgorianSting?.mapImage()||window.EfisioArc?.mapImage()||window.Hinji?.mapImage()||window.Westcrown?.mapImage()||window.RemesianaMarket?.mapImage()||window.EgorianFountain?.mapImage()||window.EgorianDischarge?.mapImage()||window.AregoExit?.mapImage()||window.AregoAmbush?.mapImage()||window.InfernoGate?.mapImage()||window.FortArego?.mapImage()||window.SenaraGraveyard?.mapImage()||window.SenaraWagon?.mapImage()||window.WhisperwoodGlade?.mapImage()||window.WhisperwoodCamp?.mapImage()||window.SenaraCitadel?.mapImage()||window.SenaraDaggers?.mapImage()||window.SenaraCover?.mapImage()||window.SenaraArrival?.mapImage()||window.EgorianExecution?.mapImage()||window.EgorianMort?.mapImage()||window.EgorianTrial?.mapImage()||window.EgorianNight?.mapImage()||window.EgorianArrival?.mapImage()||window.SouthRoad?.mapImage()||window.KantariaAftermath?.mapImage()||window.FastnessArc?.mapImage()||window.SupplyArc?.mapImage()||window.CovertArc?.mapImage()||DisruptionArc.mapImage()||KantariaArc.mapImage()||CourtArc.mapImage()||FortArc.mapImage()||ArmoryArc.mapImage()||ChurchArc.mapImage(),t,{reduced:reduce.matches,top:-SCREEN.mapTop,bottom:SCREEN.height-SCREEN.mapTop});window.AregoAmbush?.effects(ctx,t);window.InfernoGate?.effects(ctx,t);window.AregoExit?.effects(ctx);window.EgorianDischarge?.effects(ctx);window.RemesianaMarket?.effects(ctx,t);window.SethicFarm?.effects(ctx,t);window.PaleBall?.effects(ctx,t);window.Pezzack?.effects(ctx,t);window.BellflowerBarge?.effects(ctx);window.BellflowerBarn?.effects(ctx,t);window.VyreWish?.effects(ctx);window.BarrowTrail?.effects(ctx,t);window.BarrowCovenant?.effects(ctx,t);window.DarkRain?.effects(ctx,t);window.MolthuneCoffin?.effects(ctx,t);window.DinyarRecon?.drawPostern(ctx);window.DinyarRecon?.drawCellVision(ctx);window.IlniusFountain?.drawWater(ctx,t);window.EgorianFountain?.drawWater(ctx,t);window.IlniusFountain?.drawRite(ctx,t);window.FortArego?.effects(ctx,t);window.SenaraWagon?.effects(ctx);window.WhisperwoodCamp?.effects(ctx,t);window.CovertArc?.effects(ctx,t);window.SupplyArc?.effects(ctx);window.SouthRoad?.effects(ctx);DisruptionArc.effects(ctx,t);ArmoryArc.effects(ctx,t);FortArc.effects(ctx,t);CourtArc.effects(ctx,t);KantariaArc.drawCell(ctx);
@@ -811,7 +849,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
  PoliticalMovement.drawArrest(ctx);
  DebtsRumors.drawChurchBreach(ctx);
  drawBellRope();window.PresentationPolish?.world(ctx,t);ChurchArc.effects?.(ctx,t);
- if(!reduce.matches){ctx.save();for(const l of flicker){ctx.globalAlpha=.095+.035*Math.sin(t*1.7+l.index*2.4)+.021*Math.sin(t*3.1+l.index*4.1);ctx.drawImage(l.mask,l.x,l.y);}ctx.restore();if(scene!=='street')for(let i=0;i<scenes[scene].lights.length;i++){const [x,y]=scenes[scene].lights[i];if((Math.floor(t*7)+i)%3===0)rect(x,y-2,1,2,'#fbd29388');}}
+ drawMapLights(t);
  if(scene==='street'&&!reduce.matches){for(let i=0;i<30;i++){const p=(t*.05+i*.177)%1,x=(i*71+t*(2+i%3))%640,y=30+p*90;rect(x,y,2,1,'#b8aa9044');}}
  if(showPaths){ctx.fillStyle='#83bdb23b';for(let y=0;y<25;y++)for(let x=0;x<40;x++)if(passable(x,y))ctx.fillRect(x*T+1,y*T+1,14,14);}
  if(path.length){ctx.fillStyle='#d9b86a77';path.forEach(([x,y])=>ctx.fillRect(x*T+7,y*T+7,2,2));}
