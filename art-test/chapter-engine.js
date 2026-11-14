@@ -73,7 +73,7 @@ async function journeyCard(title,summary,commit=()=>{},illustration=null,{outro=
  panel.classList.toggle('illustrated',!!illustration);
  panel.classList.toggle('campaign-outro',outro);
  panel.querySelector('.eyebrow').textContent=outro?'Folken Games presents':'HELL’S VENGEANCE · THE JOURNEY';
- button.textContent=outro?'Return to main menu':'Continue ↵';
+ button.textContent=(outro?'Return to main menu':'Continue')+' · '+GameInput.confirmLabel();
  const gradient=outro?'transparent 72%, #100d14b0 81%, #100d14':'transparent 42%, #100d14eb 68%, #100d14';
  const card=panel.querySelector('.journey-card');
  PresentationPolish.setJourneyEffects(card,illustration);
@@ -563,8 +563,8 @@ function setCombatHeading(text, compactText = text){
 function paintCombatSelection(){
  if(!battle)return;const c=battle.control;combatButtons().forEach((b,i)=>b.classList.toggle('is-chosen',c?.mode==='commands'&&i===c.index));
  if(c?.mode==='enemy'||c?.mode==='ally'){
-  const confirmLabel=document.documentElement.classList.contains('handheld-display')?'A':'E';
-  setCombatHeading('← → Select · '+confirmLabel+' Confirm · B Back');
+  const confirmLabel=GameInput.hint('A','E');
+  setCombatHeading('← → Select · '+confirmLabel+' Confirm · '+GameInput.backLabel()+' Back');
   canvas.focus({preventScroll:true});
  }
 }
@@ -601,7 +601,7 @@ function paintBattle(){
  if(!battle)return;paintEnemyIntent();const acting=activeUnit();
  if(!acting||battle.reveal){$('actions').replaceChildren();$('heal-target').disabled=true;$('combat-target').disabled=true;setCombatHeading(battle.reveal?'Initiative · Battle order':'R'+battle.round+' · '+(battle.order?.[battle.turn]?.name||'Resolving turn'));paintParty();return;}
  if(battle.enemies[battle.target]?.hp<=0)battle.target=battle.enemies.findIndex(e=>e.hp>0);
- const actor=activeUnit(),script=battle.script?.command();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy||!!script;const turnHeading=(script?.title||'R'+battle.round)+' · '+NAMES[actor.id];const confirmLabel=document.documentElement.classList.contains('handheld-display')?'A':'E';setCombatHeading(turnHeading+' · '+confirmLabel+': select',turnHeading);$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(e.shortName||e.name)+' '+e.hp+'/'+e.max+(e.resolve?' resolve':'');o.title=e.name;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy||!!script;
+ const actor=activeUnit(),script=battle.script?.command();if(!battle.control||battle.control.actor!==actor.id||battle.control.round!==battle.round)battle.control={actor:actor.id,round:battle.round,mode:'commands',index:0,action:null};$('heal-target').textContent='Aid: '+NAMES[battle.ally];$('heal-target').disabled=battle.busy||!!script;const turnHeading=(script?.title||'R'+battle.round)+' · '+NAMES[actor.id];const confirmLabel=GameInput.hint('A','E');setCombatHeading(turnHeading+' · '+confirmLabel+': select',turnHeading);$('battle-title').title='Round '+battle.round+' · '+NAMES[actor.id]+'’s turn';$('combat-target').replaceChildren();battle.enemies.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(e.shortName||e.name)+' '+e.hp+'/'+e.max+(e.resolve?' resolve':'');o.title=e.name;o.disabled=e.hp<=0;$('combat-target').append(o);});$('combat-target').value=battle.target;$('combat-target').disabled=battle.busy||!!script;
  $('actions').replaceChildren();const commands=[['attack','Attack'],['special',SPECIAL[actor.id].name+' ('+Math.max(0,SPECIAL[actor.id].uses-uses[actor.id])+')'],['guard','Guard'],['potion','Potion ('+potions+')']];
  if(script)commands.splice(0,commands.length,['special',script.name]);
  else if(unarmedWeapon(actor.id)||(actor.id==='jason'&&quest.egorianJasonBack))commands.splice(1,1);
@@ -675,8 +675,8 @@ function beginInitiative(){
   const row=document.createElement('li');row.className='init-'+entry.side;row.style.setProperty('--rank',i);const rank=document.createElement('span'),die=document.createElement('span'),copy=document.createElement('span'),name=document.createElement('strong'),math=document.createElement('small');
   rank.textContent=i+1;die.className='init-die';die.innerHTML=dieMarkup(20,entry.die);name.className='init-name';name.textContent=entry.name;math.textContent='D20 '+entry.die+' '+signed(entry.modifier)+' = '+entry.total;copy.append(name,math);row.append(rank,die,copy);list.append(row);
  });
- window.PresentationPolish?.paintDice();$('initiative-reveal').hidden=false;$('dice-panel').hidden=true;$('initiative-start').textContent=reduce.matches?'Start battle · Enter / E':'Skip reveal · Enter / E';$('initiative-start').focus({preventScroll:true});paintBattle();
- delay(reduce.matches?0:1500).then(()=>{if(epoch===token&&battle===current&&current.reveal)$('initiative-start').textContent='Start battle · Enter / E';});
+ window.PresentationPolish?.paintDice();$('initiative-reveal').hidden=false;$('dice-panel').hidden=true;$('initiative-start').textContent=reduce.matches?'Start battle · '+GameInput.confirmLabel():'Skip reveal · '+GameInput.confirmLabel();$('initiative-start').focus({preventScroll:true});paintBattle();
+ delay(reduce.matches?0:1500).then(()=>{if(epoch===token&&battle===current&&current.reveal)$('initiative-start').textContent='Start battle · '+GameInput.confirmLabel();});
 }
 async function startInitiative(){
  if(!battle?.reveal)return;const token=epoch;battle.reveal=false;$('initiative-reveal').hidden=true;keys.clear();
@@ -771,7 +771,7 @@ function update(dt){if(campaignLoading||Handheld.isOpen()||$('save-import-dialog
   run(()=>DinyarRecon.sensePostern());
   return;
  }
- const p=nearPoint();$('prompt').hidden=!p;if(p)$('prompt').textContent='E · '+p.label;
+ const p=nearPoint();$('prompt').hidden=!p;if(p)$('prompt').textContent=GameInput.hint('A','E')+' · '+p.label;
 }
 function drawActor(g,u,height=55){
  if(window.EgorianDischarge?.drawActor(g,u,height))return;
@@ -885,7 +885,7 @@ function render(t){if(!journeyOpen&&!taskBusy)$('journey').hidden=true;GameAudio
 
  if(quest.burned&&scene==='tavern'){ctx.fillStyle='rgba(80,55,38,.1)';ctx.fillRect(0,0,640,400);if(!reduce.matches)for(let i=0;i<12;i++){const y=350-(t*35+i*47)%320,x=490+Math.sin(i+t)*60;rect(x,y,1,2,'#ffb97377');}}
  for(const f of fx){ctx.save();ctx.globalAlpha=Math.min(1,f.life*2);ctx.font='11px FolkenPixel';ctx.textAlign='center';ctx.lineWidth=3;const y=f.y-(.9-f.life)*18;ctx.strokeStyle='#0b1018';ctx.strokeText(f.text,f.x,y);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,y);ctx.restore();}
- const currentPrompt=nearPoint();$('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!currentPrompt;if(currentPrompt)$('prompt').textContent='E · '+currentPrompt.label;
+ const currentPrompt=nearPoint();$('prompt').hidden=dialogOpen||!!battle||taskBusy||finished()||!currentPrompt;if(currentPrompt)$('prompt').textContent=GameInput.hint('A','E')+' · '+currentPrompt.label;
 }finally{ctx.restore();}
 }
 $('combat-target').onchange=e=>{if(battle&&!battle.busy){battle.target=Number(e.target.value);paintBattle();}};
@@ -1616,4 +1616,10 @@ window.NextChapter.install();window.NextArc.install();LastStand.install();DebtsR
   return battle?'menu':'world';
  },
  emit:event=>canvas.dispatchEvent(new KeyboardEvent(event.type,{key:event.key,repeat:!!event.repeat,bubbles:true,cancelable:true}))
-});TitleScreen.install();GameAudio.install();load();requestAnimationFrame(loop);
+});
+for(const id of ['close','level-continue'])$(id).textContent='Continue · '+GameInput.confirmLabel();
+document.querySelector('.intro-help').textContent=GameInput.hint(
+ 'D-pad · Choose   A · Confirm   B · Back',
+ '← → · Choose   ↑ ↓ · Action   Enter · Confirm   Esc · Back');
+canvas.setAttribute('aria-label',GameInput.hint('Game world. D-pad to move and A to interact.','Game world. Use arrow keys or WASD to move and E to interact.'));
+TitleScreen.install();GameAudio.install();load();requestAnimationFrame(loop);

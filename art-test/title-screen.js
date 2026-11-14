@@ -20,7 +20,7 @@ const TitleScreen=(()=>{
   Handheld.close();keys.clear();path=[];introOpen=true;selection=false;$('intro').hidden=true;$('prompt').hidden=true;$('dice-panel').hidden=true;
   document.body.classList.remove('is-combat');document.body.classList.add('is-intro','is-title');canvas.height=480;
   mode=menu?'menu':'prompt';started=performance.now();panel().hidden=false;panel().classList.toggle('menu-open',menu);
-  $('title-push').hidden=menu;$('title-menu').hidden=!menu;panel().classList.toggle('booting',!menu&&!reduce.matches);
+  $('title-push').textContent=GameInput.hint('Push A to Start','Press Enter to Start');$('title-push').hidden=menu;$('title-menu').hidden=!menu;panel().classList.toggle('booting',!menu&&!reduce.matches);
   if(menu)paint('main');else $('title-push').focus();
  }
  function buttons(rows){
@@ -51,7 +51,7 @@ const TitleScreen=(()=>{
    ]);
   }
   if(view==='controls'){
-   $('title-detail').hidden=false;$('title-detail').textContent='D-pad / Arrows / WASD: Move & choose\nA / Enter / E: Confirm; B: Back\nX / I: Inventory; Y / O: Party\nStart / P: Pause; Select / F1: Quest or command details';
+   $('title-detail').hidden=false;$('title-detail').textContent=GameInput.controls().join('\\n');
    buttons([['Back',()=>paint('settings')]]);
   }
  }

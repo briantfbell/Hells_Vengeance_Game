@@ -56,5 +56,22 @@ window.GameInput=(()=>{
   }
   requestAnimationFrame(poll);
  }
- return {sample,create,install,status};
+ const hint=(handheld,pc)=>document.documentElement.classList.contains('handheld-display')?handheld:pc;
+ const confirmLabel=()=>hint('A','Enter');
+ const movementLabel=()=>hint('D-pad','Arrows / WASD');
+ const backLabel=()=>hint('B','Esc');
+ function controls(){return hint([
+  'D-pad · Move or select',
+  'A · Interact, advance or confirm',
+  'B · Back or pause. Hold with D-pad to run.',
+  'X · Inventory     Y · Party',
+  'Start · Pause     Select · Quest or combat details'
+ ],[
+  'Arrows / WASD · Move or select',
+  'Enter / E · Interact, advance or confirm',
+  'Esc / B · Back or pause. Shift + direction to run.',
+  'I · Inventory     O · Party',
+  'P · Pause     F1 · Quest or combat details'
+ ]);}
+ return {sample,create,install,status,hint,confirmLabel,movementLabel,backLabel,controls};
 })();

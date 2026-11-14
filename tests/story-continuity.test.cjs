@@ -648,6 +648,8 @@ test('a confirm during the last step acts once on the requested point when the l
  const w=world(),s=read('chapter-engine.js'),leader={id:'freya',x:312,y:248,anim:0};
  const target={id:'rileyBanter',x:360,y:248};
  let points=[target],interactions=0;
+ w.document.documentElement={classList:{contains:()=>false}};
+ vm.runInContext(read('game-input.js'),w);
  Object.assign(w,{ready:true,campaignLoading:false,introOpen:false,journeyOpen:false,levelOpen:false,briefingOpen:false,
   dialogOpen:false,taskBusy:false,battle:null,finished:()=>false,Handheld:{isOpen:()=>false},INTERACTION_RADIUS:56,
   units:[leader],path:[[21,15]],trail:[],keys:new Set(),fx:[],cell:(x,y)=>[Math.floor(x/16),Math.floor(y/16)],
