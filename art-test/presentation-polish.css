@@ -10,12 +10,13 @@ body.is-combat #dialog{z-index:14}
 #dialog #line{font:1.875cqw/1.45 var(--game-font);margin:0;max-height:16cqw;overflow:hidden}
 #choices{gap:.625cqw;margin-top:1cqw;grid-template-columns:repeat(2,minmax(0,1fr))}
 #choices button,#close{font:1.72cqw/1.2 var(--game-font);min-height:4.375cqw;padding:.7cqw 1cqw;box-shadow:none;border-width:1px}
-#close{position:absolute;bottom:1.5cqw;right:1.5cqw;width:15cqw;height:4.375cqw;text-align:center}
+#close{position:absolute;bottom:1.5cqw;right:1.5cqw;width:max-content;min-width:15cqw;height:4.375cqw;text-align:center}
 #choices button:before{display:none}
 #journey-title{font:3.125cqw/1.35 var(--game-font)}
 #journey-summary{font:2.03cqw/1.55 var(--game-font)}
 #journey .eyebrow,#journey-continue{font-family:var(--game-font)}
-#journey-continue{min-width:18.75cqw;height:5cqw;font-size:1.875cqw;padding:.7cqw 2cqw}
+#journey-continue{min-width:18.75cqw;min-height:5cqw;font-size:1.875cqw;padding:.7cqw 2cqw}
+#close,#journey-continue,#level-continue{white-space:nowrap}
 #battle{grid-template-rows:3.125cqw 14.375cqw;font-family:var(--game-font)}
 .battle-head{grid-template-columns:43.125% 36.875% 20%}
 .battle-bottom{grid-template-columns:43.125% 56.875%}
@@ -185,3 +186,7 @@ body.is-combat #dialog{z-index:14}
  .journey-effects{display:none}
  .journey-effects span{animation:none}
 }
+
+#pause-panel[data-view="controls"] #pause-body{display:flex;flex-direction:column;align-items:stretch;justify-content:center}
+#pause-panel[data-view="controls"] #pause-details{order:-1;width:100%;flex:none}
+#pause-panel[data-view="controls"] #pause-options{width:100%;flex:none}
