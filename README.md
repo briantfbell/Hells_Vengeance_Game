@@ -1,61 +1,57 @@
-# Hell’s Bubbies — Hell’s Vengeance Game
+# Hell’s Vengeance: A Campaign Reborn
 
-A high-detail pixel-art RPG gift based on our Pathfinder campaign. This build contains fourteen playable chapters, beginning with the **Night of Ashes** prologue: Kintargo, the Silver Star music shop, the hidden temple encounter, and the harbor escape.
+A high-detail pixel-art RPG based on our Pathfinder campaign. The playable story begins with the Night of Ashes in Kintargo and continues through St. Ilnius and the Barleybridge scout report. El Guapo’s animated party-boat epilogue closes the currently recorded story.
 
-## Play on another computer
+## Play on PC or preview the Miyoo layout
 
-Download this repository using **Code → Download ZIP**, extract the entire folder, and open **index.html** in a modern browser. Keep the art-test folder beside index.html. No installation, account, or original development laptop is required for offline play.
+1. On GitHub, choose **Code → Download ZIP** and extract the entire folder.
+2. Open **index.html** in Edge or Chrome. Keep **art-test/** beside it.
+3. For Miyoo button hints and a clean 4:3 game view, add **?handheld=1** to the browser address, including when it starts with **file:///**. The plain address shows PC keyboard hints and the replay toolbar.
 
-Alternatively, with Node.js 18 or newer installed, run `npm start` in the extracted folder and open http://127.0.0.1:8080. There are no npm dependencies to install. This address is local to whichever computer runs it.
+You can also run **npm start** from the extracted folder with Node.js 18 or newer. Open **http://127.0.0.1:8080/** for PC or **http://127.0.0.1:8080/?handheld=1** for handheld. There are no npm dependencies to install.
+
+The Miyoo Mini Plus is the primary target. Both browser modes use a fixed 640 × 480 game frame. Handheld mode hides the development toolbar and disables page scrolling. Native packaging, device input and save integration, and testing on physical Miyoo hardware are still pending.
 
 ## Starting a new story
 
-Every launch opens the animated **Hell’s Rebels — a Hell’s Vengeance story** title screen, using Brian’s supplied Folken Games artwork. The screen flickers on and **Push A to Start** fades in. Press Enter/E/Space (or A at the title prompt) to open the main menu. Continue resumes the latest checkpoint; New game opens character selection; Load game offers four manual slots and portable save import; Settings contains audio and controls. Browsing or backing out of character selection preserves the existing checkpoint.
+Press **A** at the animated Folken Games title screen in handheld mode or **Enter** on PC. **New game** opens character selection, **Continue** resumes the latest checkpoint, and **Load game** opens the four manual slots and save import. Audio and control help are under **Settings**.
 
-Choose one of the five opening companions, then receive the mission through Freya and Jason’s briefing. Reese joins in Longacre. Bruce’s portrait is available in the gallery; his recruitment awaits a confirmed joining point. Returning to the title from pause captures a checkpoint first; Continue returns to that progress. The title and all game views keep the same 640×480 frame. Flame, magic and ember effects stop when reduced motion is enabled.
-
-The title and Night of Ashes load with the opening artwork. Chapter Two loads its own artwork when you board the Western Star or open a Chapter Two checkpoint or replay. The sermon through the Longacre armory operation load together. The later artwork loads in groups at Fort Estazano, the first Egorian arrival, the return from Fort Arego, and the Barrowood. A later checkpoint loads artwork through its group. Keep the complete `art-test` folder available for the whole story.
+Choose one of the five opening companions and receive Corrine’s mission briefing with Freya and Jason. Reese joins in Longacre. Bruce appears later in the campaign, including at St. Ilnius.
 
 ## Controls
 
-- Arrows / WASD: move or select. Enter / E / Space: confirm. B / Escape: back or pause. P also opens pause. Shift runs during exploration.
-- Dialogue choices and character selection use the same direction and confirm controls.
-- Combat: select a command, confirm, select its enemy or healing target, then confirm. B cancels targeting. The current action and last two completed actions remain visible.
-- Pause: resume, party/equipment, inventory, four save slots, load, export/import, audio, controls, or title screen. Saves and file transfers are unavailable during combat.
-- Exploration and combat share a fixed 640×480 logical screen (4:3), scaled uniformly to the available display. Mouse and touch remain supported.
+| Action | Miyoo layout | PC |
+| --- | --- | --- |
+| Move, navigate, or select a target | D-pad | Arrows or WASD |
+| Interact, advance, or confirm | A | Enter, E, or Space |
+| Back, cancel targeting, or pause from exploration | B | Esc or B |
+| Run | B + direction | Shift + direction |
+| Inventory and party | X and Y | I and O |
+| Pause and quest or combat details | Start and Select | P and F1 |
 
-## Included
+Start and Select are optional shortcuts. Quest and combat help are also accessible from pause. The browser build supports standard-mapped gamepads, keyboard, mouse, and touch.
 
-- Five following prologue companions, connected scenes, turn-based combat, signature abilities, healing, bell-rope reinforcements, and checkpoint recovery.
-- Compact retro command menus and visual D20/D4/D6/D8/D10 rolls. Command subtitles show ability details and remaining uses.
-- Dim interior light effects. Separate water underlays animate beneath supported ship, dock and island foregrounds; the old full-map ripple distortion is removed. Reduced-motion settings pause ambient effects.
-- Reusable Barzillai Thrune and Archbaron Darellus Fex character models, with three facings and automatic dialogue portraits. See docs/QUESTGIVERS.md.
-- Speaker headshots and title names inside dialogue banners. Portraits reuse close-up crops of existing character artwork.
-- Party Sprite Studio.html: seven-character art gallery. Reese and Bruce use the approved character references and do not join this prologue.
-- legacy/: preserved original game for reference.
-- docs/: artwork provenance and implementation notes. The raw campaign archive is not included.
+In combat, choose a command, then choose and confirm its target when prompted. The current action and the two most recent actions appear in the combat log. Exploration uses an objective overlay and diamond markers. Subtle torch, lantern, and water effects run on supported maps, and illustrated transitions have scene-specific animation. Ambient motion respects the browser’s reduced-motion setting.
 
 ## Saves
 
-Checkpoints and four manual save slots use browser localStorage. Press B or P to save/load a slot inside the game frame. They remain on that browser and computer and do not sync through GitHub. File and HTTP versions can have different saves. Restart chapter replaces the current checkpoint. Use **Export save** to download your checkpoint, and **Import save** on another device’s start screen or game toolbar. Preview before replacing; Restore previous save recovers the checkpoint replaced by an import. See docs/SAVE_PORTABILITY.md.
+Automatic checkpoints and four manual slots are stored in the browser. Use **Save game** or **Load game** in pause for manual slots. Both display modes share saves at the same browser address when only the query parameter changes. A different browser, extraction folder, device, or local server address can have separate saves.
 
-## Hosting and privacy
+Use **Export save** in pause or on the PC toolbar to carry a checkpoint to another device. Choose **Load game → Import save** from the title screen, review the preview, then confirm. **Restore previous save** on the PC toolbar can recover the checkpoint replaced by an import. Save transfers and manual saves are unavailable during combat. See [Save portability](docs/SAVE_PORTABILITY.md).
 
-This is a static website: index.html and art-test/ can be served by a static web host without a backend. A private repository is not itself a playable website. GitHub Pages is not enabled by this commit, and ordinary Pages sites can be public even when their source repository is private. Choose access-protected hosting before publishing campaign content if privacy is required.
+In PC view, **Find replay** filters checkpoints by number, scene title, or location. **Return to prior progress** restores the checkpoint from before the replay.
 
-## Handheld direction
+## Audio
 
-Add `?handheld=1` to the game URL to run it without page scrolling or the development controls. For example, open `http://127.0.0.1:8080/?handheld=1` on the local server. At 640×480 the game fills the display, and other display sizes keep the 4:3 frame centered. The title and pause menus still handle saves, inventory, audio, and controls. Remove the query parameter to access the replay toolbar. Both views share saves when opened from the same browser origin.
+The opening score includes seven instrumental cues covering the title, character selection, Corrine’s briefing, Kintargo, the Silver Star shop, the hidden temple, and its fight. Music defaults to **25%** through that fight and **50%** afterward. Effects default to **100%**. Change volume and mute in **Settings** or **Pause → Audio**. Changes persist in the browser. Playback starts after the first click or keypress. Later scenes use synthesized cues with three combat variations. See the [campaign soundtrack prompts](docs/SUNO_SOUNDTRACK_PROMPTS.md).
 
-The web build is the current playable prototype. Final handheld packaging, native handheld input adapters, further screen/readability refinement, cartridge-style removable storage remain future work. This is not a Game Boy ROM.
+## Validation and project files
 
-The admin toolbar’s **Find replay** field filters checkpoints by number, scene title, or location. **Return to prior progress** restores the checkpoint from before the replay.
+Automated checks cover story prerequisites, progression, equipment, and export/import for all **496 replay checkpoints**. Browser checks at 640 × 480 covered the opening through the Silver Star fight, early and late checkpoint reloads, the completed epilogue, and save transfer between handheld and PC browser sessions. Selected late scenes and standard gamepad input were also checked in the browser.
 
-## Validation
+Run **npm test** for regression checks or **npm run balance** for seeded combat simulations. Open **Party Sprite Studio.html**, **Longacre Art Studio.html**, or **Combat Animation Studio.html** to browse artwork. The **docs/** folder contains campaign and asset notes. The **legacy/** folder preserves the original game.
 
-Automated checks cover story prerequisites, progression, equipment, portable-save validation and all 494 replay checkpoints. Late-campaign artwork loads in batches as the player reaches the Barrowood, Dark Rain, Molthune, Citadel Dinyar, St. Ilnius, and Barleybridge. Opening a late checkpoint loads the title and common game art plus the destination batch, including its shared assets. Browser verification covers selected journeys, dialogue, keyboard combat and the fixed-screen menus.
-
-Run `npm test` for regression checks and `npm run balance` for seeded simulations of the actual combat engine. Balance statistics depend on the stated player strategy and are adaptation checks, not historical Pathfinder statistics.
+The ZIP includes the static game files for local play. Keep the complete **art-test/** folder so later scenes can load their art. For hosted play, serve **index.html** and **art-test/** together and use access-protected hosting if the campaign should stay private.
 
 ## Next chapter and map layers
 
@@ -63,17 +59,11 @@ See docs/NEXT_PHASE_PLAN.md for the source-grounded voyage/Longacre production p
 
 ## Chapter Three and future art
 
-Continue from the Ash House briefing into the sermon, four decrees, deputy ambush, and Fex audience. All seven party walking cycles now include opposite-foot poses. Open **Longacre Art Studio.html** (`/art`) for nine layered environments and eighteen NPC models/forms covering several upcoming story arcs. Gameplay now extends through the Kantaria docks and towers; later artwork remains available for subsequent arcs. See docs/LONGACRE_PRODUCTION.md. Portable saves, all three chapter walkthroughs, the future art gallery, offline startup, and a 320px layout were checked in the browser.
-
-Combat now uses a parchment chronicle beside crimson command buttons. The current action appears above completed actions, newest first; older entries drop off automatically, and the history clears for each fight. The visible row count adapts to the screen without scrolling.
-
-Exploration now has a visible task overlay and context-correct quest markers; public notices show `[X/4]`. Combat uses weapon-ready three-frame idles, sprite dice in the top-left roll panel, and rules subtitles on every command. Open **Combat Animation Studio.html** (`/idles`) for 23 prepared combatant models/forms. See docs/UI_AND_COMBAT_POLISH.md. For the campaign soundtrack, docs/SUNO_SOUNDTRACK_PROMPTS.md contains 67 instrumental generation prompts and combat variations; temporary instrumental music and effects are playable, with pause-menu volume and mute controls.
+Continue from the Ash House briefing into the sermon, four decrees, deputy ambush, and Fex audience. See [Longacre production notes](docs/LONGACRE_PRODUCTION.md).
 
 ## Chapter Four and handheld menus
 
 Continue from Fex’s audience into the Last Stand confrontation, Riley’s capture/interrogation, the empty hill investigation, and Bolgart’s wereboar transformation at the jail. Existing tavern, hill and NPC artwork is reused. Read docs/LAST_STAND_AND_HANDHELD.md for evidence, adaptation choices and controls. The party screen shows current weapons, combat numbers, health, remaining skills/potions and earned upgrades.
-
-A complete keyboard-only browser playthrough covered the opening mission through Chapter Four, including every battle and the four-decree counter. Save/load slots and party browsing were checked at 320×200; exploration/combat frame bounds were checked across four viewports. Portable progression saves and seven validation tests pass. Native hardware/gamepad and filesystem adapters still need a later packaging pass.
 
 ## Inventory and equipment
 
@@ -85,7 +75,7 @@ The game now uses one 640×480 (4:3) surface across exploration, combat, charact
 
 ## Combat art, audio and Chapter Five
 
-Three-phase weapon/casting sprites accompany eight-frame Burning Hands, healing and Chill Touch effects. Freya displays her equipped katana or recovered scimitar. Reduced motion uses brief static effects. Pause → Audio cycles music/effect volumes and mute; preferences stay in this browser. Original temporary instrumental cues include three combat variations, ready to be replaced by campaign tracks.
+Three-phase weapon and casting sprites accompany Burning Hands, healing, and Chill Touch effects. Freya displays her equipped katana or recovered scimitar. Reduced motion uses brief static effects.
 
 Chapter Five, Debts and Rumors, visits Gerya’s hospice and the church in chronological order before the hill search and wereboar confrontation. The later dockside visit establishes Ingoe’s ten-gold weekly agreement. Completed Chapter Four saves can continue directly; the section replay menu also offers Chapter Five. No additional advancement is inferred. See docs/COMBAT_AUDIO_AND_DEBTS.md.
 
@@ -115,30 +105,28 @@ Early initiative modifiers are provisional game values, not inferred from later 
 
 ## Controller support and quest help
 
-Standard browser gamepads now use D-pad / left stick, A to confirm, B to back or pause, and B + direction to run. X opens inventory, Y opens party details, Start pauses/resumes, and Select opens quest details or the selected combat command. Keyboard shortcuts I / O / F1 offer those same screens. In combat, F1 shows the selected command’s full effect without changing your target or recent action log. The pause menu also provides quest/help access.
+Standard browser gamepads follow the mapping above. The selected command’s help preserves your target and recent action log when you return to combat.
 
-Connect a standard-mapped controller, press and release a button, then use it in the focused game tab. Physical controller and Miyoo validation remain pending. See docs/CONTROLLER_SUPPORT.md for mapping, held-button safeguards and native-port limits.
+Connect a standard-mapped controller, press and release a button, then use it in the focused game tab. See [Controller support](docs/CONTROLLER_SUPPORT.md) for held-button safeguards and device support.
 
 ## Chapter Thirteen: Quiet Knives
 
-Continue from the completed dock/tower operation, or replay section 86. Stir the market riot, ambush a militia patrol and plant the false account, compromise the labor guild records, steal the unnamed manor artifacts, then escape the burning Uskwood and recover in the Fungus Caves. Corrine returns as the assigned liaison. Sections 86–102 cover this continuation; there are now 102 replay checkpoints.
+Continue from the completed dock/tower operation, or replay section 86. Stir the market riot, ambush a militia patrol and plant the false account, compromise the labor guild records, steal the unnamed manor artifacts, then escape the burning Uskwood and recover in the Fungus Caves. Corrine returns as the assigned liaison. Replays **86–102** cover this chapter.
 
 Four new transparent map foregrounds and two anonymous civilian models match the existing style. All views retain the 640×480 logical frame. The prison aftermath remains unresolved, and this chapter grants no inferred level-ups or unidentified magic items. See [chapter notes](docs/chapter-thirteen.md).
-
-Validation: 83 automated tests pass, including portable-save round trips for every replay checkpoint and objective reachability on the new maps. The combat harness covers 200 seeded runs per encounter and chapter chains; results describe its skill-first/healing strategy, not every possible player choice.
 
 ## Presentation polish and Photoshop frames
 
 The game now uses the original Folken Pixel font inside its 640×480 overlays. New combat void and image dice, eight distinguishable townsfolk, captive Riley conversations, separate church entry/hall maps, altar effects and the converted Asmodean floor symbol accompany the story fixes. Porch combat resumes into Cimri's rescue after victory.
 
-See [Photoshop UI dimensions](docs/UI_PHOTOSHOP_SPEC.md) for fixed export sizes and scalable borders, [change notes](docs/PRESENTATION_POLISH.md) for the batch, and [generated artwork prompts](docs/PRESENTATION_POLISH_ART_PROMPTS.json) for reproducible asset references. Blank Photoshop skins are pending artwork. 92 automated tests pass; the solo porch fight and subsequent rescue interaction were also verified in the browser.
+See [Photoshop UI dimensions](docs/UI_PHOTOSHOP_SPEC.md) for fixed export sizes and scalable borders, [change notes](docs/PRESENTATION_POLISH.md) for the batch, and [generated artwork prompts](docs/PRESENTATION_POLISH_ART_PROMPTS.json) for reproducible asset references.
 
 
 ## Chapter Fourteen — Stranglehold
 
 Continue after Corrine’s Fungus Caves briefing, or replay section **103**. Secure the mines, destroy the Lamashtu cult, strike rebel suppliers, and isolate the perimeter forts. Three battles, two narrated supplier operations, two new map foregrounds and two new defender models lead to a report at the refuge. The chapter stops before Valor’s Fastness.
 
-There are now **118 replay checkpoints** and **104 passing automated tests**. Existing saves continue into the new chapter. Live browser verification of this batch is pending because local browser use is disabled in the app’s Work settings. See [chapter notes](docs/chapter-fourteen.md) for source limits, artwork and validation.
+See [chapter notes](docs/chapter-fourteen.md) for artwork, source limits, and validation.
 
 ## Chapter Fifteen · Valor’s Fastness outer gate
 
@@ -380,7 +368,7 @@ Continue from the fountain court or select replay **456**. Break Sylvestra Hanel
 
 Continue from the inner temple or select replay **460**. Follow El Guapo’s solo reconnaissance of the river crossing and town gate. Replays **460–463** cover the cutaway and scouting. See [the section notes](docs/barleybridge-scout.md) for the Foundry references and the remaining gaps in the ritual timeline.
 
-Replay **464** reviews the documented Tathlum plan for Barleybridge, Warlock Island, and Egorian.
+Replay **464** reviews the Tathlum plan for Barleybridge, Warlock Island, and Egorian. Replays **465–466** cover El Guapo’s invitation and the party boat. Raise a glass at the banquet to see the animated outro and return to the main menu. The journal keeps the remaining Tathlum plans available.
 
 ### Warlock Island layout previews
 
